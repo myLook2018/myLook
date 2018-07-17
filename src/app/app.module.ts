@@ -18,12 +18,26 @@ import { LoginComponent } from './auth/components/login/login.component';
 import { UserComponent } from './auth/components/user/user.component';
 import { RegisterComponent } from './auth/components/register/register.component';
 
+import { InventoryComponent } from './articles/components/inventory/inventory.component';
+
+// import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatCardModule} from '@angular/material/card';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import { FormsModule } from '@angular/forms';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MatButtonModule} from '@angular/material/button';
+import {MatStepperModule} from '@angular/material/stepper';
+import {MatDividerModule} from '@angular/material/divider';
+
+
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     UserComponent,
-    RegisterComponent
+    RegisterComponent,
+    InventoryComponent
   ],
   imports: [
     BrowserModule,
@@ -31,7 +45,15 @@ import { RegisterComponent } from './auth/components/register/register.component
     RouterModule.forRoot(rootRouterConfig, { useHash: false }),
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule, // imports firebase/firestore, only needed for database features
-    AngularFireAuthModule // imports firebase/auth, only needed for auth features
+    AngularFireAuthModule, // imports firebase/auth, only needed for auth features
+    MatCardModule,
+    MatInputModule,
+    MatFormFieldModule,
+    FormsModule,
+    BrowserAnimationsModule,
+    MatButtonModule,
+    MatStepperModule,
+    MatDividerModule
   ],
   exports: [RouterModule],
   providers: [AuthService, UserService, UserResolver, AuthGuard],

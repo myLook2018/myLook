@@ -1,17 +1,27 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router, Params } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {FormControl, FormGroupDirective, NgForm } from '@angular/forms';
+import {ErrorStateMatcher} from '@angular/material/core';
 
 @Component({
   selector: 'app-login',
   templateUrl: 'login.component.html',
   styleUrls: ['login.component.scss']
 })
+
 export class LoginComponent {
 
   loginForm: FormGroup;
   errorMessage = '';
+
+  emailFormControl = new FormControl('', [
+    Validators.required,
+    Validators.email,
+  ]);
+
+  matcher = new MyErrorStateMatcher();
 
   constructor(
     public authService: AuthService,
@@ -57,5 +67,13 @@ export class LoginComponent {
       console.log(err);
       this.errorMessage = err.message;
     });
+    console.log(this.errorMessage);
+  }
+}
+
+export class MyErrorStateMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    const isSubmitted = form && form.submitted;
+    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
   }
 }
