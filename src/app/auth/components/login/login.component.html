@@ -1,30 +1,25 @@
 <mat-card id="loginCard">
   <mat-card-title style="color: purple">MyLook</mat-card-title>
   <mat-card-title>Iniciar sesión</mat-card-title>
-  <form class="loginForm">
-    <mat-form-field class="inputForm">
-      <input matInput placeholder="Introduce tu correo electrónico" [formControl]="emailFormControl" [errorStateMatcher]="matcher">
-      <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
-        Por favor ingrese un Email valido
-      </mat-error>
-      <mat-error *ngIf="emailFormControl.hasError('required')">
-        Se requiere
-        <strong>Email</strong>
-      </mat-error>
-    </mat-form-field>
-
-    
-
-  </form>
   <form>
-    <button mat-button (click)="tryLogin(loginForm.value)" class="acceptButton">Acceder</button>
-  </form>
-    
- 
-  <mat-divider></mat-divider>
-  <form style="margin-top: 34px">
-    <button mat-button class="externalLogin" style="background-color: #3b5998" (click)="tryFacebookLogin()">Acceder con Facebook</button>
+    <button mat-button class="externalLogin" style="background-color: #3b5998;margin-bottom: 10px" (click)="tryFacebookLogin()">Acceder con Facebook</button>
     <button mat-button class="externalLogin" style="background-color: #d34836" (click)="tryGoogleLogin()">Acceder con Google</button>
   </form>
+  <mat-divider id="divider"></mat-divider>
+  <form class="logingForm">
+      <mat-form-field class="inputForm">
+        <input matInput placeholder="Introduce tu correo electrónico" [formControl]="emailFormControl" [errorStateMatcher]="matcher">
+        <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+          Por favor ingrese un Email valido
+        </mat-error>
+        <mat-error *ngIf="emailFormControl.hasError('required')">
+          Se requiere
+          <strong>Email</strong>
+        </mat-error>
+      </mat-form-field>
+    </form>
+    <form>
+      <button mat-button (click)="tryLogin(loginForm.value)" class="acceptButton">Acceder</button>
+    </form>
 
 </mat-card>
