@@ -1,6 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
 import { AppComponent } from './app.component';
 
 import { AngularFireModule } from 'angularfire2';
@@ -11,16 +10,16 @@ import { AuthGuard } from './auth/services/auth.guard';
 import { AuthService } from './auth/services/auth.service';
 import { UserService } from './auth/services/user.service';
 import { UserResolver } from './auth/components/user/user.resolver';
-import { ReactiveFormsModule } from '../../node_modules/@angular/forms';
-import { RouterModule } from '../../node_modules/@angular/router';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { rootRouterConfig } from './app-routing.module';
 import { LoginComponent } from './auth/components/login/login.component';
 import { UserComponent } from './auth/components/user/user.component';
 import { RegisterComponent } from './auth/components/register/register.component';
-
 import { InventoryComponent } from './articles/components/inventory/inventory.component';
+import { IAppState } from './store';
 
-// import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatCardModule} from '@angular/material/card';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -53,7 +52,8 @@ import {MatDividerModule} from '@angular/material/divider';
     BrowserAnimationsModule,
     MatButtonModule,
     MatStepperModule,
-    MatDividerModule
+    MatDividerModule,
+    MatToolbarModule,
   ],
   exports: [RouterModule],
   providers: [AuthService, UserService, UserResolver, AuthGuard],
