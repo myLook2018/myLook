@@ -7,20 +7,20 @@
   </form>
   <mat-divider id="divider"></mat-divider>
   <form class="logingForm">
-      <mat-form-field class="inputForm">
-        <input matInput placeholder="Introduce tu correo electrónico" [formControl]="emailFormControl" [errorStateMatcher]="matcher">
-        <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
-          Por favor ingrese un Email valido
-        </mat-error>
-        <mat-error *ngIf="emailFormControl.hasError('required')">
-          Se requiere
-          <strong>Email</strong>
-        </mat-error>
-      </mat-form-field>
-    </form>
-    <form>
-      <a class="createAcc" style="text-decoration: none;color: #6a99ff;" href="/register">Crear Cuenta en Mylook</a>
-      <button mat-button (click)="tryLogin(loginForm.value)" class="acceptButton">Acceder</button>
-    </form>
+    <mat-form-field class="inputForm">
+      <input matInput placeholder="Introduce tu correo electrónico" [formControl]="emailFormControl" [errorStateMatcher]="matcher">
+      <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+        Por favor ingrese un Email valido
+      </mat-error>
+      <mat-error *ngIf="emailFormControl.hasError('required')">
+        Se requiere
+        <strong>Email</strong>
+      </mat-error>
+    </mat-form-field>
+  </form>
+  <form>
+    <a class="createAcc" style="text-decoration: none;color: #6a99ff;" href="/register">Crear Cuenta en Mylook</a>
+    <button mat-button (click)="tryLogin(loginForm.value)" class="acceptButton">Acceder</button>
+  </form>
 
 </mat-card>
