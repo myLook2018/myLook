@@ -1,5 +1,5 @@
 .header{
-    text-align: center;
+    flex: auto;
     font-size: 30px;
     margin-bottom: 40px;
   }
@@ -47,5 +47,10 @@
 
   .fill-space{
     flex: 1 1 auto;
+  }
+
+  .img-size{
+    max-width: 100px;
+    max-height: 50px;
   }
   
