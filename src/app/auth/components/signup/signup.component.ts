@@ -5,11 +5,11 @@ import { FormBuilder, FormGroup, Validators, FormControl, FormGroupDirective, Ng
 import {ErrorStateMatcher} from '@angular/material/core';
 
 @Component({
-  selector: 'app-register',
-  templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss']
+  selector: 'app-signup',
+  templateUrl: './signup.component.html',
+  styleUrls: ['./signup.component.scss']
 })
-export class RegisterComponent {
+export class SignupComponent {
 
   registerForm: FormGroup;
   errorMessage = '';

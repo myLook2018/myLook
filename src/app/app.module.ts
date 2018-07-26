@@ -28,7 +28,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatButtonModule} from '@angular/material/button';
 import {MatStepperModule} from '@angular/material/stepper';
 import {MatDividerModule} from '@angular/material/divider';
-import { SignupComponent } from './signup/signup.component';
+import { SignupComponent } from './auth/components/signup/signup.component';
 
 
 @NgModule({
