@@ -1,9 +1,9 @@
-<mat-card id="registerCard">
+<mat-card id="signUpCard">
   <div class="container">
     <img src="/assets/brandNoBackground.png" class="img-size">
     <div class="row">
       <div class="col-md-6 col-md-offset-3">
-        <form [formGroup]="registerForm">
+        <form [formGroup]="signupForm">
           <mat-form-field class="inputForm">
             <label>Email address</label>
             <input matInput class="form-control" formControlName="email">
@@ -24,7 +24,7 @@
           <mat-toolbar>
             <mat-toolbar-row style="background-color: white">
               <span class="fill-space"></span>
-              <button mat-button type="submit" (click)="tryRegister(registerForm.value)" class="registerButton">Register</button>
+              <button mat-button type="submit" (click)="tryRegister(signupForm.value)" class="registerButton">Register</button>
             </mat-toolbar-row>
           </mat-toolbar>
         </form>

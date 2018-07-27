@@ -10,9 +10,10 @@ import { SignupComponent } from './auth/components/signup/signup.component';
 
 
 export const rootRouterConfig: Routes = [
-  { path: '', component: InventoryComponent },
+  // { path: '', component: InventoryComponent },
   // { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent, canActivate: [AuthGuard] },
   { path: 'signup', component: SignupComponent, canActivate: [AuthGuard] },
-  { path: 'user', component: UserComponent,  resolve: { data: UserResolver}}
+  { path: 'user', component: UserComponent,  resolve: { data: UserResolver}},
+  { path: 'register', component: RegisterComponent}
 ];

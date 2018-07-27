@@ -1,3 +1,99 @@
-<p>
-  register works!
-</p>
+<mat-card id="registerCard">
+  <div class="container">
+    <mat-horizontal-stepper [linear]="isLinear" #stepper>
+
+      <mat-step [stepControl]="firstFormGroup">
+        <form [formGroup]="firstFormGroup">
+          <ng-template matStepLabel>Usuario</ng-template>
+          <mat-form-field>
+            <input matInput placeholder="Nombre de Usuario" formControlName="userName" required>
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput placeholder="Foto" formControlName="userPicture" required>
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput placeholder="Mail" formControlName="userMail" type="email">
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput placeholder="Telefono Personal" formControlName="userPhone" required>
+          </mat-form-field>
+
+          <div>
+            <button mat-button matStepperNext>Next</button>
+          </div>
+
+        </form>
+      </mat-step>
+      <mat-step [stepControl]="secondFormGroup">
+        <form [formGroup]="secondFormGroup">
+          <ng-template matStepLabel>Tienda</ng-template>
+
+          <mat-form-field>
+            <input matInput placeholder="Nombre de Tienda" formControlName="storeName" required>
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput placeholder="Foto de Tienda" formControlName="storePicture" required>
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput placeholder="Descripción" formControlName="storeDescription" type="text">
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput placeholder="Horarios de atención" formControlName="attendanceHours">
+          </mat-form-field>
+
+          <div>
+
+            <mat-form-field>
+              <input matInput placeholder="Provincias" formControlName="storeProvince">
+            </mat-form-field>
+
+            <mat-form-field>
+              <input matInput placeholder="Dirección" formControlName="storeAddress">
+            </mat-form-field>
+
+            <mat-form-field>
+              <input matInput placeholder="Número" formControlName="storeAddressNumber" type="number">
+            </mat-form-field>
+
+            <mat-form-field>
+              <input matInput placeholder="Piso/Depto" formControlName="storeFloor">
+            </mat-form-field>
+            
+          </div>
+
+
+
+          <div>
+            <button mat-button matStepperPrevious>Previous</button>
+            <button mat-button matStepperNext>Next</button>
+          </div>
+        </form>
+      </mat-step>
+      <mat-step [stepControl]="thirdFormGroup">
+        <form [formGroup]="thirdFormGroup">
+          <ng-template matStepLabel>Contacto</ng-template>
+
+          <mat-form-field>
+            <input matInput placeholder="Teléfono de Tienda" formControlName="storePhone" type="number">
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput placeholder="Mail" formControlName="storeMail" type="email">
+          </mat-form-field>
+
+          <div>
+            <button mat-button matStepperPrevious>Previous</button>
+            <button mat-button matStepperNext>Finish</button>
+          </div>
+        </form>
+      </mat-step>
+
+    </mat-horizontal-stepper>
+  </div>
+</mat-card>

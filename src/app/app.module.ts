@@ -55,7 +55,7 @@ import { SignupComponent } from './auth/components/signup/signup.component';
     MatButtonModule,
     MatStepperModule,
     MatDividerModule,
-    MatToolbarModule,
+    MatToolbarModule
   ],
   exports: [RouterModule],
   providers: [AuthService, UserService, UserResolver, AuthGuard],

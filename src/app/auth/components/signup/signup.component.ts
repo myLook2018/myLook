@@ -11,7 +11,7 @@ import {ErrorStateMatcher} from '@angular/material/core';
 })
 export class SignupComponent {
 
-  registerForm: FormGroup;
+  signupForm: FormGroup;
   errorMessage = '';
   successMessage = '';
 
@@ -31,7 +31,7 @@ export class SignupComponent {
    }
 
    createForm() {
-     this.registerForm = this.fb.group({
+     this.signupForm = this.fb.group({
        email: ['', Validators.required ],
        password: ['', Validators.required]
      });
