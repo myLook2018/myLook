@@ -28,6 +28,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatButtonModule} from '@angular/material/button';
 import {MatStepperModule} from '@angular/material/stepper';
 import {MatDividerModule} from '@angular/material/divider';
+import {MatIconModule} from '@angular/material/icon';
+import {MatTableModule} from '@angular/material/table';
 import { SignupComponent } from './auth/components/signup/signup.component';
 
 
@@ -55,7 +57,9 @@ import { SignupComponent } from './auth/components/signup/signup.component';
     MatButtonModule,
     MatStepperModule,
     MatDividerModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatIconModule,
+    MatTableModule
   ],
   exports: [RouterModule],
   providers: [AuthService, UserService, UserResolver, AuthGuard],
