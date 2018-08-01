@@ -62,7 +62,6 @@ export class SignupComponent {
    }
 
    tryRegister(value) {
-     console.log(value);
      this.authService.doRegister(value)
      .then(res => {
        console.log(res);

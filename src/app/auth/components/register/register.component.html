@@ -1,30 +1,48 @@
-<mat-card id="registerCard">
-  <div class="container">
-    <mat-horizontal-stepper [linear]="isLinear" #stepper>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<div class="backgroundColor container">
 
+  <div id="cardContainer" class="container"></div>
+  <mat-card id="registerCard">
+    <mat-card-header>
+      <!-- <span class="fill-space"></span> -->
+      <div class="headerImage">
+        <img src="/assets/brandNoBackground.png" class="img-size centerImage">
+      </div>
+    </mat-card-header>
+
+    <mat-horizontal-stepper #stepper [linear]="isLinear">
       <mat-step [stepControl]="firstFormGroup">
         <form [formGroup]="firstFormGroup">
           <ng-template matStepLabel>Usuario</ng-template>
           <mat-form-field>
             <input matInput placeholder="Nombre de Usuario" formControlName="userName" required>
           </mat-form-field>
-
-          <mat-form-field>
-            <input matInput placeholder="Foto" formControlName="userPicture" required>
+          <div>
+            <label>Foto de Perfil</label>
+            <br>
+            <div class="headerImage">
+              <div style="width: 100%">
+                <img id="userPicture" class="profilePictures centerImage" />
+              </div>
+              <input type="file" onchange="document.getElementById('userPicture').src = window.URL.createObjectURL(this.files[0])">
+            </div>
+            <br>
+          </div>
+          <mat-form-field class="full-length">
+            <input matInput placeholder="Mail" formControlName="userMail" type="email" required>
           </mat-form-field>
-
-          <mat-form-field>
-            <input matInput placeholder="Mail" formControlName="userMail" type="email">
-          </mat-form-field>
-
+          <br>
           <mat-form-field>
             <input matInput placeholder="Telefono Personal" formControlName="userPhone" required>
           </mat-form-field>
-
-          <div>
-            <button mat-button matStepperNext>Next</button>
-          </div>
-
+          <mat-toolbar>
+            <mat-toolbar-row style="background-color: white">
+              <span class="fill-space"></span>
+              <button mat-button mat-raised-button class="nextButton" (click)="checkUserName(firstFormGroup.value, stepper)">
+                <i class="material-icons">navigate_next</i>
+              </button>
+            </mat-toolbar-row>
+          </mat-toolbar>
         </form>
       </mat-step>
       <mat-step [stepControl]="secondFormGroup">
@@ -35,12 +53,15 @@
             <input matInput placeholder="Nombre de Tienda" formControlName="storeName" required>
           </mat-form-field>
 
-          <mat-form-field>
-            <input matInput placeholder="Foto de Tienda" formControlName="storePicture" required>
-          </mat-form-field>
+          <div>
+            <label>Foto de Tienda</label>
+            <br>
+            <input type="file" onchange="document.getElementById('storePicture').src = window.URL.createObjectURL(this.files[0])">
+            <img id="storePicture" src="../../../../assets/brandNoBackground.png" class="profilePictures" />
+          </div>
 
           <mat-form-field>
-            <input matInput placeholder="Descripción" formControlName="storeDescription" type="text">
+            <textarea matInput placeholder="Descripción" formControlName="storeDescription" type="text"></textarea>
           </mat-form-field>
 
           <mat-form-field>
@@ -52,27 +73,35 @@
             <mat-form-field>
               <input matInput placeholder="Provincias" formControlName="storeProvince">
             </mat-form-field>
+            <div>
+              <mat-form-field>
+                <input matInput placeholder="Dirección" formControlName="storeAddress">
+              </mat-form-field>
 
-            <mat-form-field>
-              <input matInput placeholder="Dirección" formControlName="storeAddress">
-            </mat-form-field>
+              <mat-form-field>
+                <input matInput placeholder="Número" formControlName="storeAddressNumber" type="number">
+              </mat-form-field>
 
-            <mat-form-field>
-              <input matInput placeholder="Número" formControlName="storeAddressNumber" type="number">
-            </mat-form-field>
+              <mat-form-field>
+                <input matInput placeholder="Piso/Depto" formControlName="storeFloor">
+              </mat-form-field>
 
-            <mat-form-field>
-              <input matInput placeholder="Piso/Depto" formControlName="storeFloor">
-            </mat-form-field>
-            
+            </div>
+
           </div>
 
 
-
-          <div>
-            <button mat-button matStepperPrevious>Previous</button>
-            <button mat-button matStepperNext>Next</button>
-          </div>
+          <mat-toolbar>
+            <mat-toolbar-row style="background-color: white">
+              <button mat-button matStepperPrevious>
+                <i class="material-icons">navigate_before</i>
+              </button>
+              <span class="fil"></span>
+              <button mat-button matStepperNext>
+                <i class="material-icons">navigate_next</i>
+              </button>
+            </mat-toolbar-row>
+          </mat-toolbar>
         </form>
       </mat-step>
       <mat-step [stepControl]="thirdFormGroup">
@@ -88,12 +117,16 @@
           </mat-form-field>
 
           <div>
-            <button mat-button matStepperPrevious>Previous</button>
-            <button mat-button matStepperNext>Finish</button>
+            <button mat-button matStepperPrevious>
+              <i class="material-icons">navigate_before</i>
+            </button>
+            <button mat-button matStepperNext>
+              <i class="material-icons">done</i>
+            </button>
           </div>
         </form>
       </mat-step>
 
     </mat-horizontal-stepper>
-  </div>
-</mat-card>
+  </mat-card>
+</div>

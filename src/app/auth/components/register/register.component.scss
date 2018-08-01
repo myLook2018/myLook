@@ -2,6 +2,70 @@
     width: 60%;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 10%; // need to be refactor
-    max-width: 400px;
+    margin-top: 5%;
+    max-width: 500px;
+  }
+  .material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 50px;  /* Preferred icon size */
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+  
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+    /* Support for Safari and Chrome. */
+    text-rendering: optimizeLegibility;
+  
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+  
+    /* Support for IE. */
+    font-feature-settings: 'liga';
+  }
+
+  .profilePictures{
+    max-width: 200px;
+    max-height: 200px;
+  }
+  #userPicture{
+    border-radius: 50%;
+  }
+  .img-size{
+    max-width: 100px;
+    max-height: 50px;
+  }
+  .fill-space{
+    flex: 1 1 auto;
+  }
+
+  .headerImage{
+    width: 100%;
+    text-align: center;
+  }
+
+  .centerImage {
+    margin: 0 auto;
+  }
+  .backgroundColor{
+    min-height: 100vh;
+    width: 100%;
+    height: auto;
+    background-color: #C4007A;
+    overflow: hidden;
+  }
+
+  .full-length{
+    width: 100%;
+  }
+
+  .nextButton{
+    background-color: #0388ca;
+    color: white;
   }
