@@ -15,7 +15,7 @@
         <form [formGroup]="firstFormGroup">
           <ng-template matStepLabel>Usuario</ng-template>
           <mat-form-field>
-            <input matInput placeholder="Nombre de Usuario" formControlName="userName" required id="userName">
+            <input matInput placeholder="Nombre de Usuario" formControlName="userName" id="userName">
           </mat-form-field>
           <div>
             <label>Foto de Perfil</label>
@@ -29,11 +29,11 @@
             <br>
           </div>
           <mat-form-field class="full-length">
-            <input matInput placeholder="Mail" formControlName="userMail" type="email" required>
+            <input matInput placeholder="Mail" formControlName="userMail" type="email">
           </mat-form-field>
           <br>
           <mat-form-field>
-            <input matInput placeholder="Telefono Personal" formControlName="userPhone" required>
+            <input matInput placeholder="Telefono Personal" formControlName="userPhone">
           </mat-form-field>
           <mat-toolbar>
             <mat-toolbar-row style="background-color: white">
@@ -59,36 +59,33 @@
             <input type="file" onchange="document.getElementById('storePicture').src = window.URL.createObjectURL(this.files[0])">
             <img id="storePicture" src="../../../../assets/brandNoBackground.png" class="profilePictures" />
           </div>
-
-          <mat-form-field>
-            <textarea matInput placeholder="Descripción" formControlName="storeDescription" type="text"></textarea>
-          </mat-form-field>
-
-          <mat-form-field>
-            <input matInput placeholder="Horarios de atención" formControlName="attendanceHours">
-          </mat-form-field>
-
-          <div>
-
-            <mat-form-field>
-              <input matInput placeholder="Provincias" formControlName="storeProvince">
+          <div class="full-length">
+            <mat-form-field class="full-length">
+              <textarea matInput placeholder="Descripción" formControlName="storeDescription" type="text"></textarea>
             </mat-form-field>
-            <div>
-              <mat-form-field>
-                <input matInput placeholder="Dirección" formControlName="storeAddress">
-              </mat-form-field>
-
-              <mat-form-field>
-                <input matInput placeholder="Número" formControlName="storeAddressNumber" type="number">
-              </mat-form-field>
-
-              <mat-form-field>
-                <input matInput placeholder="Piso/Depto" formControlName="storeFloor">
-              </mat-form-field>
-
-            </div>
-
           </div>
+
+          <!-- <mat-form-field>
+            <input matInput placeholder="Horarios de atención" formControlName="attendanceHours">
+          </mat-form-field> -->
+          <mat-form-field>
+            <input matInput placeholder="Provincias" formControlName="storeProvince">
+          </mat-form-field>
+
+          <div class="row">
+            <mat-form-field class="col m4">
+              <input matInput placeholder="Dirección" formControlName="storeAddress">
+            </mat-form-field>
+
+            <mat-form-field class="col m4">
+              <input matInput placeholder="Número" formControlName="storeAddressNumber" type="number">
+            </mat-form-field>
+
+            <mat-form-field class="col m4">
+              <input matInput placeholder="Piso/Depto" formControlName="storeFloor" size="3">
+            </mat-form-field>
+          </div>
+
 
 
           <mat-toolbar>
