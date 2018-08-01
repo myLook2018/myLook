@@ -62,7 +62,7 @@ export class RegisterComponent {
         if (res) {
           stepper.next();
         } else {
-          var dialogRef = this.dialog.open(DialogAlertComponent);
+          const dialogRef = this.dialog.open(DialogAlertComponent, { data: { userNameDialog: userName.userName } });
           dialogRef.afterClosed().subscribe(result => {
             return document.getElementById('userName').focus();
           });

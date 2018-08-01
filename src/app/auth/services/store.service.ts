@@ -14,13 +14,12 @@ export class StoreService {
     checkUserExistance(user) {
         return new Promise<any>((resolve, reject) => {
             const ref = this.db.collection('usuarios').ref;
-            console.log(ref)
-            this.db.collection("usuarios").ref
+            console.log(ref);
             ref.where('userName', '==', user.userName)
                 .get()
                 .then(snapshot => {
-                    console.log(snapshot.empty)
-                    return resolve(snapshot.empty)
+                    console.log(snapshot.empty);
+                    return resolve(snapshot.empty);
                 });
 
         });
