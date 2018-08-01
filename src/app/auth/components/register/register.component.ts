@@ -20,9 +20,9 @@ export class RegisterComponent {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private store: StoreService
+    public store: StoreService
   ) {
-    console.log('MAteo');
+    console.log('Mateo');
     this.createForm();
 
   }

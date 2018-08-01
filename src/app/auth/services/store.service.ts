@@ -12,11 +12,14 @@ export class StoreService {
     }
 
     checkUserExistance(userName) {
-        // const ref = this.db.collection('usuarios').ref;
-        // return ref.where('userName', '==', userName)
-        //     .get()
-        //     .then(snapshot => {
-        //         return snapshot.empty;
-        //     });
-    }
+
+        return new Promise<any>((resolve, reject) => {
+            const ref = this.db.collection('usuarios').ref;
+            ref.where('userName', '==', userName)
+                .get()
+                .then(snapshot => {
+                    return snapshot.empty;
+                });
+        });
+        }
 }

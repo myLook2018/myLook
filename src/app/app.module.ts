@@ -31,6 +31,7 @@ import {MatDividerModule} from '@angular/material/divider';
 import {MatIconModule} from '@angular/material/icon';
 import {MatTableModule} from '@angular/material/table';
 import { SignupComponent } from './auth/components/signup/signup.component';
+import { StoreService } from './auth/services/store.service';
 
 
 @NgModule({
@@ -62,7 +63,7 @@ import { SignupComponent } from './auth/components/signup/signup.component';
     MatTableModule
   ],
   exports: [RouterModule],
-  providers: [AuthService, UserService, UserResolver, AuthGuard],
+  providers: [AuthService, UserService, UserResolver, AuthGuard, StoreService],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
