@@ -32,7 +32,8 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatTableModule} from '@angular/material/table';
 import { SignupComponent } from './auth/components/signup/signup.component';
 import { StoreService } from './auth/services/store.service';
-import { DialogAlertComponent } from './dialog-alert/dialog-alert.component';
+import { MatDialogModule } from '../../node_modules/@angular/material';
+import { DialogAlertComponent } from './dialog/dialog-alert/dialog-alert.component';
 
 
 @NgModule({
@@ -62,10 +63,12 @@ import { DialogAlertComponent } from './dialog-alert/dialog-alert.component';
     MatDividerModule,
     MatToolbarModule,
     MatIconModule,
-    MatTableModule
+    MatTableModule,
+    MatDialogModule
   ],
   exports: [RouterModule],
   providers: [AuthService, UserService, UserResolver, AuthGuard, StoreService],
+  entryComponents: [DialogAlertComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

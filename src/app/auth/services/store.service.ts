@@ -13,7 +13,6 @@ export class StoreService {
 
     checkUserExistance(user) {
         return new Promise<any>((resolve, reject) => {
-            // tslint:disable-next-line:no-shadowed-variable
             const ref = this.db.collection('usuarios').ref;
             console.log(ref)
             this.db.collection("usuarios").ref
@@ -21,7 +20,7 @@ export class StoreService {
                 .get()
                 .then(snapshot => {
                     console.log(snapshot.empty)
-                    return snapshot.empty
+                    return resolve(snapshot.empty)
                 });
 
         });

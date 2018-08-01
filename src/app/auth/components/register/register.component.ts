@@ -4,8 +4,8 @@ import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { StoreService } from '../../services/store.service';
 import { MatHorizontalStepper } from '../../../../../node_modules/@angular/material/stepper';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-DialogData
+import { MatDialog, MatDialogRef } from '../../../../../node_modules/@angular/material';
+import { DialogAlertComponent } from '../../../dialog/dialog-alert/dialog-alert.component';
 
 @Component({
   selector: 'app-register',
@@ -18,11 +18,12 @@ export class RegisterComponent {
   thirdFormGroup: FormGroup;
   isLinear = true;
 
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
     public store: StoreService,
-    public dialog: MatDialog
+    private dialog: MatDialog
   ) {
 
     this.createForm();
@@ -54,55 +55,25 @@ export class RegisterComponent {
   }
 
   checkUserName(userName, stepper: MatHorizontalStepper) {
-    console.log('Mateo');
-    if (!this.store.checkUserExistance(userName)) {
-      stepper.next();
-    } else {
-      
-    }
+    console.log('executin checkuserName');
+    this.store.checkUserExistance(userName).then(
+      res => {
+        console.log('executin checkuserExistance');
+        if (res) {
+          stepper.next();
+        } else {
+          var dialogRef = this.dialog.open(DialogAlertComponent);
+          dialogRef.afterClosed().subscribe(result => {
+            return document.getElementById('userName').focus();
+          });
+        }
+      },
+      err => {
+        console.log(err);
+      });
 
 
   }
 }
 
-@Component({
-  selector: 'dialog-overview-example',
-  templateUrl: 'dialog-overview-example.html',
-  styleUrls: ['dialog-overview-example.css'],
-})
-export class DialogOverviewExample {
-
-  animal: string;
-  name: string;
-
-  constructor(public dialog: MatDialog) {}
-
-  openDialog(): void {
-    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
-      width: '250px',
-      data: {name: this.name, animal: this.animal}
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-      this.animal = result;
-    });
-  }
-
-}
-
-@Component({
-  selector: 'dialog-overview-example-dialog',
-  templateUrl: 'dialog-overview-example-dialog.html',
-})
-export class DialogOverviewExampleDialog {
-
-  constructor(
-    public dialogRef: MatDialogRef<DialogOverviewExampleDialog>) {}
-
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-
-}
 
