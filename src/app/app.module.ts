@@ -32,6 +32,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatTableModule} from '@angular/material/table';
 import { SignupComponent } from './auth/components/signup/signup.component';
 import { StoreService } from './auth/services/store.service';
+import { DialogAlertComponent } from './dialog-alert/dialog-alert.component';
 
 
 @NgModule({
@@ -41,7 +42,8 @@ import { StoreService } from './auth/services/store.service';
     UserComponent,
     RegisterComponent,
     InventoryComponent,
-    SignupComponent
+    SignupComponent,
+    DialogAlertComponent
   ],
   imports: [
     BrowserModule,

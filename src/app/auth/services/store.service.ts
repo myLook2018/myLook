@@ -11,15 +11,21 @@ export class StoreService {
     ) {
     }
 
-    checkUserExistance(userName) {
-
+    checkUserExistance(user) {
         return new Promise<any>((resolve, reject) => {
+            // tslint:disable-next-line:no-shadowed-variable
             const ref = this.db.collection('usuarios').ref;
-            ref.where('userName', '==', userName)
+            console.log(ref)
+            this.db.collection("usuarios").ref
+            ref.where('userName', '==', user.userName)
                 .get()
                 .then(snapshot => {
-                    return snapshot.empty;
+                    console.log(snapshot.empty)
+                    return snapshot.empty
                 });
+
         });
-        }
+
+
+    }
 }

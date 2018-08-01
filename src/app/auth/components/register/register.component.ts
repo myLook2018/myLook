@@ -4,7 +4,8 @@ import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { StoreService } from '../../services/store.service';
 import { MatHorizontalStepper } from '../../../../../node_modules/@angular/material/stepper';
-
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+DialogData
 
 @Component({
   selector: 'app-register',
@@ -20,9 +21,10 @@ export class RegisterComponent {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    public store: StoreService
+    public store: StoreService,
+    public dialog: MatDialog
   ) {
-    console.log('Mateo');
+
     this.createForm();
 
   }
@@ -52,12 +54,55 @@ export class RegisterComponent {
   }
 
   checkUserName(userName, stepper: MatHorizontalStepper) {
-    // this.store.checkUserExistance(userName)
-    //   .then(res => {
-    //     if (res) {
-    //       stepper.next();
-    //     }
-    //   });
+    console.log('Mateo');
+    if (!this.store.checkUserExistance(userName)) {
+      stepper.next();
+    } else {
+      
+    }
+
+
   }
+}
+
+@Component({
+  selector: 'dialog-overview-example',
+  templateUrl: 'dialog-overview-example.html',
+  styleUrls: ['dialog-overview-example.css'],
+})
+export class DialogOverviewExample {
+
+  animal: string;
+  name: string;
+
+  constructor(public dialog: MatDialog) {}
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+      width: '250px',
+      data: {name: this.name, animal: this.animal}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      this.animal = result;
+    });
+  }
+
+}
+
+@Component({
+  selector: 'dialog-overview-example-dialog',
+  templateUrl: 'dialog-overview-example-dialog.html',
+})
+export class DialogOverviewExampleDialog {
+
+  constructor(
+    public dialogRef: MatDialogRef<DialogOverviewExampleDialog>) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
 }
 
