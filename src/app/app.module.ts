@@ -32,9 +32,9 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatTableModule} from '@angular/material/table';
 import { SignupComponent } from './auth/components/signup/signup.component';
 import { StoreService } from './auth/services/store.service';
-import { MatDialogModule } from '../../node_modules/@angular/material';
+import { MatDialogModule } from '@angular/material';
 import { DialogAlertComponent } from './dialog/dialog-alert/dialog-alert.component';
-
+import { UpLoadArticleComponent } from './articles/components/dialogs/uploadArticle';
 
 @NgModule({
   declarations: [
@@ -44,7 +44,8 @@ import { DialogAlertComponent } from './dialog/dialog-alert/dialog-alert.compone
     RegisterComponent,
     InventoryComponent,
     SignupComponent,
-    DialogAlertComponent
+    DialogAlertComponent,
+    UpLoadArticleComponent
   ],
   imports: [
     BrowserModule,
@@ -68,7 +69,7 @@ import { DialogAlertComponent } from './dialog/dialog-alert/dialog-alert.compone
   ],
   exports: [RouterModule],
   providers: [AuthService, UserService, UserResolver, AuthGuard, StoreService],
-  entryComponents: [DialogAlertComponent],
+  entryComponents: [DialogAlertComponent, UpLoadArticleComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
