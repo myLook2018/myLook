@@ -55,10 +55,8 @@ export class RegisterComponent {
   }
 
   checkUserName(userName, stepper: MatHorizontalStepper) {
-    console.log('executin checkuserName');
     this.store.checkUserExistance(userName).then(
       res => {
-        console.log('executin checkuserExistance');
         if (res) {
           stepper.next();
         } else {
