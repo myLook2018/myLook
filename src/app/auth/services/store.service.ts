@@ -1,5 +1,5 @@
-import { AngularFirestore, AngularFirestoreCollection } from '../../../../node_modules/angularfire2/firestore';
-import { Injectable } from '../../../../node_modules/@angular/core';
+import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
+import { Injectable } from '@angular/core';
 import * as firebase from 'firebase';
 
 

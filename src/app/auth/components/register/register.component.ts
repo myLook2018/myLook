@@ -3,8 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { StoreService } from '../../services/store.service';
-import { MatHorizontalStepper } from '../../../../../node_modules/@angular/material/stepper';
-import { MatDialog, MatDialogRef } from '../../../../../node_modules/@angular/material';
+import { MatHorizontalStepper } from '@angular/material/stepper';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { DialogAlertComponent } from '../../../dialog/dialog-alert/dialog-alert.component';
 
 @Component({
@@ -55,10 +55,8 @@ export class RegisterComponent {
   }
 
   checkUserName(userName, stepper: MatHorizontalStepper) {
-    console.log('executin checkuserName');
     this.store.checkUserExistance(userName).then(
       res => {
-        console.log('executin checkuserExistance');
         if (res) {
           stepper.next();
         } else {
