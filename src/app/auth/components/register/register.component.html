@@ -73,16 +73,16 @@
           </mat-form-field>
 
           <div class="row">
-            <mat-form-field class="col m4">
+            <mat-form-field class="inline-row" id="storeAddress">
               <input matInput placeholder="Dirección" formControlName="storeAddress">
             </mat-form-field>
 
-            <mat-form-field class="col m4">
-              <input matInput placeholder="Número" formControlName="storeAddressNumber" type="number">
+            <mat-form-field class="inline-row" id="storeAddressNumber">
+              <input matInput placeholder="N°" formControlName="storeAddressNumber" type="number">
             </mat-form-field>
 
-            <mat-form-field class="col m4">
-              <input matInput placeholder="Piso/Depto" formControlName="storeFloor" size="3">
+            <mat-form-field class="inline-row" id="storeFloor">
+              <input matInput placeholder="Piso" formControlName="storeFloor">
             </mat-form-field>
           </div>
 
@@ -90,11 +90,11 @@
 
           <mat-toolbar>
             <mat-toolbar-row style="background-color: white">
-              <button mat-button matStepperPrevious>
+              <button mat-button matStepperPrevious mat-raised-button class="nextButton">
                 <i class="material-icons">navigate_before</i>
               </button>
-              <span class="fil"></span>
-              <button mat-button matStepperNext>
+              <span class="fill-space"></span>
+              <button mat-button matStepperNext mat-raised-button class="nextButton">
                 <i class="material-icons">navigate_next</i>
               </button>
             </mat-toolbar-row>
@@ -105,22 +105,25 @@
         <form [formGroup]="thirdFormGroup">
           <ng-template matStepLabel>Contacto</ng-template>
 
-          <mat-form-field>
-            <input matInput placeholder="Teléfono de Tienda" formControlName="storePhone" type="number">
+          <mat-form-field class="full-length">
+            <input matInput placeholder="Teléfono de Tienda" formControlName="storePhone">
           </mat-form-field>
 
-          <mat-form-field>
+          <mat-form-field class="full-length">
             <input matInput placeholder="Mail" formControlName="storeMail" type="email">
           </mat-form-field>
 
-          <div>
-            <button mat-button matStepperPrevious>
-              <i class="material-icons">navigate_before</i>
-            </button>
-            <button mat-button matStepperNext>
-              <i class="material-icons">done</i>
-            </button>
-          </div>
+          <mat-toolbar>
+            <mat-toolbar-row style="background-color: white">
+              <button mat-button matStepperPrevious mat-raised-button class="nextButton">
+                <i class="material-icons">navigate_before</i>
+              </button>
+              <span class="fill-space"></span>
+              <button mat-button matStepperNext mat-raised-button class="nextButton">
+                <i class="material-icons">done</i>
+              </button>
+            </mat-toolbar-row>
+          </mat-toolbar>
         </form>
       </mat-step>
 

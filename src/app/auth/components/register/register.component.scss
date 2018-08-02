@@ -69,3 +69,28 @@
     background-color: #0388ca;
     color: white;
   }
+
+  .inline-row{
+    flex: 1;
+    margin-right: 10px;
+    max-width: 40%;
+  }
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: left;
+}
+
+#storeAdrress{
+  width: 40%;
+}
+
+#storeAddressNumber{
+  max-width: 10%;
+}
+
+#storeFloor{
+  max-width: 15%;
+}
