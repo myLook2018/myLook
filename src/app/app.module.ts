@@ -19,22 +19,23 @@ import { RegisterComponent } from './auth/components/register/register.component
 import { InventoryComponent } from './articles/components/inventory/inventory.component';
 import { IAppState } from './store';
 
-import {MatToolbarModule} from '@angular/material/toolbar';
-import {MatCardModule} from '@angular/material/card';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatButtonModule} from '@angular/material/button';
-import {MatStepperModule} from '@angular/material/stepper';
-import {MatDividerModule} from '@angular/material/divider';
-import {MatIconModule} from '@angular/material/icon';
-import {MatTableModule} from '@angular/material/table';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatButtonModule } from '@angular/material/button';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
 import { SignupComponent } from './auth/components/signup/signup.component';
 import { StoreService } from './auth/services/store.service';
 import { MatDialogModule } from '@angular/material';
 import { DialogAlertComponent } from './dialog/dialog-alert/dialog-alert.component';
 import { UpLoadArticleComponent } from './articles/components/dialogs/uploadArticle';
+import { SuccesfulDialogComponent } from './dialog/succesful-dialog/succesful-dialog.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { UpLoadArticleComponent } from './articles/components/dialogs/uploadArti
     InventoryComponent,
     SignupComponent,
     DialogAlertComponent,
-    UpLoadArticleComponent
+    UpLoadArticleComponent,
+    SuccesfulDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -69,7 +71,7 @@ import { UpLoadArticleComponent } from './articles/components/dialogs/uploadArti
   ],
   exports: [RouterModule],
   providers: [AuthService, UserService, UserResolver, AuthGuard, StoreService],
-  entryComponents: [DialogAlertComponent, UpLoadArticleComponent],
+  entryComponents: [DialogAlertComponent, UpLoadArticleComponent, SuccesfulDialogComponent],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

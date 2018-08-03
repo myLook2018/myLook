@@ -26,4 +26,28 @@ export class StoreService {
 
 
     }
+
+    checkStoreExistance(store) {
+        return new Promise<any>((resolve, reject) => {
+            const ref = this.db.collection('stores').ref;
+            ref.where('storeName', '==', store)
+                .get()
+                .then(snapshot => {
+                    return resolve(snapshot.empty);
+                });
+
+        });
+    }
+
+    tryRegisterStore(usuario, tienda) {
+        return new Promise<any>((resolve, reject) => {
+            const ref = this.db.collection('usuarios').ref;
+            ref.add(usuario).then(snapshot => {
+                const store = this.db.collection('stores').ref;
+                store.add(tienda).then(storeSnapshot => {
+                    return resolve(storeSnapshot.collection);
+                });
+            });
+        });
+    }
 }

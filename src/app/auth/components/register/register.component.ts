@@ -6,6 +6,8 @@ import { StoreService } from '../../services/store.service';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { DialogAlertComponent } from '../../../dialog/dialog-alert/dialog-alert.component';
+import { SuccesfulDialogComponent } from '../../../dialog/succesful-dialog/succesful-dialog.component';
+
 
 @Component({
   selector: 'app-register',
@@ -17,6 +19,7 @@ export class RegisterComponent {
   secondFormGroup: FormGroup;
   thirdFormGroup: FormGroup;
   isLinear = true;
+  private targetInput = '';
 
 
   constructor(
@@ -27,7 +30,6 @@ export class RegisterComponent {
   ) {
 
     this.createForm();
-
   }
 
   createForm() {
@@ -50,15 +52,32 @@ export class RegisterComponent {
     this.thirdFormGroup = this.fb.group({
       storePhone: ['', Validators.required],
       storeMail: ['', Validators.required]
-
     });
+
+    setTimeout(function waitTargetElem() {
+      if (document.body.contains(document.getElementById('userName'))) {
+        document.getElementById('userName').focus();
+      } else {
+        setTimeout(waitTargetElem, 100);
+      }
+    }, 100);
   }
+
+
 
   checkUserName(userName, stepper: MatHorizontalStepper) {
     this.store.checkUserExistance(userName).then(
       res => {
         if (res) {
           stepper.next();
+          setTimeout(function waitTargetElem() {
+            if (document.body.contains(document.getElementById('storeName'))) {
+              document.getElementById('storeName').focus();
+            } else {
+              setTimeout(waitTargetElem, 100);
+            }
+          }, 100);
+
         } else {
           const dialogRef = this.dialog.open(DialogAlertComponent, { data: { userNameDialog: userName.userName } });
           dialogRef.afterClosed().subscribe(result => {
@@ -72,6 +91,50 @@ export class RegisterComponent {
 
 
   }
+
+  checkStoreName(value, stepper: MatHorizontalStepper) {
+    this.store.checkStoreExistance(value.storeName).then(
+      res => {
+        if (res) {
+          stepper.next();
+          setTimeout(function waitTargetElem() {
+            if (document.body.contains(document.getElementById('storePhone'))) {
+              document.getElementById('storePhone').focus();
+            } else {
+              setTimeout(waitTargetElem, 100);
+            }
+          }, 100);
+        }
+      });
+  }
+
+  tryRegister(userForm, storeForm, storeContactForm) {
+    const user = {
+      userMail: userForm.userMail,
+      userName: userForm.userName,
+      userPhone: userForm.userPhone,
+      userPicture: '/images/userImage2'
+    };
+    const store = {
+      storeAddresNumber: storeForm.storeAddressNumber,
+      storeAddress: storeForm.storeAddress,
+      storeDescription: storeForm.storeDescription,
+      storeFloor: storeForm.storeFloor,
+      storeMail: storeContactForm.storeMail,
+      storeName: storeForm.storeName,
+      storePhone: storeContactForm.storePhone
+    };
+    this.store.tryRegisterStore(user, store).then(
+      res => {
+        if (res) {
+          const dialogRef = this.dialog.open(SuccesfulDialogComponent);
+          dialogRef.afterClosed().subscribe(result => {
+            this.router.navigateByUrl('/user');
+          });
+
+        }
+
+
+      });
+  }
 }
-
-

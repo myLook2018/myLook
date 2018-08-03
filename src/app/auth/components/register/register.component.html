@@ -15,7 +15,7 @@
         <form [formGroup]="firstFormGroup">
           <ng-template matStepLabel>Usuario</ng-template>
           <mat-form-field>
-            <input matInput placeholder="Nombre de Usuario" formControlName="userName" id="userName">
+            <input matInput autofocus placeholder="Nombre de Usuario" formControlName="userName" >
           </mat-form-field>
           <div>
             <label>Foto de Perfil</label>
@@ -49,8 +49,8 @@
         <form [formGroup]="secondFormGroup">
           <ng-template matStepLabel>Tienda</ng-template>
 
-          <mat-form-field>
-            <input matInput placeholder="Nombre de Tienda" formControlName="storeName" required>
+          <mat-form-field >
+            <input matInput placeholder="Nombre de Tienda" formControlName="storeName" id='storeName' required >
           </mat-form-field>
 
           <div>
@@ -94,7 +94,7 @@
                 <i class="material-icons">navigate_before</i>
               </button>
               <span class="fill-space"></span>
-              <button mat-button matStepperNext mat-raised-button class="nextButton">
+              <button mat-button matStepperNext mat-raised-button class="nextButton" (click)="checkStoreName(secondFormGroup.value, stepper)">
                 <i class="material-icons">navigate_next</i>
               </button>
             </mat-toolbar-row>
@@ -106,7 +106,7 @@
           <ng-template matStepLabel>Contacto</ng-template>
 
           <mat-form-field class="full-length">
-            <input matInput placeholder="Teléfono de Tienda" formControlName="storePhone">
+            <input matInput placeholder="Teléfono de Tienda" formControlName="storePhone" id="storePhone">
           </mat-form-field>
 
           <mat-form-field class="full-length">
@@ -119,7 +119,7 @@
                 <i class="material-icons">navigate_before</i>
               </button>
               <span class="fill-space"></span>
-              <button mat-button matStepperNext mat-raised-button class="nextButton">
+              <button mat-button matStepperNext mat-raised-button class="nextButton" (click)="tryRegister(firstFormGroup.value, secondFormGroup.value, thirdFormGroup.value)">
                 <i class="material-icons">done</i>
               </button>
             </mat-toolbar-row>
