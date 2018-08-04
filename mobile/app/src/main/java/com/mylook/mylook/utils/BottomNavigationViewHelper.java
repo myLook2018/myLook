@@ -1,0 +1,45 @@
+package com.mylook.mylook.utils;
+
+import android.content.Context;
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.view.MenuItem;
+
+import com.mylook.mylook.explore.ExploreActivity;
+import com.mylook.mylook.home.HomeActivity;
+import com.mylook.mylook.profile.ProfileActivity;
+import com.mylook.mylook.R;
+import com.mylook.mylook.recommend.RecommendActivity;
+
+public class BottomNavigationViewHelper {
+
+    public static void enableNavigation(final Context context, @NonNull BottomNavigationView view) {
+        view.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.ic_house:
+                        Intent intent1 = new Intent(context, HomeActivity.class);
+                        context.startActivity(intent1);
+                        break;
+                    case R.id.ic_explore:
+                        Intent intent2 = new Intent(context, ExploreActivity.class);
+                        context.startActivity(intent2);
+                        break;
+                    case R.id.ic_recommend:
+                        Intent intent3 = new Intent(context, RecommendActivity.class);
+                        context.startActivity(intent3);
+                        break;
+                    case R.id.ic_profile:
+                        Intent intent4 = new Intent(context, ProfileActivity.class);
+                        context.startActivity(intent4);
+                        break;
+                }
+
+                return false;
+            }
+        });
+    }
+
+}
