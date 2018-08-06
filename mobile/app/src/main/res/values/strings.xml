@@ -3,7 +3,9 @@
     <string name="edit_message">Enter a message</string>
     <string name="button_send">Send</string>
     <string name="title_activity_login">Sign in</string>
-
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="profileImage">Pofile Image</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
@@ -22,6 +24,15 @@
     <string name="title_notifications">Notifications</string>
     <string name="title_activity_store">StoreActivity</string>
 
+    <!-- Strings related to store -->
+    <string name="storeName">Store name</string>
+    <string name="userNameStore">User name</string>
+    <string name="storeDescription">Store description</string>
+    <string name="webSite">Web Site</string>
+    <string name="ubication">Ubication</string>
+    <string name="openHour">Open</string>
+    <string name="closeHour">Close</string>
+    <string name="privateInfo">Private information</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

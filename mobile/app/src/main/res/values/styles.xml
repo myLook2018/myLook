@@ -6,6 +6,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="textInputStyle">@anim/fui_slide_in_right</item>
+        <item name="bottomNavigationStyle">@style/Animation.Design.BottomSheetDialog</item>
     </style>
 
 </resources>
