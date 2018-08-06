@@ -11,7 +11,9 @@ export const environment = {
     projectId: 'mylook-develop',
     storageBucket: 'mylook-develop.appspot.com',
     messagingSenderId: '259536885025'
-  }
+  },
+  maps:{
+    key: 'AIzaSyA09UF3v-eEMF1nbfjJWO7yKQq4va4__xE'  }
 };
 
 
