@@ -1,10 +1,98 @@
-<h1 mat-dialog-title>Select a file</h1>
-<div mat-dialog-content>
-  <mat-form-field>
-    <input matInput type="file" (change)= "onFileSelected($event)">
-  </mat-form-field>
+<div class="mat-typography">
+  <h3 style="margin: 0;">Agrega una nueva prenda a tu cataálogo</h3>
+  <h4 style="margin: 0;">A continuación ingresa la información de la prenda.</h4>
 </div>
-<div mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">No Thanks</button>
-  <button mat-button [mat-dialog-close]="data.animal" cdkFocusInitial>Ok</button>
+
+<div style="display: table-caption">
+
+  <form [formGroup]="articleForm" style="display: flex;">
+
+    <div #firstColumn style="display: inline-table; width: 400px; height: 455px; position: relative;">
+      
+      <div style="height: 380px;background-color: red;padding-top: 10px;">
+        <img *ngFor="let url of urls" [src]="url" class="rounded mb-3" height="370" style="display: block; margin-left: auto; margin-right: auto;">
+      </div>
+
+      <div>
+        <button type="button" mat-raised-button style="display: block; margin-left: auto; margin-right: auto; margin-top: 10px" (click)="imgFileInput.click()">Añade una foto</button>
+        <input hidden class="file-input" #imgFileInput type="file" (change)="detectFiles($event)">
+      </div>
+
+    </div>
+
+
+    <div #secondColumn style="display: inline-table;margin-left: 10px;">
+      <div>
+        <mat-form-field>
+          <input matInput placeholder="Proveedor" formControlName="provider" value="">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Costo" formControlName="cost" value="">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Stock inicial" formControlName="initial_stock" value="">
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <input matInput placeholder="Talle" formControlName="size" value="">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Material" formControlName="material" value="">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Colores disponibles" formControlName="colors" value="">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Etiquetas" formControlName="tags" value="">
+        </mat-form-field>
+      </div>
+
+    </div>
+
+  </form>
+  <div mat-dialog-actions align="end">
+    <button type="button" mat-raised-button (click)="startUpload($event.target.files)">Crear</button>
+  </div>
+
 </div>
+
+
+
+<!--<form [formGroup]="formGroup">
+  <mat-horizontal-stepper formArrayName="formArray" linear>
+    <mat-step formGroupName="0" [stepControl]="formArray.get([0])">
+      ...
+      <div>
+        <button mat-button matStepperNext type="button">Next</button>
+      </div>
+    </mat-step>
+    <mat-step formGroupName="1" [stepControl]="formArray.get([1])">
+      ...
+      <div>
+        <button mat-button matStepperPrevious type="button">Back</button>
+        <button mat-button matStepperNext type="button">Next</button>
+      </div>
+    </mat-step>
+    ...
+  </mat-horizontal-stepper>
+</form>
+
+-->
+
+<!--
+
+  <div class="container">
+    
+    <div class="dropzone" appDropZone (hovered)="toggleHover($event)" (dropped)="startUpload($event)" [class.hovering]="isHovering">
+      <h3>Añade una nueva prenda a tu inventario</h3>
+      
+      <div class="file">
+        <label class="file-label">
+          <button type="button" mat-button (click)="imgFileInput.click()">Añade una foto</button>
+          <input hidden class="file-input" #imgFileInput type="file" (change)="startUpload($event.target.files)">
+        </label>
+      </div>
+    </div>
+  </div>
+-->

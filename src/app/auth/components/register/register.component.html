@@ -24,7 +24,8 @@
               <div style="width: 100%">
                 <img id="userPicture" class="profilePictures centerImage" />
               </div>
-              <input type="file" onchange="document.getElementById('userPicture').src = window.URL.createObjectURL(this.files[0])">
+              <button type="button" mat-raised-button (click)="profileImgFileInput.click()">Añade una foto</button>
+              <input hidden type="file" #profileImgFileInput onchange="document.getElementById('userPicture').src = window.URL.createObjectURL(this.files[0])">
             </div>
             <br>
           </div>
@@ -55,8 +56,9 @@
 
           <div>
             <label>Foto de Tienda</label>
-            <br>
-            <input type="file" onchange="document.getElementById('storePicture').src = window.URL.createObjectURL(this.files[0])">
+            <br>            
+            <button type="button" mat-raised-button (click)="shopImgFileInput.click()">Añade una foto</button>
+            <input hidden type="file" #shopImgFileInput onchange="document.getElementById('storePicture').src = window.URL.createObjectURL(this.files[0])">
             <img id="storePicture" src="../../../../assets/brandNoBackground.png" class="profilePictures" />
           </div>
           <div class="full-length">

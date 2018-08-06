@@ -1,14 +1,19 @@
 <mat-card id="loginCard">
-  <mat-card-title style="color: purple">MyLook</mat-card-title>
+  <mat-card-title style="color: purple">
+    <div class="headerImage">
+      <img src="/assets/brandNoBackground.png" class="img-size centerImage">
+    </div>
+  </mat-card-title>
   <mat-card-title>Iniciar sesión</mat-card-title>
   <form>
     <button mat-button class="externalLogin" style="background-color: #3b5998;margin-bottom: 10px" (click)="tryFacebookLogin()">Acceder con Facebook</button>
     <button mat-button class="externalLogin" style="background-color: #d34836" (click)="tryGoogleLogin()">Acceder con Google</button>
   </form>
   <mat-divider id="divider"></mat-divider>
-  <form class="logingForm">
+  <form [formGroup]="loginForm">
     <mat-form-field class="inputForm">
-      <input matInput placeholder="Introduce tu correo electrónico" [formControl]="emailFormControl" [errorStateMatcher]="matcher">
+      <label>Email address</label>
+      <input matInput class="form-control" formControlName="email">
       <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
         Por favor ingrese un Email valido
       </mat-error>
@@ -17,9 +22,15 @@
         <strong>Email</strong>
       </mat-error>
     </mat-form-field>
+    <mat-form-field class="inputForm">
+      <label>Password</label>
+      <input matInput type="password" class="form-control" formControlName="password">
+    </mat-form-field>
+    <label class="error">{{errorMessage}}</label>
+    <label class="success">{{successMessage}}</label>
   </form>
   <form>
-    <a class="createAcc" style="text-decoration: none;color: #6a99ff;" href="/register">Crear Cuenta en Mylook</a>
+    <a class="createAcc" style="text-decoration: none;color: #6a99ff;" href="/signup">Crear Cuenta en Mylook</a>
     <span class="spacer"></span>
     <button mat-button (click)="tryLogin(loginForm.value)" class="acceptButton right-button">Acceder</button>
   </form>

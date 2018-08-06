@@ -4,11 +4,13 @@ import { AppComponent } from './app.component';
 
 import { AngularFireModule } from 'angularfire2';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
+import { AngularFireStorageModule } from 'angularfire2/storage';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { environment } from '../environments/environment';
 import { AuthGuard } from './auth/services/auth.guard';
 import { AuthService } from './auth/services/auth.service';
 import { UserService } from './auth/services/user.service';
+import { ArticleService } from './articles/services/article.service';
 import { UserResolver } from './auth/components/user/user.resolver';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -19,6 +21,7 @@ import { RegisterComponent } from './auth/components/register/register.component
 import { InventoryComponent } from './articles/components/inventory/inventory.component';
 import { IAppState } from './store';
 
+import {MatMenuModule} from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
@@ -54,6 +57,7 @@ import { SuccesfulDialogComponent } from './dialog/succesful-dialog/succesful-di
     ReactiveFormsModule,
     RouterModule.forRoot(rootRouterConfig, { useHash: false }),
     AngularFireModule.initializeApp(environment.firebase),
+    AngularFireStorageModule,
     AngularFirestoreModule, // imports firebase/firestore, only needed for database features
     AngularFireAuthModule, // imports firebase/auth, only needed for auth features
     MatCardModule,
@@ -67,10 +71,11 @@ import { SuccesfulDialogComponent } from './dialog/succesful-dialog/succesful-di
     MatToolbarModule,
     MatIconModule,
     MatTableModule,
-    MatDialogModule
+    MatDialogModule,
+    MatMenuModule
   ],
   exports: [RouterModule],
-  providers: [AuthService, UserService, UserResolver, AuthGuard, StoreService],
+  providers: [AuthService, UserService, UserResolver, AuthGuard, StoreService, ArticleService],
   entryComponents: [DialogAlertComponent, UpLoadArticleComponent, SuccesfulDialogComponent],
   bootstrap: [AppComponent]
 })

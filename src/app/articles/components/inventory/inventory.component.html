@@ -1,16 +1,22 @@
-<mat-toolbar role="heading">
+<mat-toolbar role="heading"  class="mat-typography">
     <mat-toolbar-row style="height: 48px;">
         <img id="logo" src="/assets/myLookBrand.png" />
         <span class="spacer"></span>
-        <mat-icon class="right-icon">account_circle</mat-icon>
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon>account_circle</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item>Configuración</button>
+            <button mat-menu-item (click)="logout()">Salir</button>
+        </mat-menu>
     </mat-toolbar-row>
 
     <mat-toolbar-row style="background-color: rgb(173, 172, 235); height: 48px;">
         <span>Products List</span>
-        <mat-form-field  [floatLabel]='options.value.floatLabel' style="padding-left: 10px;padding-bottom: 0; font-size: 70%">
+        <mat-form-field [floatLabel]='options.value.floatLabel' style="padding-left: 10px;padding-bottom: 0; font-size: 70%">
             <mat-label>Buscar prenda</mat-label>
             <mat-icon matSuffix md-48>search</mat-icon>
-            <input matInput>
+            <input matInput (keyup)="applyFilter($event.target.value)">
         </mat-form-field>
         <button id="uploadArticle" mat-flat-button color="primary" (click)="openDialog()">Subir Prenda</button>
     </mat-toolbar-row>

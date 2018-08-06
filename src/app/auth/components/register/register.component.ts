@@ -28,7 +28,6 @@ export class RegisterComponent {
     public store: StoreService,
     private dialog: MatDialog
   ) {
-
     this.createForm();
   }
 
@@ -124,12 +123,13 @@ export class RegisterComponent {
       storeName: storeForm.storeName,
       storePhone: storeContactForm.storePhone
     };
+
     this.store.tryRegisterStore(user, store).then(
       res => {
         if (res) {
           const dialogRef = this.dialog.open(SuccesfulDialogComponent);
           dialogRef.afterClosed().subscribe(result => {
-            this.router.navigateByUrl('/user');
+            this.router.navigateByUrl('/home');
           });
 
         }

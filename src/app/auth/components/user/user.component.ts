@@ -18,8 +18,8 @@ export class UserComponent implements OnInit {
   constructor(
     public userService: UserService,
     public authService: AuthService,
-    private route: ActivatedRoute,
     private location: Location,
+    private route: ActivatedRoute,
     private fb: FormBuilder
   ) {}
 

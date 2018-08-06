@@ -25,7 +25,7 @@
 }
 
 .acceptButton{
-  right: 0;  
+  margin-left: 135px; // Hay que hacer que se acomode   
   background-color: rgb(197, 127, 169);
   color: white;
 }
@@ -54,4 +54,13 @@ position: absolute;
 
 .right-button {
   padding: 0 14px;
+}
+
+.img-size {
+  max-width: 100px;
+  max-height: 50px;
+}
+
+.centerImage {
+  margin: 0 auto;
 }
