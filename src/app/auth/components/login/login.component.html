@@ -12,7 +12,7 @@
   <mat-divider id="divider"></mat-divider>
   <form [formGroup]="loginForm">
     <mat-form-field class="inputForm">
-      <label>Email address</label>
+      <label>Email</label>
       <input matInput class="form-control" formControlName="email">
       <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
         Por favor ingrese un Email valido
@@ -23,16 +23,21 @@
       </mat-error>
     </mat-form-field>
     <mat-form-field class="inputForm">
-      <label>Password</label>
+      <label>Contraseña</label>
       <input matInput type="password" class="form-control" formControlName="password">
     </mat-form-field>
     <label class="error">{{errorMessage}}</label>
     <label class="success">{{successMessage}}</label>
   </form>
   <form>
-    <a class="createAcc" style="text-decoration: none;color: #6a99ff;" href="/signup">Crear Cuenta en Mylook</a>
+    <div> 
+      <button mat-button (click)="tryLogin(loginForm.value)" class="acceptButton">Acceder</button>
+    </div>
+    <div style="display: grid;">
+      <a class="createAcc" style="text-decoration: none;color: #6a99ff;" href="/signup">Crear Cuenta en Mylook</a>
+      <a class="createAcc" style="text-decoration: none;color: #6a99ff;" href="/login">Has olvidado tu Contraseña?</a>
+    </div>
     <span class="spacer"></span>
-    <button mat-button (click)="tryLogin(loginForm.value)" class="acceptButton right-button">Acceder</button>
   </form>
 
 </mat-card>

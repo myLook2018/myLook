@@ -9,7 +9,7 @@
 
     <div #firstColumn style="display: inline-table; width: 400px; height: 455px; position: relative;">
       
-      <div style="height: 380px;background-color: red;padding-top: 10px;">
+      <div style="height: 380px;background-color: #adaaaa5d;padding-top: 10px;">
         <img *ngFor="let url of urls" [src]="url" class="rounded mb-3" height="370" style="display: block; margin-left: auto; margin-right: auto;">
       </div>
 
@@ -49,10 +49,11 @@
       </div>
 
     </div>
-
   </form>
+
+  
   <div mat-dialog-actions align="end">
-    <button type="button" mat-raised-button (click)="startUpload($event.target.files)">Crear</button>
+    <button type="button" mat-raised-button (click)="startUpload($event.target.files)">Agregar Prenda</button>
   </div>
 
 </div>

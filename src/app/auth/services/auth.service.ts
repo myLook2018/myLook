@@ -10,6 +10,8 @@ export class AuthService {
    public afAuth: AngularFireAuth
  ) {}
 
+  emailToRegister: String;
+
   doFacebookLogin() {
     return new Promise<any>((resolve, reject) => {
       const provider = new firebase.auth.FacebookAuthProvider();
@@ -81,6 +83,10 @@ export class AuthService {
         reject();
       }
     });
+  }
+
+  getEmailToRegister() {
+    return this.emailToRegister;
   }
 
 

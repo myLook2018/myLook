@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { Article } from '../../models/article';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { UpLoadArticleComponent } from '../dialogs/uploadArticle';
-import { MatDialog, MatTableDataSource } from '@angular/material';
+import { MatDialog, MatTableDataSource, MatSort } from '@angular/material';
 import { AuthService } from '../../../auth/services/auth.service';
 import { Location } from '@angular/common';
 
@@ -162,14 +162,16 @@ const ELEMENT_DATA: Article[] = [
     tags: ['Lorem', 'ipsum']
   }
 ];
-
 @Component({
   selector: 'app-inventory',
   templateUrl: './inventory.component.html',
   styleUrls: ['./inventory.component.scss']
 })
-export class InventoryComponent {
+
+
+export class InventoryComponent implements OnInit {
   options: FormGroup;
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     fb: FormBuilder,
@@ -197,6 +199,11 @@ export class InventoryComponent {
   applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
+
+
+    ngOnInit() {
+      this.dataSource.sort = this.sort;
+    }
 
   openDialog(): void {
     const dialogRef = this.dialog.open(UpLoadArticleComponent, {

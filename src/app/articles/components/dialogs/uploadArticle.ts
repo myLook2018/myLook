@@ -22,8 +22,8 @@ export class UpLoadArticleComponent {
   // Download url
   downloadURL: Observable<string>;
   isHovering: boolean;
-  urls = new Array<string>();
   articleForm: FormGroup;
+  urls = new Array<string>();
   filesSelected: FileList;
 
   constructor(

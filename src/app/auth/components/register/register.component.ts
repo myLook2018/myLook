@@ -19,15 +19,20 @@ export class RegisterComponent {
   secondFormGroup: FormGroup;
   thirdFormGroup: FormGroup;
   isLinear = true;
+  email: String;
   private targetInput = '';
+  urls = new Array<string>();
+  filesSelected: FileList;
 
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     public store: StoreService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    public authService: AuthService
   ) {
+    this.email = authService.getEmailToRegister();
     this.createForm();
   }
 
@@ -136,5 +141,23 @@ export class RegisterComponent {
 
 
       });
+  }
+
+  detectFiles(event) {
+    this.filesSelected = event.target.files;
+    this.urls = [];
+    const files = event.target.files;
+    if (files) {
+      for (const file of files) {
+        console.log('pasamos a render');
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          console.log(this.urls.length);
+          console.log(file);
+          this.urls.push(e.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
   }
 }

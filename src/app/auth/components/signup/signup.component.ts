@@ -11,6 +11,7 @@ import {ErrorStateMatcher} from '@angular/material/core';
 })
 export class SignupComponent {
 
+  email: String;
   signupForm: FormGroup;
   errorMessage = '';
   successMessage = '';
@@ -61,6 +62,12 @@ export class SignupComponent {
      );
    }
 
+   goToRegistration() {
+     console.log(this.email);
+    this.authService.emailToRegister = this.email;
+    this.router.navigate(['/register']);
+   }
+
    tryRegister(value) {
      this.authService.doRegister(value)
      .then(res => {
@@ -73,6 +80,7 @@ export class SignupComponent {
        this.successMessage = '';
      });
    }
+
 
 }
 export class MyErrorStateMatcher implements ErrorStateMatcher {

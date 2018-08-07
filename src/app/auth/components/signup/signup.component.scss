@@ -1,56 +1,55 @@
-.header{
-    flex: auto;
-    font-size: 30px;
-    margin-bottom: 40px;
-  }
-  
-  .row{
-    margin-top: 10px;
-  }
-  
-  .error{
-    color: red;
-  }
-  
-  .success{
-    color: green;
-  }
+.header {
+  flex: auto;
+  font-size: 30px;
+  margin-bottom: 40px;
+}
 
-  #signUpCard {
-    width: 60%;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 10%; // need to be refactor
-    max-width: 400px;
-  }
+.row {
+  margin-top: 10px;
+}
 
-  .externalRegister{
-    width: 80%;
-    margin-left: 10%;
-    margin-bottom: 24px;
-    color: white;
-  }
+.error {
+  color: red;
+}
 
-  .inputForm{
-    width: 100%;
-  }
+.success {
+  color: green;
+}
 
-  .logingForm{
-    margin-top: 10px;
-  }
+#signUpCard {
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10%; // need to be refactor
+  max-width: 400px;
+}
 
-  .registerButton{
-    background-color: rgb(197, 127, 169);
-    color: white;
-    position: relative;
-  }
+.externalRegister {
+  width: 80%;
+  margin-left: 10%;
+  color: white;
+}
 
-  .fill-space{
-    flex: 1 1 auto;
-  }
+.inputForm {
+  width: 100%;
+}
 
-  .img-size{
-    max-width: 100px;
-    max-height: 50px;
-  }
-  
+.logingForm {
+  margin-top: 10px;
+}
+
+.registerButton {
+  display: block;
+  margin-left: auto;
+  background-color: rgb(197, 127, 169);
+  color: white;
+}
+
+.img-size {
+  max-width: 100px;
+  max-height: 50px;
+}
+
+#backToLogin{
+  font-size: 1em
+}

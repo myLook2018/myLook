@@ -12,9 +12,9 @@
     </mat-toolbar-row>
 
     <mat-toolbar-row style="background-color: rgb(173, 172, 235); height: 48px;">
-        <span>Products List</span>
+        <span>Lista de Prendas</span>
         <mat-form-field [floatLabel]='options.value.floatLabel' style="padding-left: 10px;padding-bottom: 0; font-size: 70%">
-            <mat-label>Buscar prenda</mat-label>
+            <mat-label>Buscar Prenda</mat-label>
             <mat-icon matSuffix md-48>search</mat-icon>
             <input matInput (keyup)="applyFilter($event.target.value)">
         </mat-form-field>
@@ -22,7 +22,7 @@
     </mat-toolbar-row>
 </mat-toolbar>
 
-<mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+<mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
 
     <!--- Note that these columns can be defined in any order.
               The actual rendered columns are set as a property on the row definition" -->
@@ -37,7 +37,7 @@
 
     <!-- cost Column -->
     <ng-container matColumnDef="cost">
-        <mat-header-cell *matHeaderCellDef> Precio costo </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef> Costo </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{element.cost}} </mat-cell>
     </ng-container>
 
