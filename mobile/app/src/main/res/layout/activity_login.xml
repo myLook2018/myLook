@@ -15,8 +15,7 @@
         <ImageView
             android:layout_width="300dp"
             android:layout_height="100dp"
-            android:background="@color/magenta"
-            android:src="@drawable/ic_mylook_white"
+            android:src="@drawable/logo_purple_no_background"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="25dp"/>
 
@@ -43,13 +42,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:hint="Password"
+                android:hint="Contraseña"
                 android:id="@+id/input_password"/>
 
         </android.support.design.widget.TextInputLayout>
 
         <Button
             android:id="@+id/login_button"
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Login" />
@@ -58,6 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="25dp"
+            android:layout_marginTop="20dp"
             android:text="Crear una nueva cuenta"
             android:gravity="center"
             android:textSize="16dp"
@@ -77,6 +78,7 @@
         android:layout_height="wrap_content"
         android:text="Logueando..."
         android:id="@+id/waiting"
+        android:layout_marginTop="20dp"
         android:layout_alignBottom="@id/login_progressbar"
         android:layout_alignRight="@+id/login_progressbar"
         android:layout_alignLeft="@+id/login_progressbar"/>

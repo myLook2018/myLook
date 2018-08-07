@@ -1,16 +1,19 @@
 package com.mylook.mylook.recommend;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.mylook.mylook.R;
+import com.mylook.mylook.utils.SectionsPagerAdapter;
 import com.mylook.mylook.utils.BottomNavigationViewHelper;
 
-public class RecommendActivity extends AppCompatActivity {
+public class RecommendActivity extends AppCompatActivity implements RecommendFragment.OnFragmentInteractionListener {
 
     private static final int ACTIVITY_NUM = 2;
 
@@ -22,6 +25,7 @@ public class RecommendActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recommend);
 
         setupBottomNavigationView();
+        setupViewPager();
     }
 
     /**
@@ -33,5 +37,18 @@ public class RecommendActivity extends AppCompatActivity {
         Menu menu = bottomNavigationView.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);
+    }
+
+    private void setupViewPager() {
+        SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new RecommendFragment());
+        ViewPager viewPager = (ViewPager) findViewById(R.id.container);
+        viewPager.setAdapter(adapter);
+
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }

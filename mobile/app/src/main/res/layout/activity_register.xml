@@ -39,34 +39,21 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp">
-            <AutoCompleteTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                android:hint="Full Name"
-                android:id="@+id/input_username"/>
-
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp">
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:hint="Password"
+                android:hint="Contraseña"
                 android:id="@+id/input_password"/>
 
         </android.support.design.widget.TextInputLayout>
 
         <Button
             android:id="@+id/register_button"
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Login" />
+            android:text="Registrar" />
 
     </LinearLayout>
 
@@ -80,6 +67,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Logueando..."
+        android:id="@+id/waiting"
+        android:layout_marginTop="20dp"
         android:layout_alignBottom="@id/register_progressbar"
         android:layout_alignRight="@+id/register_progressbar"
         android:layout_alignLeft="@+id/register_progressbar"/>

@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.mylook.mylook.R;
 import com.mylook.mylook.login.LoginActivity;
 import com.mylook.mylook.utils.BottomNavigationViewHelper;
+import com.mylook.mylook.utils.SectionsPagerAdapter;
 
 public class HomeActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener, NotificationsFragment.OnFragmentInteractionListener {
 
@@ -84,7 +85,7 @@ public class HomeActivity extends AppCompatActivity implements HomeFragment.OnFr
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_mylook_white);
+        tabLayout.getTabAt(0).setIcon(R.drawable.logo_white_no_background);
         tabLayout.getTabAt(1).setIcon(R.drawable.ic_notifications);
     }
 

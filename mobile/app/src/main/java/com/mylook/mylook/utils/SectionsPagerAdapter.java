@@ -1,4 +1,4 @@
-package com.mylook.mylook.home;
+package com.mylook.mylook.utils;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

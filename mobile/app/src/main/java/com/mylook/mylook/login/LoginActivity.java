@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,7 +22,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.mylook.mylook.R;
 import com.mylook.mylook.home.HomeActivity;
 
-import org.w3c.dom.Text;
 
 /**
  * A login screen that offers login via email/password.
@@ -35,6 +35,7 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private EditText mEmail, mPassword;
     private TextView mWaiting;
+    private LinearLayout mLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
         mWaiting = (TextView) findViewById(R.id.waiting);
         mEmail = (EditText) findViewById(R.id.input_email);
         mPassword = (EditText) findViewById(R.id.input_password);
+        mLayout = (LinearLayout) findViewById(R.id.login_form);
         mContext = LoginActivity.this;
 
         mWaiting.setVisibility(View.GONE);
@@ -65,6 +67,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String email = mEmail.getText().toString();
                 String password = mPassword.getText().toString();
+                mLayout.setVisibility(View.GONE);
 
                 if (isStringNull(email) && isStringNull(password)) {
                     Toast.makeText(mContext, "Debes llenar todos los campos", Toast.LENGTH_SHORT).show();
@@ -100,10 +103,6 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        if (mAuth.getCurrentUser() != null) {
-
-        }
     }
 
     @Override

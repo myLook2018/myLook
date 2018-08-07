@@ -11,7 +11,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/bottomNavViewBar"
-            android:background="@drawable/white_grey_border_top"
+            android:background="@color/primary"
             app:menu="@menu/bottom_navigation_menu">
 
         </android.support.design.widget.BottomNavigationView>
