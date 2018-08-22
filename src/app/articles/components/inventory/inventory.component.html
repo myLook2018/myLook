@@ -1,0 +1,82 @@
+<mat-toolbar role="heading"  class="mat-typography">
+    <mat-toolbar-row style="height: 48px;">
+        <img id="logo" src="/assets/myLookBrand.png" />
+        <span class="spacer"></span>
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon>account_circle</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item>Configuración</button>
+            <button mat-menu-item (click)="logout()">Salir</button>
+        </mat-menu>
+    </mat-toolbar-row>
+
+    <mat-toolbar-row style="background-color: rgb(173, 172, 235); height: 48px;">
+        <span>Lista de Prendas</span>
+        <mat-form-field [floatLabel]='options.value.floatLabel' style="padding-left: 10px;padding-bottom: 0; font-size: 70%">
+            <mat-label>Buscar Prenda</mat-label>
+            <mat-icon matSuffix md-48>search</mat-icon>
+            <input matInput (keyup)="applyFilter($event.target.value)">
+        </mat-form-field>
+        <button id="uploadArticle" mat-flat-button color="primary" (click)="openDialog()">Subir Prenda</button>
+    </mat-toolbar-row>
+</mat-toolbar>
+
+<mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+
+    <!--- Note that these columns can be defined in any order.
+              The actual rendered columns are set as a property on the row definition" -->
+
+    <!-- Picture Column -->
+    <ng-container matColumnDef="picture">
+        <mat-header-cell *matHeaderCellDef>
+            <mat-icon>photo</mat-icon>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.picture}} </mat-cell>
+    </ng-container>
+
+    <!-- cost Column -->
+    <ng-container matColumnDef="cost">
+        <mat-header-cell *matHeaderCellDef> Costo </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.cost}} </mat-cell>
+    </ng-container>
+
+    <!-- size Column -->
+    <ng-container matColumnDef="size">
+        <mat-header-cell *matHeaderCellDef> Talle </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.size}} </mat-cell>
+    </ng-container>
+
+    <!-- material Column -->
+    <ng-container matColumnDef="material">
+        <mat-header-cell *matHeaderCellDef> Material </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.material}} </mat-cell>
+    </ng-container>
+
+    <!-- colors Column -->
+    <ng-container matColumnDef="colors">
+        <mat-header-cell *matHeaderCellDef> Colores Disp. </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.colors}} </mat-cell>
+    </ng-container>
+
+    <!-- initial_stock Column -->
+    <ng-container matColumnDef="initial_stock">
+        <mat-header-cell *matHeaderCellDef> stock inicial </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.initial_stock}} </mat-cell>
+    </ng-container>
+
+    <!-- provider Column -->
+    <ng-container matColumnDef="provider">
+        <mat-header-cell *matHeaderCellDef> Proveedor </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.provider}} </mat-cell>
+    </ng-container>
+
+    <!-- tags Column -->
+    <ng-container matColumnDef="tags">
+        <mat-header-cell *matHeaderCellDef> Etiquetas </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.tags}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>

@@ -1,0 +1,105 @@
+#registerCard {
+  //width: 60%;
+  margin-top: 5px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 500px;
+}
+/*.material-icons {
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 50px;  Preferred icon size 
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. 
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. 
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. 
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. 
+  font-feature-settings: "liga";
+}
+*/
+.profilePictures {
+  max-width: 200px;
+  max-height: 200px;
+}
+#userPicture {
+  border-radius: 50%;
+}
+
+.bannerImage {
+  max-width: 100px;
+  max-height: 50px;
+}
+
+.centerImage {
+  margin: 0 auto;
+}
+
+.fill-space {
+  flex: 1 1 auto;
+}
+
+.headerImage {
+  width: 100%;
+  text-align: center;
+}
+
+.backgroundColor {
+  min-height: 100vh;
+  width: 100%;
+  height: auto;
+  //background-color: #c4007a;
+  overflow: hidden;
+}
+
+.full-length {
+  width: 100%;
+}
+
+.nextButton {
+  background-color: #0388ca;
+  color: white;
+}
+
+/*.inline-row {
+  flex: 1;
+  margin-right: 10px;
+  max-width: 40%;
+}*/
+
+/*.row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: left;
+}*/
+
+#storeAdrress {
+  width: 40%;
+}
+
+#storeAddressNumber {
+  max-width: 10%;
+}
+
+#storeFloor {
+  max-width: 15%;
+}
+
+.circleBase {
+  border-radius: 50%;
+  //behavior: url(PIE.htc); /* remove if you don't care about IE8 */
+}
+
