@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, AfterViewInit } from '@angular/core';
 import { Article } from '../../models/article';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { UpLoadArticleComponent } from '../dialogs/uploadArticle';
@@ -6,175 +6,20 @@ import { MatDialog, MatTableDataSource, MatSort } from '@angular/material';
 import { AuthService } from '../../../auth/services/auth.service';
 import { Location } from '@angular/common';
 import { Router } from '../../../../../node_modules/@angular/router';
-const ELEMENT_DATA: Article[] = [
-  {
-    id: 'Lorem ipsum',
-    picture: '',
-    cost: 5,
-    size: 'Lorem ipsum',
-    material: 'Lorem ipsum',
-    colors: 'Lorem ipsum',
-    initial_stock: 5,
-    provider: 'Lorem ipsum',
-    tags: ['Lorem', 'ipsum']
-  },
-  {
-    id: 'Lorem ipsum',
-    picture: '',
-    cost: 5,
-    size: 'Lorem ipsum',
-    material: 'Lorem ipsum',
-    colors: 'Lorem ipsum',
-    initial_stock: 5,
-    provider: 'Lorem ipsum',
-    tags: ['Lorem', 'ipsum']
-  },
-  {
-    id: 'Lorem ipsum',
-    picture: '',
-    cost: 5,
-    size: 'Lorem ipsum',
-    material: 'Lorem ipsum',
-    colors: 'Lorem ipsum',
-    initial_stock: 5,
-    provider: 'Lorem ipsum',
-    tags: ['Lorem', 'ipsum']
-  },
-  {
-    id: 'Lorem ipsum',
-    picture: '',
-    cost: 5,
-    size: 'Lorem ipsum',
-    material: 'Lorem ipsum',
-    colors: 'Lorem ipsum',
-    initial_stock: 5,
-    provider: 'Lorem ipsum',
-    tags: ['Lorem', 'ipsum']
-  },
-  {
-    id: 'Lorem ipsum',
-    picture: '',
-    cost: 5,
-    size: 'Lorem ipsum',
-    material: 'Lorem ipsum',
-    colors: 'Lorem ipsum',
-    initial_stock: 5,
-    provider: 'Lorem ipsum',
-    tags: ['Lorem', 'ipsum']
-  },
-  {
-    id: 'Lorem ipsum',
-    picture: '',
-    cost: 5,
-    size: 'Lorem ipsum',
-    material: 'Lorem ipsum',
-    colors: 'Lorem ipsum',
-    initial_stock: 5,
-    provider: 'Lorem ipsum',
-    tags: ['Lorem', 'ipsum']
-  },
-  {
-    id: 'Lorem ipsum',
-    picture: '',
-    cost: 5,
-    size: 'Lorem ipsum',
-    material: 'Lorem ipsum',
-    colors: 'Lorem ipsum',
-    initial_stock: 5,
-    provider: 'Lorem ipsum',
-    tags: ['Lorem', 'ipsum']
-  },
-  {
-    id: 'Lorem ipsum',
-    picture: '',
-    cost: 5,
-    size: 'Lorem ipsum',
-    material: 'Lorem ipsum',
-    colors: 'Lorem ipsum',
-    initial_stock: 5,
-    provider: 'Lorem ipsum',
-    tags: ['Lorem', 'ipsum']
-  },
-  {
-    id: 'Lorem ipsum',
-    picture: '',
-    cost: 5,
-    size: 'Lorem ipsum',
-    material: 'Lorem ipsum',
-    colors: 'Lorem ipsum',
-    initial_stock: 5,
-    provider: 'Lorem ipsum',
-    tags: ['Lorem', 'ipsum']
-  },
-  {
-    id: 'Lorem ipsum',
-    picture: '',
-    cost: 5,
-    size: 'Lorem ipsum',
-    material: 'Lorem ipsum',
-    colors: 'Lorem ipsum',
-    initial_stock: 5,
-    provider: 'Lorem ipsum',
-    tags: ['Lorem', 'ipsum']
-  },
-  {
-    id: 'Lorem ipsum',
-    picture: '',
-    cost: 5,
-    size: 'Lorem ipsum',
-    material: 'Lorem ipsum',
-    colors: 'Lorem ipsum',
-    initial_stock: 5,
-    provider: 'Lorem ipsum',
-    tags: ['Lorem', 'ipsum']
-  },
-  {
-    id: 'Lorem ipsum',
-    picture: '',
-    cost: 5,
-    size: 'Lorem ipsum',
-    material: 'Lorem ipsum',
-    colors: 'Lorem ipsum',
-    initial_stock: 5,
-    provider: 'Lorem ipsum',
-    tags: ['Lorem', 'ipsum']
-  },
-  {
-    id: 'Lorem ipsum',
-    picture: '',
-    cost: 5,
-    size: 'Lorem ipsum',
-    material: 'Lorem ipsum',
-    colors: 'Lorem ipsum',
-    initial_stock: 5,
-    provider: 'Lorem ipsum',
-    tags: ['Lorem', 'ipsum']
-  },
-  {
-    id: 'Lorem ipsum',
-    picture: '',
-    cost: 5,
-    size: 'Lorem ipsum',
-    material: 'Lorem ipsum',
-    colors: 'Lorem ipsum',
-    initial_stock: 5,
-    provider: 'Lorem ipsum',
-    tags: ['Lorem', 'ipsum']
-  }
-];
+import { ArticleService } from '../../services/article.service';
+
 @Component({
   selector: 'app-inventory',
   templateUrl: './inventory.component.html',
   styleUrls: ['./inventory.component.scss']
 })
-
-
 export class InventoryComponent implements OnInit {
   options: FormGroup;
   @ViewChild(MatSort) sort: MatSort;
-
+  articles: Article[];
   constructor(
     fb: FormBuilder,
+    public articleService: ArticleService,
     public dialog: MatDialog,
     public authService: AuthService,
     private location: Location,
@@ -185,6 +30,7 @@ export class InventoryComponent implements OnInit {
       floatLabel: 'never'
     });
   }
+  dataSource;
 
   displayedColumns: string[] = [
     'picture',
@@ -196,15 +42,23 @@ export class InventoryComponent implements OnInit {
     'tags'
   ];
 
-  dataSource = new MatTableDataSource(ELEMENT_DATA);
   applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-
-    ngOnInit() {
-      this.dataSource.sort = this.sort;
+  ngOnInit() {
+    this.articleService.getArticles().subscribe(articles => {
+      console.log(articles);
+      this.articles = articles;
+      console.log(this.articles.length);
+      this.dataSource = new MatTableDataSource(this.articles);
     }
+  );
+  }
+
+  /*ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+  }*/
 
   openDialog(): void {
     const dialogRef = this.dialog.open(UpLoadArticleComponent, {

@@ -19,12 +19,12 @@ import { LoginComponent } from './auth/components/login/login.component';
 import { UserComponent } from './auth/components/user/user.component';
 import { RegisterComponent } from './auth/components/register/register.component';
 import { InventoryComponent } from './articles/components/inventory/inventory.component';
-import { IAppState } from './store';
 
-import {MatMenuModule} from '@angular/material/menu';
+
+import { MatMenuModule} from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
-import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { MatSnackBarModule} from '@angular/material/snack-bar';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
@@ -36,7 +36,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { SignupComponent } from './auth/components/signup/signup.component';
 import { StoreService } from './auth/services/store.service';
-import { MatDialogModule } from '@angular/material';
+import { MatDialogModule, MatSort, MatSortModule } from '@angular/material';
 import { DialogAlertComponent } from './dialog/dialog-alert/dialog-alert.component';
 import { UpLoadArticleComponent } from './articles/components/dialogs/uploadArticle';
 import { SuccesfulDialogComponent } from './dialog/succesful-dialog/succesful-dialog.component';
@@ -74,7 +74,8 @@ import { SuccesfulDialogComponent } from './dialog/succesful-dialog/succesful-di
     MatTableModule,
     MatDialogModule,
     MatMenuModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatSortModule
   ],
   exports: [RouterModule],
   providers: [AuthService, UserService, UserResolver, AuthGuard, StoreService, ArticleService],

@@ -1,21 +1,25 @@
 import { Component, Inject } from '@angular/core';
 import {
   AngularFireStorage,
-  AngularFireUploadTask
+  AngularFireUploadTask,
+  AngularFireStorageReference
 } from 'angularfire2/storage';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { Observable } from 'rxjs';
 import { UploadTaskSnapshot } from 'angularfire2/storage/interfaces';
-import { inspectNativeElement } from '@angular/platform-browser/src/dom/debug/ng_probe';
 import { Validators, FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { ArticleService } from '../../services/article.service';
 import {MatSnackBar} from '@angular/material';
+import { finalize } from '../../../../../node_modules/rxjs/operators';
 
 @Component({
   selector: 'app-uploadarticle',
   templateUrl: 'uploadArticle.html'
 })
 export class UpLoadArticleComponent {
+  // taskReference
+  ref: AngularFireStorageReference;
+
   // Main task
   task: AngularFireUploadTask;
   // Progress monitoring
@@ -23,6 +27,7 @@ export class UpLoadArticleComponent {
   snapshot: Observable<UploadTaskSnapshot>;
   // Download url
   downloadURL: Observable<string>;
+
   isHovering: boolean;
   articleForm: FormGroup;
   urls = new Array<string>();
@@ -72,7 +77,6 @@ export class UpLoadArticleComponent {
 
     // The storage Path (must be unique)
     const path = `test/${new Date().getTime()}_${file.name}`;
-    this.articleForm.addControl('picture', new FormControl(path, Validators.required));
     // Optional metadata
     const customMetadata = { app: 'Mylook!' };
     // The main task / metadata is optional
@@ -81,12 +85,28 @@ export class UpLoadArticleComponent {
 
     console.log('Imagen guardada en myLook!');
     // Progress monitoring
-    this.percentage = this.task.percentageChanges(); // usar si es necesario
-    this.snapshot = this.task.snapshotChanges(); // cambio de version
+    // this.percentage = this.task.percentageChanges(); // usar si es necesario
+    // this.snapshot = this.task.snapshotChanges(); // cambio de version
 
     // The file download URL
     // cambio de version/implementacion
-    this.articleService.addItem(this.articleForm.value);
+
+    console.log('a ver el link');
+    this.ref = this.storage.ref(path);
+
+    this.task.snapshotChanges().pipe(
+      finalize(() => {
+        this.ref.getDownloadURL().subscribe(url => {
+          this.articleForm.addControl('picture', new FormControl(url, Validators.required));
+          console.log('añadimos al form');
+          this.articleService.addArticle(this.articleForm.value);
+          console.log(url); // <-- do what ever you want with the url..
+        });
+      })
+    ).subscribe();
+
+
+    console.log('pasamos el add');
     this.openSnackBar('Prenda guardada en MyLook!', 'close');
 
   }
