@@ -4,6 +4,16 @@
   padding-right: 3px;
 }
 
+mat-table {
+  height: calc(100vh - 105px);
+  overflow: auto;
+}
+
+.navbar{
+  height: 48px;
+  z-index: 10;
+}
+
 .right-icon {
   padding: 0 14px;
 }
@@ -28,4 +38,9 @@ table{
 
 .centerImage {
   margin: 0 auto;
+}
+
+.actionIcon{
+  color: #9C27B0;
+  z-index: 9;
 }

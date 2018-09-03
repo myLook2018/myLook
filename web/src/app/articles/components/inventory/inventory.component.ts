@@ -39,7 +39,8 @@ export class InventoryComponent implements OnInit {
     'material',
     'colors',
     'initial_stock',
-    'tags'
+    'tags',
+    'actions'
   ];
 
   applyFilter(filterValue: string) {
