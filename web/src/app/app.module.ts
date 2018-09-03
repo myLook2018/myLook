@@ -38,7 +38,7 @@ import { SignupComponent } from './auth/components/signup/signup.component';
 import { StoreService } from './auth/services/store.service';
 import { MatDialogModule, MatSort, MatSortModule } from '@angular/material';
 import { DialogAlertComponent } from './dialog/dialog-alert/dialog-alert.component';
-import { UpLoadArticleComponent } from './articles/components/dialogs/uploadArticle';
+import { ArticleDialogComponent } from './articles/components/dialogs/articleDialog';
 import { SuccesfulDialogComponent } from './dialog/succesful-dialog/succesful-dialog.component';
 
 @NgModule({
@@ -50,7 +50,7 @@ import { SuccesfulDialogComponent } from './dialog/succesful-dialog/succesful-di
     InventoryComponent,
     SignupComponent,
     DialogAlertComponent,
-    UpLoadArticleComponent,
+    ArticleDialogComponent,
     SuccesfulDialogComponent
   ],
   imports: [
@@ -79,7 +79,7 @@ import { SuccesfulDialogComponent } from './dialog/succesful-dialog/succesful-di
   ],
   exports: [RouterModule],
   providers: [AuthService, UserService, UserResolver, AuthGuard, StoreService, ArticleService],
-  entryComponents: [DialogAlertComponent, UpLoadArticleComponent, SuccesfulDialogComponent],
+  entryComponents: [DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

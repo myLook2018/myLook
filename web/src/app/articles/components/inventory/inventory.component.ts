@@ -1,11 +1,11 @@
 import { Component, ViewChild, OnInit, AfterViewInit } from '@angular/core';
 import { Article } from '../../models/article';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { UpLoadArticleComponent } from '../dialogs/uploadArticle';
+import { ArticleDialogComponent } from '../dialogs/articleDialog';
 import { MatDialog, MatTableDataSource, MatSort } from '@angular/material';
 import { AuthService } from '../../../auth/services/auth.service';
 import { Location } from '@angular/common';
-import { Router } from '../../../../../node_modules/@angular/router';
+import { Router } from '@angular/router';
 import { ArticleService } from '../../services/article.service';
 
 @Component({
@@ -57,14 +57,33 @@ export class InventoryComponent implements OnInit {
   );
   }
 
+  deleteArticle(event) {
+    this.articleService.deleteArticle(event);
+    console.log(`Articulo ${event.id} eliminado`);
+  }
+
   /*ngAfterViewInit() {
     this.dataSource.sort = this.sort;
   }*/
 
-  openDialog(): void {
-    const dialogRef = this.dialog.open(UpLoadArticleComponent, {
+  openArticleDialog(article: Article): void {
+    let dataToSend = {};
+    if (article !== undefined) {
+        dataToSend = {
+        id: article.id,
+        picture: article.picture,
+        cost: article.cost,
+        size: article.size,
+        material: article.material,
+        colors: article.colors,
+        initial_stock: article.initial_stock,
+        provider: article.provider,
+        tags: article.tags };
+        }
+
+    const dialogRef = this.dialog.open(ArticleDialogComponent, {
       height: '650px',
-      data: {}
+      data: dataToSend
     });
 
     dialogRef.afterClosed().subscribe(result => {

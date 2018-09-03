@@ -35,4 +35,27 @@ export class ArticleService {
   getArticles() {
     return this.articles;
   }
+
+  deleteArticle(article: Article) {
+   return this.fst.collection(this.collectionPath).doc(`${article.id}`).delete();
+  }
+
+  refreshArticle(article: Article) {
+    return this.fst.collection(this.collectionPath).doc(`${article.id}`).update({
+      cost: article.cost,
+      size: article.size,
+      material: article.material,
+      colors: article.colors,
+      initial_stock: article.initial_stock,
+      provider: article.provider,
+      tags: article.tags
+    })
+    .then(function() {
+        console.log('Document successfully updated!');
+    })
+    .catch(function(error) {
+        // The document probably doesn't exist.
+        console.error('Error updating document: ', error);
+    });
+  }
 }

@@ -10,13 +10,14 @@ import { UploadTaskSnapshot } from 'angularfire2/storage/interfaces';
 import { Validators, FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { ArticleService } from '../../services/article.service';
 import {MatSnackBar} from '@angular/material';
-import { finalize } from '../../../../../node_modules/rxjs/operators';
+import { finalize } from 'rxjs/operators';
+import { Article } from '../../models/article';
 
 @Component({
-  selector: 'app-uploadarticle',
-  templateUrl: 'uploadArticle.html'
+  selector: 'app-article-dialog',
+  templateUrl: 'articleDialog.html'
 })
-export class UpLoadArticleComponent {
+export class ArticleDialogComponent {
   // taskReference
   ref: AngularFireStorageReference;
 
@@ -29,8 +30,9 @@ export class UpLoadArticleComponent {
   downloadURL: Observable<string>;
 
   isHovering: boolean;
+  isNew = true;
   articleForm: FormGroup;
-  urls = new Array<string>();
+  urls = new Array<String>();
   filesSelected: FileList;
 
   constructor(
@@ -38,9 +40,12 @@ export class UpLoadArticleComponent {
     private articleService: ArticleService,
     private fb: FormBuilder,
     private storage: AngularFireStorage,
-    public dialogRef: MatDialogRef<UpLoadArticleComponent>,
-    @Inject(MAT_DIALOG_DATA) article: any
-  ) { this.createForm(); }
+    public dialogRef: MatDialogRef<ArticleDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public articleData: Article
+  ) { this.createForm();
+      console.log(articleData.picture);
+      if (articleData.picture !== undefined ) {this.urls.push(articleData.picture); this.isNew = false; }
+      }
 
   createForm() {
     this.articleForm = this.fb.group({
@@ -108,6 +113,22 @@ export class UpLoadArticleComponent {
 
     console.log('pasamos el add');
     this.openSnackBar('Prenda guardada en MyLook!', 'close');
+
+  }
+
+  refreshArticle(event) {
+    const articleUpdated: Article = {
+      id: this.articleData.id,
+      cost: this.articleForm.controls['cost'].value,
+      size: this.articleForm.controls['size'].value,
+      material: this.articleForm.controls['material'].value,
+      colors: this.articleForm.controls['colors'].value,
+      initial_stock: this.articleForm.controls['initial_stock'].value,
+      provider: this.articleForm.controls['provider'].value,
+      tags: this.articleForm.controls['tags'].value
+    };
+    this.articleService.refreshArticle(articleUpdated);
+    console.log(articleUpdated.tags);
 
   }
 

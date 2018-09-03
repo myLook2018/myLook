@@ -2,7 +2,7 @@
   <button mat-mini-fab style="display: block; margin-left: auto; background-color: #ff9800;" (click) = "onNoClick()">
     <mat-icon>close</mat-icon>
   </button>
-  <h3 style="margin: 0;">Agrega una nueva prenda a tu cataálogo</h3>
+  <h3 style="margin: 0;">Agrega una nueva prenda a tu catálogo</h3>
   <h4 style="margin: 0;">A continuación ingresa la información de la prenda.</h4>
 </div>
 
@@ -28,27 +28,27 @@
     <div #secondColumn style="display: inline-table;margin-left: 10px;">
       <div>
         <mat-form-field>
-          <input matInput placeholder="Proveedor" formControlName="provider" value="">
+          <input matInput placeholder="Proveedor" formControlName="provider" value= {{articleData.provider}} >
         </mat-form-field>
         <mat-form-field>
-          <input matInput placeholder="Costo" formControlName="cost" value="">
+          <input matInput placeholder="Costo" formControlName="cost" value= {{articleData.cost}} >
         </mat-form-field>
         <mat-form-field>
-          <input matInput placeholder="Stock inicial" formControlName="initial_stock" value="">
+          <input matInput placeholder="Stock inicial" formControlName="initial_stock" value= {{articleData.initial_stock}} >
         </mat-form-field>
       </div>
       <div>
         <mat-form-field>
-          <input matInput placeholder="Talle" formControlName="size" value="">
+          <input matInput placeholder="Talle" formControlName="size" value= {{articleData.size}}>
         </mat-form-field>
         <mat-form-field>
-          <input matInput placeholder="Material" formControlName="material" value="">
+          <input matInput placeholder="Material" formControlName="material" value= {{articleData.material}} >
         </mat-form-field>
         <mat-form-field>
-          <input matInput placeholder="Colores disponibles" formControlName="colors" value="">
+          <input matInput placeholder="Colores disponibles" formControlName="colors" [(ngModel)]= "articleData.colors" >
         </mat-form-field>
         <mat-form-field>
-          <input matInput placeholder="Etiquetas" formControlName="tags" value="">
+          <input matInput placeholder="Etiquetas" formControlName="tags" value= {{articleData.tags}} >
         </mat-form-field>
       </div>
 
@@ -56,8 +56,9 @@
   </form>
 
 
-  <div mat-dialog-actions align="end">
-    <button style="background-color: #9C27B0; color: white" type="button" mat-raised-button (click)="startUpload($event.target.files)">Agregar Prenda</button>
+  <div  mat-dialog-actions align="end">
+    <button *ngIf="!isNew" style="background-color: #9C27B0; color: white" type="button" mat-raised-button (click)="refreshArticle($event)">Actualizar Prenda</button>
+    <button *ngIf="isNew" style="background-color: #9C27B0; color: white" type="button" mat-raised-button (click)="startUpload($event.target.files)">Agregar Prenda</button>
   </div>
 
 </div>
