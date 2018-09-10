@@ -7,6 +7,7 @@ import { AuthService } from '../../../auth/services/auth.service';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { ArticleService } from '../../services/article.service';
+import { DeleteConfirmationDialogComponent } from '../dialogs/deleteConfirmationDialog';
 
 @Component({
   selector: 'app-inventory',
@@ -57,14 +58,26 @@ export class InventoryComponent implements OnInit {
   );
   }
 
-  deleteArticle(event) {
-    this.articleService.deleteArticle(event);
-    console.log(`Articulo ${event.id} eliminado`);
+  deleteArticle(article) {
+    this.articleService.deleteArticle(article);
+    console.log(`Articulo ${article.id} eliminado`);
   }
 
   /*ngAfterViewInit() {
     this.dataSource.sort = this.sort;
   }*/
+
+  openConfirmationDialog(article): void {
+    const confirmationRef = this.dialog.open(DeleteConfirmationDialogComponent, {
+      width: '300px',
+      data: article.picture
+    });
+    confirmationRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        this.deleteArticle(article);
+      }
+    });
+  }
 
   openArticleDialog(article: Article): void {
     let dataToSend = {};
@@ -82,7 +95,7 @@ export class InventoryComponent implements OnInit {
         }
 
     const dialogRef = this.dialog.open(ArticleDialogComponent, {
-      height: '650px',
+      height: '610px',
       data: dataToSend
     });
 

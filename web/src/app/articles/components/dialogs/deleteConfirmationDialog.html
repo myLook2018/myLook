@@ -1,0 +1,8 @@
+<h1 mat-dialog-title style="text-align:center">¿Confirma que desea eliminar?</h1>
+<div mat-dialog-content style="display: flex; margin-left: auto; margin-right: auto; padding: 0" >
+    <img style="margin-left:auto;margin-right:auto;margin-bottom:10px"  height="250" width="250" src={{data}} >
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-raised-button [mat-dialog-close]="false" cdkFocusInitial>Cancelar</button>
+    <button mat-raised-button color="warn" [mat-dialog-close]="true" cdkFocusInitial>Elimninar</button>
+</div>

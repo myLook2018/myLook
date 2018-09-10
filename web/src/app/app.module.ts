@@ -19,6 +19,7 @@ import { LoginComponent } from './auth/components/login/login.component';
 import { UserComponent } from './auth/components/user/user.component';
 import { RegisterComponent } from './auth/components/register/register.component';
 import { InventoryComponent } from './articles/components/inventory/inventory.component';
+import { TagsService } from './articles/services/tags.service';
 
 
 import { MatMenuModule} from '@angular/material/menu';
@@ -38,8 +39,11 @@ import { SignupComponent } from './auth/components/signup/signup.component';
 import { StoreService } from './auth/services/store.service';
 import { MatDialogModule, MatSort, MatSortModule } from '@angular/material';
 import { DialogAlertComponent } from './dialog/dialog-alert/dialog-alert.component';
+import { MatChipsModule } from '@angular/material/chips';
 import { ArticleDialogComponent } from './articles/components/dialogs/articleDialog';
 import { SuccesfulDialogComponent } from './dialog/succesful-dialog/succesful-dialog.component';
+import { DeleteConfirmationDialogComponent } from './articles/components/dialogs/deleteConfirmationDialog';
+import { MatAutocompleteModule } from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -51,7 +55,8 @@ import { SuccesfulDialogComponent } from './dialog/succesful-dialog/succesful-di
     SignupComponent,
     DialogAlertComponent,
     ArticleDialogComponent,
-    SuccesfulDialogComponent
+    SuccesfulDialogComponent,
+    DeleteConfirmationDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -75,11 +80,13 @@ import { SuccesfulDialogComponent } from './dialog/succesful-dialog/succesful-di
     MatDialogModule,
     MatMenuModule,
     MatSnackBarModule,
-    MatSortModule
+    MatSortModule,
+    MatChipsModule,
+    MatAutocompleteModule
   ],
   exports: [RouterModule],
-  providers: [AuthService, UserService, UserResolver, AuthGuard, StoreService, ArticleService],
-  entryComponents: [DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent],
+  providers: [AuthService, UserService, UserResolver, AuthGuard, StoreService, ArticleService, TagsService],
+  entryComponents: [DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent, DeleteConfirmationDialogComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,26 +1,28 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ElementRef } from '@angular/core';
 import {
   AngularFireStorage,
   AngularFireUploadTask,
   AngularFireStorageReference
 } from 'angularfire2/storage';
-import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatChipInputEvent, MatAutocompleteSelectedEvent } from '@angular/material';
 import { Observable } from 'rxjs';
 import { UploadTaskSnapshot } from 'angularfire2/storage/interfaces';
 import { Validators, FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { ArticleService } from '../../services/article.service';
-import {MatSnackBar} from '@angular/material';
-import { finalize } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material';
+import { finalize, startWith, map } from 'rxjs/operators';
 import { Article } from '../../models/article';
+import { TagsService } from '../../services/tags.service';
+import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import { Tags } from '../../models/tags';
 
 @Component({
   selector: 'app-article-dialog',
   templateUrl: 'articleDialog.html'
 })
-export class ArticleDialogComponent {
+export class ArticleDialogComponent implements OnInit {
   // taskReference
   ref: AngularFireStorageReference;
-
   // Main task
   task: AngularFireUploadTask;
   // Progress monitoring
@@ -28,35 +30,60 @@ export class ArticleDialogComponent {
   snapshot: Observable<UploadTaskSnapshot>;
   // Download url
   downloadURL: Observable<string>;
-
   isHovering: boolean;
   isNew = true;
   articleForm: FormGroup;
   urls = new Array<String>();
   filesSelected: FileList;
 
+  tags: string[] = [];
+  allTags: Tags;
+  visible = true;
+  selectable = true;
+  removable = true;
+  addOnBlur = false;
+  separatorKeysCodes: number[] = [ENTER, COMMA];
+  tagsCtrl = new FormControl();
+  filteredTags: Observable<string[]>;
+  @ViewChild('tagsInput') tagsInput: ElementRef<HTMLInputElement>;
+
   constructor(
+    public tagsService: TagsService,
     public snackBar: MatSnackBar,
     private articleService: ArticleService,
     private fb: FormBuilder,
     private storage: AngularFireStorage,
     public dialogRef: MatDialogRef<ArticleDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public articleData: Article
-  ) { this.createForm();
-      console.log(articleData.picture);
-      if (articleData.picture !== undefined ) {this.urls.push(articleData.picture); this.isNew = false; }
-      }
+    ) { this.createForm();
+    if (articleData.picture !== undefined ) {this.urls.push(articleData.picture); this.isNew = false; }
+  }
+
+  ngOnInit(): void {
+    this.tagsService.getTags().subscribe(tags => {
+      console.log(tags[0]);
+      this.allTags = tags[0];
+      console.log(this.allTags.preset.length);
+      this.filteredTags = this.tagsCtrl.valueChanges.pipe(startWith(null),
+      map((tag: string | null) => tag ? this._filter(tag) : this.allTags.preset.slice()));
+    });
+  }
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.allTags.preset.filter(tags => tags.toString().toLowerCase().indexOf(filterValue) === 0);
+  }
 
   createForm() {
     this.articleForm = this.fb.group({
       // completar los datos de la imagen
-      cost: ['', Validators.nullValidator],
-      size: ['', Validators.nullValidator],
-      material: ['', Validators.nullValidator],
-      colors: ['', Validators.nullValidator],
-      initial_stock: ['', Validators.nullValidator],
-      provider: ['', Validators.nullValidator],
-      tags: ['', Validators.nullValidator],
+      cost: [this.articleData.cost, Validators.nullValidator],
+      size: [this.articleData.size, Validators.nullValidator],
+      material: [this.articleData.material, Validators.nullValidator],
+      colors: [this.articleData.colors, Validators.nullValidator],
+      initial_stock: [this.articleData.initial_stock, Validators.nullValidator],
+      provider: [this.articleData.provider, Validators.nullValidator],
+      tags: [this.articleData.tags, Validators.nullValidator],
     });
   }
 
@@ -129,6 +156,7 @@ export class ArticleDialogComponent {
     };
     this.articleService.refreshArticle(articleUpdated);
     console.log(articleUpdated.tags);
+    this.openSnackBar('Prenda actualizada en MyLook!', 'close');
 
   }
 
@@ -163,5 +191,26 @@ export class ArticleDialogComponent {
         reader.readAsDataURL(file);
       }
     }
+  }
+
+  add(event: MatChipInputEvent): void {
+    const input = event.input;
+    const value = event.value;
+    if ((value || '').trim()) {
+      this.tags.push(value.trim());
+    }
+
+    // Reset the input value
+    if (input) {
+      input.value = '';
+    }
+
+    this.tagsCtrl.setValue(null);
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    this.tags.push(event.option.viewValue);
+    this.tagsInput.nativeElement.value = '';
+    this.tagsCtrl.setValue(null);
   }
 }
