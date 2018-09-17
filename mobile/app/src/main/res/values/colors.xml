@@ -9,4 +9,12 @@
     <color name="icons">#FFFFFF</color>
     <color name="divider">#BDBDBD</color>
     <color name="link_blue">#0000EE</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="grey">#A0A0A0</color>
+    <color name="white">#fff</color>
+    <color name="purple">#9C27B0</color>
+    <color name="black">#000</color>
+    <color name="orange">#FB8C00</color>
 </resources>
