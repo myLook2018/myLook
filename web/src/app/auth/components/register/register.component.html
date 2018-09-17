@@ -1,0 +1,194 @@
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<div class="backgroundColor container mat-typography">
+
+  <div id="cardContainer" class="container" fxLayoutAlign="center center"></div>
+  <mat-card id="registerCard">
+    <mat-card-header>
+      <!-- <span class="fill-space"></span> -->
+      <div class="headerImage">
+        <img src="/assets/brandNoBackground.png" class="centerImage bannerImage">
+      </div>
+    </mat-card-header>
+
+    <div>
+      <mat-horizontal-stepper #stepper [linear]="isLinear">
+        <mat-step [stepControl]="firstFormGroup">
+          <form [formGroup]="firstFormGroup">
+            <ng-template matStepLabel>Usuario</ng-template>
+
+            <div #firstStep style="display: flex; height: 435px;">
+
+              <div style="display: block;margin-left: auto; margin-right:auto;">
+
+                <mat-form-field style="display: block;">
+                  <input matInput autofocus placeholder="Nombre de Usuario" formControlName="userName">
+                </mat-form-field>
+
+                <div style="display: table-cell">
+                  <div style="display: block; width: 200px; height: 255px; position: relative;">
+                    <div style="text-align: center;">
+                      <label>Foto de Perfil</label>
+                    </div>
+                    <div #firstColumn>
+                      <div class="circleBase" style="height: 180px;background-color: #adaaaa5d;padding-top: 10px;">
+
+                        <!--  <object data="avatar.jpg" [src]="" type="image/jpg">
+                          <img src="../../../../assets/noPhotoSelected.png" />
+                        </object>
+                      -->
+                        <div *ngFor="let url of urls ;  let i=index">
+                          <img *ngIf="i<1" [src]="url" class="rounded mb-3" height="170" style="display: block; margin-left: auto; margin-right: auto;">
+                        </div>
+                      </div>
+                      <div>
+                        <button class="purpleButton" type="button" mat-raised-button style="display: block; margin-left: auto; margin-right: auto; margin-top: 10px" (click)="imgProfile.click()">Añade una foto</button>
+                        <input hidden class="file-input" #imgProfile type="file" (change)="detectFiles($event, 0)">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style="display: grid; margin-top: 10px;">
+                    <mat-form-field class="full-length">
+                      <input matInput placeholder="Email " formControlName="userMail" type="email" [ngModel]="email">
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <input matInput placeholder="Telefono Personal" formControlName="userPhone">
+                    </mat-form-field>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div style="display: grid;">
+              <div style="margin-left: auto">
+                <button mat-mini-fab class="nextButton orangeButton" (click)="checkUserName(firstFormGroup.value, stepper)">
+                  <mat-icon>navigate_next</mat-icon>
+                </button>
+              </div>
+            </div>
+          </form>
+        </mat-step>
+
+
+        <mat-step [stepControl]="secondFormGroup">
+          <form [formGroup]="secondFormGroup">
+            <ng-template matStepLabel>Tienda</ng-template>
+
+            <mat-form-field>
+              <input matInput placeholder="Nombre de Tienda" formControlName="storeName" id='storeName' required>
+            </mat-form-field>
+
+            <div>
+
+              <div style="display: block; width: 200px; height: 255px; position: relative; margin-left: auto; margin-right: auto">
+                <div style="text-align: center;">
+                  <label>Foto de Tienda</label>
+                </div>
+                <div #firstColumn>
+                  <div class="circleBase" style="height: 180px;background-color: #adaaaa5d;padding-top: 10px;">
+                    <img *ngFor="let url of urls | slice:1; let i = index" [src]="url" class="rounded mb-3" height="170" style="display: block; margin-left: auto; margin-right: auto;">
+                  </div>
+                  <div>
+                    <button class="purpleButton" type="button" mat-raised-button style="display: block; margin-left: auto; margin-right: auto; margin-top: 10px" (click)="imgShop.click()">Añade una foto</button>
+                    <input hidden class="file-input" #imgShop type="file" (change)="detectFiles($event, 1)">
+                  </div>
+                </div>
+              </div>
+
+              <div class="full-length">
+                <mat-form-field class="full-length">
+                  <textarea matInput placeholder="Descripción" formControlName="storeDescription" type="text" style="padding: 0"></textarea>
+                </mat-form-field>
+              </div>
+
+            </div>
+            <!-- <mat-form-field>
+              <input matInput placeholder="Horarios de atención" formControlName="attendanceHours">
+          </mat-form-field> -->
+
+            <div style="display: flex">
+              <mat-form-field style="width: 30%;">
+                <input matInput placeholder="Provincia" formControlName="storeProvince">
+              </mat-form-field>
+
+              <mat-form-field style="width: 40%;">
+                <input matInput placeholder="Ciudad" formControlName="storeProvince">
+              </mat-form-field>
+
+              <mat-form-field style="width: 30%;">
+                  <input matInput placeholder="Teléfono de Contacto" formControlName="storeProvince" id="storePhone">
+                </mat-form-field>
+            </div>
+
+
+            <div style="display: flex">
+              <mat-form-field id="storeAddress" style="width: 45%">
+                <input matInput placeholder="Dirección" formControlName="storeAddress">
+              </mat-form-field>
+
+              <mat-form-field id="storeAddressNumber" style="width: 15%">
+                <input matInput placeholder="N°" formControlName="storeAddressNumber">
+              </mat-form-field>
+
+              <mat-form-field id="storeFloor" style="width: 10%;">
+                <input matInput placeholder="Piso" formControlName="storeFloor">
+              </mat-form-field>
+
+              <mat-form-field id="storeFloor" style="width: 10%;">
+                  <input matInput placeholder="Dpto" formControlName="storeFloor">
+                </mat-form-field>
+
+              <mat-form-field id="storeFloor" style="width: 20%;">
+                  <input matInput placeholder="Torre(opcional)" formControlName="storeFloor">
+              </mat-form-field>
+            </div>
+
+
+            <mat-toolbar>
+              <mat-toolbar-row style="background-color: white">
+                <button mat-mini-fab matStepperPrevious class="nextButton orangeButton">
+                  <mat-icon>navigate_before</mat-icon>
+                </button>
+                <span class="fill-space"></span>
+                <button mat-mini-fab matStepperNext class="nextButton orangeButton" (click)="checkStoreName(secondFormGroup.value, stepper)">
+                  <mat-icon>navigate_next</mat-icon>
+                </button>
+              </mat-toolbar-row>
+            </mat-toolbar>
+          </form>
+        </mat-step>
+
+
+
+
+        <mat-step [stepControl]="thirdFormGroup">
+          <form [formGroup]="thirdFormGroup">
+            <ng-template matStepLabel>Confirmar Datos</ng-template>
+
+            <mat-form-field class="full-length">
+              <input matInput placeholder="Contraseña" formControlName="storePhone" id="storePhone" type="password">
+            </mat-form-field>
+
+            <mat-form-field class="full-length">
+              <input matInput placeholder="Confirmar contraseña" formControlName="storeMail" type="password" >
+            </mat-form-field>
+
+            <mat-toolbar>
+              <mat-toolbar-row style="background-color: white">
+                <button  mat-mini-fab matStepperPrevious  class="nextButton orangeButton">
+                  <mat-icon>navigate_before</mat-icon>
+                </button>
+                <span class="fill-space"></span>
+                <button mat-mini-fab matStepperNext class="nextButton orangeButton" (click)="tryRegister(firstFormGroup.value, secondFormGroup.value, thirdFormGroup.value)">
+                  <mat-icon class="material-icons">done</mat-icon>
+                </button>
+              </mat-toolbar-row>
+            </mat-toolbar>
+          </form>
+        </mat-step>
+      </mat-horizontal-stepper>
+    </div>
+  </mat-card>
+</div>
