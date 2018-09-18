@@ -1,34 +1,19 @@
 <div class="mat-typography">
   <div style="display:flex">
 
-      <h2 style="margin: 0; ">Agrega una nueva prenda a tu catálogo</h2>
+      <h2  *ngIf="isNew" style="margin: 0; ">Agrega una nueva prenda a tu catálogo</h2>
+      <h2  *ngIf="!isNew" style="margin: 0; ">Actualizar prenda</h2>
       <button mat-mini-fab style="display: block; margin-left: auto; background-color: #ff9800;" (click)="onNoClick()">
         <mat-icon>close</mat-icon>
       </button>
 
   </div>
-  <h4 style="margin: 0;">A continuación ingresa la información de la prenda.</h4>
+  <h4  *ngIf="isNew" style="margin: 0;">A continuación ingresa la información de la prenda.</h4>
 </div>
 
-<div style="display: table-caption">
+<div style="display: table-caption; margin-top: 15px">
 
   <form [formGroup]="articleForm" style="display: flex;">
-
-    <div #firstColumn style="display: inline-table; width: 400px; height: 455px; position: relative;">
-
-      <div style="height: 380px; background-color: #adaaaa5d;padding-top: 10px;">
-        <img *ngFor="let url of urls" [src]="url" class="rounded mb-3" height="370"  style="display: block; margin-left: auto; margin-right: auto; max-width:380px">
-      </div>
-
-      <div>
-        <button type="button" mat-raised-button style="display: block; margin-left: auto; margin-right: auto; margin-top: 10px;  background-color: #7B1FA2;color: white"
-          (click)="imgFileInput.click()">Añade una foto</button>
-        <input hidden class="file-input" #imgFileInput type="file" (change)="detectFiles($event)">
-      </div>
-
-    </div>
-
-
     <div #secondColumn style="display: inline-table;margin-left: 10px;">
       <div>
         <mat-form-field>
@@ -49,7 +34,7 @@
                   [matChipInputFor]="chipList"
                   [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                   [matChipInputAddOnBlur]="addOnBlur"
-                  (matChipInputTokenEnd)="add($event)">
+                  (matChipInputTokenEnd)="add($event)" autofocus>
               </mat-chip-list>
               <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
                 <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
@@ -78,6 +63,20 @@
         <mat-form-field>
           <input matInput placeholder="Colores disponibles" formControlName="colors" [(ngModel)]="articleData.colors">
         </mat-form-field>
+      </div>
+
+    </div>
+
+    <div #firstColumn style="display: inline-table; width: 200px; height: 255px; position: relative; margin-left: 25px">
+
+      <div style="height: 180px;padding-top: 10px;">
+         <img *ngFor="let url of urls" [src]="url" class="rounded mb-3" height="170"  style="display: block; margin-left: auto; margin-right: auto; max-width:180px">
+      </div>
+
+      <div>
+        <button type="button" mat-raised-button style="display: block; margin-left: auto; margin-right: auto; margin-top: 10px;  background-color: #7B1FA2;color: white"
+          (click)="imgFileInput.click()">Añade una foto</button>
+        <input hidden class="file-input" #imgFileInput type="file" (change)="detectFiles($event)">
       </div>
 
     </div>

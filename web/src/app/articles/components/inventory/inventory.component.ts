@@ -8,6 +8,9 @@ import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { ArticleService } from '../../services/article.service';
 import { DeleteConfirmationDialogComponent } from '../dialogs/deleteConfirmationDialog';
+import { UserService } from '../../../auth/services/user.service';
+import { FirebaseUserModel } from '../../../auth/models/user.model';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-inventory',
@@ -16,20 +19,24 @@ import { DeleteConfirmationDialogComponent } from '../dialogs/deleteConfirmation
 })
 export class InventoryComponent implements OnInit {
   options: FormGroup;
+  user = new FirebaseUserModel();
   @ViewChild(MatSort) sort: MatSort;
   articles: Article[];
   constructor(
     fb: FormBuilder,
     public articleService: ArticleService,
     public dialog: MatDialog,
+    public userService: UserService,
     public authService: AuthService,
     private location: Location,
-    private router: Router
+    private router: Router,
+    private spinner: NgxSpinnerService
   ) {
     this.options = fb.group({
       hideRequired: false,
       floatLabel: 'never'
     });
+    this.user.image = '/assets/alternativeUserPic.png';
   }
   dataSource;
 
@@ -49,13 +56,19 @@ export class InventoryComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.spinner.show();
     this.articleService.getArticles().subscribe(articles => {
       console.log(articles);
       this.articles = articles;
       console.log(this.articles.length);
       this.dataSource = new MatTableDataSource(this.articles);
+      setTimeout(() => {
+        /** spinner ends after 5 seconds */
+        this.spinner.hide();
+    }, 2000);
     }
   );
+    this.getUserInfo();
   }
 
   deleteArticle(article) {
@@ -95,13 +108,26 @@ export class InventoryComponent implements OnInit {
         }
 
     const dialogRef = this.dialog.open(ArticleDialogComponent, {
-      height: '610px',
+      height: '630px',
       data: dataToSend
     });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
     });
+  }
+
+  getUserInfo() {
+    this.userService.getCurrentUser().then(
+      res => {
+        this.user.image = res.photoURL;
+        this.user.name = res.displayName;
+        this.user.provider = res.providerData[0].providerId;
+        return;
+      }, err => {
+        this.router.navigate(['/login']);
+      }
+    );
   }
 
   logout() {

@@ -56,7 +56,9 @@ export class ArticleDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<ArticleDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public articleData: Article
     ) { this.createForm();
-    if (articleData.picture !== undefined ) {this.urls.push(articleData.picture); this.isNew = false; }
+    if (articleData.picture !== undefined ) {
+      this.urls.push(articleData.picture); this.isNew = false;
+     } else { this.urls.push('/assets/hanger.png'); }
   }
 
   ngOnInit(): void {

@@ -20,7 +20,7 @@ import { UserComponent } from './auth/components/user/user.component';
 import { RegisterComponent } from './auth/components/register/register.component';
 import { InventoryComponent } from './articles/components/inventory/inventory.component';
 import { TagsService } from './articles/services/tags.service';
-
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 import { MatMenuModule} from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -59,6 +59,7 @@ import { MatAutocompleteModule } from '@angular/material';
     DeleteConfirmationDialogComponent
   ],
   imports: [
+    NgxSpinnerModule,
     BrowserModule,
     ReactiveFormsModule,
     RouterModule.forRoot(rootRouterConfig, { useHash: false }),

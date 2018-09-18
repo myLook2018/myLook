@@ -5,7 +5,7 @@
 }
 
 mat-table {
-  height: calc(100vh - 105px);
+  height: calc(100vh - 112px);
   overflow: auto;
 }
 
@@ -43,4 +43,19 @@ table{
 .actionIcon{
   color: #9C27B0;
   z-index: 9;
+}
+
+.stickyNavbar{
+  background-color: #E1BEE7;
+  height: 56px;
+}
+
+.profilePic{
+border-radius: 50%;
+height: 32px;
+margin: 8px 0 8px 24px;
+outline: 0;
+vertical-align: top;
+width: 32px;
+margin: 8px 0 8px 8px;
 }
