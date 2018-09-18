@@ -44,6 +44,13 @@ import { ArticleDialogComponent } from './articles/components/dialogs/articleDia
 import { SuccesfulDialogComponent } from './dialog/succesful-dialog/succesful-dialog.component';
 import { DeleteConfirmationDialogComponent } from './articles/components/dialogs/deleteConfirmationDialog';
 import { MatAutocompleteModule } from '@angular/material';
+import { StoreComponent } from './store/components/store/store.component';
+import { StoreResolver } from './store/components/store/store.resolver';
+import { ArticleResolver } from './store/components/store/store.resolver';
+import { EditStoreComponent } from './store/components/dialogs/editStore';
+import { AgmCoreModule } from '@agm/core';
+import { MapsComponent } from './maps/maps.component';
+import { MapsDialogComponent } from './dialog/maps-dialog/maps-dialog.component';
 
 @NgModule({
   declarations: [
@@ -56,7 +63,11 @@ import { MatAutocompleteModule } from '@angular/material';
     DialogAlertComponent,
     ArticleDialogComponent,
     SuccesfulDialogComponent,
-    DeleteConfirmationDialogComponent
+    DeleteConfirmationDialogComponent,
+    StoreComponent,
+    MapsDialogComponent,
+    EditStoreComponent,
+    MapsComponent
   ],
   imports: [
     NgxSpinnerModule,
@@ -83,10 +94,11 @@ import { MatAutocompleteModule } from '@angular/material';
     MatSnackBarModule,
     MatSortModule,
     MatChipsModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    AgmCoreModule
   ],
   exports: [RouterModule],
-  providers: [AuthService, UserService, UserResolver, AuthGuard, StoreService, ArticleService, TagsService],
+  providers: [AuthService, UserService, UserResolver, AuthGuard, StoreService, ArticleService, TagsService, ArticleResolver, StoreResolver],
   entryComponents: [DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent, DeleteConfirmationDialogComponent],
   bootstrap: [AppComponent]
 })

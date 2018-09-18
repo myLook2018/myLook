@@ -1,0 +1,171 @@
+*{
+    
+    font-family: 'Futura';
+}
+.body{
+    min-height: 100vh;
+    width: 100%;
+    height: auto;
+    background-color: beige;
+    overflow: hidden;
+}
+#storeName{
+    font-family: FuturaHeavy;
+    font-size: 2em;
+}
+#storeDescription{
+    font-family: FuturaMediumCondensed;
+    font-size: 1em;
+}
+#storeInformation{
+    float: right;
+}
+.verticalCenter {
+    display:flex;
+    align-items:center;
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
+.noneDecorationLink {
+    cursor: pointer;
+    color: rgb(88, 128, 180);
+    text-decoration-line: none;
+}
+#mainInfo{
+    float: left;
+}
+.row {
+    overflow: hidden; 
+}
+.matCard{
+    width: 90%;
+    height: auto;
+    border-radius: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10vh;
+}
+
+#matCardDesc {
+    width: 90%;
+    min-width: 90%;
+    align-self: flex-end;
+    padding-bottom: 0;
+    margin-bottom: 0;
+
+}
+
+.avatar{    
+    display: flex;
+    // margin: 15px auto 15px;
+}
+.profile{
+    overflow: visible;
+    height: 40vh;
+    width: 100%;
+}
+
+.articlesCard{ 
+    width: 90%;
+    min-width: 90%;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#articleContainer {
+    width: 100%;
+}
+
+.imgContainer{
+    display: flex;
+    width: 15vw;
+    height: 15vw;
+    min-width: 150px;
+    min-height: 150px;
+    border-radius: 50%;
+    background-color: white;
+    overflow: hidden;
+    align-items: center; /* horizontal */
+    justify-content: center; /* vertical */
+    border: solid 10px;
+    border-color: white;
+    position: absolute;
+    z-index: 2;
+    box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
+
+}
+
+#mapDialog{
+    padding: 0px;
+}
+#noPostsYet{
+    height: 20%;
+    width: 20%;
+    margin-left:calc(50% - 10vw); 
+}
+
+.articleRow {
+    flex-direction: row; 
+    box-sizing: border-box; 
+    display: flex; 
+    //flex: 1 1 0%;
+    flex-wrap: wrap;   
+}
+.articleCard {
+    background-color: chocolate;
+    max-width: 300px;
+    max-height: 300px;
+    margin-bottom: 3%;
+    padding: 3px;
+}
+
+#logo {
+    width: 92px;
+    height: 36px;
+    padding-right: 3px;
+  }
+  
+  .right-icon {
+    padding: 0 14px;
+  }
+  
+  .spacer {
+    flex: 1 1 auto;
+  }
+  
+  table{
+      width: 100%;
+  }
+
+  .img-size {
+    max-width: 100px;
+    max-height: 50px;
+  }
+  
+  .centerImage {
+    margin: auto;
+  }
+
+  .socialMediaLink{
+      margin: 3px;
+      border-radius: 50%;
+  }
+
+  .clothImage{
+      max-width: 300px;
+      max-height: 300px;
+      min-width: 50px;
+      min-height: 50px;
+  }
+  .editInfo{
+      float: right;
+      color: #c7c0c0;
+      background-color: white;
+      :hover{
+          color: black;
+          cursor: pointer;
+      }
+  }
