@@ -1,0 +1,89 @@
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<div class="body">
+  <mat-toolbar role="heading" class="mat-typography">
+    <mat-toolbar-row style="background-color: beige; height: 48 px;">
+      <img id="logo" src="/assets/brandNoBackground.png" />
+      <span class="spacer"></span>
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>Configuración</button>
+        <button mat-menu-item (click)="logout()">Salir</button>
+      </mat-menu>
+    </mat-toolbar-row>
+  </mat-toolbar>
+  <div class="container" fxflex fxLayout="column" fxLayoutAlign="space-between center">
+    <div fxflex class="profile" fxLayout="column" fxLayoutAlign="space-around center">
+      <div class="imgContainer">
+        <img src="/assets/brandNoBackground.png" class="avatar" id="storePicture">
+      </div>
+      <mat-card id="matCardDesc" class="matCard" fxFlexAlign="end">
+        <div class="row">
+          <div id="mainInfo">
+            <mat-card-header>
+              <mat-card-title id="storeName">{{storeData.storeName}}
+                <div class="editInfo">
+                  &emsp;<i class="material-icons" (click)="editStoreInfo()">edit</i>
+                </div>
+              </mat-card-title>
+
+              <mat-card-subtitle id="storeDescription">{{storeData.storeDescription}}</mat-card-subtitle>
+            </mat-card-header>
+          </div>
+          <div id="storeInformation">
+            <div class="verticalCenter">
+              <i class="material-icons">local_phone</i>&emsp;{{storeData.storePhone}}
+            </div>
+            <div class="verticalCenter">
+              <i class="material-icons">home</i><a (click)="openMapDialog()" class="noneDecorationLink">&emsp;{{storeData.storeAddress}}
+                &emsp;{{storeData.storeAddressNumber}}
+              </a>
+            </div>
+            <div class="verticalCenter">
+              <i class="material-icons">mail_outline</i><a class="noneDecorationLink" href="mailto:{{storeData.storeMail}}">&emsp;{{storeData.storeMail}}</a>
+            </div>
+            <div class="row">
+              <a *ngIf="storeData.twitterLink" href="//{{storeData.twitterLink}}" target="_blank">
+                <img title="Twitter" alt="Twitter" src="https://image.flaticon.com/icons/svg/124/124021.svg" width="35" height="35" class="socialMediaLink"
+                />
+              </a>
+              <a *ngIf="storeData.facebookLink" href="//{{storeData.facebookLink}}" target="_blank">
+                <img title="Facebook" alt="Facebook" src="https://image.flaticon.com/icons/svg/174/174848.svg" width="35" height="35" class="socialMediaLink"
+                />
+              </a>
+              <a *ngIf="storeData.instagramLink" href="//{{storeData.instagramLink}}" target="_blank">
+                <img title="Instagram" alt="Instagram" src="https://image.flaticon.com/icons/svg/174/174855.svg" width="35" height="35" class="socialMediaLink"
+                />
+              </a>
+
+            </div>
+          </div>
+        </div>
+      </mat-card>
+
+    </div>
+    <div fxflex id="articleContainer">
+      <mat-card class="matCard articlesCard">
+        <div fxflex *ngIf="articles.length > 0" class="articleRow" fxLayout="row" fxLayoutAlign="space-around center" fxLayout.xs="column">
+          <div *ngFor="let article of articles" class="articleCardContainer">
+            <mat-card class="articleCard" fxflex="100" fxflex.gt="30%" fxflex.md="40%" fxflex.sm="100%">
+              <mat-card-content class="centerImage">
+                <img width="250px" height="250px" src="{{article.data().picture}}" class="clothImage">
+              </mat-card-content>
+              <mat-card-header>
+                <mat-card-title>{{article.data().provider}}</mat-card-title>
+                <mat-card-subtitle>{{article.data().cost}}</mat-card-subtitle>
+              </mat-card-header>
+
+            </mat-card>
+          </div>
+        </div>
+        <div *ngIf="articles.length == 0">
+          <img id="noPostsYet" src="../../../../assets//NoPostsYet.png">
+          <p style="margin-left:calc(50% - 10vw)">Todavía no hay artículos... :(</p>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>

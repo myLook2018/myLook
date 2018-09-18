@@ -19,12 +19,13 @@ import { LoginComponent } from './auth/components/login/login.component';
 import { UserComponent } from './auth/components/user/user.component';
 import { RegisterComponent } from './auth/components/register/register.component';
 import { InventoryComponent } from './articles/components/inventory/inventory.component';
-import { IAppState } from './store';
+import { TagsService } from './articles/services/tags.service';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
-import {MatMenuModule} from '@angular/material/menu';
+import { MatMenuModule} from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
-import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { MatSnackBarModule} from '@angular/material/snack-bar';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
@@ -36,10 +37,20 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { SignupComponent } from './auth/components/signup/signup.component';
 import { StoreService } from './auth/services/store.service';
-import { MatDialogModule } from '@angular/material';
+import { MatDialogModule, MatSort, MatSortModule } from '@angular/material';
 import { DialogAlertComponent } from './dialog/dialog-alert/dialog-alert.component';
-import { UpLoadArticleComponent } from './articles/components/dialogs/uploadArticle';
+import { MatChipsModule } from '@angular/material/chips';
+import { ArticleDialogComponent } from './articles/components/dialogs/articleDialog';
 import { SuccesfulDialogComponent } from './dialog/succesful-dialog/succesful-dialog.component';
+import { DeleteConfirmationDialogComponent } from './articles/components/dialogs/deleteConfirmationDialog';
+import { MatAutocompleteModule } from '@angular/material';
+import { StoreComponent } from './store/components/store/store.component';
+import { StoreResolver } from './store/components/store/store.resolver';
+import { ArticleResolver } from './store/components/store/store.resolver';
+import { EditStoreComponent } from './store/components/dialogs/editStore';
+import { AgmCoreModule } from '@agm/core';
+import { MapsComponent } from './maps/maps.component';
+import { MapsDialogComponent } from './dialog/maps-dialog/maps-dialog.component';
 
 @NgModule({
   declarations: [
@@ -50,10 +61,16 @@ import { SuccesfulDialogComponent } from './dialog/succesful-dialog/succesful-di
     InventoryComponent,
     SignupComponent,
     DialogAlertComponent,
-    UpLoadArticleComponent,
-    SuccesfulDialogComponent
+    ArticleDialogComponent,
+    SuccesfulDialogComponent,
+    DeleteConfirmationDialogComponent,
+    StoreComponent,
+    MapsDialogComponent,
+    EditStoreComponent,
+    MapsComponent
   ],
   imports: [
+    NgxSpinnerModule,
     BrowserModule,
     ReactiveFormsModule,
     RouterModule.forRoot(rootRouterConfig, { useHash: false }),
@@ -74,11 +91,15 @@ import { SuccesfulDialogComponent } from './dialog/succesful-dialog/succesful-di
     MatTableModule,
     MatDialogModule,
     MatMenuModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatSortModule,
+    MatChipsModule,
+    MatAutocompleteModule,
+    AgmCoreModule
   ],
   exports: [RouterModule],
-  providers: [AuthService, UserService, UserResolver, AuthGuard, StoreService, ArticleService],
-  entryComponents: [DialogAlertComponent, UpLoadArticleComponent, SuccesfulDialogComponent],
+  providers: [AuthService, UserService, UserResolver, AuthGuard, StoreService, ArticleService, TagsService, ArticleResolver, StoreResolver],
+  entryComponents: [DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent, DeleteConfirmationDialogComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
