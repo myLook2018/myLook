@@ -3,7 +3,7 @@ import {
   AngularFirestoreCollection
 } from 'angularfire2/firestore';
 import {  AngularFireStorage } from 'angularfire2/storage';
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Article } from '../models/article';
 import { map } from 'rxjs/operators';
@@ -11,7 +11,7 @@ import { map } from 'rxjs/operators';
 
 
 @Injectable()
-export class ArticleService {
+export class ArticleService implements OnDestroy {
     articleCollection: AngularFirestoreCollection<Article>;
     articles: Observable<Article[]>;
     // tslint:disable-next-line:no-inferrable-types
@@ -21,7 +21,7 @@ export class ArticleService {
     this.articleCollection = this.fst.collection(this.collectionPath, ref => ref.orderBy('tags', 'asc'));
     this.articles = this.articleCollection.snapshotChanges().pipe(map(changes => {
       return changes.map(a => {
-        const data = a.payload.doc.data() as Article;
+        const data = a.payload.doc.data();
         data.id = a.payload.doc.id;
         return data;
       });
@@ -57,5 +57,10 @@ export class ArticleService {
         // The document probably doesn't exist.
         console.error('Error updating document: ', error);
     });
+  }
+
+  ngOnDestroy() {
+    this.articleCollection.unsubscribe();
+    this.articles.unsubscribe();
   }
 }

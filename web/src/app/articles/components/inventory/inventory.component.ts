@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { Article } from '../../models/article';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ArticleDialogComponent } from '../dialogs/articleDialog';
@@ -11,17 +11,20 @@ import { DeleteConfirmationDialogComponent } from '../dialogs/deleteConfirmation
 import { UserService } from '../../../auth/services/user.service';
 import { FirebaseUserModel } from '../../../auth/models/user.model';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { Subscription } from 'rxjs';
+
 
 @Component({
   selector: 'app-inventory',
   templateUrl: './inventory.component.html',
   styleUrls: ['./inventory.component.scss']
 })
-export class InventoryComponent implements OnInit {
+export class InventoryComponent implements OnInit, OnDestroy {
+  @ViewChild(MatSort) sort: MatSort;
   options: FormGroup;
   user = new FirebaseUserModel();
-  @ViewChild(MatSort) sort: MatSort;
   articles: Article[];
+  _subscription: Subscription;
   constructor(
     fb: FormBuilder,
     public articleService: ArticleService,
@@ -31,49 +34,54 @@ export class InventoryComponent implements OnInit {
     private location: Location,
     private router: Router,
     private spinner: NgxSpinnerService
-  ) {
-    this.options = fb.group({
-      hideRequired: false,
-      floatLabel: 'never'
-    });
-    this.user.image = '/assets/alternativeUserPic.png';
-  }
-  dataSource;
-
-  displayedColumns: string[] = [
-    'picture',
-    'cost',
-    'size',
-    'material',
-    'colors',
-    'initial_stock',
-    'tags',
-    'actions'
-  ];
-
-  applyFilter(filterValue: string) {
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
-
-  ngOnInit() {
-    this.spinner.show();
-    this.articleService.getArticles().subscribe(articles => {
-      console.log(articles);
-      this.articles = articles;
-      console.log(this.articles.length);
-      this.dataSource = new MatTableDataSource(this.articles);
-      setTimeout(() => {
-        /** spinner ends after 5 seconds */
-        this.spinner.hide();
-    }, 2000);
+    ) {
+      this.options = fb.group({
+        hideRequired: false,
+        floatLabel: 'never'
+      });
+      this.user.image = '/assets/alternativeUserPic.png';
     }
-  );
-    this.getUserInfo();
-  }
+    dataSource;
 
-  deleteArticle(article) {
-    this.articleService.deleteArticle(article);
-    console.log(`Articulo ${article.id} eliminado`);
+    displayedColumns: string[] = [
+      'picture',
+      'cost',
+      'size',
+      'material',
+      'colors',
+      'initial_stock',
+      'tags',
+      'actions'
+    ];
+
+    applyFilter(filterValue: string) {
+      this.dataSource.filter = filterValue.trim().toLowerCase();
+    }
+
+    ngOnInit() {
+      this.spinner.show();
+      this._subscription = this.articleService.getArticles().subscribe(articles => {
+        console.log(articles);
+        this.articles = articles;
+        console.log(this.articles.length);
+        this.dataSource = new MatTableDataSource(this.articles);
+        setTimeout(() => {
+          /** spinner ends after 5 seconds */
+          this.spinner.hide();
+        }, 2000);
+      }
+      );
+      this.getUserInfo();
+    }
+
+  ngOnDestroy(): void {
+    console.log('no me destruyo la concha de la lora');
+    this._subscription.unsubscribe();
+    }
+
+deleteArticle(article) {
+      this.articleService.deleteArticle(article);
+      console.log(`Articulo ${article.id} eliminado`);
   }
 
   /*ngAfterViewInit() {
