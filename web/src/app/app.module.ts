@@ -100,7 +100,7 @@ import { MapsDialogComponent } from './dialog/maps-dialog/maps-dialog.component'
   exports: [RouterModule],
   providers: [AuthService, UserService, UserResolver, AuthGuard, StoreService, ArticleService, TagsService, ArticleResolver, StoreResolver],
   entryComponents: [DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent,
-     DeleteConfirmationDialogComponent, MapsDialogComponent],
+     DeleteConfirmationDialogComponent, MapsDialogComponent, EditStoreComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

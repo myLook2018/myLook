@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Resolve } from '@angular/router';
+import { ActivatedRoute, Resolve, Router } from '@angular/router';
 import { StoreService } from '../../../auth/services/store.service';
 import * as firebase from 'firebase';
 import { Observable } from '../../../../../node_modules/rxjs';
@@ -8,6 +8,11 @@ import { MapsDialogComponent } from '../../../dialog/maps-dialog/maps-dialog.com
 import { Article } from '../../../articles/models/article';
 import { Store } from '../../model/store.model';
 import { EditStoreComponent } from '../dialogs/editStore';
+import { UserService } from '../../../auth/services/user.service';
+import { FirebaseUserModel } from '../../../auth/models/user.model';
+import { AuthService } from '../../../auth/services/auth.service';
+import { Location } from '@angular/common';
+import { NgxSpinnerService } from 'ngx-spinner';
 // import { ObservableMedia } from '@angular/flex-layout';
 
 @Component({
@@ -20,11 +25,21 @@ export class StoreComponent implements OnInit {
   storeService: StoreService;
   storeData: Store;
   articles: Article[];
-  constructor(private route: ActivatedRoute, public dialog: MatDialog) {
+  user = new FirebaseUserModel();
+  constructor(
+    private route: ActivatedRoute,
+    public dialog: MatDialog,
+    public userService: UserService,
+    private router: Router,
+    public authService: AuthService,
+    private location: Location,
+    private spinner: NgxSpinnerService,
+    ) {
     this.storeName = route.snapshot.params['storeName'];
   }
 
   ngOnInit(): void {
+    this.spinner.show();
     this.route.data.subscribe(routeData => {
       const data = routeData['data'];
       if (data) {
@@ -37,7 +52,12 @@ export class StoreComponent implements OnInit {
       if (articles) {
         this.articles = articles;
       }
+      setTimeout(() => {
+        /** spinner ends after 5 seconds */
+        this.spinner.hide();
+      }, 2000);
     });
+    this.getUserInfo();
   }
 
   openMapDialog(): void {
@@ -78,5 +98,31 @@ export class StoreComponent implements OnInit {
       console.log('The dialog was closed');
     });
   }
+
+  getUserInfo() {
+    this.userService.getCurrentUser().then(
+      res => {
+        this.user.image = res.photoURL;
+        this.user.name = res.displayName;
+        this.user.provider = res.providerData[0].providerId;
+        return;
+      }, err => {
+        this.router.navigate(['/login']);
+      }
+    );
+  }
+
+  logout() {
+    this.authService.doLogout().then(
+      res => {
+        this.location.back();
+      },
+      error => {
+        console.log('Logout error', error);
+        this.router.navigate(['/login']);
+      }
+    );
+  }
+
 
 }
