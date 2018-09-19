@@ -59,7 +59,11 @@ export class StoreService {
                 ref.where('userName', '==', userName)
                     .get()
                     .then(snapshot => {
-                        return resolve(snapshot.docs[0].data());
+                        if (snapshot.docs[0]) {
+                            return resolve(snapshot.docs[0].data());
+                        } else {
+                            return reject('Page not Found');
+                        }
                     });
             });
         }

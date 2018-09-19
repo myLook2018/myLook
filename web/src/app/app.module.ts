@@ -22,10 +22,10 @@ import { InventoryComponent } from './articles/components/inventory/inventory.co
 import { TagsService } from './articles/services/tags.service';
 import { NgxSpinnerModule } from 'ngx-spinner';
 
-import { MatMenuModule} from '@angular/material/menu';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
-import { MatSnackBarModule} from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
@@ -51,7 +51,7 @@ import { EditStoreComponent } from './store/components/dialogs/editStore';
 import { AgmCoreModule } from '@agm/core';
 import { MapsComponent } from './maps/maps.component';
 import { MapsDialogComponent } from './dialog/maps-dialog/maps-dialog.component';
-
+import { ErrorComponent } from './error/error.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -67,13 +67,14 @@ import { MapsDialogComponent } from './dialog/maps-dialog/maps-dialog.component'
     StoreComponent,
     MapsDialogComponent,
     EditStoreComponent,
-    MapsComponent
+    MapsComponent,
+    ErrorComponent
   ],
   imports: [
     NgxSpinnerModule,
     BrowserModule,
     ReactiveFormsModule,
-    RouterModule.forRoot(rootRouterConfig, { useHash: false }),
+    RouterModule.forRoot(rootRouterConfig, { useHash: false, onSameUrlNavigation: 'reload' }),
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireStorageModule,
     AngularFirestoreModule, // imports firebase/firestore, only needed for database features
@@ -100,7 +101,7 @@ import { MapsDialogComponent } from './dialog/maps-dialog/maps-dialog.component'
   exports: [RouterModule],
   providers: [AuthService, UserService, UserResolver, AuthGuard, StoreService, ArticleService, TagsService, ArticleResolver, StoreResolver],
   entryComponents: [DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent,
-     DeleteConfirmationDialogComponent, MapsDialogComponent, EditStoreComponent],
+    DeleteConfirmationDialogComponent, MapsDialogComponent, EditStoreComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

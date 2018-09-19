@@ -8,20 +8,17 @@
 <div>
   <div [formGroup]="storeForm" style="display: flex;">
     <div style="width: 90%;height: 455px; position: relative;">
-      <div>
+      <div fxLayout="row" fxLayoutAlign="space-between start">
         <mat-form-field>
           <input matInput placeholder="Nombre" formControlName="name">
         </mat-form-field>
-        <mat-form-field style="width:90%">
+        <mat-form-field style="width:60%">
           <textarea matInput placeholder="Descripción" formControlName="desc"></textarea>
         </mat-form-field>
       </div>
       <mat-divider>
       </mat-divider>
       <div style="margin-top: 5%">
-        <mat-form-field style="margin-right: 2%">
-          <input matInput placeholder="Teléfono" formControlName="phone">
-        </mat-form-field>
         <div fxflex fxLayout="row" fxLayoutAlign="space-between center">
           <mat-form-field fxflex fxFlex="70%">
             <input matInput placeholder="Dirección" formControlName="address">
@@ -30,7 +27,10 @@
             <input matInput placeholder="N°" formControlName="addressNumber">
           </mat-form-field>
         </div>
-        <mat-form-field style="width: 90%;margin-top: 5%">
+        <mat-form-field style="margin-right: 2%">
+          <input matInput placeholder="Teléfono" formControlName="phone">
+        </mat-form-field>
+        <mat-form-field style="width: 90%">
           <input matInput placeholder="Mail" formControlName="mail">
         </mat-form-field>
       </div>
@@ -47,7 +47,7 @@
           <input matInput placeholder="Twitter" formControlName="twitter">
         </mat-form-field>
       </div>
-      <div fxflex style="align-self: flex-end" fxLayout="row" fxLayoutAlign="end end">
+      <div fxflex style="align-self: flex-end;margin-bottom: 5px" fxLayout="row" fxLayoutAlign="end end">
         <button style="background-color: #9C27B0; color: white" mat-raised-button (click)="saveChanges(storeForm.value)">Guardar</button>
       </div>
     </div>

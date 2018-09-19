@@ -11,7 +11,14 @@ export class StoreResolver implements Resolve<any> {
 
     resolve(route: ActivatedRouteSnapshot): Promise<any> {
         const storeName = route.params['storeName'];
-        return this.storeService.getStoreData(storeName);
+        return new Promise((resolve, reject) => {
+            this.storeService.getStoreData(storeName).then(res => {
+                return resolve(res);
+            }, err => {
+                this.router.navigate(['/404']);
+                return reject(err);
+            });
+        });
     }
 
 
