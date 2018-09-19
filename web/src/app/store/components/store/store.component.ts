@@ -90,8 +90,7 @@ export class StoreComponent implements OnInit {
   editStoreInfo(): void {
     const dialogRef = this.dialog.open(EditStoreComponent, {
       height: '650px',
-      data: { data: this.storeData },
-      width: '450px'
+      data: { data: this.storeData }
     });
 
     dialogRef.afterClosed().subscribe(result => {

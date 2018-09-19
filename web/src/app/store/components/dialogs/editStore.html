@@ -7,12 +7,12 @@
 
 <div>
   <div [formGroup]="storeForm" style="display: flex;">
-    <div style="width: 90%;height: 455px; position: relative;">
+    <div style="height: 455px; position: relative;">
       <div fxLayout="row" fxLayoutAlign="space-between start">
         <mat-form-field>
           <input matInput placeholder="Nombre" formControlName="name">
         </mat-form-field>
-        <mat-form-field style="width:60%">
+        <mat-form-field style="width:60%; margin-left: 5%;">
           <textarea matInput placeholder="Descripción" formControlName="desc"></textarea>
         </mat-form-field>
       </div>
