@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy} from '@angular/core';
 import { Article } from '../../models/article';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ArticleDialogComponent } from '../dialogs/articleDialog';
@@ -21,6 +21,7 @@ import { Subscription } from 'rxjs';
 })
 export class InventoryComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
+
   options: FormGroup;
   user = new FirebaseUserModel();
   articles: Article[];
@@ -148,5 +149,10 @@ deleteArticle(article) {
         this.router.navigate(['/login']);
       }
     );
+  }
+
+  goToProfile() {
+    console.log(`/store/${this.user.name}`);
+    this.router.navigate([`/store/${this.user.name}`]);
   }
 }

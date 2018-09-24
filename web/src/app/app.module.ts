@@ -22,6 +22,7 @@ import { InventoryComponent } from './articles/components/inventory/inventory.co
 import { TagsService } from './articles/services/tags.service';
 import { NgxSpinnerModule } from 'ngx-spinner';
 
+import {MatSidenavModule} from '@angular/material/sidenav';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
@@ -52,6 +53,8 @@ import { AgmCoreModule } from '@agm/core';
 import { MapsComponent } from './maps/maps.component';
 import { MapsDialogComponent } from './dialog/maps-dialog/maps-dialog.component';
 import { ErrorComponent } from './error/error.component';
+import {MatListModule} from '@angular/material/list';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -96,7 +99,9 @@ import { ErrorComponent } from './error/error.component';
     MatSortModule,
     MatChipsModule,
     MatAutocompleteModule,
-    AgmCoreModule
+    AgmCoreModule,
+    MatSidenavModule,
+    MatListModule
   ],
   exports: [RouterModule],
   providers: [AuthService, UserService, UserResolver, AuthGuard, StoreService, ArticleService, TagsService, ArticleResolver, StoreResolver],
