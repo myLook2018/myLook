@@ -1,8 +1,5 @@
 import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from 'angularfire2/firestore';
 import { Injectable, Inject } from '@angular/core';
-import * as firebase from 'firebase';
-import { Observable } from '../../../../node_modules/rxjs';
-import { AngularFireStorageReference } from 'angularfire2/storage';
 import { Store } from '../../store/model/store.model';
 
 @Injectable()
