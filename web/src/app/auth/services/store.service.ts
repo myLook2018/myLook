@@ -1,14 +1,17 @@
 import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from 'angularfire2/firestore';
 import { Injectable, Inject } from '@angular/core';
 import { Store } from '../../store/model/store.model';
+import { UserService } from './user.service';
+import { FirebaseUserModel } from '../models/user.model';
 
 @Injectable()
 export class StoreService {
+    userName: string;
 
     constructor(
-        public db: AngularFirestore
-    ) {
-    }
+        public db: AngularFirestore,
+        public usrService: UserService
+    ) {}
 
     checkUserExistance(user) {
         return new Promise<any>((resolve, reject) => {

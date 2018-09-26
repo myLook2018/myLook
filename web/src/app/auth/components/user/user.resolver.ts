@@ -14,22 +14,18 @@ export class UserResolver implements Resolve<FirebaseUserModel> {
 
     return new Promise((resolve, reject) => {
       this.userService.getCurrentUser()
-      .then(res => {
-        if (res.providerData[0].providerId === 'password') {
-          user.image = 'http://dsi-vd.github.io/patternlab-vd/images/fpo_avatar.png';
-          user.name = res.displayName;
-          user.provider = res.providerData[0].providerId;
-          return resolve(user);
-        } else {
+        .then(res => {
           user.image = res.photoURL;
           user.name = res.displayName;
+          console.log('1');
+          user.userId = res.uid;
           user.provider = res.providerData[0].providerId;
-          return resolve(user);
-        }
-      }, err => {
-        this.router.navigate(['/login']);
-        return reject(err);
+          resolve(user);
+        }, err => {
+          console.log(err);
+          this.router.navigate(['/login']);
+          return reject(err);
+        });
       });
-    });
+    }
   }
-}
