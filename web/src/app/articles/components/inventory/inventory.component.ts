@@ -5,7 +5,7 @@ import { ArticleDialogComponent } from '../dialogs/articleDialog';
 import { MatDialog, MatTableDataSource, MatSort } from '@angular/material';
 import { AuthService } from '../../../auth/services/auth.service';
 import { Location } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ArticleService } from '../../services/article.service';
 import { DeleteConfirmationDialogComponent } from '../dialogs/deleteConfirmationDialog';
 import { UserService } from '../../../auth/services/user.service';
@@ -26,6 +26,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
   user = new FirebaseUserModel();
   articles: Article[];
   _subscription: Subscription;
+  _subscription2: Subscription;
   constructor(
     fb: FormBuilder,
     public articleService: ArticleService,
@@ -34,7 +35,8 @@ export class InventoryComponent implements OnInit, OnDestroy {
     public authService: AuthService,
     private location: Location,
     private router: Router,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private route: ActivatedRoute,
     ) {
       this.options = fb.group({
         hideRequired: false,
@@ -61,23 +63,39 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
       this.spinner.show();
-      this._subscription = this.articleService.getArticles().subscribe(articles => {
-        console.log(articles);
-        this.articles = articles;
-        console.log(this.articles.length);
-        this.dataSource = new MatTableDataSource(this.articles);
-        setTimeout(() => {
-          /** spinner ends after 5 seconds */
-          this.spinner.hide();
-        }, 2000);
+      this.route.data.subscribe(routeData => {
+        console.log('estoy ya en el inventario');
+        const data = routeData['data'];
+            if (data) {
+              this.user = data as FirebaseUserModel;
+          }
+      });
+
+      this._subscription2 = this.userService.getUserInfo(this.user.userId).subscribe(userA => {
+        console.log(userA);
+        console.log(userA[0].userPhone);
+        this.user.userName = userA[0].userName;
+        console.log('nombre para comparar: ' + userA[0].userName);
+        this.user.userPhone = userA[0].userPhone;
+        this._subscription = this.articleService.getArticles(this.user.userName).subscribe(articles => {
+          console.log(articles);
+          this.articles = articles;
+          console.log(this.articles.length);
+          this.dataSource = new MatTableDataSource(this.articles);
+          setTimeout(() => {
+            /** spinner ends after  seconds */
+            this.spinner.hide();
+          }, 2000);
+        }
+        );
       }
-      );
-      this.getUserInfo();
+        );
     }
 
   ngOnDestroy(): void {
     console.log('no me destruyo la concha de la lora');
     this._subscription.unsubscribe();
+    this._subscription2.unsubscribe();
     }
 
 deleteArticle(article) {
@@ -105,6 +123,7 @@ deleteArticle(article) {
     let dataToSend = {};
     if (article !== undefined) {
         dataToSend = {
+        storeName: this.user.userName,
         id: article.id,
         picture: article.picture,
         cost: article.cost,
@@ -114,6 +133,8 @@ deleteArticle(article) {
         initial_stock: article.initial_stock,
         provider: article.provider,
         tags: article.tags };
+        } else {
+        dataToSend = { storeName: this.user.userName };
         }
 
     const dialogRef = this.dialog.open(ArticleDialogComponent, {
@@ -124,19 +145,6 @@ deleteArticle(article) {
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
     });
-  }
-
-  getUserInfo() {
-    this.userService.getCurrentUser().then(
-      res => {
-        this.user.image = res.photoURL;
-        this.user.name = res.displayName;
-        this.user.provider = res.providerData[0].providerId;
-        return;
-      }, err => {
-        this.router.navigate(['/login']);
-      }
-    );
   }
 
   logout() {
@@ -152,7 +160,7 @@ deleteArticle(article) {
   }
 
   goToProfile() {
-    console.log(`/store/${this.user.name}`);
-    this.router.navigate([`/store/${this.user.name}`]);
+    console.log(`/store/${this.user.userName}`);
+    this.router.navigate([`/store/${this.user.userName}`]);
   }
 }

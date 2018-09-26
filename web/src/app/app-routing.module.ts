@@ -14,7 +14,7 @@ import { ErrorComponent } from './error/error.component';
 
 export const rootRouterConfig: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'home', component: InventoryComponent },
+  { path: 'home', component: InventoryComponent, resolve: { data: UserResolver }},
   { path: 'login', component: LoginComponent, canActivate: [AuthGuard] },
   { path: 'signup', component: SignupComponent, canActivate: [AuthGuard] },
   { path: 'user', component: UserComponent, resolve: { data: UserResolver } },

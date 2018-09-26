@@ -8,4 +8,5 @@ export interface Article {
     initial_stock?: number;
     provider?: string;
     tags?: string[];
+    storeName?: string;
   }

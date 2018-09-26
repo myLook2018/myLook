@@ -1,11 +1,11 @@
-import { Component, Inject, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import {
   AngularFireStorage,
   AngularFireUploadTask,
   AngularFireStorageReference
 } from 'angularfire2/storage';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatChipInputEvent, MatAutocompleteSelectedEvent } from '@angular/material';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { UploadTaskSnapshot } from 'angularfire2/storage/interfaces';
 import { Validators, FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { ArticleService } from '../../services/article.service';
@@ -20,7 +20,7 @@ import { Tags } from '../../models/tags';
   selector: 'app-article-dialog',
   templateUrl: 'articleDialog.html'
 })
-export class ArticleDialogComponent implements OnInit {
+export class ArticleDialogComponent implements OnInit, OnDestroy {
   // taskReference
   ref: AngularFireStorageReference;
   // Main task
@@ -37,6 +37,7 @@ export class ArticleDialogComponent implements OnInit {
   filesSelected: FileList;
 
   tags: string[] = [];
+  _subscription: Subscription;
   allTags: Tags;
   visible = true;
   selectable = true;
@@ -62,13 +63,17 @@ export class ArticleDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.tagsService.getTags().subscribe(tags => {
+    this._subscription = this.tagsService.getTags().subscribe(tags => {
       console.log(tags[0]);
       this.allTags = tags[0];
       console.log(this.allTags.preset.length);
       this.filteredTags = this.tagsCtrl.valueChanges.pipe(startWith(null),
       map((tag: string | null) => tag ? this._filter(tag) : this.allTags.preset.slice()));
     });
+  }
+
+  ngOnDestroy(): void {
+    this._subscription.unsubscribe();
   }
 
   private _filter(value: string): string[] {
@@ -78,7 +83,7 @@ export class ArticleDialogComponent implements OnInit {
 
   createForm() {
     this.articleForm = this.fb.group({
-      // completar los datos de la imagen
+      // completar los datos de la prenda
       cost: [this.articleData.cost, Validators.nullValidator],
       size: [this.articleData.size, Validators.nullValidator],
       material: [this.articleData.material, Validators.nullValidator],
@@ -86,6 +91,7 @@ export class ArticleDialogComponent implements OnInit {
       initial_stock: [this.articleData.initial_stock, Validators.nullValidator],
       provider: [this.articleData.provider, Validators.nullValidator],
       tags: [this.articleData.tags, Validators.nullValidator],
+      storeName: [this.articleData.storeName, Validators.nullValidator]
     });
   }
 
@@ -133,18 +139,16 @@ export class ArticleDialogComponent implements OnInit {
         this.ref.getDownloadURL().subscribe(url => {
           this.articleForm.addControl('picture', new FormControl(url, Validators.required));
           console.log('añadimos al form');
-          this.articleService.addArticle(this.articleForm.value);
           console.log(url); // <-- do what ever you want with the url..
+          this.articleService.addArticle(this.articleForm.value);
         });
       })
     ).subscribe();
-
-
-    console.log('pasamos el add');
     this.openSnackBar('Prenda guardada en MyLook!', 'close');
 
   }
 
+  // actualiza la descripcion de una tienda
   refreshArticle(event) {
     const articleUpdated: Article = {
       id: this.articleData.id,
@@ -154,7 +158,8 @@ export class ArticleDialogComponent implements OnInit {
       colors: this.articleForm.controls['colors'].value,
       initial_stock: this.articleForm.controls['initial_stock'].value,
       provider: this.articleForm.controls['provider'].value,
-      tags: this.articleForm.controls['tags'].value
+      tags: this.articleForm.controls['tags'].value,
+      storeName: this.articleData.storeName
     };
     this.articleService.refreshArticle(articleUpdated);
     console.log(articleUpdated.tags);
@@ -177,13 +182,13 @@ export class ArticleDialogComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  // Genera el preview de las imagenes a cargar
   detectFiles(event) {
     this.filesSelected = event.target.files;
     this.urls = [];
     const files = event.target.files;
     if (files) {
       for (const file of files) {
-        console.log('pasamos a render');
         const reader = new FileReader();
         reader.onload = (e: any) => {
           console.log(this.urls.length);
@@ -195,6 +200,7 @@ export class ArticleDialogComponent implements OnInit {
     }
   }
 
+  // aniade un nuevo tag a la prenda
   add(event: MatChipInputEvent): void {
     const input = event.input;
     const value = event.value;
@@ -206,8 +212,6 @@ export class ArticleDialogComponent implements OnInit {
     if (input) {
       input.value = '';
     }
-
-    this.tagsCtrl.setValue(null);
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
