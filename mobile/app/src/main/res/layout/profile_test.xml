@@ -34,8 +34,7 @@
                 android:background="@drawable/profile_border_imageview"
                 android:elevation="5dp"
                 android:padding="20dp"
-                android:scaleType="centerCrop"
-                android:src="@mipmap/profile_image" />
+                android:scaleType="centerCrop"/>
 
             <ImageView
                 android:id="@+id/drop_down_option_menu"
@@ -43,8 +42,7 @@
                 android:layout_height="30dp"
                 android:layout_alignParentRight="true"
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
-                android:src="@drawable/ic_add" />
+                android:layout_marginTop="16dp" />
 
             <TextView
                 android:id="@+id/user_profile_name"
@@ -98,8 +96,7 @@
                 app:fabSize="normal"
                 app:backgroundTint="@color/orange"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:src="@drawable/ic_addphoto"/>
+                android:layout_alignParentRight="true" />
 
         </RelativeLayout>
 

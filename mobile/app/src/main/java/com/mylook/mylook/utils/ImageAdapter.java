@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
-import com.mylook.myapp.R;
+import com.mylook.mylook.R;
 
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
