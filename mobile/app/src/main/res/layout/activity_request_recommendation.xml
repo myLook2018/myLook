@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="474dp"
+        app:layout_constraintBottom_toTopOf="@+id/frameLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:context=".MainActivity">
+
+        <FrameLayout
+            android:id="@+id/cameraView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </FrameLayout>
+
+        <ImageButton
+            android:id="@+id/imgClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|top"
+            android:background="@android:drawable/ic_menu_close_clear_cancel"
+            android:padding="20dp" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/frameLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="93dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frameLayout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/btnCloset"
+                android:layout_width="80dp"
+                android:layout_height="76dp"
+                android:layout_marginEnd="43dp"
+                android:layout_marginRight="43dp"
+                android:layout_weight="1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:srcCompat="@android:drawable/ic_input_get"
+                tools:layout_editor_absoluteY="487dp" />
+
+            <ImageView
+                android:id="@+id/btnCamera"
+                android:layout_width="77dp"
+                android:layout_height="79dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_weight="1"
+                app:layout_constraintEnd_toStartOf="@+id/btnCloset"
+                app:srcCompat="@android:drawable/ic_menu_camera"
+                tools:layout_editor_absoluteY="488dp" />
+
+            <ImageView
+                android:id="@+id/btnGallery"
+                android:layout_width="83dp"
+                android:layout_height="72dp"
+                android:layout_marginEnd="3dp"
+                android:layout_marginLeft="18dp"
+                android:layout_marginRight="3dp"
+                android:layout_marginStart="18dp"
+                android:layout_weight="1"
+                app:layout_constraintEnd_toStartOf="@+id/btnCamera"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@android:drawable/ic_menu_gallery"
+                tools:layout_editor_absoluteY="488dp" />
+        </LinearLayout>
+
+    </FrameLayout>
+
+</android.support.constraint.ConstraintLayout>
