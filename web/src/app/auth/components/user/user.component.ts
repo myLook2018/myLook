@@ -4,7 +4,7 @@ import { AuthService } from '../../services/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { FirebaseUserModel } from '../../models/user.model';
+import { StoreModel } from '../../models/store.model';
 
 @Component({
   selector: 'app-user',
@@ -12,7 +12,7 @@ import { FirebaseUserModel } from '../../models/user.model';
   styleUrls: ['user.component.scss']
 })
 export class UserComponent implements OnInit {
-  user: FirebaseUserModel = new FirebaseUserModel();
+  user: StoreModel = new StoreModel();
   profileForm: FormGroup;
 
   constructor(
@@ -28,7 +28,8 @@ export class UserComponent implements OnInit {
       const data = routeData['data'];
       if (data) {
         this.user = data;
-        this.createForm(this.user.name);
+        console.log(`usrl ${this.user.profilePh}`);
+        this.createForm(this.user.storeName);
       }
     });
   }

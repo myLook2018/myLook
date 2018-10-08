@@ -9,7 +9,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ArticleService } from '../../services/article.service';
 import { DeleteConfirmationDialogComponent } from '../dialogs/deleteConfirmationDialog';
 import { UserService } from '../../../auth/services/user.service';
-import { FirebaseUserModel } from '../../../auth/models/user.model';
+import { StoreModel } from '../../../auth/models/store.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
 
@@ -21,12 +21,13 @@ import { Subscription } from 'rxjs';
 })
 export class InventoryComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
-
   options: FormGroup;
-  user = new FirebaseUserModel();
+  FirebaseUser = new StoreModel();
+  userStore = new StoreModel();
   articles: Article[];
   _subscription: Subscription;
   _subscription2: Subscription;
+
   constructor(
     fb: FormBuilder,
     public articleService: ArticleService,
@@ -42,7 +43,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
         hideRequired: false,
         floatLabel: 'never'
       });
-      this.user.image = '/assets/alternativeUserPic.png';
+      this.userStore.profilePh = '/assets/noProfilePic.png';
     }
     dataSource;
 
@@ -67,20 +68,14 @@ export class InventoryComponent implements OnInit, OnDestroy {
         console.log('estoy ya en el inventario');
         const data = routeData['data'];
             if (data) {
-              this.user = data as FirebaseUserModel;
+              this.FirebaseUser = data;
           }
       });
-
-      this._subscription2 = this.userService.getUserInfo(this.user.userId).subscribe(userA => {
-        console.log(userA);
-        console.log(userA[0].userPhone);
-        this.user.userName = userA[0].userName;
-        console.log('nombre para comparar: ' + userA[0].userName);
-        this.user.userPhone = userA[0].userPhone;
-        this._subscription = this.articleService.getArticles(this.user.userName).subscribe(articles => {
-          console.log(articles);
+      this._subscription2 = this.userService.getUserInfo(this.FirebaseUser.firebaseUserId).subscribe (userA => {
+        this.userStore = userA[0];
+        if (this.userStore.profilePh === '') {this.userStore.profilePh = this.FirebaseUser.profilePh; }
+        this._subscription = this.articleService.getArticles(this.userStore.storeName).subscribe(articles => {
           this.articles = articles;
-          console.log(this.articles.length);
           this.dataSource = new MatTableDataSource(this.articles);
           setTimeout(() => {
             /** spinner ends after  seconds */
@@ -93,7 +88,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     }
 
   ngOnDestroy(): void {
-    console.log('no me destruyo la concha de la lora');
+    console.log('destruyendo subscripciones');
     this._subscription.unsubscribe();
     this._subscription2.unsubscribe();
     }
@@ -123,7 +118,7 @@ deleteArticle(article) {
     let dataToSend = {};
     if (article !== undefined) {
         dataToSend = {
-        storeName: this.user.userName,
+        storeName: this.userStore.storeName,
         id: article.id,
         picture: article.picture,
         cost: article.cost,
@@ -134,7 +129,7 @@ deleteArticle(article) {
         provider: article.provider,
         tags: article.tags };
         } else {
-        dataToSend = { storeName: this.user.userName };
+        dataToSend = { storeName: this.userStore.storeName};
         }
 
     const dialogRef = this.dialog.open(ArticleDialogComponent, {
@@ -160,7 +155,7 @@ deleteArticle(article) {
   }
 
   goToProfile() {
-    console.log(`/store/${this.user.userName}`);
-    this.router.navigate([`/store/${this.user.userName}`]);
+    console.log(`/store/${this.userStore.storeName}`);
+    this.router.navigate([`/store/${this.userStore.storeName}`]);
   }
 }

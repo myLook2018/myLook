@@ -2,7 +2,7 @@ import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from 
 import { Injectable, Inject } from '@angular/core';
 import { Store } from '../../store/model/store.model';
 import { UserService } from './user.service';
-import { FirebaseUserModel } from '../models/user.model';
+import { StoreModel } from '../models/store.model';
 
 @Injectable()
 export class StoreService {
@@ -15,9 +15,9 @@ export class StoreService {
 
     checkUserExistance(user) {
         return new Promise<any>((resolve, reject) => {
-            const ref = this.db.collection('usuarios').ref;
+            const ref = this.db.collection('stores').ref;
             console.log(ref);
-            ref.where('userName', '==', user.userName)
+            ref.where('storeName', '==', user.userName)
                 .get()
                 .then(snapshot => {
                     return resolve(snapshot.empty);

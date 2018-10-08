@@ -14,15 +14,15 @@
                 <button mat-menu-item>Configuración</button>
                 <button mat-menu-item (click)="logout()">Salir</button>
             </mat-menu>
-            <img class="profilePic" [src]="user.image">
+            <img class="profilePic" [src]="FirebaseUser.profilePh">
         </mat-toolbar-row>
     </mat-toolbar>
-
 
     <mat-sidenav-container style="height: 100%;">
         <mat-sidenav #sidenav [mode]="over">
             <mat-nav-list>
-                <a mat-list-item (click)="goToProfile()">Ver Perfil</a>
+                <a mat-list-item (click)="goToProfile()">Visita tu Perfil!</a>              
+              <a mat-list-item (click)="goToRecomendations()">Has una recomendacion!</a>
             </mat-nav-list>
         </mat-sidenav>
 
@@ -41,7 +41,7 @@
                     </div>
                 </mat-toolbar-row>
             </mat-toolbar>
-<div>
+    <div>
     <mat-table class="table" [dataSource]="dataSource" matSort>
 
         <!--- Note that these columns can be defined in any order.

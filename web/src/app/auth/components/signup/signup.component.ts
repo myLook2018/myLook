@@ -31,6 +31,22 @@ export class SignupComponent {
     this.createForm();
    }
 
+   isEmailAvailable() {
+      this.authService.checkEmailExistance(this.email).then(
+        (res) => {
+          if (!res) {
+            this.errorMessage = 'Ya existe un usuario registrado con el mail ingresado.';
+            console.log(this.errorMessage);
+          } else  {
+            console.log(res);
+            console.log(this.email);
+            this.authService.emailToRegister = this.email;
+            this.router.navigate(['/register']);
+           }
+        }
+      );
+   }
+
    createForm() {
      this.signupForm = this.fb.group({
        email: ['', Validators.required ],
@@ -60,12 +76,6 @@ export class SignupComponent {
        this.router.navigate(['/home']);
      }, err => console.log(err)
      );
-   }
-
-   goToRegistration() {
-     console.log(this.email);
-    this.authService.emailToRegister = this.email;
-    this.router.navigate(['/register']);
    }
 
    tryRegister(value) {
