@@ -1,29 +1,42 @@
 export class StoreModel {
-    facebookLink: string;
-    instagramLink: string;
-    storeAddress: string;
-    storeAddressNumber: Number;
-    storeDescription: string;
-    storeFloor: string;
-    storeMail: string;
-    storeName: string;
-    storePhone: string;
-    storePosition: {};
-    twitterlink: string;
-    userName: string;
+  firebaseUserId: string;
+  storeName: string;
+  storeMail: string;
+  ownerName: string;
+  profilePh: string;
+  coverPh: string;
+  storePhone: string;
+  facebookLink: string;
+  storeProvince: string;
+  storeCity: string;
+  storeAddressNumber: string;
+  storeFloor: string;
+  storePosition: string;
+  storeDescription: string;
+  instagramLink: string;
+  twitterLink: string;
+  storeAddress: string;
+  provider: string;
 
-    constructor() {
-        this.facebookLink = '';
-        this.instagramLink = '';
-        this.storeAddress = '';
-        this.storeAddressNumber = 0;
-        this.storeDescription = '';
-        this.storeFloor = '';
-        this.storeMail = '';
-        this.storeName = '';
-        this.storePhone = '';
-        this.storePosition = {};
-        this.twitterlink = '';
-        this.userName = '';
-    }
+  constructor() {
+    this.firebaseUserId = '';
+    this.storeName = '';
+    this.storeMail = '';
+    this.ownerName = '';
+    this.profilePh = '';
+    this.coverPh = '';
+    this.storePhone = '';
+    this.facebookLink = '';
+    this.storeProvince = '';
+    this.storeCity = '';
+    this.storeAddressNumber = '';
+    this.storeFloor = '';
+    this.storePosition = '';
+    this.storeDescription = '';
+    this.instagramLink = '';
+    this.twitterLink = '';
+    this.storeAddress = '';
+    this.provider = '';
   }
+}
+

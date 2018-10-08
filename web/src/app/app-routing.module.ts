@@ -21,7 +21,7 @@ export const rootRouterConfig: Routes = [
   { path: 'register', component: RegisterComponent },
   {
     path: 'store/:storeName', component: StoreComponent,
-    resolve: { data: StoreResolver, articles: ArticleResolver }, runGuardsAndResolvers: 'always'
+    resolve: { data: UserResolver, articles: ArticleResolver }, runGuardsAndResolvers: 'always'
   },
   { path: '404', component: ErrorComponent }
 ];

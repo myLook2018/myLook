@@ -4,35 +4,41 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import * as firebase from 'firebase';
 import 'rxjs/add/operator/mergeMap';
 import { Observable } from 'rxjs';
-import { FirebaseUserModel } from '../models/user.model';
+import { StoreModel } from '../models/store.model';
 import { map } from 'rxjs/internal/operators/map';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class UserService {
-  usersCollection: AngularFirestoreCollection<FirebaseUserModel>;
-  userA: Observable<FirebaseUserModel[]>;
+  storesCollection: AngularFirestoreCollection<StoreModel>;
+  storeA: Observable<StoreModel[]>;
   constructor(
    public db: AngularFirestore,
-   public afAuth: AngularFireAuth
+   public afAuth: AuthService
  ) {
 
-  this.usersCollection = this.db.collection('usuarios', ref => ref.orderBy('userName', 'asc'));
-    this.userA = this.usersCollection.snapshotChanges().pipe(map(changes => {
+  this.storesCollection = this.db.collection('stores', ref => ref.orderBy('storeName', 'asc'));
+    this.storeA = this.storesCollection.snapshotChanges().pipe(map(changes => {
       return changes.map(a => {
         const data = a.payload.doc.data();
-        data.firebaseId = a.payload.doc.id;
+        data.firebaseUserId = a.payload.doc.id;
         return data;
       });
     }));
 
  }
 
- checkUserExistance(userName) {
+ addStore(userStore: StoreModel) {
+  return this.storesCollection.add(userStore);
+ }
+
+ checkUserExistance(storeName) {
   return new Promise<any>((resolve, reject) => {
-      const ref = this.db.collection('usuarios').ref;
-      ref.where('userName', '==', userName)
+      const ref = this.db.collection('stores').ref;
+      ref.where('storeName', '==', storeName)
           .get()
           .then(snapshot => {
+              console.log(snapshot.empty);
               return resolve(snapshot.empty);
           });
 
@@ -52,11 +58,11 @@ export class UserService {
     });
   }
 
-  getUserInfo(userUid) {
-    console.log('ya estoy pidiendo usuario:' + userUid);
-    return this.userA.pipe(map(items => items.filter(item => {
-      console.log(`este ${item.userId} vs ${userUid}`);
-      return item.userId === userUid;
+  getUserInfo(storeUid) {
+    console.log('ya estoy pidiendo store con id: ' + storeUid);
+    return this.storeA.pipe(map(items => items.filter(item => {
+      console.log(`este ${item.firebaseUserId} vs ${storeUid}`);
+      return item.firebaseUserId === storeUid;
     }
       )));
 }

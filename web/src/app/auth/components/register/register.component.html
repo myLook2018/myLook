@@ -12,8 +12,8 @@
 
     <div>
       <mat-horizontal-stepper #stepper [linear]="isLinear">
-        <mat-step [stepControl]="firstFormGroup">
-          <form [formGroup]="firstFormGroup">
+        <mat-step [stepControl]="registerStoreFormGroup">
+          <form [formGroup]="registerStoreFormGroup">
             <ng-template matStepLabel>Usuario</ng-template>
 
             <div #firstStep style="display: flex; height: 435px;">
@@ -21,39 +21,39 @@
               <div style="display: block;margin-left: auto; margin-right:auto;">
 
                 <mat-form-field style="display: block;">
-                  <input matInput autofocus placeholder="Nombre de Usuario" formControlName="userName">
+                  <input matInput autofocus placeholder="Nombre de Usuario" formControlName="storeName" [(ngModel)]="storeName">
                 </mat-form-field>
 
                 <div style="display: table-cell">
-                  <div style="display: block; width: 200px; height: 255px; position: relative;">
+                  <div style="display: block; width: 200px; height: auto; position: relative;">
                     <div style="text-align: center;">
+                      <div *ngIf="!(errorMessage === '')" style="color:red">
+                        {{errorMessage}}
+                      </div>
                       <label>Foto de Perfil</label>
                     </div>
                     <div #firstColumn>
-                      <div class="circleBase" style="height: 180px;background-color: #adaaaa5d;padding-top: 10px;">
+                      <div class="circleBase" style="height: 200px;">
 
                         <!--  <object data="avatar.jpg" [src]="" type="image/jpg">
                           <img src="../../../../assets/noPhotoSelected.png" />
                         </object>
                       -->
-                        <div *ngFor="let url of urls ;  let i=index">
-                          <img *ngIf="i<1" [src]="url" class="rounded mb-3" height="170" style="display: block; margin-left: auto; margin-right: auto;">
+                        <div>
+                          <img *ngFor="let url of urlsProfile" [src]="url" class="rounded mb-3" height="200px" width="200px" style="display: block;">
                         </div>
                       </div>
                       <div>
-                        <button class="purpleButton" type="button" mat-raised-button style="display: block; margin-left: auto; margin-right: auto; margin-top: 10px" (click)="imgProfile.click()">Añade una foto</button>
-                        <input hidden class="file-input" #imgProfile type="file" (change)="detectFiles($event, 0)">
+                        <button class="purpleButton" type="button" mat-raised-button style="display: block; margin-left: auto; margin-right: auto; margin-top: 10px"
+                          (click)="imgProfile.click()">Añade una foto</button>
+                        <input hidden class="file-input" #imgProfile type="file" (change)="detectFilesProfile($event)">
                       </div>
                     </div>
                   </div>
 
                   <div style="display: grid; margin-top: 10px;">
-                    <mat-form-field class="full-length">
-                      <input matInput placeholder="Email " formControlName="userMail" type="email" [ngModel]="email">
-                    </mat-form-field>
-
                     <mat-form-field>
-                      <input matInput placeholder="Telefono Personal" formControlName="userPhone">
+                      <input matInput placeholder="Telefono Personal" formControlName="storePhone">
                     </mat-form-field>
                   </div>
                 </div>
@@ -63,7 +63,7 @@
 
             <div style="display: grid;">
               <div style="margin-left: auto">
-                <button mat-mini-fab class="nextButton orangeButton" (click)="checkUserName(firstFormGroup.value, stepper)">
+                <button mat-mini-fab class="nextButton orangeButton" (click)="isStoreNameAvailable(stepper)">
                   <mat-icon>navigate_next</mat-icon>
                 </button>
               </div>
@@ -72,28 +72,22 @@
         </mat-step>
 
 
-        <mat-step [stepControl]="secondFormGroup">
-          <form [formGroup]="secondFormGroup">
+        <mat-step [stepControl]="registerStoreFormGroup">
+          <form [formGroup]="registerStoreFormGroup">
             <ng-template matStepLabel>Tienda</ng-template>
-
-            <mat-form-field>
-              <input matInput placeholder="Nombre de Tienda" formControlName="storeName" id='storeName' required>
-            </mat-form-field>
-
             <div>
-
-              <div style="display: block; width: 200px; height: 255px; position: relative; margin-left: auto; margin-right: auto">
-                <div style="text-align: center;">
-                  <label>Foto de Tienda</label>
-                </div>
+              <div style="display: block; width: auto; height: auto; position: relative; margin-left: auto; margin-right: auto">
                 <div #firstColumn>
-                  <div class="circleBase" style="height: 180px;background-color: #adaaaa5d;padding-top: 10px;">
-                    <img *ngFor="let url of urls | slice:1; let i = index" [src]="url" class="rounded mb-3" height="170" style="display: block; margin-left: auto; margin-right: auto;">
+                  <div style="height: 200px;">
+                    <div *ngFor="let url of urlsPortada ;  let i=index">
+                      <img *ngIf="i<1" [src]="url" class="rounded mb-3" height="200" style="display: block; margin-left: auto; margin-right: auto;">
+                    </div>
                   </div>
-                  <div>
-                    <button class="purpleButton" type="button" mat-raised-button style="display: block; margin-left: auto; margin-right: auto; margin-top: 10px" (click)="imgShop.click()">Añade una foto</button>
-                    <input hidden class="file-input" #imgShop type="file" (change)="detectFiles($event, 1)">
-                  </div>
+                </div>
+                <div>
+                  <button class="purpleButton" type="button" mat-raised-button style="display: block; margin-left: auto; margin-right: auto; margin-top: 10px"
+                    (click)="imgPortada.click()">Añade una portada a tu tienda</button>
+                  <input hidden class="file-input" #imgPortada type="file" (change)="detectFilesPortada($event)">
                 </div>
               </div>
 
@@ -114,14 +108,9 @@
               </mat-form-field>
 
               <mat-form-field style="width: 40%;">
-                <input matInput placeholder="Ciudad" formControlName="storeProvince">
+                <input matInput placeholder="Ciudad" formControlName="storeCity">
               </mat-form-field>
-
-              <mat-form-field style="width: 30%;">
-                  <input matInput placeholder="Teléfono de Contacto" formControlName="storeProvince" id="storePhone">
-                </mat-form-field>
             </div>
-
 
             <div style="display: flex">
               <mat-form-field id="storeAddress" style="width: 45%">
@@ -137,11 +126,11 @@
               </mat-form-field>
 
               <mat-form-field id="storeFloor" style="width: 10%;">
-                  <input matInput placeholder="Dpto" formControlName="storeFloor">
-                </mat-form-field>
+                <input matInput placeholder="Dpto" formControlName="storeFloor">
+              </mat-form-field>
 
               <mat-form-field id="storeFloor" style="width: 20%;">
-                  <input matInput placeholder="Torre(opcional)" formControlName="storeFloor">
+                <input matInput placeholder="Torre(opcional)" formControlName="storeFloor">
               </mat-form-field>
             </div>
 
@@ -152,7 +141,7 @@
                   <mat-icon>navigate_before</mat-icon>
                 </button>
                 <span class="fill-space"></span>
-                <button mat-mini-fab matStepperNext class="nextButton orangeButton" (click)="checkStoreName(secondFormGroup.value, stepper)">
+                <button mat-mini-fab matStepperNext class="nextButton orangeButton" (click)="stepper.next()">
                   <mat-icon>navigate_next</mat-icon>
                 </button>
               </mat-toolbar-row>
@@ -163,30 +152,30 @@
 
 
 
-        <mat-step [stepControl]="thirdFormGroup">
-          <form [formGroup]="thirdFormGroup">
+        <mat-step [stepControl]="registerStoreFormGroup">
+          
             <ng-template matStepLabel>Confirmar Datos</ng-template>
 
             <mat-form-field class="full-length">
-              <input matInput placeholder="Contraseña" formControlName="storePhone" id="storePhone" type="password">
+              <input matInput placeholder="Contraseña" [(ngModel)]='password' type="password">
             </mat-form-field>
 
             <mat-form-field class="full-length">
-              <input matInput placeholder="Confirmar contraseña" formControlName="storeMail" type="password" >
+              <input matInput placeholder="Confirmar contraseña" [(ngModel)]='confirmPassword' type="password">
             </mat-form-field>
 
             <mat-toolbar>
               <mat-toolbar-row style="background-color: white">
-                <button  mat-mini-fab matStepperPrevious  class="nextButton orangeButton">
+                <button mat-mini-fab matStepperPrevious class="nextButton orangeButton">
                   <mat-icon>navigate_before</mat-icon>
                 </button>
                 <span class="fill-space"></span>
-                <button mat-mini-fab matStepperNext class="nextButton orangeButton" (click)="tryRegister(firstFormGroup.value, secondFormGroup.value, thirdFormGroup.value)">
+                <button mat-mini-fab matStepperNext class="nextButton orangeButton" (click)="tryRegister()">
                   <mat-icon class="material-icons">done</mat-icon>
                 </button>
               </mat-toolbar-row>
             </mat-toolbar>
-          </form>
+         
         </mat-step>
       </mat-horizontal-stepper>
     </div>

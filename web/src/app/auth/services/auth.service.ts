@@ -2,15 +2,28 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AngularFireAuth } from 'angularfire2/auth';
 import * as firebase from 'firebase';
+import { AngularFirestore } from 'angularfire2/firestore';
 
 @Injectable()
 export class AuthService {
 
   constructor(
-   public afAuth: AngularFireAuth
+   public afAuth: AngularFireAuth,
+   public db: AngularFirestore
  ) {}
 
   emailToRegister: String;
+
+checkEmailExistance(email) {
+  return new Promise<any>((resolve, reject) => {
+      const ref = this.db.collection('stores').ref;
+      ref.where('storeMail', '==', email)
+          .get()
+          .then(snapshot => {
+              return resolve(snapshot.empty);
+          });
+  });
+}
 
   doFacebookLogin() {
     return new Promise<any>((resolve, reject) => {

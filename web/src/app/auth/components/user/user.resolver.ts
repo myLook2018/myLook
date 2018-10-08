@@ -1,24 +1,24 @@
 import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
-import { FirebaseUserModel } from '../../models/user.model';
+import { StoreModel } from '../../models/store.model';
 
 @Injectable()
-export class UserResolver implements Resolve<FirebaseUserModel> {
+export class UserResolver implements Resolve<StoreModel> {
 
   constructor(public userService: UserService, private router: Router) { }
 
-  resolve(route: ActivatedRouteSnapshot): Promise<FirebaseUserModel> {
+  resolve(route: ActivatedRouteSnapshot): Promise<StoreModel> {
 
-    const user = new FirebaseUserModel();
+    const user = new StoreModel();
 
     return new Promise((resolve, reject) => {
       this.userService.getCurrentUser()
         .then(res => {
-          user.image = res.photoURL;
-          user.name = res.displayName;
-          console.log('1');
-          user.userId = res.uid;
+          user.profilePh = res.photoURL;
+          console.log( `fotooo` +  user.profilePh);
+          user.storeName = res.displayName;
+          user.firebaseUserId = res.uid;
           user.provider = res.providerData[0].providerId;
           resolve(user);
         }, err => {
