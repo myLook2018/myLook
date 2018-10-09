@@ -34,13 +34,14 @@
         <activity android:name=".explore.ExploreActivity" />
         <activity android:name=".profile.ProfileActivity" />
         <activity android:name=".recommend.RecommendActivityAddImg" >
-            <intent-filter>
+        </activity>
+        <activity android:name=".login.RegisterActivity"/>
+        <activity android:name=".recommend.RecommendActivityAddDesc">
+        <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
         </activity>
-        <activity android:name=".login.RegisterActivity"/>
-        <activity android:name=".recommend.RecommendActivityAddDesc"/>
     </application>
 
 </manifest>

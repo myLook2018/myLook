@@ -28,6 +28,7 @@ public class RecommendActivityAddImg extends AppCompatActivity {
     private Button btnNext;
     private Bitmap bitmap;
     private Uri selectImageUri;
+    private boolean banImage;
 
     private Integer REQUEST_CAMERA=1, SELECT_FILE=0;
 
@@ -64,7 +65,10 @@ public class RecommendActivityAddImg extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(getApplicationContext(), RecommendActivityAddDesc.class);
-                intent.putExtra("imgRecommend",bitmap); //FALTAN VAIDACIONES
+                if(banImage)
+                    intent.putExtra("imgRecommend",bitmap);
+                else
+                    intent.putExtra("imgRecommend",selectImageUri);
                 startActivity(intent);
             }
         });
@@ -78,9 +82,11 @@ public class RecommendActivityAddImg extends AppCompatActivity {
             if(requestCode==REQUEST_CAMERA){
                 bitmap=(Bitmap) data.getExtras().get("data");
                 cameraView.setImageBitmap(bitmap);
+                banImage=true;
             }else if(requestCode==SELECT_FILE){
                 selectImageUri=data.getData();
                 cameraView.setImageURI(selectImageUri);
+                banImage=false;
             }
         }
 
