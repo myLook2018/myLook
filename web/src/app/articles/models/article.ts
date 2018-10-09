@@ -1,4 +1,4 @@
-export interface Article {
+export class Article {
     id?: String;
     picture?: String;
     cost?: number;
