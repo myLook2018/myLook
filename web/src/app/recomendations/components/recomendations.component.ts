@@ -125,7 +125,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
     console.log(`selectedRowIndex request ` + this.selectedRowIndex);
     this.selectedRequest = row;
     this.selectedArticle = new Article();
-    this.selectedArticle.picture = '/assets/hanger.png';
+    this.selectedArticle.picture = '/assets/idea.png';
     console.log(this.userStore.profilePh);
   }
 
