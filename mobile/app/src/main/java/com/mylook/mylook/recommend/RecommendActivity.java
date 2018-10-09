@@ -35,7 +35,10 @@ public class RecommendActivity extends AppCompatActivity implements RecommendFra
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavViewBar);
         BottomNavigationViewHelper.enableNavigation(mContext, bottomNavigationView);
         Menu menu = bottomNavigationView.getMenu();
-        MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
+        MenuItem menuItem = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.CUPCAKE) {
+            menuItem = menu.getItem(ACTIVITY_NUM);
+        }
         menuItem.setChecked(true);
     }
 

@@ -62,8 +62,7 @@
             android:text="Crear una nueva cuenta"
             android:gravity="center"
             android:textSize="16dp"
-            android:id="@+id/link_signup"
-            android:textColor="@color/link_blue" />
+            android:id="@+id/link_signup"/>
 
     </LinearLayout>
 
