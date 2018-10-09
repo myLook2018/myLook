@@ -24,28 +24,24 @@
             <include layout="@layout/layout_top_toolbar" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/layout_center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/layout_bottom"
-            android:layout_below="@+id/layout_top">
-
             <RelativeLayout
+                android:id="@+id/layout_center"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_above="@+id/layout_bottom"
+                android:layout_below="@+id/layout_top">
 
                 <ImageView
                     android:id="@+id/imgRecommend"
-                    android:layout_width="129dp"
-                    android:layout_height="122dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="126dp"
                     android:clickable="true"
                     tools:background="@color/purple" />
 
                 <Button
                     android:id="@+id/btnSend"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="346dp"
+                    android:layout_height="39dp"
                     android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="16dp"
@@ -53,10 +49,10 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/textInputLayout"
-                    android:layout_width="230dp"
-                    android:layout_height="138dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="164dp"
                     android:layout_alignParentTop="true"
-                    android:layout_marginTop="149dp">
+                    android:layout_marginTop="123dp">
 
                     <android.support.design.widget.TextInputEditText
                         android:id="@+id/txtDescription"
@@ -64,6 +60,7 @@
                         android:layout_height="164dp"
                         android:layout_below="@+id/textInputLayout"
                         android:layout_alignStart="@+id/textInputLayout"
+                        android:layout_alignBottom="@+id/textInputLayout"
                         android:layout_marginTop="-16dp"
                         android:hint="Agregá una descripción a tu solicitud."
                         android:singleLine="false" />
@@ -75,18 +72,18 @@
                     android:layout_height="43dp"
                     android:layout_below="@+id/textInputLayout"
                     android:layout_alignStart="@+id/lblUbication"
-                    android:layout_marginStart="-12dp"
-                    android:layout_marginTop="-2dp"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="-1dp"
                     android:text="Días de duración" />
 
                 <EditText
                     android:id="@+id/txtLimitDate"
-                    android:layout_width="202dp"
-                    android:layout_height="43dp"
+                    android:layout_width="174dp"
+                    android:layout_height="45dp"
                     android:layout_below="@+id/textInputLayout"
-                    android:layout_alignStart="@+id/lblUbication"
-                    android:layout_marginStart="147dp"
-                    android:layout_marginTop="0dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="-1dp"
+                    android:layout_marginEnd="24dp"
                     android:ems="10"
                     android:inputType="date" />
 
@@ -108,8 +105,6 @@
                     android:layout_marginBottom="90dp" />
 
             </RelativeLayout>
-
-        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layout_bottom"
