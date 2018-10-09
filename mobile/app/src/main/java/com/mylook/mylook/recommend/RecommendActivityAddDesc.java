@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,7 +37,6 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     private StorageReference storageRef;
     private Uri selectImageUri;
     private Bitmap bitmap;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,6 +75,11 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 }
         }
         dB = FirebaseFirestore.getInstance();
+        Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
+        tb.setTitle("Nueva Solicitud");
+        setSupportActionBar(tb);
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
      //   storageRef = FirebaseStorage.getInstance().getReference();
     }
 

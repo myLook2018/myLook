@@ -5,12 +5,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.support.v7.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -36,7 +36,8 @@ public class HomeActivity extends AppCompatActivity implements HomeFragment.OnFr
         setupFirebaseAuth();
 
         setupBottomNavigationView();
-        setupViewPager();
+        Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(tb);
     }
 
     @Override
@@ -70,24 +71,6 @@ public class HomeActivity extends AppCompatActivity implements HomeFragment.OnFr
                 checkCurrentUser(firebaseAuth.getCurrentUser());
             }
         };
-    }
-
-    /**
-     * Responsible for adding the 2 tabs: Home, Notifications
-     */
-    private void setupViewPager() {
-        SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new HomeFragment());
-        adapter.addFragment(new NotificationsFragment());
-        ViewPager viewPager = (ViewPager) findViewById(R.id.container);
-        viewPager.setAdapter(adapter);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
-
-        tabLayout.getTabAt(0).setIcon(R.drawable.logo_white_no_background);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_notifications);
-
     }
 
     /**

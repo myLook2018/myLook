@@ -8,6 +8,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,7 +22,6 @@ public class RecommendActivity extends AppCompatActivity implements RecommendFra
     private static final int ACTIVITY_NUM = 2;
     private FloatingActionButton fab;
 
-
     private Context mContext = RecommendActivity.this;
 
     @Override
@@ -30,7 +30,6 @@ public class RecommendActivity extends AppCompatActivity implements RecommendFra
         setContentView(R.layout.activity_recommend);
 
         setupBottomNavigationView();
-        setupViewPager();
         fab= findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -39,6 +38,9 @@ public class RecommendActivity extends AppCompatActivity implements RecommendFra
                 startActivity(intent);
             }
         });
+        Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
+        tb.setTitle("Recomendaciones");
+        setSupportActionBar(tb);
     }
 
     /**
@@ -48,19 +50,8 @@ public class RecommendActivity extends AppCompatActivity implements RecommendFra
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavViewBar);
         BottomNavigationViewHelper.enableNavigation(mContext, bottomNavigationView);
         Menu menu = bottomNavigationView.getMenu();
-        MenuItem menuItem = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.CUPCAKE) {
-            menuItem = menu.getItem(ACTIVITY_NUM);
-        }
+        MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);
-    }
-
-    private void setupViewPager() {
-        SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new RecommendFragment());
-        ViewPager viewPager = (ViewPager) findViewById(R.id.container);
-        viewPager.setAdapter(adapter);
-
     }
 
     @Override

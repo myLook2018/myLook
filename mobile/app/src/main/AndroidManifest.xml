@@ -33,7 +33,9 @@
         <activity android:name=".recommend.RecommendActivity" />
         <activity android:name=".login.RegisterActivity" />
         <activity android:name=".recommend.RecommendActivityAddImg" />
-        <activity android:name=".recommend.RecommendActivityAddDesc"/>
+        <activity
+            android:name=".recommend.RecommendActivityAddDesc"
+            android:parentActivityName=".recommend.RecommendActivity"/>
 
     </application>
 

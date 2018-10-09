@@ -10,34 +10,44 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- top toolbar -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/relLayout1">
-        </RelativeLayout>
-
-        <!-- body -->
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/layout_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/relLayout2"
-            android:layout_below="@+id/relLayout1">
+            android:layout_alignParentTop="true">
 
-            <include layout="@layout/layout_center_viewpager"/>
-        </RelativeLayout>
+            <include layout="@layout/layout_top_toolbar" />
+        </LinearLayout>
 
-        <!-- bottom navigation -->
-        <include layout="@layout/layout_bottom_navigation_view"/>
+        <LinearLayout
+            android:id="@+id/layout_center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layout_top"
+            android:layout_above="@id/layout_bottom"
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/layout_bottom"
+            android:layout_alignParentBottom="true">
+
+            <include layout="@layout/layout_bottom_navigation_view" />
+        </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@id/layout_center"
+            android:layout_alignBottom="@id/layout_center"
+            android:src="@drawable/ic_add"
+            android:layout_margin="16dp"
+            app:borderWidth="0dp"/>
 
     </RelativeLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:src="@drawable/ic_add"
-        android:layout_margin="16dp" />
 
 </android.support.design.widget.CoordinatorLayout>
