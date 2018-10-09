@@ -54,6 +54,7 @@ import { MapsComponent } from './maps/maps.component';
 import { MapsDialogComponent } from './dialog/maps-dialog/maps-dialog.component';
 import { ErrorComponent } from './error/error.component';
 import {MatListModule} from '@angular/material/list';
+import { RecomendationsComponent } from './recomendations/components/recomendations.component';
 
 @NgModule({
   declarations: [
@@ -71,7 +72,8 @@ import {MatListModule} from '@angular/material/list';
     MapsDialogComponent,
     EditStoreComponent,
     MapsComponent,
-    ErrorComponent
+    ErrorComponent,
+    RecomendationsComponent
   ],
   imports: [
     NgxSpinnerModule,

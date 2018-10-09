@@ -34,10 +34,10 @@ export class InventoryComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     public userService: UserService,
     public authService: AuthService,
-    private location: Location,
     private router: Router,
-    private spinner: NgxSpinnerService,
     private route: ActivatedRoute,
+    private location: Location,
+    private spinner: NgxSpinnerService,
     ) {
       this.options = fb.group({
         hideRequired: false,
@@ -45,8 +45,8 @@ export class InventoryComponent implements OnInit, OnDestroy {
       });
       this.userStore.profilePh = '/assets/noProfilePic.png';
     }
-    dataSource;
 
+    dataSource;
     displayedColumns: string[] = [
       'picture',
       'cost',
@@ -157,5 +157,9 @@ deleteArticle(article) {
   goToProfile() {
     console.log(`/store/${this.userStore.storeName}`);
     this.router.navigate([`/store/${this.userStore.storeName}`]);
+  }
+
+  goToRecomendations() {
+    this.router.navigate([`/recomendations`]);
   }
 }

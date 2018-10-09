@@ -141,5 +141,9 @@ export class StoreComponent implements OnInit, OnDestroy {
     this.router.navigate([`/home`]);
   }
 
+  goToRecomendations() {
+    this.router.navigate([`/recomendations`]);
+  }
+
 
 }
