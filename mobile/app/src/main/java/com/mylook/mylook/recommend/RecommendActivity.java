@@ -1,21 +1,26 @@
 package com.mylook.mylook.recommend;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.mylook.mylook.R;
-import com.mylook.mylook.utils.SectionsPagerAdapter;
 import com.mylook.mylook.utils.BottomNavigationViewHelper;
+import com.mylook.mylook.utils.SectionsPagerAdapter;
 
 public class RecommendActivity extends AppCompatActivity implements RecommendFragment.OnFragmentInteractionListener {
 
     private static final int ACTIVITY_NUM = 2;
+    private FloatingActionButton fab;
+
 
     private Context mContext = RecommendActivity.this;
 
@@ -26,6 +31,14 @@ public class RecommendActivity extends AppCompatActivity implements RecommendFra
 
         setupBottomNavigationView();
         setupViewPager();
+        fab= findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(getApplicationContext(), RecommendActivityAddDesc.class);
+                startActivity(intent);
+            }
+        });
     }
 
     /**

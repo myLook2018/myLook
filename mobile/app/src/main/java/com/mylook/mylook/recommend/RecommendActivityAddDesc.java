@@ -48,6 +48,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         txtLimitDate=(EditText) findViewById(R.id.txtLimitDate);
         btnUbication=(Switch) findViewById(R.id.btnUbication);
 
+
         imgRecommend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

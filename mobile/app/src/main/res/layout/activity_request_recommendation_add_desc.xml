@@ -124,4 +124,6 @@
         app:layout_constraintStart_toEndOf="@+id/lblUbication"
         app:layout_constraintTop_toBottomOf="@+id/txtLimitDate" />
 
+
+
 </android.support.constraint.ConstraintLayout>
