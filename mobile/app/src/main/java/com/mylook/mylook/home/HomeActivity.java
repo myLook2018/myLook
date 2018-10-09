@@ -87,6 +87,7 @@ public class HomeActivity extends AppCompatActivity implements HomeFragment.OnFr
 
         tabLayout.getTabAt(0).setIcon(R.drawable.logo_white_no_background);
         tabLayout.getTabAt(1).setIcon(R.drawable.ic_notifications);
+
     }
 
     /**

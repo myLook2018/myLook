@@ -3,33 +3,45 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".explore.ExploreActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- top toolbar -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/relLayout1">
-
-            <include layout="@layout/layout_top_tabs"/>
-        </RelativeLayout>
-
-        <!-- body -->
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/layout_center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/relLayout2"
-            android:layout_below="@+id/relLayout1">
+            android:layout_alignParentTop="true"
+            android:layout_above="@id/layout_bottom">
 
-            <include layout="@layout/layout_center_viewpager"/>
-        </RelativeLayout>
+            <com.wenchao.cardstack.CardStack
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:gravity="center"
+                android:padding="10dp"
+                app:card_enable_loop="false"
+                app:card_enable_rotation="true"
+                app:card_gravity="top"
+                app:card_margin="10dp"
+                app:card_stack_size="5"
+                />
+            <!--<include layout="@layout/layout_center_viewpager" />-->
+        </LinearLayout>
 
-        <!-- bottom navigation -->
-        <include layout="@layout/layout_bottom_navigation_view"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/layout_bottom"
+            android:layout_alignParentBottom="true">
+
+            <include layout="@layout/layout_bottom_navigation_view" />
+        </LinearLayout>
 
     </RelativeLayout>
 
