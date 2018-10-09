@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "259536885025-rdsfl93bdlttlkgevjomg8u066drlja6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mylook.mylook",
+            "certificate_hash": "802aeb4f7e132d96d01e2cdf2aa592abd5db62dc"
+          }
+        },
+        {
           "client_id": "259536885025-gelnlk1fmtg8rss0cam6koe3l4bne7h6.apps.googleusercontent.com",
           "client_type": 3
         }
