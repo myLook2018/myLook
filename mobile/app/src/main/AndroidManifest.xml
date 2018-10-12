@@ -21,21 +21,23 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".login.LoginActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".home.HomeActivity"></activity>
         <activity android:name=".explore.ExploreActivity" />
         <activity android:name=".profile.ProfileActivity" />
-        <activity android:name=".recommend.RecommendActivity" />
+        <activity android:name=".recommend.RecommendActivity" android:grantUriPermissions="true"/>
         <activity android:name=".login.RegisterActivity" />
-        <activity android:name=".recommend.RecommendActivityAddImg" />
-        <activity
-            android:name=".recommend.RecommendActivityAddDesc"
-            android:parentActivityName=".recommend.RecommendActivity"/>
+        <activity android:name=".recommend.RecommendActivityAddImg" android:grantUriPermissions="true" />
+
+        <activity android:name=".recommend.RecommendActivityAddDesc"
+            android:parentActivityName=".recommend.RecommendActivity" android:grantUriPermissions="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
 
     </application>
 

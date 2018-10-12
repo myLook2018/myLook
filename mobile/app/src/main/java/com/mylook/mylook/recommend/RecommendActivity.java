@@ -29,12 +29,13 @@ public class RecommendActivity extends AppCompatActivity implements RecommendFra
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recommend);
 
-        setupBottomNavigationView();
+        //setupBottomNavigationView();
         fab= findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(getApplicationContext(), RecommendActivityAddDesc.class);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 startActivity(intent);
             }
         });
