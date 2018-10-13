@@ -2,9 +2,14 @@ package com.mylook.mylook.recommend;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,6 +22,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CalendarView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
@@ -24,6 +31,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -32,19 +41,20 @@ import com.google.firebase.storage.UploadTask;
 import com.mylook.mylook.R;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SimpleTimeZone;
+import java.util.concurrent.TimeUnit;
 
 public class RecommendActivityAddDesc extends AppCompatActivity {
 
     private Button btnBack, btnSend;
     private ImageView imgRecommend = null;
     private TextInputEditText txtDescription;
-    private EditText txtLimitDate;
+    private Date limitDate;
+    private EditText editDate;
     private Switch btnUbication;
     private FirebaseFirestore dB;
     private StorageReference storageRef;
@@ -52,6 +62,9 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     private Bitmap bitmap = null;
     private boolean permissionGranted = true;
     private final int REQUEST_CAMERA = 1, SELECT_FILE = 0, READ_EXTERNAL_STORAGE = 1;
+    protected LocationManager locationManager;
+    protected LocationListener locationListener;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,9 +74,9 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         btnSend = (Button) findViewById(R.id.btnSend);
         imgRecommend = (ImageView) findViewById(R.id.imgRecommend);
         txtDescription = (TextInputEditText) findViewById(R.id.txtDescription);
-        txtLimitDate = (EditText) findViewById(R.id.txtLimitDate);
+        editDate = (EditText) findViewById(R.id.editDate);
         btnUbication = (Switch) findViewById(R.id.btnUbication);
-
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         imgRecommend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,6 +103,8 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                     imgRecommend.setImageURI(selectImageUri);
                 }
         }
+
+
         dB = FirebaseFirestore.getInstance();
         Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
         tb.setTitle("Nueva Solicitud");
@@ -97,12 +112,32 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         storageRef = FirebaseStorage.getInstance().getReference();
+        final Calendar myCalendar = Calendar.getInstance();
+
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+                myCalendar.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
+                limitDate = new Date();
+                limitDate.setTime(myCalendar.getTimeInMillis());
+                editDate.setText(dayOfMonth+"/"+monthOfYear+"/"+year);
+            }
+        };
+
+        editDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new DatePickerDialog(RecommendActivityAddDesc.this, date , myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
     }
 
 
     private Uri[] saveImage(String key) {
         int permissionCheck = ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.READ_EXTERNAL_STORAGE);
-
         final StorageReference storageReference = storageRef.child("requestPhotos/" + this.createPhotoName("userName") + ".jpg");
         Uri[] downloadUrl = {Uri.parse(storageReference.getPath())};
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
@@ -144,8 +179,11 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             displayMessage("Please write a description");
             return;
         }
-        if (txtLimitDate.getText().toString().isEmpty()) {
-            displayMessage("Please pick a limit date");
+        Calendar cal = Calendar.getInstance();
+
+        long days = TimeUnit.MILLISECONDS.toDays(limitDate.getTime() - cal.getTime().getTime());
+        if ( days < 3) {
+            displayMessage("Please pick a correct limit date, 3 days minimum");
             return;
         }
         if (selectImageUri == null) {
@@ -153,24 +191,25 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             return;
         }
         Uri[] photoUri = saveImage("1");
-        if(photoUri.length>0&& photoUri[0] != null) {
+        Location loc = getLocation();
+        if(photoUri.length>0&& photoUri[0] != null && loc!=null) {
             final Map<String, Object> recommendation = new HashMap<>();
-            recommendation.put("userName", "user");
+            FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
+            recommendation.put("userId", user.getUid());
+            recommendation.put("userName", user.getDisplayName());
             recommendation.put("description", txtDescription.getText().toString());
-            recommendation.put("limitDate", txtLimitDate.getText().toString());
+            recommendation.put("limitDate", cal.getTimeInMillis());
             recommendation.put("updateDate", "update");
             recommendation.put("requestPhoto", photoUri[0].toString());
-            recommendation.put("localization", "location");
+            recommendation.put("localization", loc);
             recommendation.put("state", false);
-
-
             dB.collection("requestRecommendations")
                     .add(recommendation)
                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
                         public void onSuccess(DocumentReference documentReference) {
                             displayMessage("Your recommendation has been sent");
-                            finish();
+                            //finish();
 
                         }
                     })
@@ -196,6 +235,38 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         String photoName = userName + "_" + sdf.format(cal.getTime());
         System.out.println(photoName);
         return photoName;
+    }
+
+    private Location getLocation(){
+        boolean locPermission = true;
+        int permissionCheck = ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_FINE_LOCATION);
+        if(permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+                locPermission = true;
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                locPermission= true;
+            }
+        }
+
+        List<String> providers = locationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            Location l = locationManager.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null
+                    || l.getAccuracy() < bestLocation.getAccuracy()) {
+                bestLocation = l;
+            }
+        }
+        if (bestLocation == null) {
+            return null;
+        }
+        return bestLocation;
     }
 
     @Override
