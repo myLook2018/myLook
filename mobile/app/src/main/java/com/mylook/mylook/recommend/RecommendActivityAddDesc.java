@@ -2,8 +2,10 @@ package com.mylook.mylook.recommend;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -12,6 +14,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
@@ -46,6 +49,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 public class RecommendActivityAddDesc extends AppCompatActivity {
@@ -61,9 +65,9 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     private Uri selectImageUri = null;
     private Bitmap bitmap = null;
     private boolean permissionGranted = true;
-    private final int REQUEST_CAMERA = 1, SELECT_FILE = 0, READ_EXTERNAL_STORAGE = 1;
+    private final int REQUEST_CAMERA = 1, SELECT_FILE = 0, READ_EXTERNAL_STORAGE = 1, LOCATION_PERMISSION = 2;
     protected LocationManager locationManager;
-    protected LocationListener locationListener;
+    private Location currentLocation;
 
 
     @Override
@@ -76,7 +80,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         txtDescription = (TextInputEditText) findViewById(R.id.txtDescription);
         editDate = (EditText) findViewById(R.id.editDate);
         btnUbication = (Switch) findViewById(R.id.btnUbication);
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
 
         imgRecommend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,14 +126,14 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 myCalendar.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
                 limitDate = new Date();
                 limitDate.setTime(myCalendar.getTimeInMillis());
-                editDate.setText(dayOfMonth+"/"+monthOfYear+"/"+year);
+                editDate.setText(dayOfMonth + "/" + monthOfYear + "/" + year);
             }
         };
 
         editDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new DatePickerDialog(RecommendActivityAddDesc.this, date , myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                new DatePickerDialog(RecommendActivityAddDesc.this, date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
@@ -138,6 +142,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
 
     private Uri[] saveImage(String key) {
         int permissionCheck = ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.READ_EXTERNAL_STORAGE);
+
         final StorageReference storageReference = storageRef.child("requestPhotos/" + this.createPhotoName("userName") + ".jpg");
         Uri[] downloadUrl = {Uri.parse(storageReference.getPath())};
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
@@ -148,15 +153,14 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             } else {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-                permissionGranted= true;
+                permissionGranted = true;
             }
         }
-        if(permissionGranted) {
+        if (permissionGranted) {
             if (bitmap == null) {
                 storageReference.putFile(selectImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        displayMessage("Fue cargada con exito");
                     }
                 });
             } else {
@@ -182,7 +186,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         Calendar cal = Calendar.getInstance();
 
         long days = TimeUnit.MILLISECONDS.toDays(limitDate.getTime() - cal.getTime().getTime());
-        if ( days < 3) {
+        if (days < 3) {
             displayMessage("Please pick a correct limit date, 3 days minimum");
             return;
         }
@@ -190,18 +194,26 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             displayMessage("Please select an image");
             return;
         }
-        Uri[] photoUri = saveImage("1");
         Location loc = getLocation();
-        if(photoUri.length>0&& photoUri[0] != null && loc!=null) {
+        FirebaseUser user = null;
+        try {
+            user = FirebaseAuth.getInstance().getCurrentUser();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        if (loc != null && user != null) {
+            List<Double> latLong = new Vector<>();
+            latLong.add(loc.getLatitude());
+            latLong.add(loc.getLongitude());
             final Map<String, Object> recommendation = new HashMap<>();
-            FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
             recommendation.put("userId", user.getUid());
             recommendation.put("userName", user.getDisplayName());
             recommendation.put("description", txtDescription.getText().toString());
             recommendation.put("limitDate", cal.getTimeInMillis());
             recommendation.put("updateDate", "update");
-            recommendation.put("requestPhoto", photoUri[0].toString());
-            recommendation.put("localization", loc);
+            recommendation.put("requestPhoto", saveImage("1")[0].toString());
+            recommendation.put("localization", latLong );
             recommendation.put("state", false);
             dB.collection("requestRecommendations")
                     .add(recommendation)
@@ -220,7 +232,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                         }
                     });
         } else {
-            displayMessage("Error en la creacion del array");
+            displayMessage("Error en la creacion de datos");
         }
 
     }
@@ -229,44 +241,92 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
+
+    private Location getLocation() {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (!isLocationEnabled()) {
+            showLocationAlert();
+        }
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+
+        if(permissionCheck != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION);
+        }
+
+        try {
+            locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new MyLocationListenerGPS(), null);
+            currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if(currentLocation!=null){
+                return currentLocation;
+            }
+            locationManager.requestSingleUpdate(LocationManager.PASSIVE_PROVIDER, new MyLocationListenerGPS(), null);
+            currentLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+            if(currentLocation!=null){
+                return currentLocation;
+            }
+
+            locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, new MyLocationListenerGPS(), null);
+            currentLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+        return currentLocation;
+    }
+
+    public class MyLocationListenerGPS implements LocationListener {
+        @Override
+        public void onLocationChanged(Location location) {
+            currentLocation = location;
+        }
+
+        @Override
+        public void onStatusChanged(String s, int i, Bundle bundle) {
+        }
+
+        @Override
+        public void onProviderEnabled(String s) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String s) {
+            showLocationAlert();
+        }
+    }
+
+    private boolean isLocationEnabled() {
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    private void showLocationAlert() {
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Enable Location")
+                .setMessage("Your Locations Settings is set to 'Off'.\nPlease Enable Location to " +
+                        "use this app")
+                .setPositiveButton("Location Settings", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(myIntent);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    }
+                });
+        dialog.show();
+    }
+
+
+
     private String createPhotoName(String userName) {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("DD_MM_HH_mm_ss");
         String photoName = userName + "_" + sdf.format(cal.getTime());
         System.out.println(photoName);
         return photoName;
-    }
-
-    private Location getLocation(){
-        boolean locPermission = true;
-        int permissionCheck = ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_FINE_LOCATION);
-        if(permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-                locPermission = true;
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-                locPermission= true;
-            }
-        }
-
-        List<String> providers = locationManager.getProviders(true);
-        Location bestLocation = null;
-        for (String provider : providers) {
-            Location l = locationManager.getLastKnownLocation(provider);
-            if (l == null) {
-                continue;
-            }
-            if (bestLocation == null
-                    || l.getAccuracy() < bestLocation.getAccuracy()) {
-                bestLocation = l;
-            }
-        }
-        if (bestLocation == null) {
-            return null;
-        }
-        return bestLocation;
     }
 
     @Override
@@ -291,16 +351,19 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     permissionGranted = true;
                 } else {
-
                 }
-                return;
+                break;
+            }
+            case LOCATION_PERMISSION: {
+                if(grantResults.length > 0
+                        && grantResults[0] != PackageManager.PERMISSION_GRANTED){
+                        showLocationAlert();
+                }
             }
 
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
-    }
+}
 
 
 
