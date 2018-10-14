@@ -14,7 +14,7 @@
         <button mat-menu-item>Configuración</button>
         <button mat-menu-item (click)="logout()">Salir</button>
       </mat-menu>
-      <img class="profilePic" [src]="firebaseUser.profilePh">
+      <img class="profilePic" [src]="userStore.profilePh">
     </mat-toolbar-row>
   </mat-toolbar>
 
@@ -28,6 +28,7 @@
 
     <mat-sidenav-content class="pageContent">
       <ngx-spinner bdColor="rgba(255,255,255,1)" size="large" color="#9c27b0" type="ball-grid-pulse"></ngx-spinner>
+      
       <!-- Recomendations -->
       <div class="requestList">
         <mat-table class="requestTable mat-elevation-z2" [dataSource]="dataSourceRequests" matSort>
@@ -45,49 +46,53 @@
 
       <span class="spacer"></span>
 
-      <!--Carta con nuestra recomendacion-->
-      <div *ngIf="!selectedRequest.UserName == '' ">
-        <form [formGroup]="requestAnswerForm">
-          <mat-card class="answerCard">
-            <mat-card-header>
-              <img mat-card-avatar [src]="userStore.profilePh">
-              <mat-card-title>Nuestra recomendación!</mat-card-title>
-              <mat-card-subtitle>{{userStore.storeName}}</mat-card-subtitle>
-            </mat-card-header>
-            <img mat-card-image [src]="selectedArticle.picture" alt="No se adjuntó foto en la respuesta.">
-            <mat-card-content>
-              <mat-form-field class="descriptionArea">
-                <textarea matInput placeholder="Agrega una descripción para tu sugerencia, los clientes las aprecian!." formControlName="description"></textarea>
-              </mat-form-field>
-            </mat-card-content>
-            <mat-card-actions align="end">
-              <button mat-raised-button (click)="sendAnswer()">Enviar Recomendación!</button>
-            </mat-card-actions>
-          </mat-card>
-        </form>
-      </div>
       
-      <!--Al seleccionar una fila de las opciones, se despliega una carta con la descripcion-->
-      <div *ngIf="!selectedRequest.UserName == '' ">
-        <mat-card class="requestCard">
-          <mat-card-header>
-            <img mat-card-avatar src="/assets/noProfilePic.png">
-            <mat-card-title>Solicitud de Recomendación.</mat-card-title>
-            <mat-card-subtitle>{{selectedRequest.UserName}}</mat-card-subtitle>
-          </mat-card-header>
-          <img mat-card-image [src]="selectedRequest.ArticleUrl" alt="No se adjuntó foto en la solicitud.">
-          <mat-card-content>
-            <p>{{selectedRequest.Description}}</p>
-          </mat-card-content>
-        </mat-card>
+      <div>
+
+        <!--Al seleccionar una fila de las opciones, se despliega una carta con la descripcion-->
+        <div *ngIf="!selectedRequest.UserName == '' ">
+          <mat-card class="requestCard">
+            <mat-card-header>
+              <img mat-card-avatar src="/assets/noProfilePic.png">
+              <mat-card-title>Solicitud de Recomendación.</mat-card-title>
+              <mat-card-subtitle>{{selectedRequest.UserName}}</mat-card-subtitle>
+            </mat-card-header>
+            <img mat-card-image [src]="selectedRequest.ArticleUrl" alt="No se adjuntó foto en la solicitud.">
+            <mat-card-content>
+              <p>{{selectedRequest.Description}}</p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        
+        <!--Carta con nuestra recomendacion-->
+        <div *ngIf="!selectedRequest.UserName == '' ">
+          <form [formGroup]="requestAnswerForm">
+            <mat-card class="answerCard">
+              <mat-card-header>
+                <img mat-card-avatar [src]="userStore.profilePh">
+                <mat-card-title>Nuestra recomendación!</mat-card-title>
+                <mat-card-subtitle>{{userStore.storeName}}</mat-card-subtitle>
+              </mat-card-header>
+              <img mat-card-image [src]="selectedArticle.picture">
+              <mat-card-content>
+                <mat-form-field class="descriptionArea">
+                  <textarea matInput placeholder="Agrega una descripción para tu sugerencia, los clientes las aprecian!." formControlName="description"></textarea>
+                </mat-form-field>
+              </mat-card-content>
+              <mat-card-actions align="end">
+                <button mat-raised-button (click)="sendAnswer()">Enviar Recomendación!</button>
+              </mat-card-actions>
+            </mat-card>
+          </form>
+        </div>
+        
       </div>
-
-      <span class="spacer"></span>
-
-      <!-- Prendas del catalogo -->
-      <div class="articleList">
-        <mat-table class="articleTable mat-elevation-z2 navbar" [dataSource]="dataSourceArticles" matSort>
-
+        <span class="spacer"></span>
+        
+        <!-- Prendas del catalogo -->
+        <div class="articleList">
+          <mat-table class="articleTable mat-elevation-z2 navbar" [dataSource]="dataSourceArticles" matSort>
+            
           <ng-container matColumnDef="PrendasCatalogo">
             <mat-header-cell *matHeaderCellDef> Prendas para sugerir </mat-header-cell>
             <mat-cell *matCellDef="let element"><img height="150" width="150" src={{element.picture}}></mat-cell>

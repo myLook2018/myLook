@@ -9,6 +9,7 @@ import { AngularFireAuthModule } from 'angularfire2/auth';
 import { environment } from '../environments/environment';
 import { AuthGuard } from './auth/services/auth.guard';
 import { AuthService } from './auth/services/auth.service';
+import { DataService } from './service/dataService';
 import { UserService } from './auth/services/user.service';
 import { ArticleService } from './articles/services/article.service';
 import { UserResolver } from './auth/components/user/user.resolver';
@@ -106,7 +107,8 @@ import { RecomendationsComponent } from './recomendations/components/recomendati
     MatListModule
   ],
   exports: [RouterModule],
-  providers: [AuthService, UserService, UserResolver, AuthGuard, StoreService, ArticleService, TagsService, ArticleResolver, StoreResolver],
+  providers: [ DataService, AuthService, UserService, UserResolver, AuthGuard, StoreService,
+     ArticleService, TagsService, ArticleResolver, StoreResolver],
   entryComponents: [DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent,
     DeleteConfirmationDialogComponent, MapsDialogComponent, EditStoreComponent],
   bootstrap: [AppComponent]

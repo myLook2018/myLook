@@ -108,11 +108,7 @@ export class StoreService {
                     twitterlink: data.twitterLink,
                     instagramLink: data.instagramLink
                 }).then(error => {
-                    if (error) {
                         return reject('Update failed' + error);
-                    } else {
-                        return resolve(error);
-                    }
                 });
 
             });

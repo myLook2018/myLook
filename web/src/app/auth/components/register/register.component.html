@@ -12,7 +12,7 @@
 
     <div>
       <mat-horizontal-stepper #stepper [linear]="isLinear">
-        <mat-step [stepControl]="registerStoreFormGroup">
+        <mat-step [stepControl]="step1">
           <form [formGroup]="registerStoreFormGroup">
             <ng-template matStepLabel>Usuario</ng-template>
 
@@ -21,7 +21,7 @@
               <div style="display: block;margin-left: auto; margin-right:auto;">
 
                 <mat-form-field style="display: block;">
-                  <input matInput autofocus placeholder="Nombre de Usuario" formControlName="storeName" [(ngModel)]="storeName">
+                  <input matInput autofocus placeholder="Nombre de la Tienda" formControlName="storeName" [(ngModel)]="storeName">
                 </mat-form-field>
 
                 <div style="display: table-cell">
@@ -72,7 +72,7 @@
         </mat-step>
 
 
-        <mat-step [stepControl]="registerStoreFormGroup">
+        <mat-step [stepControl]="step2">
           <form [formGroup]="registerStoreFormGroup">
             <ng-template matStepLabel>Tienda</ng-template>
             <div>
@@ -80,7 +80,7 @@
                 <div #firstColumn>
                   <div style="height: 200px;">
                     <div *ngFor="let url of urlsPortada ;  let i=index">
-                      <img *ngIf="i<1" [src]="url" class="rounded mb-3" height="200" style="display: block; margin-left: auto; margin-right: auto;">
+                      <img [src]="url" class="rounded mb-3" height="200" style="display: block; margin-left: auto; margin-right: auto;">
                     </div>
                   </div>
                 </div>
@@ -152,7 +152,7 @@
 
 
 
-        <mat-step [stepControl]="registerStoreFormGroup">
+        <mat-step [stepControl]="step3">
           
             <ng-template matStepLabel>Confirmar Datos</ng-template>
 
