@@ -46,7 +46,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         Glide.with(mContext).asBitmap().load(requestRecommendation.getRequestPhoto()).into(holder.requestPhoto);
         holder.descriptionRequest.setText(requestRecommendation.getDescription());
         holder.titleRequest.setText(requestRecommendation.getTitle());
-        if(requestRecommendation.getState())
+        if(requestRecommendation.getClosed())
             holder.state.setVisibility(View.VISIBLE);
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override

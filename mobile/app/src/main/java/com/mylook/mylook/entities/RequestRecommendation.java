@@ -9,13 +9,21 @@ public class RequestRecommendation implements Serializable {
         private long limitDate;
         private ArrayList<Double> localization;
         private String requestPhoto;
-        private boolean state;
+        private boolean isClosed;
         private String updateDate;
         private String userId;
-        private String userName;
         private String title;
+        private ArrayList<ArrayList<String>> answers;
 
         public RequestRecommendation() {}
+
+    public ArrayList<ArrayList<String>> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(ArrayList<ArrayList<String>> answers) {
+        this.answers = answers;
+    }
 
     public String getTitle() {
         return title;
@@ -55,12 +63,12 @@ public class RequestRecommendation implements Serializable {
         this.requestPhoto = requestPhoto;
     }
 
-    public boolean getState() {
-        return state;
+    public boolean getClosed() {
+        return isClosed;
     }
 
-    public void setState(boolean state) {
-        this.state = state;
+    public void setClosed(boolean closed) {
+        this.isClosed = closed;
     }
 
     public String getUpdateDate() {
@@ -79,11 +87,4 @@ public class RequestRecommendation implements Serializable {
         this.userId = userId;
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
 }

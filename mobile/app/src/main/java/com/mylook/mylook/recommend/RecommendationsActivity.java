@@ -83,7 +83,7 @@ public class RecommendationsActivity extends AppCompatActivity implements Recomm
     }
     public void  getRequestRecommendations(){
         dB.collection("requestRecommendations")
-                .whereEqualTo("user",user.getUid()).get()
+                .whereEqualTo("userId",user.getUid()).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {

@@ -236,15 +236,14 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
 
             final Map<String, Object> recommendation = new HashMap<>();
             recommendation.put("userId", user.getUid());
-            recommendation.put("userName", user.getDisplayName());
             recommendation.put("description", txtDescription.getText().toString());
             recommendation.put("limitDate", cal.getTimeInMillis());
             recommendation.put("updateDate", "update");
             recommendation.put("requestPhoto", urlPhoto);
             recommendation.put("localization", latLong);
-            recommendation.put("state", false);
+            recommendation.put("isClosed", false);
             recommendation.put("title", title.getText().toString());
-            recommendation.put("answer",new ArrayList<String>());
+            recommendation.put("answers",new ArrayList<ArrayList<String>>());
             dB.collection("requestRecommendations")
                     .add(recommendation)
                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
