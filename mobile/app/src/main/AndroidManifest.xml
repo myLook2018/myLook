@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.mylook.mylook">
-
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
@@ -30,13 +31,14 @@
         <activity android:name=".home.HomeActivity"></activity>
         <activity android:name=".explore.ExploreActivity" />
         <activity android:name=".profile.ProfileActivity" />
-        <activity android:name=".recommend.RecommendActivity" />
+        <activity android:name=".recommend.RecommendationsActivity" >
+        </activity>
         <activity android:name=".login.RegisterActivity" />
         <activity android:name=".recommend.RecommendActivityAddImg" />
         <activity
             android:name=".recommend.RecommendActivityAddDesc"
-            android:parentActivityName=".recommend.RecommendActivity"/>
-
+            android:parentActivityName=".recommend.RecommendationsActivity"/>
+        <activity android:name=".recommend.RequestRecommendActivity"/>
     </application>
 
 </manifest>
