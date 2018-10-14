@@ -27,11 +27,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -47,7 +45,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mylook.mylook.R;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -73,12 +73,22 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     private Location currentLocation;
     private FloatingActionMenu fabMenu;
     private FloatingActionButton fabPhoto, fabGallery;
-
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        dB = FirebaseFirestore.getInstance();
+        storageRef = FirebaseStorage.getInstance().getReference();
         setContentView(R.layout.activity_request_recommendation_add_desc);
+
+        Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
+        tb.setTitle("Nueva Solicitud");
+        setSupportActionBar(tb);
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+
         btnBack = (Button) findViewById(R.id.btnBack);
         btnSend = (Button) findViewById(R.id.btnSend);
         imgRecommend = (ImageView) findViewById(R.id.imgRecommend);
@@ -94,13 +104,8 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 sendToFirebase();
             }
         });
-        dB = FirebaseFirestore.getInstance();
-        Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
-        tb.setTitle("Nueva Solicitud");
-        setSupportActionBar(tb);
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-        storageRef = FirebaseStorage.getInstance().getReference();
+
+
         final Calendar myCalendar = Calendar.getInstance();
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -162,9 +167,8 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     }
 
 
-    private Uri[] saveImage(String key) {
+    private Uri[] saveImage() {
         int permissionCheck = ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.READ_EXTERNAL_STORAGE);
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         final StorageReference storageReference = storageRef.child("requestPhotos/" + this.createPhotoName(user.getDisplayName()) + ".jpg");
         Uri[] downloadUrl = {Uri.parse(storageReference.getPath().toString())};
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
@@ -186,7 +190,10 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                     }
                 });
             } else {
-                storageReference.putBytes(bitmap.getNinePatchChunk()).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] data = baos.toByteArray();
+                storageReference.putBytes(data).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         displayMessage("Fue cargada con exito");
@@ -202,64 +209,59 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
 
     private void sendToFirebase() {
         if (txtDescription.getText().toString().isEmpty()) {
-            displayMessage("Please write a description");
+            displayMessage("Debe añadir una descripción!");
             return;
         }
         Calendar cal = Calendar.getInstance();
-
         long days = TimeUnit.MILLISECONDS.toDays(limitDate.getTime() - cal.getTime().getTime());
         if (days < 3) {
-            displayMessage("Please pick a correct limit date, 3 days minimum");
-            return;
-        }
-        if (selectImageUri == null && imgRecommend ==null) {
-            displayMessage("Please select an image");
+            displayMessage("La fecha limite debe ser mayor a 3 días!");
             return;
         }
         if (title.getText().toString().isEmpty()) {
-            displayMessage("Please write a title");
+            displayMessage("Debe añadir un titulo!");
             return;
         }
-        Location loc = getLocation();
-        FirebaseUser user = null;
-        try {
-            user = FirebaseAuth.getInstance().getCurrentUser();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+        String urlPhoto;
+        if(bitmap == null && selectImageUri==null){
+            urlPhoto="";
+        }else
+            urlPhoto=saveImage()[0].toString();
 
+        Location loc = getLocation();
         if (loc != null && user != null) {
             List<Double> latLong = new Vector<>();
             latLong.add(loc.getLatitude());
             latLong.add(loc.getLongitude());
+
             final Map<String, Object> recommendation = new HashMap<>();
             recommendation.put("userId", user.getUid());
             recommendation.put("userName", user.getDisplayName());
             recommendation.put("description", txtDescription.getText().toString());
             recommendation.put("limitDate", cal.getTimeInMillis());
             recommendation.put("updateDate", "update");
-            recommendation.put("requestPhoto", saveImage("1")[0].toString());
+            recommendation.put("requestPhoto", urlPhoto);
             recommendation.put("localization", latLong);
             recommendation.put("state", false);
             recommendation.put("title", title.getText().toString());
+            recommendation.put("answer",new ArrayList<String>());
             dB.collection("requestRecommendations")
                     .add(recommendation)
                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
                         public void onSuccess(DocumentReference documentReference) {
-                            displayMessage("Your recommendation has been sent");
+                            displayMessage("Tu solicitud de recomendacion ha sido enviada");
                             finish();
-
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            displayMessage("There has been a problem while uploading");
+                            displayMessage("Ha ocurrido un problema con tu solicitud");
                         }
                     });
         } else {
-            displayMessage("Error en la creacion de datos");
+            displayMessage("Error en la creacion de datos, checkea tus ajustes de localizacion");
         }
 
     }
@@ -328,17 +330,16 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
 
     private void showLocationAlert() {
         final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("Enable Location")
-                .setMessage("Your Locations Settings is set to 'Off'.\nPlease Enable Location to " +
-                        "use this app")
-                .setPositiveButton("Location Settings", new DialogInterface.OnClickListener() {
+        dialog.setTitle("Activar Ubicación")
+                .setMessage("Tu ubicacion esta desactivada..\nDebes activarla para continuar")
+                .setPositiveButton("Ajustes de localización", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                         Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         startActivity(myIntent);
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                     }
