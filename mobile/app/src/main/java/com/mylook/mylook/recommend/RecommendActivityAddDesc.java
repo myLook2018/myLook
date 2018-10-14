@@ -9,11 +9,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -32,6 +34,8 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -58,16 +62,17 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     private ImageView imgRecommend = null;
     private TextInputEditText txtDescription;
     private Date limitDate;
-    private EditText editDate;
-    private Switch btnUbication;
+    private EditText editDate, title;
     private FirebaseFirestore dB;
     private StorageReference storageRef;
     private Uri selectImageUri = null;
     private Bitmap bitmap = null;
     private boolean permissionGranted = true;
-    private final int REQUEST_CAMERA = 1, SELECT_FILE = 0, READ_EXTERNAL_STORAGE = 1, LOCATION_PERMISSION = 2;
+    private final int REQUEST_CAMERA = 3, SELECT_FILE = 0, READ_EXTERNAL_STORAGE = 1, LOCATION_PERMISSION = 2;
     protected LocationManager locationManager;
     private Location currentLocation;
+    private FloatingActionMenu fabMenu;
+    private FloatingActionButton fabPhoto, fabGallery;
 
 
     @Override
@@ -79,36 +84,16 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         imgRecommend = (ImageView) findViewById(R.id.imgRecommend);
         txtDescription = (TextInputEditText) findViewById(R.id.txtDescription);
         editDate = (EditText) findViewById(R.id.editDate);
-        btnUbication = (Switch) findViewById(R.id.btnUbication);
-
-
-        imgRecommend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), RecommendActivityAddImg.class);
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                startActivityForResult(intent, 1);
-            }
-        });
+        title = (EditText) findViewById(R.id.title);
+        fabMenu = (FloatingActionMenu) findViewById(R.id.fabMenu);
+        fabPhoto = (FloatingActionButton) findViewById(R.id.photoFloating);
+        fabGallery = (FloatingActionButton) findViewById(R.id.galleryFloating);
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 sendToFirebase();
             }
         });
-        if (!getIntent().equals(null)) {
-            Intent intent = getIntent();
-            if (intent.hasExtra("imgRecommend"))
-                if (intent.getParcelableExtra("imgRecommend").getClass() == Bitmap.class) {
-                    bitmap = intent.getParcelableExtra("imgRecommend");
-                    imgRecommend.setImageBitmap(bitmap);
-                } else {
-                    selectImageUri = intent.getParcelableExtra("imgRecommend");
-                    imgRecommend.setImageURI(selectImageUri);
-                }
-        }
-
-
         dB = FirebaseFirestore.getInstance();
         Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
         tb.setTitle("Nueva Solicitud");
@@ -117,7 +102,6 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         ab.setDisplayHomeAsUpEnabled(true);
         storageRef = FirebaseStorage.getInstance().getReference();
         final Calendar myCalendar = Calendar.getInstance();
-
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear,
@@ -137,14 +121,52 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
+
+        fabPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (getCameraAccess()) {
+                    try {
+                        startCameraIntent();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        fabGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                intent.setType("image/*");
+                startActivityForResult(intent, SELECT_FILE);
+            }
+        });
+    }
+
+
+    private boolean getCameraAccess() {
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
+            return true;
+        } else {
+            return true;
+        }
+    }
+
+    private void startCameraIntent() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, REQUEST_CAMERA);
     }
 
 
     private Uri[] saveImage(String key) {
         int permissionCheck = ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.READ_EXTERNAL_STORAGE);
-
-        final StorageReference storageReference = storageRef.child("requestPhotos/" + this.createPhotoName("userName") + ".jpg");
-        Uri[] downloadUrl = {Uri.parse(storageReference.getPath())};
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final StorageReference storageReference = storageRef.child("requestPhotos/" + this.createPhotoName(user.getDisplayName()) + ".jpg");
+        Uri[] downloadUrl = {Uri.parse(storageReference.getPath().toString())};
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             permissionGranted = false;
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
@@ -190,8 +212,12 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             displayMessage("Please pick a correct limit date, 3 days minimum");
             return;
         }
-        if (selectImageUri == null) {
+        if (selectImageUri == null && imgRecommend ==null) {
             displayMessage("Please select an image");
+            return;
+        }
+        if (title.getText().toString().isEmpty()) {
+            displayMessage("Please write a title");
             return;
         }
         Location loc = getLocation();
@@ -213,15 +239,16 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             recommendation.put("limitDate", cal.getTimeInMillis());
             recommendation.put("updateDate", "update");
             recommendation.put("requestPhoto", saveImage("1")[0].toString());
-            recommendation.put("localization", latLong );
+            recommendation.put("localization", latLong);
             recommendation.put("state", false);
+            recommendation.put("title", title.getText().toString());
             dB.collection("requestRecommendations")
                     .add(recommendation)
                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
                         public void onSuccess(DocumentReference documentReference) {
                             displayMessage("Your recommendation has been sent");
-                            //finish();
+                            finish();
 
                         }
                     })
@@ -249,19 +276,19 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         }
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
 
-        if(permissionCheck != PackageManager.PERMISSION_GRANTED){
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION);
         }
 
         try {
             locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new MyLocationListenerGPS(), null);
             currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if(currentLocation!=null){
+            if (currentLocation != null) {
                 return currentLocation;
             }
             locationManager.requestSingleUpdate(LocationManager.PASSIVE_PROVIDER, new MyLocationListenerGPS(), null);
             currentLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-            if(currentLocation!=null){
+            if (currentLocation != null) {
                 return currentLocation;
             }
 
@@ -320,7 +347,6 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     }
 
 
-
     private String createPhotoName(String userName) {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("DD_MM_HH_mm_ss");
@@ -331,13 +357,17 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        imgRecommend.setBackgroundColor(Color.rgb(255, 255, 255));
         if (resultCode == Activity.RESULT_OK) {
-            if ((boolean) data.getExtras().get("isBitmap")) {
-                bitmap = (Bitmap) data.getExtras().get("imgRecommend");
+            if (requestCode == REQUEST_CAMERA) {
+                bitmap = (Bitmap) data.getExtras().get("data");
                 imgRecommend.setImageBitmap(bitmap);
-            } else {
-                selectImageUri = (Uri) data.getExtras().get("imgRecommend");
+                fabMenu.close(true);
+            } else if (requestCode == SELECT_FILE) {
+                selectImageUri = data.getData();
                 imgRecommend.setImageURI(selectImageUri);
+                fabMenu.close(true);
             }
         }
     }
@@ -355,10 +385,19 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 break;
             }
             case LOCATION_PERMISSION: {
-                if(grantResults.length > 0
-                        && grantResults[0] != PackageManager.PERMISSION_GRANTED){
-                        showLocationAlert();
+                if (grantResults.length > 0
+                        && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    showLocationAlert();
                 }
+                break;
+            }
+            case REQUEST_CAMERA: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startCameraIntent();
+                } else {
+                }
+                break;
             }
 
         }
