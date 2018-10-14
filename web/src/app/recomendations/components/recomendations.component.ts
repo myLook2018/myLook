@@ -5,8 +5,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { StoreModel } from '../../auth/models/store.model';
 import { Subscription } from 'rxjs';
 import { RecomendationRequest } from '../model/recomendationRequest.model';
-import { timestamp } from 'rxjs/operators';
-import { toDate } from '@angular/common/src/i18n/format_date';
 import { Article } from '../../articles/models/article';
 import { ArticleService } from '../../articles/services/article.service';
 import { MatTableDataSource, MatSnackBar } from '@angular/material';
@@ -30,6 +28,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
   requestAnswerForm: FormGroup;
   answeredRequestIndex = -1;
   selectedArticleRowIndex: any;
+  finishedLoading = false;
   constructor(
     public snackBar: MatSnackBar,
     public articleService: ArticleService,
@@ -45,19 +44,21 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
 
       dataSourceRequests: RecomendationRequest[] = [
          {FirebaseUID: '1' ,
-          UserName: 'ADonato', Description: 'Lorem ipsum dolor sit amet consectetur adipiscing elit enim auctor',
+          UserName: 'JuPerez231', Description: 'Hola, me regalaron esta camisa y quiero usarla,'
+          + 'porque me da lastima que este juntando tierra guardada. No soy de usar camisas y tengo una salida a comer con mis amigos.' +
+          'Tengo un cuerpo normal y mido 1.57. Gracias.',
           // tslint:disable-next-line:max-line-length
-          ArticleUrl: 'https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/test%2F1536083661870_camisa%20roja%20case.jpeg?alt=media&token=e3244600-38ef-4c7c-bf73-a254d51db290',
+          ArticleUrl: 'http://www.grupopase.es/images/large/grupopase/Camisas%201211_LRG.jpg',
           Localization: [60],
           Answers: []},
           {FirebaseUID: '2' ,
-          UserName: 'ADonato', Description: 'Lorem ipsum dolor sit amet consectetur adipiscing elit enim auctor',
+          UserName: 'ViviMedina', Description: 'Lorem ipsum dolor sit amet consectetur adipiscing elit enim auctor',
           // tslint:disable-next-line:max-line-length
           ArticleUrl: 'https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/test%2F1536083661870_camisa%20roja%20case.jpeg?alt=media&token=e3244600-38ef-4c7c-bf73-a254d51db290',
           Localization: [60],
           Answers: []},
           {FirebaseUID: '3' ,
-          UserName: 'AeeeDonato', Description: 'Lorem ipsum dolor sit amet consectetur adipiscing elit enim auctor',
+          UserName: '_roJarich', Description: 'Lorem ipsum dolor sit amet consectetur adipiscing elit enim auctor',
           // tslint:disable-next-line:max-line-length
           ArticleUrl: 'https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/test%2F1536084641338_Remera%20lisa%20azul.jpg?alt=media&token=bcc00b29-96be-4ac3-b900-1b07e880346b',
           Localization: [60],
@@ -148,5 +149,11 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
     });
   }
 
+  loadingSpinner() {
+    setTimeout(() => {
+      /** spinner ends after  seconds */
+      this.finishedLoading = true;
+    }, 2000);
+  }
 
 }

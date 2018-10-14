@@ -65,20 +65,18 @@ export class InventoryComponent implements OnInit, OnDestroy {
     ngOnInit() {
       this.spinner.show();
       this.route.data.subscribe(routeData => {
-        console.log('estoy ya en el inventario');
         const data = routeData['data'];
             if (data) {
               this.FirebaseUser = data;
           }
       });
-      this._subscription2 = this.userService.getUserInfo(this.FirebaseUser.firebaseUserId).subscribe (userA => {
+      this._subscription2 = this.userService.getUserInfo(this.FirebaseUser.firebaseUserId).subscribe(userA => {
         this.userStore = userA[0];
         if (this.userStore.profilePh === '') {this.userStore.profilePh = this.FirebaseUser.profilePh; }
         this._subscription = this.articleService.getArticles(this.userStore.storeName).subscribe(articles => {
           this.articles = articles;
           this.dataSource = new MatTableDataSource(this.articles);
           setTimeout(() => {
-            /** spinner ends after  seconds */
             this.spinner.hide();
           }, 2000);
         }
@@ -95,12 +93,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
 deleteArticle(article) {
       this.articleService.deleteArticle(article);
-      console.log(`Articulo ${article.id} eliminado`);
   }
-
-  /*ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
-  }*/
 
   openConfirmationDialog(article): void {
     const confirmationRef = this.dialog.open(DeleteConfirmationDialogComponent, {
@@ -138,7 +131,6 @@ deleteArticle(article) {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
     });
   }
 

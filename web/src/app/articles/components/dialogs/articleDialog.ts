@@ -15,6 +15,7 @@ import { Article } from '../../models/article';
 import { TagsService } from '../../services/tags.service';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import { Tags } from '../../models/tags';
+import { DataService } from '../../../service/dataService';
 
 @Component({
   selector: 'app-article-dialog',
@@ -52,6 +53,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     public tagsService: TagsService,
     public snackBar: MatSnackBar,
     private articleService: ArticleService,
+    private dataService: DataService,
     private fb: FormBuilder,
     private storage: AngularFireStorage,
     public dialogRef: MatDialogRef<ArticleDialogComponent>,
@@ -106,46 +108,14 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   }
 
   startUpload() {
-    // First item
-    const file = this.filesSelected.item(0);
-
-    // Client side validation
-    if (file.type.split('/')[0] !== 'image') {
-      console.log('Tipo de imagen no soportado.');
-      return;
-    }
-
-    // The storage Path (must be unique)
-    const path = `test/${new Date().getTime()}_${file.name}`;
-    // Optional metadata
-    const customMetadata = { app: 'Mylook!' };
-    // The main task / metadata is optional
-    console.log('path: ' + path);
-    this.task = this.storage.upload(path, file, { customMetadata }); // suuubiendo
-
-    console.log('Imagen guardada en myLook!');
-    // Progress monitoring
-    // this.percentage = this.task.percentageChanges(); // usar si es necesario
-    // this.snapshot = this.task.snapshotChanges(); // cambio de version
-
-    // The file download URL
-    // cambio de version/implementacion
-
-    console.log('a ver el link');
-    this.ref = this.storage.ref(path);
-
-    this.task.snapshotChanges().pipe(
-      finalize(() => {
-        this.ref.getDownloadURL().subscribe(url => {
-          this.articleForm.addControl('picture', new FormControl(url, Validators.required));
-          console.log('añadimos al form');
-          console.log(url); // <-- do what ever you want with the url..
-          this.articleService.addArticle(this.articleForm.value);
-        });
-      })
-    ).subscribe();
-    this.openSnackBar('Prenda guardada en MyLook!', 'close');
-
+    this.dataService.uploadPicture(this.filesSelected).then(pictureURL => {
+      this.articleForm.addControl('picture', new FormControl(pictureURL, Validators.required));
+      console.log('añadimos al form');
+      console.log(pictureURL); // <-- do what ever you want with the url..
+      this.articleService.addArticle(this.articleForm.value).then(() => {
+        this.openSnackBar('Prenda guardada en MyLook!', 'close');
+      });
+    });
   }
 
   // actualiza la descripcion de una tienda

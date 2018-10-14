@@ -1,4 +1,5 @@
 export class StoreModel {
+  firebaseUID: string;
   firebaseUserId: string;
   storeName: string;
   storeMail: string;
@@ -19,6 +20,7 @@ export class StoreModel {
   provider: string;
 
   constructor() {
+    this.firebaseUID = '';
     this.firebaseUserId = '';
     this.storeName = '';
     this.storeMail = '';

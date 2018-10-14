@@ -49,18 +49,15 @@ export class StoreComponent implements OnInit, OnDestroy {
         this.FirebaseUser = data;
       }
     });
-    console.log(1);
     this._subscription2 = this.userService.getUserInfo(this.FirebaseUser.firebaseUserId).subscribe(userA => {
       this.userStore = userA[0];
       if (this.userStore.profilePh === undefined) {this.userStore.profilePh = this.FirebaseUser.profilePh; }
-      console.log(3);
       this.route.data.subscribe(routeData => {
         const articles = routeData['articles'];
         if (articles) {
           this.articles = articles;
         }
         setTimeout(() => {
-          /** spinner ends after 5 seconds */
           this.spinner.hide();
         }, 2000);
       });
@@ -70,7 +67,6 @@ export class StoreComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log('destruyendo subscripciones');
     this._subscription2.unsubscribe();
     }
 
@@ -108,7 +104,6 @@ export class StoreComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
     });
   }
 
@@ -131,7 +126,6 @@ export class StoreComponent implements OnInit, OnDestroy {
         this.location.back();
       },
       error => {
-        console.log('Logout error', error);
         this.router.navigate(['/login']);
       }
     );

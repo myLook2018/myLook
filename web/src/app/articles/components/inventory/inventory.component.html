@@ -14,7 +14,7 @@
                 <button mat-menu-item>Configuración</button>
                 <button mat-menu-item (click)="logout()">Salir</button>
             </mat-menu>
-            <img class="profilePic" [src]="FirebaseUser.profilePh">
+            <img class="profilePic" [src]="userStore.profilePh">
         </mat-toolbar-row>
     </mat-toolbar>
 
@@ -32,11 +32,6 @@
                 <mat-toolbar-row class="stickyNavbar mat-elevation-z2">
                     <span>Lista de Prendas</span>
                     <div style="margin-left: auto">
-                        <!--<mat-form-field [floatLabel]='options.value.floatLabel' style="margin-right: 20px;padding-bottom: 0; font-size: 70%">
-                <mat-icon matSuffix>search</mat-icon>
-                <input matInput (keyup)="applyFilter ($event.target.value)">
-            </mat-form-field>
-            -->
                         <button id="uploadArticle" mat-flat-button (click)="openArticleDialog()">Subir Prenda</button>
                     </div>
                 </mat-toolbar-row>

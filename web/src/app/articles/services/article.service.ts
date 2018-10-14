@@ -33,7 +33,6 @@ export class ArticleService {
   }
 
   getArticles(storeName) {
-    console.log('ya estoy pidiendo articulos: ' + storeName);
     return this.articles.pipe(map(items => items.filter(item => item.storeName === storeName)));
   }
 
