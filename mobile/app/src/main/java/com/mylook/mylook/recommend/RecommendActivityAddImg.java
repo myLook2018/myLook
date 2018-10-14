@@ -33,7 +33,6 @@ public class RecommendActivityAddImg extends AppCompatActivity {
     private Integer REQUEST_CAMERA=1, SELECT_FILE=0;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,11 +64,19 @@ public class RecommendActivityAddImg extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(getApplicationContext(), RecommendActivityAddDesc.class);
-                if(banImage)
-                    intent.putExtra("imgRecommend",bitmap);
-                else
-                    intent.putExtra("imgRecommend",selectImageUri);
-                startActivity(intent);
+                if(banImage) {
+                    intent.putExtra("imgRecommend", bitmap);
+                    intent.putExtra("isBitmap", true);
+                }
+                else {
+                    intent.putExtra("imgRecommend", selectImageUri);
+                    intent.putExtra("isBitmap", false);
+                }
+                //startActivity(intent);
+                setResult(Activity.RESULT_OK, intent);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                finish();
+
             }
         });
     }
@@ -89,6 +96,5 @@ public class RecommendActivityAddImg extends AppCompatActivity {
                 banImage=false;
             }
         }
-
     }
 }
