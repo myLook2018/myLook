@@ -20,22 +20,25 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_mylook_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:hardwareAccelerated="false"
+        android:largeHeap="true">
         <activity android:name=".login.LoginActivity">
 
         </activity>
-        <activity android:name=".home.HomeActivity">            <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter></activity>
+        <activity android:name=".home.HomeActivity"></activity>
         <activity android:name=".explore.ExploreActivity" />
         <activity android:name=".profile.ProfileActivity" />
         <activity android:name=".recommend.RecommendActivity" android:grantUriPermissions="true"/>
         <activity android:name=".login.RegisterActivity" />
         <activity android:name=".recommend.RecommendActivityAddImg" android:grantUriPermissions="true" />
         <activity android:name=".recommend.RecommendActivityAddDesc"
-            android:parentActivityName=".recommend.RecommendActivity" android:grantUriPermissions="true">
-
+            android:parentActivityName=".recommend.RecommendActivity"
+            android:grantUriPermissions="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
 
