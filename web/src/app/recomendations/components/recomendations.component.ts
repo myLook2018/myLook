@@ -9,23 +9,27 @@ import { Article } from '../../articles/models/article';
 import { ArticleService } from '../../articles/services/article.service';
 import { MatTableDataSource, MatSnackBar } from '@angular/material';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { RecomendationService } from '../service/recomendationService';
 
 @Component({
   selector: 'app-recomendations',
   templateUrl: './recomendations.component.html',
-  styleUrls: ['./recomendations.component.css']
+  styleUrls: ['./recomendations.component.scss']
 })
 export class RecomendationsComponent implements OnInit, OnDestroy {
   firebaseUser = new StoreModel();
   userStore = new StoreModel();
   articles: Article[];
-  _subscription2: Subscription;
-  _subscription: Subscription;
+  recomendationsRequests: RecomendationRequest[];
+  userSubscription: Subscription;
+  articleSubscription: Subscription;
+  recomendationSubscription: Subscription;
   selectedRequest: RecomendationRequest = new RecomendationRequest();
   selectedArticle: Article = new Article();
   selectedRowIndex = -1;
   requestAnswerForm: FormGroup;
+  answerForm: FormGroup;
   answeredRequestIndex = -1;
   selectedArticleRowIndex: any;
   finishedLoading = false;
@@ -34,6 +38,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
     public articleService: ArticleService,
     public userService: UserService,
     public authService: AuthService,
+    public recomendationsService: RecomendationService,
     private router: Router,
     private route: ActivatedRoute,
     private spinner: NgxSpinnerService,
@@ -42,28 +47,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
         console.log(`vamps con este nombre ` + this.userStore.storeName);
       }
 
-      dataSourceRequests: RecomendationRequest[] = [
-         {FirebaseUID: '1' ,
-          UserName: 'JuPerez231', Description: 'Hola, me regalaron esta camisa y quiero usarla,'
-          + 'porque me da lastima que este juntando tierra guardada. No soy de usar camisas y tengo una salida a comer con mis amigos.' +
-          'Tengo un cuerpo normal y mido 1.57. Gracias.',
-          // tslint:disable-next-line:max-line-length
-          ArticleUrl: 'http://www.grupopase.es/images/large/grupopase/Camisas%201211_LRG.jpg',
-          Localization: [60],
-          Answers: []},
-          {FirebaseUID: '2' ,
-          UserName: 'ViviMedina', Description: 'Lorem ipsum dolor sit amet consectetur adipiscing elit enim auctor',
-          // tslint:disable-next-line:max-line-length
-          ArticleUrl: 'https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/test%2F1536083661870_camisa%20roja%20case.jpeg?alt=media&token=e3244600-38ef-4c7c-bf73-a254d51db290',
-          Localization: [60],
-          Answers: []},
-          {FirebaseUID: '3' ,
-          UserName: '_roJarich', Description: 'Lorem ipsum dolor sit amet consectetur adipiscing elit enim auctor',
-          // tslint:disable-next-line:max-line-length
-          ArticleUrl: 'https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/test%2F1536084641338_Remera%20lisa%20azul.jpg?alt=media&token=bcc00b29-96be-4ac3-b900-1b07e880346b',
-          Localization: [60],
-          Answers: []},
-    ] ;
+    dataSourceRequests;
     displayedColumnsRequests: string[] = [
       'ListaPeticiones',
     ];
@@ -75,18 +59,22 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.spinner.show();
     this.route.data.subscribe(routeData => {
-      console.log('estoy ya en el inventario');
+      console.log(`trayendo recomendaciones`);
       const data = routeData['data'];
           if (data) {
             this.firebaseUser = data;
         }
       });
-      this._subscription = this.userService.getUserInfo(this.firebaseUser.firebaseUserId).subscribe(userA => {
+      this.userSubscription = this.userService.getUserInfo(this.firebaseUser.firebaseUserId).subscribe(userA => {
         this.userStore = userA[0];
         if ( this.userStore.profilePh === undefined) {this.userStore.profilePh = this.firebaseUser.profilePh; }
-        this._subscription2 = this.articleService.getArticles(this.userStore.storeName).subscribe(articles => {
+        this.articleSubscription = this.articleService.getArticles(this.userStore.storeName).subscribe(articles => {
           this.articles = articles;
           this.dataSourceArticles = new MatTableDataSource(this.articles);
+          this.recomendationSubscription = this.recomendationsService.getRecomendations().subscribe( recomendations => {
+            this.recomendationsRequests = recomendations;
+            this.dataSourceRequests = new MatTableDataSource(this.recomendationsRequests);
+          });
           setTimeout(() => {
             /** spinner ends after  seconds */
             this.spinner.hide();
@@ -97,16 +85,22 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     console.log('destruyendo subscripciones');
-    this._subscription.unsubscribe();
-    this._subscription2.unsubscribe();
+    this.userSubscription.unsubscribe();
+    this.articleSubscription.unsubscribe();
+    this.recomendationSubscription.unsubscribe();
   }
 
   createForm() {
     this.requestAnswerForm = this.fb.group({
       storeName: ['', Validators.nullValidator], // verificar que se envie
-      article: ['', Validators.nullValidator],
+      // requestUID: ['', Validators.nullValidator],
+      articlePhoto: ['', Validators.nullValidator],
+      articleUID: ['', Validators.nullValidator],
       description: ['', Validators.nullValidator],
-      isFavorite: ['', Validators.nullValidator],
+    });
+    this.answerForm = this.fb.group({
+      requestUID: ['', Validators.nullValidator],
+      storeName: ['', Validators.nullValidator],
     });
   }
 
@@ -137,9 +131,18 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
     this.selectedArticle = row;
   }
 
-  sendAnswer(row) {
+  sendAnswer() {
     this.answeredRequestIndex = this.selectedRowIndex;
-    this.openSnackBar('Se ha enviado la sugerencia!' , 'cerrar');
+    this.requestAnswerForm.get('storeName').setValue(this.userStore.storeName);
+    this.requestAnswerForm.get('articlePhoto').setValue(this.selectedArticle.picture);
+    this.requestAnswerForm.get('articleUID').setValue(this.selectedArticle.id);
+    this.recomendationsService.addRecomendationAnswer(this.requestAnswerForm.value, this.selectedRequest.FirebaseUID).then(() => {
+      this.answerForm.get('requestUID').setValue(this.selectedRequest.FirebaseUID);
+      this.answerForm.get('storeName').setValue(this.userStore.storeName);
+      this.recomendationsService.storeAnswer(this.answerForm.value).then(() => {
+        this.openSnackBar('Se ha enviado la sugerencia!' , 'cerrar');
+      });
+    });
 
   }
 

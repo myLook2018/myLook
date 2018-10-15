@@ -5,7 +5,7 @@ import {
   AngularFireStorageReference
 } from 'angularfire2/storage';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatChipInputEvent, MatAutocompleteSelectedEvent } from '@angular/material';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, empty } from 'rxjs';
 import { UploadTaskSnapshot } from 'angularfire2/storage/interfaces';
 import { Validators, FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { ArticleService } from '../../services/article.service';
@@ -55,7 +55,6 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     private articleService: ArticleService,
     private dataService: DataService,
     private fb: FormBuilder,
-    private storage: AngularFireStorage,
     public dialogRef: MatDialogRef<ArticleDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public articleData: Article
     ) { this.createForm();
@@ -87,6 +86,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     this.articleForm = this.fb.group({
       // completar los datos de la prenda
       cost: [this.articleData.cost, Validators.nullValidator],
+      picture: ['', Validators.nullValidator],
       size: [this.articleData.size, Validators.nullValidator],
       material: [this.articleData.material, Validators.nullValidator],
       colors: [this.articleData.colors, Validators.nullValidator],
@@ -109,9 +109,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
 
   startUpload() {
     this.dataService.uploadPicture(this.filesSelected).then(pictureURL => {
-      this.articleForm.addControl('picture', new FormControl(pictureURL, Validators.required));
-      console.log('añadimos al form');
-      console.log(pictureURL); // <-- do what ever you want with the url..
+      this.articleForm.get('picture').setValue(pictureURL);
       this.articleService.addArticle(this.articleForm.value).then(() => {
         this.openSnackBar('Prenda guardada en MyLook!', 'close');
       });
@@ -161,8 +159,6 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
       for (const file of files) {
         const reader = new FileReader();
         reader.onload = (e: any) => {
-          console.log(this.urls.length);
-          console.log(file);
           this.urls.push(e.target.result);
         };
         reader.readAsDataURL(file);

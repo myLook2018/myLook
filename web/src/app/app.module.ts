@@ -12,6 +12,7 @@ import { AuthService } from './auth/services/auth.service';
 import { DataService } from './service/dataService';
 import { UserService } from './auth/services/user.service';
 import { ArticleService } from './articles/services/article.service';
+import { RecomendationService } from './recomendations/service/recomendationService';
 import { UserResolver } from './auth/components/user/user.resolver';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -107,7 +108,7 @@ import { RecomendationsComponent } from './recomendations/components/recomendati
     MatListModule
   ],
   exports: [RouterModule],
-  providers: [ DataService, AuthService, UserService, UserResolver, AuthGuard, StoreService,
+  providers: [ RecomendationService, DataService, AuthService, UserService, UserResolver, AuthGuard, StoreService,
      ArticleService, TagsService, ArticleResolver, StoreResolver],
   entryComponents: [DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent,
     DeleteConfirmationDialogComponent, MapsDialogComponent, EditStoreComponent],
