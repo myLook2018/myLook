@@ -18,13 +18,13 @@ import com.mylook.mylook.entities.RequestRecommendation;
 
 import java.util.List;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
+public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecyclerViewAdapter.ViewHolder> {
 
-    private static final String TAG = "RecyclerViewAdapter";
+    private static final String TAG = "RequestRecyclerViewAdapter";
     private Context mContext;
     private List<RequestRecommendation> requestRecommendationsList;
 
-    public RecyclerViewAdapter(Context mContext, List<RequestRecommendation> requestRecommendationsList) {
+    public RequestRecyclerViewAdapter(Context mContext, List<RequestRecommendation> requestRecommendationsList) {
         this.mContext = mContext;
         this.requestRecommendationsList = requestRecommendationsList;
     }
@@ -32,26 +32,26 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_list_item_recommend, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_list_item_request_recommendation, parent, false);
         ViewHolder holder = new ViewHolder(view);
         return holder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder,final int position) {
-        Log.d(TAG, "onBindViewHolder: called.");
+        Log.d("ALGO", "onBindViewHolder: called.");
 
         final RequestRecommendation requestRecommendation = requestRecommendationsList.get(position);
 
         Glide.with(mContext).asBitmap().load(requestRecommendation.getRequestPhoto()).into(holder.requestPhoto);
         holder.descriptionRequest.setText(requestRecommendation.getDescription());
         holder.titleRequest.setText(requestRecommendation.getTitle());
-        if(requestRecommendation.getClosed())
+        if(!requestRecommendation.getAnswers().isEmpty())
             holder.state.setVisibility(View.VISIBLE);
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "onClick: clicked on: " + position);
+                Log.d("ALGO", "onClick: clicked on: " + position);
 
                 Intent intent = new Intent(mContext, RequestRecommendActivity.class);
                 intent.putExtra("requestRecommendation", requestRecommendation);

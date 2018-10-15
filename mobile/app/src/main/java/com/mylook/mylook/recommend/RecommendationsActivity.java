@@ -93,7 +93,7 @@ public class RecommendationsActivity extends AppCompatActivity implements Recomm
                                 RequestRecommendation requestRecommendation = document.toObject(RequestRecommendation.class);
                                 requestRecommendationsList.add(requestRecommendation);
                             }
-                            RecyclerViewAdapter adapter = new RecyclerViewAdapter(RecommendationsActivity.this,requestRecommendationsList);
+                            RequestRecyclerViewAdapter adapter = new RequestRecyclerViewAdapter(RecommendationsActivity.this,requestRecommendationsList);
                             recyclerView.setAdapter(adapter);
                             recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                         }

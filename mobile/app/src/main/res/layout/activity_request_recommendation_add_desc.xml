@@ -29,7 +29,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 tools:layout_conversion_absoluteHeight="0dp"
                 tools:layout_conversion_absoluteWidth="0dp"
-                tools:layout_editor_absoluteX="0dp" />
+                tools:layout_editor_absoluteX="0dp"
+                tools:ignore="MissingConstraints" />
 
             <Button
                 android:id="@+id/btnSend"
@@ -46,7 +47,7 @@
         <android.support.constraint.ConstraintLayout
             android:id="@+id/layout_center"
             android:layout_width="match_parent"
-            android:layout_height="518dp"
+            android:layout_height="match_parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <android.support.design.widget.TextInputEditText
@@ -66,23 +67,25 @@
                 android:id="@+id/imgRecommend"
                 android:layout_width="129dp"
                 android:layout_height="114dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="60dp"
                 android:background="@drawable/outline_photo_24"
                 android:clickable="true"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:layout_editor_absoluteX="16dp" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
                 android:id="@+id/editDate"
                 android:layout_width="114dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="32dp"
                 android:ems="10"
                 android:focusable="false"
                 android:hint="Fecha Límite"
                 android:inputType="textPersonName"
-                app:layout_constraintTop_toBottomOf="@+id/txtDescription"
-                tools:layout_editor_absoluteX="16dp" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtDescription" />
 
             <EditText
                 android:id="@+id/title"
@@ -112,7 +115,7 @@
                 app:menu_colorPressed="@color/accent"
                 app:menu_colorRipple="@color/accent"
                 app:menu_fab_size="normal"
-                app:menu_icon="@drawable/fab_add"
+                app:menu_icon="@drawable/ic_add_photo"
                 app:menu_labels_colorNormal="@color/fui_transparent"
                 app:menu_labels_colorPressed="@color/fui_transparent"
                 app:menu_labels_colorRipple="@color/fui_transparent"
@@ -143,28 +146,19 @@
                     android:tint="@color/accent"
                     app:fab_label="Cámara"
                     app:fab_size="mini"
-                    app:rippleColor="@color/accent"/>
+                    app:rippleColor="@color/accent" />
 
                 <com.github.clans.fab.FloatingActionButton
                     android:id="@+id/galleryFloating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/outline_photo_24_white"
+                    android:tint="@color/accent"
                     app:fab_label="Galería"
-                    app:fab_size="mini"
-                    android:tint="@color/accent"/>
+                    app:fab_size="mini" />
             </com.github.clans.fab.FloatingActionMenu>
 
         </android.support.constraint.ConstraintLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_bottom"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true">
-
-            <include layout="@layout/layout_bottom_navigation_view" />
-        </LinearLayout>
 
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

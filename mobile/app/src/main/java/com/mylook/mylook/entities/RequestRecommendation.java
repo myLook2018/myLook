@@ -2,6 +2,7 @@ package com.mylook.mylook.entities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class RequestRecommendation implements Serializable {
 
@@ -13,15 +14,15 @@ public class RequestRecommendation implements Serializable {
         private String updateDate;
         private String userId;
         private String title;
-        private ArrayList<ArrayList<String>> answers;
+        private ArrayList<HashMap<String,String>> answers;
 
         public RequestRecommendation() {}
 
-    public ArrayList<ArrayList<String>> getAnswers() {
+    public ArrayList<HashMap<String,String>> getAnswers() {
         return answers;
     }
 
-    public void setAnswers(ArrayList<ArrayList<String>> answers) {
+    public void setAnswers(ArrayList<HashMap<String,String>> answers) {
         this.answers = answers;
     }
 
