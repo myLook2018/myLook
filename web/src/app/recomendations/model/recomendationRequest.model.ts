@@ -2,11 +2,13 @@ import { RecomendationAnswer } from './recomendationAnswer.model';
 
 export class RecomendationRequest {
     FirebaseUID?: string;
-    UserName?: string;
-    Description?: String;
-    LimitDate?: Date;
-    UpdateDate?: Date;
-    ArticleUrl?: string; // Opcional
-    Localization?: [Number]; // Se toma desde donde se hizo o la del User?
-    Answers?: RecomendationAnswer[];
+    title?: string;
+    userName?: string;
+    state?: boolean;
+    description?: String;
+    limitDate?: Date;
+    updateDate?: Date;
+    requestPhoto?: string; // Opcional
+    localization?: [Number]; // Se toma desde donde se hizo o la del User?
+    answers?: RecomendationAnswer[];
   }
