@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,11 +28,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -46,8 +45,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mylook.mylook.R;
+import com.theartofdev.edmodo.cropper.CropImage;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -67,18 +69,31 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     private StorageReference storageRef;
     private Uri selectImageUri = null;
     private Bitmap bitmap = null;
+    private Uri picUri;
     private boolean permissionGranted = true;
-    private final int REQUEST_CAMERA = 3, SELECT_FILE = 0, READ_EXTERNAL_STORAGE = 1, LOCATION_PERMISSION = 2;
+    private final int REQUEST_CAMERA = 3, SELECT_FILE = 0, READ_EXTERNAL_STORAGE = 1, LOCATION_PERMISSION = 2, PIC_CROP = 4;;
+    //keep track of cropping intent
     protected LocationManager locationManager;
     private Location currentLocation;
     private FloatingActionMenu fabMenu;
     private FloatingActionButton fabPhoto, fabGallery;
-
+    private FirebaseUser user;
+    private String urlLogo="https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/requestPhotos%2Flogo_purple.png?alt=media&token=63174614-b40d-4085-bc52-bc0e89e0c8cd";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        dB = FirebaseFirestore.getInstance();
+        storageRef = FirebaseStorage.getInstance().getReference();
         setContentView(R.layout.activity_request_recommendation_add_desc);
+
+        Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
+        tb.setTitle("Nueva Solicitud");
+        setSupportActionBar(tb);
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+
         btnBack = (Button) findViewById(R.id.btnBack);
         btnSend = (Button) findViewById(R.id.btnSend);
         imgRecommend = (ImageView) findViewById(R.id.imgRecommend);
@@ -94,13 +109,8 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 sendToFirebase();
             }
         });
-        dB = FirebaseFirestore.getInstance();
-        Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
-        tb.setTitle("Nueva Solicitud");
-        setSupportActionBar(tb);
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-        storageRef = FirebaseStorage.getInstance().getReference();
+
+
         final Calendar myCalendar = Calendar.getInstance();
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -141,6 +151,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 intent.setType("image/*");
                 startActivityForResult(intent, SELECT_FILE);
+
             }
         });
     }
@@ -157,14 +168,17 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     }
 
     private void startCameraIntent() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, REQUEST_CAMERA);
+        //Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        //startActivityForResult(intent, REQUEST_CAMERA);
+        //use standard intent to capture an image
+        Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        //we will handle the returned data in onActivityResult
+        startActivityForResult(captureIntent, REQUEST_CAMERA);
+
     }
 
-
-    private Uri[] saveImage(String key) {
+    private Uri[] saveImage() {
         int permissionCheck = ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.READ_EXTERNAL_STORAGE);
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         final StorageReference storageReference = storageRef.child("requestPhotos/" + this.createPhotoName(user.getDisplayName()) + ".jpg");
         Uri[] downloadUrl = {Uri.parse(storageReference.getPath().toString())};
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
@@ -186,7 +200,10 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                     }
                 });
             } else {
-                storageReference.putBytes(bitmap.getNinePatchChunk()).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] data = baos.toByteArray();
+                storageReference.putBytes(data).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         displayMessage("Fue cargada con exito");
@@ -202,64 +219,59 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
 
     private void sendToFirebase() {
         if (txtDescription.getText().toString().isEmpty()) {
-            displayMessage("Please write a description");
+            displayMessage("Debe añadir una descripción!");
             return;
         }
         Calendar cal = Calendar.getInstance();
-
         long days = TimeUnit.MILLISECONDS.toDays(limitDate.getTime() - cal.getTime().getTime());
         if (days < 3) {
-            displayMessage("Please pick a correct limit date, 3 days minimum");
-            return;
-        }
-        if (selectImageUri == null && imgRecommend ==null) {
-            displayMessage("Please select an image");
+            displayMessage("La fecha limite debe ser mayor a 3 días!");
             return;
         }
         if (title.getText().toString().isEmpty()) {
-            displayMessage("Please write a title");
+            displayMessage("Debe añadir un titulo!");
             return;
         }
-        Location loc = getLocation();
-        FirebaseUser user = null;
-        try {
-            user = FirebaseAuth.getInstance().getCurrentUser();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
 
+
+        Location loc = getLocation();
+        String urlPhoto;
+        if(bitmap == null && selectImageUri==null){
+            urlPhoto=urlLogo;
+        }else
+            urlPhoto=saveImage()[0].toString();
         if (loc != null && user != null) {
             List<Double> latLong = new Vector<>();
             latLong.add(loc.getLatitude());
             latLong.add(loc.getLongitude());
+
             final Map<String, Object> recommendation = new HashMap<>();
             recommendation.put("userId", user.getUid());
-            recommendation.put("userName", user.getDisplayName());
             recommendation.put("description", txtDescription.getText().toString());
             recommendation.put("limitDate", cal.getTimeInMillis());
             recommendation.put("updateDate", "update");
-            recommendation.put("requestPhoto", saveImage("1")[0].toString());
+            recommendation.put("requestPhoto", urlPhoto);
             recommendation.put("localization", latLong);
-            recommendation.put("state", false);
+            recommendation.put("isClosed", false);
             recommendation.put("title", title.getText().toString());
+            recommendation.put("answers",new ArrayList<ArrayList<String>>());
             dB.collection("requestRecommendations")
                     .add(recommendation)
                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
                         public void onSuccess(DocumentReference documentReference) {
-                            displayMessage("Your recommendation has been sent");
+                            displayMessage("Tu solicitud de recomendacion ha sido enviada");
                             finish();
-
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            displayMessage("There has been a problem while uploading");
+                            displayMessage("Ha ocurrido un problema con tu solicitud");
                         }
                     });
         } else {
-            displayMessage("Error en la creacion de datos");
+            displayMessage("Error en la creacion de datos, checkea tus ajustes de localizacion");
         }
 
     }
@@ -328,17 +340,16 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
 
     private void showLocationAlert() {
         final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("Enable Location")
-                .setMessage("Your Locations Settings is set to 'Off'.\nPlease Enable Location to " +
-                        "use this app")
-                .setPositiveButton("Location Settings", new DialogInterface.OnClickListener() {
+        dialog.setTitle("Activar Ubicación")
+                .setMessage("Tu ubicacion esta desactivada..\nDebes activarla para continuar")
+                .setPositiveButton("Ajustes de localización", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                         Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         startActivity(myIntent);
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                     }
@@ -361,14 +372,58 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         imgRecommend.setBackgroundColor(Color.rgb(255, 255, 255));
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == REQUEST_CAMERA) {
-                bitmap = (Bitmap) data.getExtras().get("data");
-                imgRecommend.setImageBitmap(bitmap);
-                fabMenu.close(true);
+                picUri = data.getData();
+                perfromCrop();
             } else if (requestCode == SELECT_FILE) {
                 selectImageUri = data.getData();
+                CropImage.activity(selectImageUri)
+                        .setAspectRatio(1,1)
+                        .start(this);
+            }
+        }
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                selectImageUri = result.getUri();
                 imgRecommend.setImageURI(selectImageUri);
                 fabMenu.close(true);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
             }
+        }
+        if(requestCode==PIC_CROP){
+
+            bitmap = (Bitmap) data.getExtras().getParcelable("data");
+            imgRecommend.setImageBitmap(bitmap);
+            fabMenu.close(true);
+        }
+    }
+
+
+    private void perfromCrop() {
+        try {
+            //call the standard crop action intent (the user device may not support it)
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
+            //indicate image type and Uri
+            cropIntent.setDataAndType(picUri, "image/*");
+            //set crop properties
+            cropIntent.putExtra("crop", "true");
+            //indicate aspect of desired crop
+            cropIntent.putExtra("aspectX", 1);
+            cropIntent.putExtra("aspectY", 1);
+            //indicate output X and Y
+            cropIntent.putExtra("outputX", 256);
+            cropIntent.putExtra("outputY", 256);
+            //retrieve data on return
+            cropIntent.putExtra("return-data", true);
+            //start the activity - we handle returning in onActivityResult
+            startActivityForResult(cropIntent, PIC_CROP);
+        }
+        catch(ActivityNotFoundException anfe){
+            //display an error message
+            String errorMessage = "Whoops - your device doesn't support the crop action!";
+            Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
+            toast.show();
         }
     }
 
