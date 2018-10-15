@@ -42,6 +42,8 @@
             android:grantUriPermissions="true">
         </activity>
         <activity android:name=".recommend.RequestRecommendActivity"/>
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat"/>
     </application>
 
 </manifest>

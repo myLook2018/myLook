@@ -24,6 +24,7 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
     private Context mContext;
     private List<RequestRecommendation> requestRecommendationsList;
 
+
     public RequestRecyclerViewAdapter(Context mContext, List<RequestRecommendation> requestRecommendationsList) {
         this.mContext = mContext;
         this.requestRecommendationsList = requestRecommendationsList;

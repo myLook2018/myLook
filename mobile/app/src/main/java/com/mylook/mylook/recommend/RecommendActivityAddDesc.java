@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -44,6 +45,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mylook.mylook.R;
+import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
@@ -67,13 +69,16 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     private StorageReference storageRef;
     private Uri selectImageUri = null;
     private Bitmap bitmap = null;
+    private Uri picUri;
     private boolean permissionGranted = true;
-    private final int REQUEST_CAMERA = 3, SELECT_FILE = 0, READ_EXTERNAL_STORAGE = 1, LOCATION_PERMISSION = 2;
+    private final int REQUEST_CAMERA = 3, SELECT_FILE = 0, READ_EXTERNAL_STORAGE = 1, LOCATION_PERMISSION = 2, PIC_CROP = 4;;
+    //keep track of cropping intent
     protected LocationManager locationManager;
     private Location currentLocation;
     private FloatingActionMenu fabMenu;
     private FloatingActionButton fabPhoto, fabGallery;
     private FirebaseUser user;
+    private String urlLogo="https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/requestPhotos%2Flogo_purple.png?alt=media&token=63174614-b40d-4085-bc52-bc0e89e0c8cd";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -146,6 +151,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 intent.setType("image/*");
                 startActivityForResult(intent, SELECT_FILE);
+
             }
         });
     }
@@ -162,10 +168,14 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     }
 
     private void startCameraIntent() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, REQUEST_CAMERA);
-    }
+        //Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        //startActivityForResult(intent, REQUEST_CAMERA);
+        //use standard intent to capture an image
+        Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        //we will handle the returned data in onActivityResult
+        startActivityForResult(captureIntent, REQUEST_CAMERA);
 
+    }
 
     private Uri[] saveImage() {
         int permissionCheck = ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -222,13 +232,14 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             displayMessage("Debe añadir un titulo!");
             return;
         }
-        String urlPhoto;
-        if(bitmap == null && selectImageUri==null){
-            urlPhoto="";
-        }else
-            urlPhoto=saveImage()[0].toString();
+
 
         Location loc = getLocation();
+        String urlPhoto;
+        if(bitmap == null && selectImageUri==null){
+            urlPhoto=urlLogo;
+        }else
+            urlPhoto=saveImage()[0].toString();
         if (loc != null && user != null) {
             List<Double> latLong = new Vector<>();
             latLong.add(loc.getLatitude());
@@ -361,14 +372,58 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         imgRecommend.setBackgroundColor(Color.rgb(255, 255, 255));
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == REQUEST_CAMERA) {
-                bitmap = (Bitmap) data.getExtras().get("data");
-                imgRecommend.setImageBitmap(bitmap);
-                fabMenu.close(true);
+                picUri = data.getData();
+                perfromCrop();
             } else if (requestCode == SELECT_FILE) {
                 selectImageUri = data.getData();
+                CropImage.activity(selectImageUri)
+                        .setAspectRatio(1,1)
+                        .start(this);
+            }
+        }
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                selectImageUri = result.getUri();
                 imgRecommend.setImageURI(selectImageUri);
                 fabMenu.close(true);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
             }
+        }
+        if(requestCode==PIC_CROP){
+
+            bitmap = (Bitmap) data.getExtras().getParcelable("data");
+            imgRecommend.setImageBitmap(bitmap);
+            fabMenu.close(true);
+        }
+    }
+
+
+    private void perfromCrop() {
+        try {
+            //call the standard crop action intent (the user device may not support it)
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
+            //indicate image type and Uri
+            cropIntent.setDataAndType(picUri, "image/*");
+            //set crop properties
+            cropIntent.putExtra("crop", "true");
+            //indicate aspect of desired crop
+            cropIntent.putExtra("aspectX", 1);
+            cropIntent.putExtra("aspectY", 1);
+            //indicate output X and Y
+            cropIntent.putExtra("outputX", 256);
+            cropIntent.putExtra("outputY", 256);
+            //retrieve data on return
+            cropIntent.putExtra("return-data", true);
+            //start the activity - we handle returning in onActivityResult
+            startActivityForResult(cropIntent, PIC_CROP);
+        }
+        catch(ActivityNotFoundException anfe){
+            //display an error message
+            String errorMessage = "Whoops - your device doesn't support the crop action!";
+            Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
+            toast.show();
         }
     }
 
