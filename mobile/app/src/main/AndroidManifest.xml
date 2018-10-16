@@ -33,14 +33,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<<<<<<< HEAD
-||||||| merged common ancestors
-        <activity android:name=".home.HomeActivity"> </activity>
-=======
         <activity android:name=".home.HomeActivity"></activity>
         <activity android:name=".home.ArticleInfoActivity"></activity>
         <activity android:name=".home.StoreActivity"></activity>
->>>>>>> 0335b43f0be0704b68710d99b400d99e9edaca71
         <activity android:name=".explore.ExploreActivity" />
         <activity android:name=".profile.ProfileActivity" />
         <activity android:name=".recommend.RecommendationsActivity" android:grantUriPermissions="true">
