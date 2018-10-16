@@ -1,6 +1,7 @@
 package com.mylook.mylook.recommend;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +27,7 @@ public class RequestRecommendActivity extends AppCompatActivity{
     private TextView txtDescription;
     private TextView txtTitle;
     private RecyclerView recyclerView;
+    private TextView txtLimitDate;
 
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,6 +41,7 @@ public class RequestRecommendActivity extends AppCompatActivity{
         imgRequestPhoto= findViewById(R.id.imgRecommend);
         txtDescription=findViewById(R.id.txtRecommendDescpription);
         txtTitle=findViewById(R.id.txtRecommendTitle);
+        txtLimitDate=findViewById(R.id.txtDate);
         getIncomingIntent();
     }
 
@@ -53,12 +56,14 @@ public class RequestRecommendActivity extends AppCompatActivity{
     private void getIncomingIntent(){
         Log.d(TAG, "getIncomingIntent: checking for incoming intents.");
 
-        if(getIntent().hasExtra("requestRecommendation")){
+        Intent intent=getIntent();
+        if(intent.hasExtra("requestRecommendation")){
             Log.d(TAG, "getIncomingIntent: found intent extras.");
 
-            RequestRecommendation requestRecommendation= (RequestRecommendation) getIntent().getSerializableExtra("requestRecommendation");
+            RequestRecommendation requestRecommendation= (RequestRecommendation) intent.getSerializableExtra("requestRecommendation");
             txtDescription.setText(requestRecommendation.getDescription());
             txtTitle.setText(requestRecommendation.getTitle());
+            txtLimitDate.setText(intent.getStringExtra("dateFormat"));
             setImage(requestRecommendation.getRequestPhoto());
             initRecyclerView( requestRecommendation.getAnswers());
         }

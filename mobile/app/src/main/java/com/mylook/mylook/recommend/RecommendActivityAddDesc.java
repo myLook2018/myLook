@@ -86,10 +86,16 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     private FloatingActionMenu fabMenu;
     private FloatingActionButton fabPhoto, fabGallery;
     private FirebaseUser user;
+<<<<<<< HEAD
     private String urlLogo = "https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/requestPhotos%2Flogo_purple.png?alt=media&token=63174614-b40d-4085-bc52-bc0e89e0c8cd";
     private ProgressBar mProgressBar;
     private Uri downloadUrl;
     private boolean enviado = false;
+||||||| merged common ancestors
+    private String urlLogo="https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/requestPhotos%2Flogo_purple.png?alt=media&token=63174614-b40d-4085-bc52-bc0e89e0c8cd";
+=======
+    private String urlLogo="https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/utils%2Flogo_transparente_50.png?alt=media&token=c72e5b39-3011-4f26-ba4f-4c9f7326c68a";
+>>>>>>> 0335b43f0be0704b68710d99b400d99e9edaca71
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -105,7 +111,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        btnBack = (Button) findViewById(R.id.btnBack);
+       // btnBack = (Button) findViewById(R.id.btnBack);
         btnSend = (Button) findViewById(R.id.btnSend);
         imgRecommend = (ImageView) findViewById(R.id.imgRecommend);
         txtDescription = (TextInputEditText) findViewById(R.id.txtDescription);

@@ -48,10 +48,11 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
 
         final HashMap<String,String> answer = answersList.get(position);
 
+        Glide.with(mContext).asBitmap().load(answer.get("storePhoto")).into(holder.imgStore);
         Glide.with(mContext).asBitmap().load(answer.get("articlePhoto")).into(holder.imgArticle);
         holder.txtStore.setText(answer.get("storeName"));
         holder.txtDescription.setText(answer.get("description"));
-        if(answer.get("feedBack")!="")
+        if(!answer.get("feedBack").equals(""))
             holder.ratingBar.setRating(Float.parseFloat(answer.get("feedBack")));
         else
             holder.ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
@@ -89,6 +90,7 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
         TextView txtDescription;
         RatingBar ratingBar;
         RelativeLayout parentLayout;
+        ImageView imgStore;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -97,6 +99,9 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
             ratingBar = itemView.findViewById(R.id.ratingBar);
             txtDescription= itemView.findViewById(R.id.txtDescription);
             parentLayout=itemView.findViewById(R.id.parentLayout);
+            imgStore=itemView.findViewById(R.id.imgStore);
+
+
 
         }
     }

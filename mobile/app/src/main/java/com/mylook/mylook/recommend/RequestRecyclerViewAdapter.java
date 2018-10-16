@@ -9,13 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.RequestRecommendation;
 
+import java.util.Calendar;
 import java.util.List;
 
 public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecyclerViewAdapter.ViewHolder> {
@@ -45,7 +47,10 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
         final RequestRecommendation requestRecommendation = requestRecommendationsList.get(position);
 
         Glide.with(mContext).asBitmap().load(requestRecommendation.getRequestPhoto()).into(holder.requestPhoto);
-        holder.descriptionRequest.setText(requestRecommendation.getDescription());
+        Calendar cal=Calendar.getInstance();
+        cal.setTimeInMillis(requestRecommendation.getLimitDate());
+        final String dateFormat=cal.get(Calendar.DAY_OF_MONTH)+"/"+cal.get(Calendar.MONTH)+"/"+cal.get(Calendar.YEAR);
+        holder.txtDate.setText(dateFormat);
         holder.titleRequest.setText(requestRecommendation.getTitle());
         if(!requestRecommendation.getAnswers().isEmpty())
             holder.state.setVisibility(View.VISIBLE);
@@ -56,6 +61,7 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
 
                 Intent intent = new Intent(mContext, RequestRecommendActivity.class);
                 intent.putExtra("requestRecommendation", requestRecommendation);
+                intent.putExtra("dateFormat", dateFormat);
                 mContext.startActivity(intent);
             }
         });
@@ -69,17 +75,17 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
     public class ViewHolder extends RecyclerView.ViewHolder{
         ImageView requestPhoto;
         TextView titleRequest;
-        TextView descriptionRequest;
-        ImageView state;
-        RelativeLayout parentLayout;
+        TextView txtDate;
+        RadioButton state;
+        LinearLayout parentLayout;
 
         public ViewHolder(View itemView) {
             super(itemView);
             requestPhoto = itemView.findViewById(R.id.imgRequestPhoto);
             titleRequest = itemView.findViewById(R.id.txtRecommendTitle);
-            descriptionRequest = itemView.findViewById(R.id.txtRecommendDescpription);
-            state=itemView.findViewById(R.id.imgState);
-            parentLayout=itemView.findViewById(R.id.parent_layout);
+            txtDate = itemView.findViewById(R.id.txtDate);
+            state=itemView.findViewById(R.id.rdbState);
+            parentLayout=itemView.findViewById(R.id.parentLayout);
         }
     }
 }
