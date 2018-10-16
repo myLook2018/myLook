@@ -13,6 +13,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -29,7 +30,7 @@ import java.util.ArrayList;
 public class StoreActivity extends AppCompatActivity {
 
     private Context mContext = StoreActivity.this;
-    private ImageView backArrow;
+    private ImageView backArrow, storePhoto;
     private Button btnSubscribe;
     private TextView storeName, storeLocation, storeShedule, storePhone;
     private GridView gridArticlesStore;
@@ -44,6 +45,7 @@ public class StoreActivity extends AppCompatActivity {
         setContentView(R.layout.activity_store_final);
 
         backArrow = (ImageView) findViewById(R.id.backArrow);
+        storePhoto = (ImageView) findViewById(R.id.store_profile_photo);
         btnSubscribe = (Button) findViewById(R.id.btn_subscribe);
         storeName = (TextView) findViewById(R.id.profile_store_name);
         storeLocation = (TextView) findViewById(R.id.store_location);
@@ -58,25 +60,29 @@ public class StoreActivity extends AppCompatActivity {
         nombreTiendaPerfil = intentStore.getStringExtra("Tienda");
         storeName.setText(nombreTiendaPerfil);
 
-        /*db.collection("stores").whereEqualTo("storeName", nombreTiendaPerfil)
+        db.collection("stores").whereEqualTo("storeName", nombreTiendaPerfil)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
                     Log.d("info de firebase", "onComplete: " + task.getResult().toObjects(Store.class));
+
                     storeList.addAll(task.getResult().toObjects(Store.class));
-                    Log.d("store list", "onComplete: " + storeList.toString());
 
-                    storeLocation.setText(storeData.getStoreAddress() + " " +
-                            storeData.getStoreAddressNumber() + " " + storeData.getStoreFloor());
+                    Store storeAux = storeList.get(0);
 
-                    storePhone.setText(storeData.getStorePhone());
+                    storeLocation.setText(storeAux.getStoreAddress() + " " +
+                            storeAux.getStoreAddressNumber() + " " + storeAux.getStoreFloor());
+
+                    storePhone.setText(storeAux.getStorePhone());
+
+                    Glide.with(mContext).load(storeAux.getProfilePh()).into(storePhoto);
 
                 } else {
                     Log.d("Firestore task", "onComplete: " + task.getException());
                 }
             }
-        });*/
+        });
 
         //retrieve data for grid view
         setupGridView();

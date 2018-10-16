@@ -2,12 +2,12 @@ package com.mylook.mylook.entities;
 
 public class Store {
 
-    private String firebaseId;
+    private String firebaseUserId;
     private String storeName;
     private String storeMail;
     private String ownerName;
-    private String storePhoto;
-    private String storeCoverPhoto;
+    private String profilePh;
+    private String coverPh;
     private String storePhone;
     private String storeProvince;
     private String storeCity;
@@ -16,10 +16,10 @@ public class Store {
     private String storeFloor;
     private String storePosition;
     private String storeDescription;
-    private String storeInstaLink;
-    private String storeTwLink;
-    private String storeFbLink;
-    private String storeProvider;
+    private String instagramLink;
+    private String twitterLink;
+    private String facebookLink;
+    private String provider;
     //private String storeCreationDate;
 
     public Store(){}
@@ -44,9 +44,6 @@ public class Store {
         return storeDescription;
     }
 
-    public String getFirebaseId() {
-        return firebaseId;
-    }
 
     public String getOwnerName() {
         return ownerName;
@@ -64,21 +61,6 @@ public class Store {
         return storeCity;
     }
 
-    public String getStoreCoverPhoto() {
-        return storeCoverPhoto;
-    }
-
-    public String getStoreInstaLink() {
-        return storeInstaLink;
-    }
-
-    public String getStorePhoto() {
-        return storePhoto;
-    }
-
-    public String getStoreFbLink() {
-        return storeFbLink;
-    }
 
     public String getStorePosition() {
         return storePosition;
@@ -88,13 +70,6 @@ public class Store {
         return storeProvince;
     }
 
-    public String getStoreProvider() {
-        return storeProvider;
-    }
-
-    public String getStoreTwLink() {
-        return storeTwLink;
-    }
 
     public void setStorePhone(String storePhone) {
         this.storePhone = storePhone;
@@ -112,9 +87,6 @@ public class Store {
         this.storeFloor = storeFloor;
     }
 
-    public void setFirebaseId(String firebaseId) {
-        this.firebaseId = firebaseId;
-    }
 
     public void setStoreDescription(String storeDescription) {
         this.storeDescription = storeDescription;
@@ -136,35 +108,67 @@ public class Store {
         this.storeCity = storeCity;
     }
 
-    public void setStoreCoverPhoto(String storeCoverPhoto) {
-        this.storeCoverPhoto = storeCoverPhoto;
-    }
-
-    public void setStorePhoto(String storePhoto) {
-        this.storePhoto = storePhoto;
-    }
-
-    public void setStoreInstaLink(String storeInstaLink) {
-        this.storeInstaLink = storeInstaLink;
-    }
-
     public void setStorePosition(String storePosition) {
         this.storePosition = storePosition;
-    }
-
-    public void setStoreFbLink(String storeFbLink) {
-        this.storeFbLink = storeFbLink;
     }
 
     public void setStoreProvince(String storeProvince) {
         this.storeProvince = storeProvince;
     }
 
-    public void setStoreTwLink(String storeTwLink) {
-        this.storeTwLink = storeTwLink;
+    public String getFirebaseUserId() {
+        return firebaseUserId;
     }
 
-    public void setStoreProvider(String storeProvider) {
-        this.storeProvider = storeProvider;
+    public void setFirebaseUserId(String firebaseUserId) {
+        this.firebaseUserId = firebaseUserId;
+    }
+
+    public String getCoverPh() {
+        return coverPh;
+    }
+
+    public String getProfilePh() {
+        return profilePh;
+    }
+
+    public String getFacebookLink() {
+        return facebookLink;
+    }
+
+    public String getInstagramLink() {
+        return instagramLink;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public String getTwitterLink() {
+        return twitterLink;
+    }
+
+    public void setCoverPh(String coverPh) {
+        this.coverPh = coverPh;
+    }
+
+    public void setProfilePh(String profilePh) {
+        this.profilePh = profilePh;
+    }
+
+    public void setFacebookLink(String facebookLink) {
+        this.facebookLink = facebookLink;
+    }
+
+    public void setInstagramLink(String instagramLink) {
+        this.instagramLink = instagramLink;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public void setTwitterLink(String twitterLink) {
+        this.twitterLink = twitterLink;
     }
 }
