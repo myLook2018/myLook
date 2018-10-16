@@ -35,6 +35,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatDividerModule } from '@angular/material/divider';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { SignupComponent } from './auth/components/signup/signup.component';
@@ -56,6 +57,7 @@ import { MapsDialogComponent } from './dialog/maps-dialog/maps-dialog.component'
 import { ErrorComponent } from './error/error.component';
 import {MatListModule} from '@angular/material/list';
 import { RecomendationsComponent } from './recomendations/components/recomendations.component';
+
 
 @NgModule({
   declarations: [
@@ -104,7 +106,8 @@ import { RecomendationsComponent } from './recomendations/components/recomendati
     MatAutocompleteModule,
     AgmCoreModule,
     MatSidenavModule,
-    MatListModule
+    MatListModule,
+    MatProgressBarModule
   ],
   exports: [RouterModule],
   providers: [ RecomendationService, DataService, AuthService, UserService, UserResolver, AuthGuard, StoreService,
