@@ -48,7 +48,12 @@
   }
   
   .requestTable {
-    height: calc(100vh - 48px );
+    height: calc(60vh - 24px );
+    overflow: auto;
+  }
+
+  .answeredTable { 
+    height: calc(40vh - 24px );
     overflow: auto;
   }
 

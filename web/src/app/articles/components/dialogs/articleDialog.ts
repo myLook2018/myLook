@@ -44,6 +44,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   selectable = true;
   removable = true;
   addOnBlur = false;
+  isUpLoading = false;
   separatorKeysCodes: number[] = [ENTER, COMMA];
   tagsCtrl = new FormControl();
   filteredTags: Observable<string[]>;
@@ -60,14 +61,13 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     ) { this.createForm();
     if (articleData.picture !== undefined ) {
       this.urls.push(articleData.picture); this.isNew = false;
-     } else { this.urls.push('/assets/hanger.png'); }
+     } else {
+       this.urls.push('/assets/hanger.png'); }
   }
 
   ngOnInit(): void {
     this._subscription = this.tagsService.getTags().subscribe(tags => {
-      console.log(tags[0]);
       this.allTags = tags[0];
-      console.log(this.allTags.preset.length);
       this.filteredTags = this.tagsCtrl.valueChanges.pipe(startWith(null),
       map((tag: string | null) => tag ? this._filter(tag) : this.allTags.preset.slice()));
     });
@@ -83,8 +83,11 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   }
 
   createForm() {
+    if (this.articleData.tags === null) { this.articleData.tags = []; }
+    this.tags = this.articleData.tags;
     this.articleForm = this.fb.group({
       // completar los datos de la prenda
+      title: [this.articleData.title, Validators.nullValidator],
       cost: [this.articleData.cost, Validators.nullValidator],
       picture: ['', Validators.nullValidator],
       size: [this.articleData.size, Validators.nullValidator],
@@ -92,7 +95,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
       colors: [this.articleData.colors, Validators.nullValidator],
       initial_stock: [this.articleData.initial_stock, Validators.nullValidator],
       provider: [this.articleData.provider, Validators.nullValidator],
-      tags: [this.articleData.tags, Validators.nullValidator],
+      tags: [this.articleData.tags.map(x => x), Validators.nullValidator],
       storeName: [this.articleData.storeName, Validators.nullValidator]
     });
   }
@@ -108,25 +111,30 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   }
 
   startUpload() {
+    this.isUpLoading = true;
+    this.articleForm.get('tags').setValue(this.tags.map(x => x));
+    console.log(this.tags.map(x => x));
     this.dataService.uploadPicture(this.filesSelected).then(pictureURL => {
       this.articleForm.get('picture').setValue(pictureURL);
       this.articleService.addArticle(this.articleForm.value).then(() => {
+        this.isUpLoading = false;
         this.openSnackBar('Prenda guardada en MyLook!', 'close');
       });
     });
   }
 
-  // actualiza la descripcion de una tienda
+  // actualiza la descripcion de una prenda
   refreshArticle(event) {
     const articleUpdated: Article = {
       id: this.articleData.id,
+      title: this.articleData.title,
       cost: this.articleForm.controls['cost'].value,
       size: this.articleForm.controls['size'].value,
       material: this.articleForm.controls['material'].value,
       colors: this.articleForm.controls['colors'].value,
       initial_stock: this.articleForm.controls['initial_stock'].value,
       provider: this.articleForm.controls['provider'].value,
-      tags: this.articleForm.controls['tags'].value,
+      tags: this.articleData.tags.map(x => x),
       storeName: this.articleData.storeName
     };
     this.articleService.refreshArticle(articleUpdated);
@@ -185,4 +193,12 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     this.tagsInput.nativeElement.value = '';
     this.tagsCtrl.setValue(null);
   }
+
+  remove(tag): void {
+    const index = this.tags.indexOf(tag);
+    if (index >= 0) {
+      this.tags.splice(index, 1);
+    }
+  }
+
 }

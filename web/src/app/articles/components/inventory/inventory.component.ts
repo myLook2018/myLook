@@ -12,6 +12,7 @@ import { UserService } from '../../../auth/services/user.service';
 import { StoreModel } from '../../../auth/models/store.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
+import { calcBindingFlags } from '@angular/core/src/view/util';
 
 
 @Component({
@@ -49,6 +50,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     dataSource;
     displayedColumns: string[] = [
       'picture',
+      'title',
       'cost',
       'size',
       'material',
@@ -112,6 +114,7 @@ deleteArticle(article) {
     if (article !== undefined) {
         dataToSend = {
         storeName: this.userStore.storeName,
+        title: article.title,
         id: article.id,
         picture: article.picture,
         cost: article.cost,
@@ -120,13 +123,16 @@ deleteArticle(article) {
         colors: article.colors,
         initial_stock: article.initial_stock,
         provider: article.provider,
-        tags: article.tags };
+        tags: article.tags};
         } else {
-        dataToSend = { storeName: this.userStore.storeName};
+        dataToSend = {
+          storeName: this.userStore.storeName,
+          tags: []
+         };
         }
 
     const dialogRef = this.dialog.open(ArticleDialogComponent, {
-      height: '630px',
+     maxHeight: 'calc(95vh)',
       data: dataToSend
     });
 
