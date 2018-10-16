@@ -6,8 +6,8 @@
   </mat-card-title>
   <mat-card-title>Iniciar sesión</mat-card-title>
   <form>
-    <button mat-button class="externalLogin" style="background-color: #3b5998;margin-bottom: 10px" (click)="tryFacebookLogin()">Acceder con Facebook</button>
-    <button mat-button class="externalLogin" style="background-color: #d34836" (click)="tryGoogleLogin()">Acceder con Google</button>
+    <button mat-button [disabled]="isLoading" class="externalLogin" style="background-color: #3b5998;margin-bottom: 10px" (click)="tryFacebookLogin()">Acceder con Facebook</button>
+    <button mat-button [disabled]="isLoading"class="externalLogin" style="background-color: #d34836" (click)="tryGoogleLogin()">Acceder con Google</button>
   </form>
   <mat-divider id="divider"></mat-divider>
   <form [formGroup]="loginForm">
@@ -31,7 +31,7 @@
   </form>
   <form>
     <div> 
-      <button mat-button (click)="tryLogin()" class="acceptButton">Acceder</button>
+      <button mat-button [disabled]="isLoading" (click)="tryLogin()" class="acceptButton">Acceder</button>
     </div>
     <div style="display: grid;">
       <a class="createAcc" style="text-decoration: none;color: #6a99ff;" href="/signup">Crear Cuenta en Mylook</a>
@@ -39,5 +39,7 @@
     </div>
     <span class="spacer"></span>
   </form>
-
+  <div class="proggressBar">
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="deeppurple-amber" ></mat-progress-bar>
+  </div>
 </mat-card>
