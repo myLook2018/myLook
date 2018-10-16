@@ -16,4 +16,5 @@
     <color name="orange">#FB8C00</color>
     <color name="green">#007F17</color>
     <color name="red">#7F0000</color>
+    <color name="article_title">#4c4c4c</color>
 </resources>

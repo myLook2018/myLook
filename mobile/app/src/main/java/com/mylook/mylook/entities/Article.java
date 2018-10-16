@@ -13,6 +13,7 @@ public class Article {
     private String storeName;
     private ArrayList<String> tags;
     private String picture;
+    private String title;
 
     public Article() {}
 
@@ -98,5 +99,13 @@ public class Article {
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

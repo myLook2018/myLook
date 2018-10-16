@@ -28,6 +28,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".home.HomeActivity"></activity>
+        <activity android:name=".home.ArticleInfoActivity"></activity>
+        <activity android:name=".home.StoreActivity"></activity>
         <activity android:name=".explore.ExploreActivity" />
         <activity android:name=".profile.ProfileActivity" />
         <activity android:name=".recommend.RecommendActivity" />
