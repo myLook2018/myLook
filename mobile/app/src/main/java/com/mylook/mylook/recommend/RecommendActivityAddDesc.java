@@ -36,7 +36,6 @@ import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -47,7 +46,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mylook.mylook.R;
@@ -62,7 +60,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 public class RecommendActivityAddDesc extends AppCompatActivity {
@@ -503,13 +500,14 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
 
         }
     }
-
+/*
     @Override
     protected void onDestroy(){
         super.onDestroy();
         Intent intent3 = new Intent(getApplicationContext(), RecommendationsActivity.class);
         getApplicationContext().startActivity(intent3);
     }
+    */
 }
 
 
