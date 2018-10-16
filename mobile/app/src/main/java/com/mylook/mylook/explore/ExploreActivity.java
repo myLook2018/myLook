@@ -1,6 +1,7 @@
 package com.mylook.mylook.explore;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -10,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -18,16 +20,18 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
+import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.utils.BottomNavigationViewHelper;
 import com.mylook.mylook.utils.CardsDataAdapter;
 import com.wenchao.cardstack.CardStack;
 import com.yuyakaido.android.cardstackview.CardStackView;
+import com.yuyakaido.android.cardstackview.SwipeDirection;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ExploreActivity extends AppCompatActivity implements ExploreStartFragment.OnFragmentInteractionListener, ExploreSearchFragment.OnFragmentInteractionListener{
+public class ExploreActivity extends AppCompatActivity implements ExploreStartFragment.OnFragmentInteractionListener, ExploreSearchFragment.OnFragmentInteractionListener {
 
     private static final int ACTIVITY_NUM = 1;
 
@@ -52,6 +56,44 @@ public class ExploreActivity extends AppCompatActivity implements ExploreStartFr
         Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
         tb.setTitle("Explorar");
         setSupportActionBar(tb);
+
+        mCardStack.setCardEventListener(new CardStackView.CardEventListener() {
+            @Override
+            public void onCardDragging(float percentX, float percentY) {
+                Log.d("CardStackView", "onCardDragging");
+            }
+
+            @Override
+            public void onCardSwiped(SwipeDirection direction) {
+                Log.d("CardStackView", "onCardSwiped: " + direction.toString());
+            }
+
+            @Override
+            public void onCardReversed() {
+                Log.d("CardStackView", "onCardReversed");
+            }
+
+            @Override
+            public void onCardMovedToOrigin() {
+                Log.d("CardStackView", "onCardMovedToOrigin");
+            }
+
+            @Override
+            public void onCardClicked(int index) {
+                Log.d("CardStackView", "onCardClicked: " + index);
+                Intent intent = new Intent(mContext, ArticleInfoActivity.class);
+                Log.d("info del articulo", "onClick: paso por intent la data del articulo");
+                Article art = mDiscoverableArticles.get(index);
+                intent.putExtra("Colores", art.getColors());
+                intent.putExtra("Costo", art.getCost());
+                intent.putExtra("Stock", art.getInitial_stock());
+                intent.putExtra("Material", art.getMaterial());
+                intent.putExtra("Talle", art.getSize());
+                intent.putExtra("Tienda", art.getStoreName());
+                intent.putExtra("Foto", art.getPicture());
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     /**
@@ -76,7 +118,8 @@ public class ExploreActivity extends AppCompatActivity implements ExploreStartFr
                                 Article art = document.toObject(Article.class);
                                 mDiscoverableArticles.add(art);
                             }
-                            if (!mDiscoverableArticles.isEmpty()) Collections.shuffle(mDiscoverableArticles);
+                            if (!mDiscoverableArticles.isEmpty())
+                                Collections.shuffle(mDiscoverableArticles);
                             mCardAdapter = new CardsDataAdapter(getApplicationContext(), R.layout.article_card);
                             mCardAdapter.addAll(mDiscoverableArticles);
                             mCardStack.setAdapter(mCardAdapter);

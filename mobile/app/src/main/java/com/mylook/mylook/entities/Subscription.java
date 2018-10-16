@@ -5,6 +5,9 @@ public class Subscription {
     private String storeName;
     private String userId;
 
+    public Subscription() {
+    }
+
     public Subscription(String storeName, String userId) {
         this.storeName = storeName;
         this.userId = userId;

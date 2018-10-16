@@ -33,8 +33,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".home.ArticleInfoActivity"></activity>
-        <activity android:name=".home.StoreActivity"></activity>
+        <activity android:name=".info.ArticleInfoActivity"></activity>
+        <activity android:name=".info.StoreActivity"></activity>
         <activity android:name=".explore.ExploreActivity" />
         <activity android:name=".profile.ProfileActivity" />
         <activity android:name=".recommend.RecommendationsActivity" android:grantUriPermissions="true">
