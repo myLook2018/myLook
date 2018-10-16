@@ -11,6 +11,7 @@ import { MatTableDataSource, MatSnackBar } from '@angular/material';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { RecomendationService } from '../service/recomendationService';
+import { RecomendationAnswer } from '../model/recomendationAnswer.model';
 
 @Component({
   selector: 'app-recomendations',
@@ -22,6 +23,8 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
   userStore = new StoreModel();
   articles: Article[];
   recomendationsRequests: RecomendationRequest[];
+  recomendationsAnswered: RecomendationRequest[] = [];
+  recomendationsToAnswer: RecomendationRequest[] = [];
   userSubscription: Subscription;
   articleSubscription: Subscription;
   recomendationSubscription: Subscription;
@@ -33,6 +36,9 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
   answeredRequestIndex = -1;
   selectedArticleRowIndex: any;
   finishedLoading = false;
+  selectedAnswer: RecomendationAnswer;
+  description = '';
+  isRequestSelected = false;
   constructor(
     public snackBar: MatSnackBar,
     public articleService: ArticleService,
@@ -47,11 +53,15 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
         console.log(`vamps con este nombre ` + this.userStore.storeName);
       }
 
-    dataSourceRequests;
-    displayedColumnsRequests: string[] = [
-      'ListaPeticiones',
-    ];
-    dataSourceArticles;
+      dataSourceRequests;
+      displayedColumnsRequests: string[] = [
+        'ListaPeticiones',
+      ];
+      dataSourceAnswered;
+      displayedColumnsAnswered: string[] = [
+        'ListaPeticiones',
+      ];
+      dataSourceArticles;
     displayedColumnsArticles: string[] = [
       'PrendasCatalogo'
     ];
@@ -73,7 +83,9 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
           this.dataSourceArticles = new MatTableDataSource(this.articles);
           this.recomendationSubscription = this.recomendationsService.getRecomendations().subscribe( recomendations => {
             this.recomendationsRequests = recomendations;
-            this.dataSourceRequests = new MatTableDataSource(this.recomendationsRequests);
+            this.determineRequestToAnswer();
+            this.dataSourceRequests = new MatTableDataSource(this.recomendationsToAnswer);
+            this.dataSourceAnswered = new MatTableDataSource(this.recomendationsAnswered);
           });
           setTimeout(() => {
             /** spinner ends after  seconds */
@@ -97,6 +109,8 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
       articlePhoto: ['', Validators.nullValidator],
       articleUID: ['', Validators.nullValidator],
       description: ['', Validators.nullValidator],
+      storePhoto: ['', Validators.nullValidator],
+      feedBack: ['', Validators.nullValidator],
     });
     this.answerForm = this.fb.group({
       requestUID: ['', Validators.nullValidator],
@@ -115,20 +129,30 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
   }
 
   showInformationRequest(row) {
-    console.log(row);
+    this.isRequestSelected = true;
     this.selectedRowIndex = row.FirebaseUID;
-    console.log(`selectedRowIndex request ` + this.selectedRowIndex);
     this.selectedRequest = row;
     this.selectedArticle = new Article();
     this.selectedArticle.picture = '/assets/idea.png';
     console.log(this.userStore.profilePh);
   }
 
-  showInformationArticle(row) {
-    console.log(row);
-    this.selectedArticleRowIndex = row.id;
-    console.log(`selectedRowIndex article ` + this.selectedRowIndex);
+  showInformationAnswer(row) {
     this.selectedArticle = row;
+    this.selectedArticleRowIndex = undefined;
+    this.isRequestSelected = false;
+    this.selectedRowIndex = row.FirebaseUID;
+    this.selectedRequest = row;
+    this.selectedAnswer = this.selectedRequest.answers.find(answer => answer.storeName === this.userStore.storeName);
+    this.selectedArticle.picture = this.selectedAnswer.articlePhoto;
+    this.requestAnswerForm.get('description').setValue(this.selectedAnswer.description);
+  }
+
+  showInformationArticle(row) {
+    if (this.isRequestSelected) {
+      this.selectedArticleRowIndex = row.id;
+      this.selectedArticle = row;
+    }
   }
 
   sendAnswer() {
@@ -136,6 +160,8 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
     this.requestAnswerForm.get('storeName').setValue(this.userStore.storeName);
     this.requestAnswerForm.get('articlePhoto').setValue(this.selectedArticle.picture);
     this.requestAnswerForm.get('articleUID').setValue(this.selectedArticle.id);
+    this.requestAnswerForm.get('storePhoto').setValue(this.userStore.profilePh);
+    this.requestAnswerForm.get('feedBack').setValue('');
     this.recomendationsService.addRecomendationAnswer(this.requestAnswerForm.value, this.selectedRequest.FirebaseUID).then(() => {
       this.answerForm.get('requestUID').setValue(this.selectedRequest.FirebaseUID);
       this.answerForm.get('storeName').setValue(this.userStore.storeName);
@@ -144,6 +170,27 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
       });
     });
 
+  }
+
+  determineRequestToAnswer() {
+    this.recomendationsToAnswer = [];
+    this.recomendationsAnswered = [];
+    this.recomendationsRequests.map(request => {
+      if (this.isInAnswers(request.answers)) {
+        this.recomendationsAnswered.push(request);
+      } else {
+        this.recomendationsToAnswer.push(request); }
+    });
+  }
+
+  isInAnswers(answers: RecomendationAnswer[]) {
+    let res = false;
+    answers.forEach(answer => {
+      if (answer.storeName === this.userStore.storeName) {
+      res = true;
+      }
+    });
+    return res;
   }
 
   openSnackBar(message: string, action: string) {

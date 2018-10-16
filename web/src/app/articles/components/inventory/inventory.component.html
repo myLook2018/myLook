@@ -21,8 +21,8 @@
     <mat-sidenav-container style="height: 100%;">
         <mat-sidenav #sidenav [mode]="over">
             <mat-nav-list>
-                <a mat-list-item (click)="goToProfile()">Visita tu Perfil!</a>              
-              <a mat-list-item (click)="goToRecomendations()">Has una recomendacion!</a>
+                <a mat-list-item (click)="goToProfile()">Visita tu Perfil!</a>
+                <a mat-list-item (click)="goToRecomendations()">Has una recomendacion!</a>
             </mat-nav-list>
         </mat-sidenav>
 
@@ -36,81 +36,87 @@
                     </div>
                 </mat-toolbar-row>
             </mat-toolbar>
-    <div>
-    <mat-table class="table" [dataSource]="dataSource" matSort>
+            <div>
+                <mat-table class="table" [dataSource]="dataSource" matSort>
 
-        <!--- Note that these columns can be defined in any order.
+                    <!--- Note that these columns can be defined in any order.
             The actual rendered columns are set as a property on the row definition" -->
 
-        <!-- Picture Column -->
-        <ng-container matColumnDef="picture">
-            <mat-header-cell *matHeaderCellDef>
-                <mat-icon>photo</mat-icon>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                <img height="100" src={{element.picture}}> </mat-cell>
-        </ng-container>
+                    <!-- Picture Column -->
+                    <ng-container matColumnDef="picture">
+                        <mat-header-cell *matHeaderCellDef>
+                            <mat-icon>photo</mat-icon>
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            <img height="100" width="100" src={{element.picture}}> </mat-cell>
+                    </ng-container>
 
-        <!-- cost Column -->
-        <ng-container matColumnDef="cost">
-            <mat-header-cell *matHeaderCellDef> Costo ($) </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.cost}} </mat-cell>
-        </ng-container>
+                    <!-- title Column -->
+                    <ng-container matColumnDef="title">
+                        <mat-header-cell *matHeaderCellDef> Titulo </mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{element.title}} </mat-cell>
+                    </ng-container>
 
-        <!-- size Column -->
-        <ng-container matColumnDef="size">
-            <mat-header-cell *matHeaderCellDef> Talle </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.size}} </mat-cell>
-        </ng-container>
+                    <!-- cost Column -->
+                    <ng-container matColumnDef="cost">
+                        <mat-header-cell *matHeaderCellDef> Costo ($) </mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{element.cost}} </mat-cell>
+                    </ng-container>
 
-        <!-- material Column -->
-        <ng-container matColumnDef="material">
-            <mat-header-cell *matHeaderCellDef> Material </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.material}} </mat-cell>
-        </ng-container>
+                    <!-- size Column -->
+                    <ng-container matColumnDef="size">
+                        <mat-header-cell *matHeaderCellDef> Talle </mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{element.size}} </mat-cell>
+                    </ng-container>
 
-        <!-- colors Column -->
-        <ng-container matColumnDef="colors">
-            <mat-header-cell *matHeaderCellDef> Colores Disp. </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.colors}} </mat-cell>
-        </ng-container>
+                    <!-- material Column -->
+                    <ng-container matColumnDef="material">
+                        <mat-header-cell *matHeaderCellDef> Material </mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{element.material}} </mat-cell>
+                    </ng-container>
 
-        <!-- initial_stock Column -->
-        <ng-container matColumnDef="initial_stock">
-            <mat-header-cell *matHeaderCellDef> Stock Inicial </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.initial_stock}} </mat-cell>
-        </ng-container>
+                    <!-- colors Column -->
+                    <ng-container matColumnDef="colors">
+                        <mat-header-cell *matHeaderCellDef> Colores Disp. </mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{element.colors}} </mat-cell>
+                    </ng-container>
 
-        <!-- provider Column -->
-        <ng-container matColumnDef="provider">
-            <mat-header-cell *matHeaderCellDef> Proveedor </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.provider}} </mat-cell>
-        </ng-container>
+                    <!-- initial_stock Column -->
+                    <ng-container matColumnDef="initial_stock">
+                        <mat-header-cell *matHeaderCellDef> Stock Inicial </mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{element.initial_stock}} </mat-cell>
+                    </ng-container>
 
-        <!-- tags Column -->
-        <ng-container matColumnDef="tags">
-            <mat-header-cell *matHeaderCellDef> Etiquetas </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.tags}} </mat-cell>
-        </ng-container>
+                    <!-- provider Column -->
+                    <ng-container matColumnDef="provider">
+                        <mat-header-cell *matHeaderCellDef> Proveedor </mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{element.provider}} </mat-cell>
+                    </ng-container>
 
-        <ng-container matColumnDef="actions">
-            <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                <button mat-icon-button class="actionIcon" (click)="openConfirmationDialog(element)">
-                    <mat-icon>delete</mat-icon>
-                </button>
-                <button mat-icon-button class="actionIcon" (click)="openArticleDialog(element)">
-                    <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button class="actionIcon">
-                    <mat-icon>favorite</mat-icon>
-                </button>
-            </mat-cell>
-        </ng-container>
+                    <!-- tags Column -->
+                    <ng-container matColumnDef="tags">
+                        <mat-header-cell *matHeaderCellDef> Etiquetas </mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{element.tags}} </mat-cell>
+                    </ng-container>
 
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-    </mat-table>
-</div>
-</mat-sidenav-content>
-</mat-sidenav-container>
+                    <ng-container matColumnDef="actions">
+                        <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            <button mat-icon-button class="actionIcon" (click)="openConfirmationDialog(element)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                            <button mat-icon-button class="actionIcon" (click)="openArticleDialog(element)">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button mat-icon-button class="actionIcon">
+                                <mat-icon>favorite</mat-icon>
+                            </button>
+                        </mat-cell>
+                    </ng-container>
+
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                </mat-table>
+            </div>
+        </mat-sidenav-content>
+    </mat-sidenav-container>

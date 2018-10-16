@@ -23,8 +23,7 @@ import { RegisterComponent } from './auth/components/register/register.component
 import { InventoryComponent } from './articles/components/inventory/inventory.component';
 import { TagsService } from './articles/services/tags.service';
 import { NgxSpinnerModule } from 'ngx-spinner';
-
-import {MatSidenavModule} from '@angular/material/sidenav';
+import { MatSidenavModule} from '@angular/material/sidenav';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
