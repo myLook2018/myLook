@@ -4,13 +4,18 @@
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/purple">
+        android:layout_height="wrap_content">
 
         <android.support.v7.widget.Toolbar
+            android:id="@+id/article_info_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/accountSettingsToolbar">
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+            app:titleTextColor="@color/white"
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -20,26 +25,23 @@
                     android:id="@+id/backArrow"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
                     android:layout_centerVertical="true"
-                    android:clickable="true" />
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:clickable="true"
+                    android:src="@drawable/ic_back_arrow" />
 
                 <TextView
-                    android:layout_toRightOf="@id/backArrow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:text="Opciones"
-                    android:textSize="20dp"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="15dp"
                     android:layout_marginLeft="15dp"
-                    />
+                    android:layout_marginStart="15dp"
+                    android:layout_toRightOf="@id/backArrow"
+                    android:text="Tienda"
+                    android:textSize="20dp" />
 
             </RelativeLayout>
         </android.support.v7.widget.Toolbar>
-
     </android.support.design.widget.AppBarLayout>
-
 </merge>

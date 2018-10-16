@@ -16,7 +16,7 @@
             android:layout_height="match_parent"
             android:id="@+id/relLayout1">
 
-            <include layout="@layout/layout_top_tabs"/>
+            <include layout="@layout/layout_top_toolbar"/>
         </RelativeLayout>
 
         <!-- body -->

@@ -16,5 +16,9 @@
     <color name="white">#fff</color>
     <color name="purple">#9C27B0</color>
     <color name="black">#000</color>
+
     <color name="orange">#fb8c00</color>
+
+    <color name="article_title">#4c4c4c</color>
+
 </resources>

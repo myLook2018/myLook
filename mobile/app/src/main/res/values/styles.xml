@@ -10,4 +10,10 @@
         <item name="bottomNavigationStyle">@style/Animation.Design.BottomSheetDialog</item>
     </style>
 
+    <style name="PrimaryFlatButton" parent="Theme.AppCompat.Light">
+        <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Borderless</item>
+        <item name="colorControlHighlight">@color/primary_dark</item>
+        <item name="colorAccent">@color/orange</item>
+    </style>
+
 </resources>
