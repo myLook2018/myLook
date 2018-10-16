@@ -59,8 +59,9 @@ export class LoginComponent {
     });
   }
 
-  tryLogin(value) {
-    this.authService.doLogin(value)
+  tryLogin() {
+    console.log(this.loginForm.value);
+    this.authService.doLogin(this.loginForm)
     .then(res => {
       this.router.navigate(['/home']);
     }, err => {
