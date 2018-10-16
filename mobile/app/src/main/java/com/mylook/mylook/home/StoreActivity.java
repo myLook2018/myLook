@@ -15,7 +15,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -23,9 +27,12 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Store;
+import com.mylook.mylook.entities.Subscription;
 import com.mylook.mylook.utils.GridImageAdapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class StoreActivity extends AppCompatActivity {
 
@@ -36,8 +43,10 @@ public class StoreActivity extends AppCompatActivity {
     private GridView gridArticlesStore;
     private String nombreTiendaPerfil;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private static final int NUM_COLUMNS=3;
+    private static final int NUM_COLUMNS = 3;
     private ArrayList<Store> storeList;
+    private boolean mSubscribed;
+    private String documentId="";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,7 +73,7 @@ public class StoreActivity extends AppCompatActivity {
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
+                if (task.isSuccessful()) {
                     Log.d("info de firebase", "onComplete: " + task.getResult().toObjects(Store.class));
 
                     storeList.addAll(task.getResult().toObjects(Store.class));
@@ -93,32 +102,106 @@ public class StoreActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        //following system
+        checkFollow();
+
+        btnSubscribe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                btnSubscribe.setEnabled(false);
+                if (!mSubscribed) {
+
+                    Subscription newSubscription = new Subscription(nombreTiendaPerfil, FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                    db.collection("subscriptions").add(newSubscription).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            Log.d("Firestore task", "DocumentSnapshot written with ID: " + documentReference.getId());
+                            documentId = documentReference.getId();
+                            setupButtonSubscribe(true);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("Firestore task", "Error adding document", e);
+                            btnSubscribe.setEnabled(true);
+                        }
+                    });
+
+                } else {
+                    db.collection("subscriptions").document(documentId).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                setupButtonSubscribe(false);
+                                documentId = "";
+                            }
+                            btnSubscribe.setEnabled(true);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void checkFollow() {
+
+        db.collection("subscriptions")
+                .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .whereEqualTo("storeName", nombreTiendaPerfil)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    if (!task.getResult().isEmpty()) {
+                        //read subscription id
+                        documentId = task.getResult().getDocuments().get(0).getId();
+                    }
+                    setupButtonSubscribe(!task.getResult().isEmpty());
+                }
+            }
+        });
+    }
+
+    private void setupButtonSubscribe(boolean subscribed) {
+
+        if (subscribed) {
+            btnSubscribe.setText("Subscripto");
+            btnSubscribe.setBackgroundColor(getResources().getColor(R.color.primary_dark));
+            mSubscribed = true;
+        } else {
+            btnSubscribe.setText("Subscribirse");
+            btnSubscribe.setBackgroundColor(getResources().getColor(R.color.accent));
+        }
+
+        btnSubscribe.setEnabled(true);
     }
 
 
-    private void setupGridView(){
+    private void setupGridView() {
 
         Log.d("Store gridView", "setupGridView: Setting up store grid.");
         final ArrayList<Article> storeArticles = new ArrayList<Article>();
         db.collection("articles").whereEqualTo("storeName", nombreTiendaPerfil).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     storeArticles.addAll(task.getResult().toObjects(Article.class));
 
                     int widthGrid = getResources().getDisplayMetrics().widthPixels;
-                    int imageWidth = widthGrid/NUM_COLUMNS;
+                    int imageWidth = widthGrid / NUM_COLUMNS;
                     gridArticlesStore.setColumnWidth(imageWidth);
 
                     ArrayList<String> articlesPhotosUrls = new ArrayList<String>();
-                    for (int i=0;i<storeArticles.size();i++){
+                    for (int i = 0; i < storeArticles.size(); i++) {
                         articlesPhotosUrls.add(storeArticles.get(i).getPicture());
                     }
 
-                    GridImageAdapter gridAdapter = new GridImageAdapter(mContext,R.layout.layout_grid_imageview,articlesPhotosUrls);
+                    GridImageAdapter gridAdapter = new GridImageAdapter(mContext, R.layout.layout_grid_imageview, articlesPhotosUrls);
                     gridArticlesStore.setAdapter(gridAdapter);
 
-                }else{
+                } else {
                     Log.d("Firestore task", "onComplete: " + task.getException());
                 }
             }

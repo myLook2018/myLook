@@ -29,6 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
+import com.mylook.mylook.entities.Subscription;
 import com.mylook.mylook.login.LoginActivity;
 import com.mylook.mylook.utils.BottomNavigationViewHelper;
 import com.mylook.mylook.utils.CardsHomeFeedAdapter;
@@ -46,6 +47,7 @@ public class HomeActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private CardsHomeFeedAdapter adapter;
     private List<Article> articleList;
+    private ArrayList<Subscription> subscriptionList;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -67,25 +69,13 @@ public class HomeActivity extends AppCompatActivity {
         articleList = new ArrayList<>();
         adapter = new CardsHomeFeedAdapter(this, articleList);
 
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL,false);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
-        //leer firestore
-        db.collection("articles").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    articleList.addAll(task.getResult().toObjects(Article.class));
-                    adapter.notifyDataSetChanged();
-
-                }else{
-                    Log.d("Firestore task", "onComplete: " + task.getException());
-                }
-
-            }
-        });
+        //read firestore
+        readSubscriptions();
 
     }
 
@@ -120,6 +110,38 @@ public class HomeActivity extends AppCompatActivity {
                 checkCurrentUser(firebaseAuth.getCurrentUser());
             }
         };
+    }
+
+    private void readSubscriptions() {
+        db.collection("subscriptions")
+                .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    if (!task.getResult().isEmpty()) {
+                        subscriptionList = new ArrayList<Subscription>();
+                        subscriptionList.addAll(task.getResult().toObjects(Subscription.class));
+
+                        for (Subscription sub : subscriptionList) {
+                            db.collection("articles")
+                                    .whereEqualTo("storeName", sub.getStoreName())
+                                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        articleList.addAll(task.getResult().toObjects(Article.class));
+                                        adapter.notifyDataSetChanged();
+                                    } else {
+                                        Log.d("Firestore task", "onComplete: " + task.getException());
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        });
     }
 
     /**
