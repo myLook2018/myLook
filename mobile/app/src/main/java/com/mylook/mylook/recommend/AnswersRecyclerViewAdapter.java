@@ -14,8 +14,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
-import com.mylook.mylook.profile.ProfileActivity;
+import com.mylook.mylook.entities.Store;
+import com.mylook.mylook.home.StoreActivity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,11 +31,13 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
     private static final String TAG = "AnswersRecyclerViewAdapter";
     private Context mContext;
     private List<HashMap<String, String>> answersList;
+    private FirebaseFirestore dB;
 
 
     public AnswersRecyclerViewAdapter(Context mContext, List<HashMap<String,String>> answersList) {
         this.mContext = mContext;
         this.answersList = answersList;
+        dB=FirebaseFirestore.getInstance();
     }
 
     @NonNull
@@ -65,21 +72,50 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
         holder.imgArticle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /*
                 Log.d("AnswerRecyclerViewAdap", "onClick: clicked on: " + position);
+                DocumentReference docRef = dB.collection("articles").document(answer.get("articleUID"));
+                ApiFuture<DocumentSnapshot> future = docRef.get();
 
-                Intent intent = new Intent(mContext, ProfileActivity.class);
-                //intent.putExtra("requestRecommendation", answer.);
-                mContext.startActivity(intent);
-            }
-        });
+                DocumentSnapshot document = docRef.get().get();
+                Article art = null;
+                if (document.exists()) {
+                    // convert document to POJO
+                    art = document.toObject(Article.class);
+                    Intent intent = new Intent(mContext, ArticleInfoActivity.class);
+                    intent.putExtra("Tienda", art.getStoreName());
+                    intent.putExtra("Costo", art.getCost());
+                    intent.putExtra("Costo", art.getCost());
+                    intent.putExtra("Stock", art.getInitial_stock());
+                    intent.putExtra("Colores", art.getColors());
+                    intent.putExtra("Material", art.getMaterial());
+                    intent.putExtra("Talles", art.getSize());
+                    mContext.startActivity(intent);
+            }*/
+        }});
+
         holder.txtStore.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
+                Log.d("AnswerRecyclerViewAdap", "onClick: clicked on: " + position);
+                dB.collection("stores")
+                        .whereEqualTo("storeName",answer.get("storeName")).get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                Store store = (Store) task.getResult().toObjects(Store.class).get(0);
+                                Intent intent = new Intent(mContext, StoreActivity.class);
+                                intent.putExtra("Tienda", store.getStoreName());
+                                mContext.startActivity(intent);
+                            }
+                        }
+                        );
+            }});
 
-            }
-        });
+
+
+
     }
-
     @Override
     public int getItemCount() {
         return answersList.size();
