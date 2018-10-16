@@ -1,5 +1,7 @@
 package com.mylook.mylook.entities;
 
+import java.util.ArrayList;
+
 public class Article {
 
     private String colors;
@@ -9,10 +11,22 @@ public class Article {
     private String provider;
     private String size;
     private String storeName;
-    private String tags;
+    private ArrayList<String> tags;
     private String picture;
 
     public Article() {}
+
+    public Article(String colors, String cost, String initial_stock, String material, String provider, String size, String storeName, ArrayList<String> tags, String picture) {
+        this.colors = colors;
+        this.cost = cost;
+        this.initial_stock = initial_stock;
+        this.material = material;
+        this.provider = provider;
+        this.size = size;
+        this.storeName = storeName;
+        this.tags = tags;
+        this.picture = picture;
+    }
 
     public String getCost() {
         return cost;
@@ -46,11 +60,11 @@ public class Article {
         this.size = size;
     }
 
-    public String getTags() {
+    public ArrayList<String> getTags() {
         return tags;
     }
 
-    public void setTags(String tags) {
+    public void setTags(ArrayList<String> tags) {
         this.tags = tags;
     }
 

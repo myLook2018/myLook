@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0">
@@ -24,87 +24,60 @@
             <include layout="@layout/layout_top_toolbar" />
         </LinearLayout>
 
-            <RelativeLayout
-                android:id="@+id/layout_center"
+        <RelativeLayout
+            android:id="@+id/layout_center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/layout_bottom"
+            android:layout_below="@+id/layout_top">
+
+            <ImageView
+                android:id="@+id/imgRecommend"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_above="@+id/layout_bottom"
-                android:layout_below="@+id/layout_top">
+                android:layout_height="126dp"
+                android:clickable="true"
+                tools:background="@color/purple" />
 
-                <ImageView
-                    android:id="@+id/imgRecommend"
+            <Button
+                android:id="@+id/btnSend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="0dp"
+                android:text="Enviar" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/textInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="164dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="123dp">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/txtDescription"
                     android:layout_width="match_parent"
-                    android:layout_height="126dp"
-                    android:clickable="true"
-                    tools:background="@color/purple" />
-
-                <Button
-                    android:id="@+id/btnSend"
-                    android:layout_width="346dp"
-                    android:layout_height="39dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="16dp"
-                    android:text="Enviar" />
-
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/textInputLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="164dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginTop="123dp">
-
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/txtDescription"
-                        android:layout_width="match_parent"
-                        android:layout_height="164dp"
-                        android:layout_below="@+id/textInputLayout"
-                        android:layout_alignStart="@+id/textInputLayout"
-                        android:layout_alignBottom="@+id/textInputLayout"
-                        android:layout_marginTop="-16dp"
-                        android:hint="Agregá una descripción a tu solicitud."
-                        android:singleLine="false" />
-                </android.support.design.widget.TextInputLayout>
-
-                <TextView
-                    android:id="@+id/lblLimitDate"
-                    android:layout_width="175dp"
-                    android:layout_height="43dp"
+                    android:layout_height="146dp"
                     android:layout_below="@+id/textInputLayout"
-                    android:layout_alignStart="@+id/lblUbication"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginTop="-1dp"
-                    android:text="Días de duración" />
+                    android:layout_alignStart="@+id/textInputLayout"
+                    android:layout_alignBottom="@+id/textInputLayout"
+                    android:layout_marginTop="-16dp"
+                    android:hint="Agregá una descripción a tu solicitud."
+                    android:singleLine="false" />
+            </android.support.design.widget.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/txtLimitDate"
-                    android:layout_width="174dp"
-                    android:layout_height="45dp"
-                    android:layout_below="@+id/textInputLayout"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginTop="-1dp"
-                    android:layout_marginEnd="24dp"
-                    android:ems="10"
-                    android:inputType="date" />
+            <EditText
+                android:id="@+id/txtLimitDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textInputLayout"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="67dp"
+                android:layout_marginEnd="210dp"
+                android:ems="10"
+                android:inputType="date" />
 
-                <TextView
-                    android:id="@+id/lblUbication"
-                    android:layout_width="175dp"
-                    android:layout_height="43dp"
-                    android:layout_alignTop="@+id/btnUbication"
-                    android:layout_toStartOf="@+id/btnUbication"
-                    android:text="Agregar ubicación" />
-
-                <Switch
-                    android:id="@+id/btnUbication"
-                    android:layout_width="175dp"
-                    android:layout_height="42dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginEnd="22dp"
-                    android:layout_marginBottom="90dp" />
-
-            </RelativeLayout>
+        </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/layout_bottom"

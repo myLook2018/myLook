@@ -21,6 +21,7 @@ import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.utils.BottomNavigationViewHelper;
 import com.mylook.mylook.utils.CardsDataAdapter;
 import com.wenchao.cardstack.CardStack;
+import com.yuyakaido.android.cardstackview.CardStackView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +33,8 @@ public class ExploreActivity extends AppCompatActivity implements ExploreStartFr
 
     private Context mContext = ExploreActivity.this;
     private List<Article> mDiscoverableArticles;
-    private CardStack mCardStack;
+    //private CardStack mCardStack;
+    private CardStackView mCardStack;
     private CardsDataAdapter mCardAdapter;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -43,8 +45,7 @@ public class ExploreActivity extends AppCompatActivity implements ExploreStartFr
         setContentView(R.layout.activity_explore);
 
         mCardStack = findViewById(R.id.container);
-        mCardStack.setContentResource(R.layout.article_card);
-        mCardStack.setStackMargin(20);
+        //mCardStack.setContentResource(R.layout.article_card);
 
         setupBottomNavigationView();
         getDiscoverableArticles();
