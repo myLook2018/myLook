@@ -4,20 +4,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="fill_vertical"
-    tools:context=".home.HomeActivity">
+    tools:context=".home.ArticleInfoActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/layout_top"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true">
+        <LinearLayout
+            android:id="@+id/layout_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true">
 
-        <include layout="@layout/layout_top_toolbar" />
-    </LinearLayout>
+            <include layout="@layout/layout_top_toolbar_info_article" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layout_center"
@@ -26,17 +26,8 @@
             android:layout_below="@id/layout_top"
             android:layout_above="@id/layout_bottom">
 
-            <include layout="@layout/content_home" />
+            <include layout="@layout/complete_info_article" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/layout_bottom"
-            android:layout_alignParentBottom="true">
-
-            <include layout="@layout/layout_bottom_navigation_view" />
         </LinearLayout>
 
     </RelativeLayout>
