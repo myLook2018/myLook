@@ -56,9 +56,7 @@ export class RecomendationService {
   }
 
   addRecomendationAnswer(answer, requestUID) {
-    console.log(1);
     const requestRef = this.fst.collection(this.requestCollectionPath).doc(requestUID);
-    console.log(2);
     return requestRef.update({
       answers: firebase.firestore.FieldValue.arrayUnion(answer)
     });
