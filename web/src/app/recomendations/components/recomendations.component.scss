@@ -77,17 +77,16 @@
   background-size: cover;
 }
 
-
 .spacer {
   flex: 1 1 auto;
 }
 
 .mat-row:hover {
-  background-color: rgba(255, 153, 0, 0.452);
+  background-color:  rgb(193, 85, 212);
 }
 
 .highlight{
-  background-color: #FF9800
+  background-color: rgb(218, 154, 230);
 }
 
 .mat-card-image {
@@ -98,4 +97,9 @@
 
 .descriptionArea{
   width: 100%;
+}
+
+.sendRecoButton{
+  background-color: #9C27B0;
+  color: white;
 }
