@@ -254,36 +254,40 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
 
     private Task writeFirebaseDocument(Uri uri) {
             if (!enviado) {
-                enviado = true;
-                final Location loc = getLocation();
-                final List<Double> latLong = new Vector<>();
-                latLong.add(loc.getLatitude());
-                latLong.add(loc.getLongitude());
-                final Calendar cal = Calendar.getInstance();
-                final Map<String, Object> recommendation = new HashMap<>();
-                recommendation.put("userId", user.getUid());
-                recommendation.put("description", txtDescription.getText().toString());
-                recommendation.put("limitDate", cal.getTimeInMillis());
-                recommendation.put("updateDate", "update");
-                recommendation.put("requestPhoto", uri.toString());
-                recommendation.put("localization", latLong);
-                recommendation.put("isClosed", false);
-                recommendation.put("title", title.getText().toString());
-                recommendation.put("answers", new ArrayList<ArrayList<String>>());
-                dB.collection("requestRecommendations")
-                        .add(recommendation).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        displayMessage("Tu solicitud de recomendacion ha sido enviada");
-                        finish();
 
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        displayMessage("Ha ocurrido un problema con tu recomendacion");
-                    }
-                });
+                final Location loc = getLocation();
+                if (loc != null) {
+
+                    final List<Double> latLong = new Vector<>();
+                    latLong.add(loc.getLatitude());
+                    latLong.add(loc.getLongitude());
+                    final Calendar cal = Calendar.getInstance();
+                    final Map<String, Object> recommendation = new HashMap<>();
+                    recommendation.put("userId", user.getUid());
+                    recommendation.put("description", txtDescription.getText().toString());
+                    recommendation.put("limitDate", cal.getTimeInMillis());
+                    recommendation.put("updateDate", "update");
+                    recommendation.put("requestPhoto", uri.toString());
+                    recommendation.put("localization", latLong);
+                    recommendation.put("isClosed", false);
+                    recommendation.put("title", title.getText().toString());
+                    recommendation.put("answers", new ArrayList<ArrayList<String>>());
+                    dB.collection("requestRecommendations")
+                            .add(recommendation).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            displayMessage("Tu solicitud de recomendacion ha sido enviada");
+                            finish();
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            displayMessage("Ha ocurrido un problema con tu recomendacion");
+                        }
+                    });
+                    enviado = true;
+                }
             }
     return null;
     }
@@ -329,6 +333,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (!isLocationEnabled()) {
             showLocationAlert();
+            return null;
         }
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
 
