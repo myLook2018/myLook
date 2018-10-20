@@ -17,6 +17,18 @@ public class Article {
 
     public Article() {}
 
+    public Article(String colors, String cost, String initial_stock, String material, String provider, String size, String storeName, ArrayList<String> tags, String picture) {
+        this.colors = colors;
+        this.cost = cost;
+        this.initial_stock = initial_stock;
+        this.material = material;
+        this.provider = provider;
+        this.size = size;
+        this.storeName = storeName;
+        this.tags = tags;
+        this.picture = picture;
+    }
+
     public String getCost() {
         return cost;
     }

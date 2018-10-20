@@ -1,4 +1,4 @@
-package com.mylook.mylook.home;
+package com.mylook.mylook.info;
 
 import android.content.Context;
 import android.content.Intent;

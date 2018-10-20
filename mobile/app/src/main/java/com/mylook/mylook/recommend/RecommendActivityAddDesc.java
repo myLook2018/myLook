@@ -26,6 +26,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -95,7 +96,6 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         dB = FirebaseFirestore.getInstance();
         storageRef = FirebaseStorage.getInstance().getReference();
         setContentView(R.layout.activity_request_recommendation_add_desc);
-
         Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
         tb.setTitle("Nueva Solicitud");
         setSupportActionBar(tb);
@@ -422,7 +422,12 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         imgRecommend.setBackgroundColor(Color.rgb(255, 255, 255));
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == REQUEST_CAMERA) {
-                picUri = data.getData();
+                //picUri = data.getData();
+                Bitmap imgBitmap = (Bitmap) data.getExtras().get("data");
+                Uri tempUri = getImageUri(getApplicationContext(), imgBitmap);
+                picUri = tempUri;
+                //picUri = (Uri) data.getExtras().get(Intent.EXTRA_STREAM);
+                Log.d("Setee picUri", "onActivityResult: " + picUri);
                 perfromCrop();
             } else if (requestCode == SELECT_FILE) {
                 selectImageUri = data.getData();
@@ -442,13 +447,19 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             }
         }
         if (requestCode == PIC_CROP) {
-
+            // no funca cuando sacas foto con la camara tmr 3===============================================D
             bitmap = (Bitmap) data.getExtras().getParcelable("data");
             imgRecommend.setImageBitmap(bitmap);
             fabMenu.close(true);
         }
     }
 
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
 
     private void perfromCrop() {
         try {

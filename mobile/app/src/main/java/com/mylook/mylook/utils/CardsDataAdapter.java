@@ -3,7 +3,7 @@ package com.mylook.mylook.utils;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -23,14 +23,38 @@ public class CardsDataAdapter extends ArrayAdapter<Article> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View contentView, @NonNull ViewGroup parent) {
-        Article a = getItem(position);
+        /*Article a = getItem(position);
         ImageView i = contentView.findViewById(R.id.image_content);
-        //i.setImageResource(R.drawable.ic_launcher);
         Glide.with(getContext()).load(a.getPicture()).into(i);
         TextView t = contentView.findViewById(R.id.text_content);
-        t.setText(a.getStoreName());
+        t.setText(a.getStoreName());*/
+
+        ViewHolder holder;
+
+        if (contentView == null) {
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            contentView = inflater.inflate(R.layout.article_card, parent, false);
+            holder = new ViewHolder(contentView);
+            contentView.setTag(holder);
+        } else {
+            holder = (ViewHolder) contentView.getTag();
+        }
+
+        Article a = getItem(position);
+        holder.name.setText(a.getStoreName());
+        Glide.with(getContext()).load(a.getPicture()).into(holder.image);
 
         return contentView;
+    }
+
+    private static class ViewHolder {
+        public TextView name;
+        public ImageView image;
+
+        public ViewHolder(View view) {
+            this.name = (TextView) view.findViewById(R.id.text_content);
+            this.image = (ImageView) view.findViewById(R.id.image_content);
+        }
     }
 
 }
