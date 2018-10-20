@@ -49,7 +49,8 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
         Glide.with(mContext).asBitmap().load(requestRecommendation.getRequestPhoto()).into(holder.requestPhoto);
         Calendar cal=Calendar.getInstance();
         cal.setTimeInMillis(requestRecommendation.getLimitDate());
-        final String dateFormat=cal.get(Calendar.DAY_OF_MONTH)+"/"+cal.get(Calendar.MONTH)+"/"+cal.get(Calendar.YEAR);
+        int mes=cal.get(Calendar.MONTH)+1;
+        final String dateFormat=cal.get(Calendar.DAY_OF_MONTH)+"/"+mes + "/"+cal.get(Calendar.YEAR);
         holder.txtDate.setText(dateFormat);
         holder.titleRequest.setText(requestRecommendation.getTitle());
         if(!requestRecommendation.getAnswers().isEmpty())

@@ -34,10 +34,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="2dp"
-                    android:textStyle="bold"
                     android:text="Nombre Tienda"
-                    android:textColor="@color/article_title"
-                    android:textSize="25dp"
+                    android:textColor="@color/primary_dark"
+                    android:textSize="20dp"
                     android:id="@+id/store_name"
                     />
                 <TextView
@@ -45,16 +44,16 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="2dp"
                     android:text="Precio"
-                    android:textColor="@color/article_title"
-                    android:textSize="@dimen/article_title"
+                    android:textColor="@color/black"
+                    android:textSize="17dp"
                     android:id="@+id/cost_article"
                     />
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Stock"
-                    android:textColor="@color/article_title"
-                    android:textSize="@dimen/article_title"
+                    android:textColor="@color/black"
+                    android:textSize="17dp"
                     android:id="@+id/stock_article"
                     />
             </LinearLayout>

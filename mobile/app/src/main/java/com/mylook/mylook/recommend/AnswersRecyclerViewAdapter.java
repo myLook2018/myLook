@@ -14,8 +14,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
-import com.mylook.mylook.profile.ProfileActivity;
+import com.mylook.mylook.entities.Store;
+import com.mylook.mylook.info.StoreActivity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +29,7 @@ import java.util.List;
 public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecyclerViewAdapter.ViewHolder> {
 
     private static final String TAG = "AnswersRecyclerViewAdapter";
+    private final FirebaseFirestore dB;
     private Context mContext;
     private List<HashMap<String, String>> answersList;
 
@@ -31,6 +37,7 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
     public AnswersRecyclerViewAdapter(Context mContext, List<HashMap<String,String>> answersList) {
         this.mContext = mContext;
         this.answersList = answersList;
+        dB= FirebaseFirestore.getInstance();
     }
 
     @NonNull
@@ -61,7 +68,7 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
                     answer.put("feedBack",String.valueOf(rating));
                 }
             });
-
+        /*
         holder.imgArticle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,12 +79,24 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
                 mContext.startActivity(intent);
             }
         });
+        */
         holder.txtStore.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-
-            }
-        });
+            public void onClick(View view) {
+                Log.d("AnswerRecyclerViewAdap", "onClick: clicked on: " + position);
+                dB.collection("stores")
+                        .whereEqualTo("storeName",answer.get("storeName")).get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                   @Override
+                                                   public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                       Store store = (Store) task.getResult().toObjects(Store.class).get(0);
+                                                       Intent intent = new Intent(mContext, StoreActivity.class);
+                                                       intent.putExtra("Tienda", store.getStoreName());
+                                                       mContext.startActivity(intent);
+                                                   }
+                                               }
+                        );
+            }});
     }
 
     @Override
