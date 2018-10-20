@@ -401,6 +401,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                        getLocation();
                     }
                 });
         dialog.show();
