@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -65,7 +64,7 @@ import java.util.concurrent.TimeUnit;
 
 public class RecommendActivityAddDesc extends AppCompatActivity {
 
-    private Button btnBack, btnSend;
+    private Button btnSend;
     private ImageView imgRecommend = null;
     private TextInputEditText txtDescription;
     private Date limitDate;
@@ -77,14 +76,13 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     private Uri picUri;
     private boolean permissionGranted = true;
     private final int REQUEST_CAMERA = 3, SELECT_FILE = 0, READ_EXTERNAL_STORAGE = 1, LOCATION_PERMISSION = 2, PIC_CROP = 4;
-    ;
     //keep track of cropping intent
     protected LocationManager locationManager;
     private Location currentLocation;
     private FloatingActionMenu fabMenu;
     private FloatingActionButton fabPhoto, fabGallery;
     private FirebaseUser user;
-    private String urlLogo = "https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/requestPhotos%2Flogo_purple.png?alt=media&token=63174614-b40d-4085-bc52-bc0e89e0c8cd";
+    private String urlLogo ="https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/utils%2Flogo_transparente_50.png?alt=media&token=c72e5b39-3011-4f26-ba4f-4c9f7326c68a";
     private ProgressBar mProgressBar;
     private Uri downloadUrl;
     private boolean enviado = false;
@@ -101,8 +99,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
-
-       // btnBack = (Button) findViewById(R.id.btnBack);
+        mProgressBar= findViewById(R.id.progressBar);
         btnSend = (Button) findViewById(R.id.btnSend);
         imgRecommend = (ImageView) findViewById(R.id.imgRecommend);
         txtDescription = (TextInputEditText) findViewById(R.id.txtDescription);
@@ -114,11 +111,13 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                btnSend.setEnabled(false);
+                fabMenu.setEnabled(false);
+                fabMenu.setVisibility(View.INVISIBLE);
                 sendToFirebase();
             }
         });
-        mProgressBar = (ProgressBar) findViewById(R.id.login_progressbar);
-        mProgressBar.setVisibility(View.GONE);
+
 
 
         final Calendar myCalendar = Calendar.getInstance();
@@ -130,7 +129,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 myCalendar.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
                 limitDate = new Date();
                 limitDate.setTime(myCalendar.getTimeInMillis());
-                editDate.setText(dayOfMonth + "/" + monthOfYear + "/" + year);
+                editDate.setText(dayOfMonth + "/" + (monthOfYear+1) + "/" + year);
             }
         };
 
@@ -178,8 +177,6 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     }
 
     private void startCameraIntent() {
-        //Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        //startActivityForResult(intent, REQUEST_CAMERA);
         //use standard intent to capture an image
         Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         //we will handle the returned data in onActivityResult
@@ -188,6 +185,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     }
 
     private UploadTask saveImage() {
+
         int permissionCheck = ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.READ_EXTERNAL_STORAGE);
         final StorageReference storageReference = storageRef.child("requestPhotos/" + this.createPhotoName(user.getDisplayName()) + ".jpg");
         final UploadTask uploadTask;
@@ -252,7 +250,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         return uploadTask;
     }
 
-    private Task writeFirebaseDocument(Uri uri) {
+    private Task writeFirebaseDocument(String uri) {
             if (!enviado) {
 
                 final Location loc = getLocation();
@@ -261,13 +259,12 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                     final List<Double> latLong = new Vector<>();
                     latLong.add(loc.getLatitude());
                     latLong.add(loc.getLongitude());
-                    final Calendar cal = Calendar.getInstance();
                     final Map<String, Object> recommendation = new HashMap<>();
                     recommendation.put("userId", user.getUid());
                     recommendation.put("description", txtDescription.getText().toString());
-                    recommendation.put("limitDate", cal.getTimeInMillis());
+                    recommendation.put("limitDate", limitDate.getTime());
                     recommendation.put("updateDate", "update");
-                    recommendation.put("requestPhoto", uri.toString());
+                    recommendation.put("requestPhoto", uri);
                     recommendation.put("localization", latLong);
                     recommendation.put("isClosed", false);
                     recommendation.put("title", title.getText().toString());
@@ -276,6 +273,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                             .add(recommendation).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
                         public void onSuccess(DocumentReference documentReference) {
+                            mProgressBar.setVisibility(View.GONE);
                             displayMessage("Tu solicitud de recomendacion ha sido enviada");
                             finish();
 
@@ -283,6 +281,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
+                            mProgressBar.setVisibility(View.GONE);
                             displayMessage("Ha ocurrido un problema con tu recomendacion");
                         }
                     });
@@ -294,6 +293,10 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
 
     private void sendToFirebase() {
         Calendar cal = Calendar.getInstance();
+        if (title.getText().toString().isEmpty()) {
+            displayMessage("Debe añadir un titulo!");
+            return;
+        }
         if (txtDescription.getText().toString().isEmpty()) {
             displayMessage("Debe añadir una descripción!");
             return;
@@ -303,24 +306,26 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             displayMessage("La fecha limite debe ser mayor a 3 días!");
             return;
         }
-        if (title.getText().toString().isEmpty()) {
-            displayMessage("Debe añadir un titulo!");
-            return;
+
+        mProgressBar.setVisibility(View.VISIBLE);
+        if(bitmap==null && selectImageUri==null){
+            writeFirebaseDocument(urlLogo);
+        }else{
+            final UploadTask uptask = saveImage();
+            uptask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    task.getResult().getStorage().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            writeFirebaseDocument(task.getResult().toString());
+                        }
+                    });
+
+
+                }
+            });
         }
-        final UploadTask uptask = saveImage();
-        uptask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                task.getResult().getStorage().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Uri> task) {
-                        writeFirebaseDocument(task.getResult());
-                    }
-                });
-
-
-            }
-        });
 
     }
 
@@ -418,13 +423,9 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        imgRecommend.setBackgroundColor(Color.rgb(255, 255, 255));
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == REQUEST_CAMERA) {
-                //picUri = data.getData();
-                Bitmap imgBitmap = (Bitmap) data.getExtras().get("data");
-                Uri tempUri = getImageUri(getApplicationContext(), imgBitmap);
-                picUri = tempUri;
+                picUri = data.getData();
                 //picUri = (Uri) data.getExtras().get(Intent.EXTRA_STREAM);
                 Log.d("Setee picUri", "onActivityResult: " + picUri);
                 perfromCrop();
@@ -446,19 +447,12 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             }
         }
         if (requestCode == PIC_CROP) {
-            // no funca cuando sacas foto con la camara tmr 3===============================================D
             bitmap = (Bitmap) data.getExtras().getParcelable("data");
             imgRecommend.setImageBitmap(bitmap);
             fabMenu.close(true);
         }
     }
 
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
-    }
 
     private void perfromCrop() {
         try {
@@ -494,7 +488,6 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     permissionGranted = true;
-                } else {
                 }
                 break;
             }
@@ -509,21 +502,17 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     startCameraIntent();
-                } else {
                 }
                 break;
             }
 
         }
     }
-/*
+
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        Intent intent3 = new Intent(getApplicationContext(), RecommendationsActivity.class);
-        getApplicationContext().startActivity(intent3);
     }
-    */
 }
 
 
