@@ -83,6 +83,12 @@ public class RecommendationsActivity extends AppCompatActivity implements Recomm
         getRequestRecommendations();
 
     }
+
+    @Override
+    protected  void onResume(){
+        super.onResume();
+        initRecyclerView();
+    }
     public void  getRequestRecommendations(){
         progressBar.setVisibility(View.VISIBLE);
         dB.collection("requestRecommendations")

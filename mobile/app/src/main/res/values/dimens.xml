@@ -13,4 +13,5 @@
     <dimen name="article_title_padding">10dp</dimen>
     <dimen name="article_title">20dp</dimen>
     <dimen name="info_padding_bottom">5dp</dimen>
+    <dimen name="badge_text_size">2dp</dimen>
 </resources>
