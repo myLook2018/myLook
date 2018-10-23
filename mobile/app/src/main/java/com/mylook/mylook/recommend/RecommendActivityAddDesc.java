@@ -326,12 +326,12 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 }
             });
         }
-        if(!enviado) {
-            mProgressBar.setVisibility(View.INVISIBLE);
-            btnSend.setEnabled(true);
-            fabMenu.setEnabled(true);
-            //sendToFirebase();
-        }
+//        if(!enviado) {
+//            mProgressBar.setVisibility(View.INVISIBLE);
+//            btnSend.setEnabled(true);
+//            fabMenu.setEnabled(true);
+//            //sendToFirebase();
+//        }
 
     }
 
