@@ -249,11 +249,10 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         return uploadTask;
     }
 
-    private Task writeFirebaseDocument(String uri) {
+    private boolean writeFirebaseDocument(String uri) {
         if (!enviado) {
             final Location loc = getLocation();
             if (loc != null) {
-
                 final List<Double> latLong = new Vector<>();
                 latLong.add(loc.getLatitude());
                 latLong.add(loc.getLongitude());
@@ -286,7 +285,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 enviado = true;
             }
         }
-        return null;
+        return enviado;
     }
 
     private void sendToFirebase() {
@@ -316,13 +315,22 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                     task.getResult().getStorage().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                         @Override
                         public void onComplete(@NonNull Task<Uri> task) {
-                            writeFirebaseDocument(task.getResult().toString());
+                            boolean taskReturn = writeFirebaseDocument(task.getResult().toString());
+                            if(!taskReturn){
+                                taskReturn = writeFirebaseDocument(task.getResult().toString());
+                            }
                         }
                     });
 
 
                 }
             });
+        }
+        if(!enviado) {
+            mProgressBar.setVisibility(View.INVISIBLE);
+            btnSend.setEnabled(true);
+            fabMenu.setEnabled(true);
+            //sendToFirebase();
         }
 
     }
@@ -337,11 +345,10 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         AlertDialog enableLocation;
         if (!isLocationEnabled()) {
             enableLocation = showLocationAlert();
-            if (!enableLocation.isShowing()) {
                 int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
 
                 if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getParent(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION);
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION);
                 }
                 try {
                     locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new MyLocationListenerGPS(), null);
@@ -360,12 +367,12 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-            }
+
         } else {
             int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
 
             if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(getParent(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION);
             }
             try {
                 locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new MyLocationListenerGPS(), null);
@@ -398,7 +405,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
 
         @Override
         public void onProviderEnabled(String s) {
-            //sendToFirebase();
+            sendToFirebase();
         }
 
         @Override
@@ -424,7 +431,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                         startActivity(myIntent);
                     }
                 })
-                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Aceptar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                         sendToFirebase();
@@ -441,13 +448,6 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             public void onShow(DialogInterface dialog) {
                 alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.purple));
                 alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.purple));
-            }
-        });
-
-        alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                sendToFirebase();
             }
         });
 
