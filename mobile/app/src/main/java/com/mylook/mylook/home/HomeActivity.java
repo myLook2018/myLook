@@ -63,7 +63,6 @@ public class HomeActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         //read firestore
-
         if(mAuth.getCurrentUser()!=null)
             readSubscriptions();
 

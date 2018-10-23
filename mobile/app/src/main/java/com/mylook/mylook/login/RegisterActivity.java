@@ -15,17 +15,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
 import com.mylook.mylook.home.HomeActivity;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -35,12 +41,13 @@ public class RegisterActivity extends AppCompatActivity {
     private Context mContext;
     private ProgressBar mProgressBar;
     private EditText txtEmail, txtPasswd1, txtPasswd2, txtDNI, txtName,txtSurname,txtBirthdate;
-    private TextView mWaiting;
     private LinearLayout mLayout;
     private Toolbar tb;
     private MaterialBetterSpinner spinner;
     private Button btnRegister;
     private FirebaseUser user;
+    private FirebaseFirestore dB;
+
 
 
     @SuppressLint("WrongViewCast")
@@ -53,7 +60,7 @@ public class RegisterActivity extends AppCompatActivity {
         tb = (Toolbar) findViewById(R.id.toolbar);
         tb.setTitle("Registro");
         setSupportActionBar(tb);
-        setupFirebaseAuth();
+        //setupFirebaseAuth();
         btnRegister.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -121,11 +128,12 @@ public class RegisterActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                sendEmailVerification();
-                                logInIntent();
+                                Log.d("REGISTER", "Esta pro guardar datos");
+
+                                boolean saved=saveClient();
                                 //setupFirebaseAuth();
                             } else {
-                                Log.w("Register","createUserWithEmail:Failure",task.getException());
+                                Log.w("REGISTER","createUserWithEmail:Failure",task.getException());
                                 Toast.makeText(RegisterActivity.this, "Algo salio mal",
                                         Toast.LENGTH_SHORT).show();
                             }
@@ -134,10 +142,41 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
+    private boolean saveClient(){
+        final boolean[] saved = new boolean[1];
+        final Map<String,Object> client=new HashMap<>();
+        client.put("email",txtEmail.getText().toString());
+        client.put("dni",txtDNI.getText().toString());
+        client.put("name",txtName.getText().toString());
+        client.put("surname",txtSurname.getText().toString());
+        client.put("birthday",txtBirthdate.getText().toString());
+        client.put("gender",spinner.getText().toString());
+        client.put("userId",mAuth.getUid());
+        dB.collection("clients")
+                .add(client).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                Log.d("SAVE_CLIENT", "Se guarda client");
+
+                saved[0] =true;
+            sendEmailVerification();
+            logInIntent();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("SAVE_Client", "No se guarda cliente ", e.getCause());
+
+                saved[0] =false;
+                Toast.makeText(RegisterActivity.this, "Algo salio mal",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+        return saved[0];
+    }
     @Override
     protected void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override
@@ -149,13 +188,13 @@ public class RegisterActivity extends AppCompatActivity {
     }
     private void logInIntent(){
         Intent intent = new Intent(mContext, LoginActivity.class);
-        intent.putExtra("email", txtEmail.getText());
+        intent.putExtra("email", txtEmail.getText().toString());
         startActivity(intent);
         finish();
     }
 
     private void setupFirebaseAuth() {
-        mAuth = FirebaseAuth.getInstance();
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -171,11 +210,15 @@ public class RegisterActivity extends AppCompatActivity {
         };
     }
     private void initElements(){
+        dB = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+
         btnRegister = (Button) findViewById(R.id.register_button);
         mProgressBar = (ProgressBar) findViewById(R.id.register_progressbar);
         txtEmail = (EditText) findViewById(R.id.txtEmail);
         txtPasswd1 = (EditText) findViewById(R.id.txtPasswd);
         txtPasswd2= (EditText)findViewById(R.id.txtPasswd2);
+        txtDNI=(EditText)findViewById(R.id.txtDNI);
         txtName= (EditText)findViewById(R.id.txtName);
         txtSurname= (EditText)findViewById(R.id.txtSurname);
         txtBirthdate= (EditText)findViewById(R.id.txtBirthdate);
@@ -199,10 +242,12 @@ public class RegisterActivity extends AppCompatActivity {
                         // [START_EXCLUDE]
                         // Re-enable button
                         if (task.isSuccessful()) {
+                            Log.d("EMAIL_VERIFICATION", "Se verifico mail");
                             Toast.makeText(RegisterActivity.this,
                                     "Verifica tu mail y luego inicia sesion ",
                                     Toast.LENGTH_SHORT).show();
                         } else {
+                            Log.d("EMAIL_VERIFICATION", "NO se verifico mail",task.getException());
                             Log.e("SendEmailVerification", "sendEmailVerification", task.getException());
                             Toast.makeText(RegisterActivity.this,
                                     "Failed to send verification email.",

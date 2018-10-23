@@ -3,15 +3,14 @@ package com.mylook.mylook.explore;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -23,7 +22,6 @@ import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.utils.BottomNavigationViewHelper;
 import com.mylook.mylook.utils.CardsDataAdapter;
-import com.wenchao.cardstack.CardStack;
 import com.yuyakaido.android.cardstackview.CardStackView;
 import com.yuyakaido.android.cardstackview.SwipeDirection;
 
@@ -91,6 +89,7 @@ public class ExploreActivity extends AppCompatActivity implements ExploreStartFr
                 intent.putExtra("Talle", art.getSize());
                 intent.putExtra("Tienda", art.getStoreName());
                 intent.putExtra("Foto", art.getPicture());
+                intent.putExtra("Title",art.getTitle());
                 mContext.startActivity(intent);
             }
         });

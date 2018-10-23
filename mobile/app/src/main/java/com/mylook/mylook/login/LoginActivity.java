@@ -64,7 +64,6 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-       // init();
     }
 
     private boolean isStringNull(String string) {
@@ -84,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
 
                             } else {
-                                Toast.makeText(mContext, "Authentication failed.",
+                                Toast.makeText(mContext, "Algo salio mal",
                                         Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(mContext, LoginActivity.class);
                                 startActivity(intent);
@@ -137,7 +136,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (user != null) {
                     if(user.isEmailVerified()){
                         Intent intent = new Intent(mContext, HomeActivity.class);
-                        Toast.makeText(mContext, "Authentication OK.",
+                        Toast.makeText(mContext, "Bienvenido a myLook!",
                                 Toast.LENGTH_SHORT).show();
                         startActivity(intent);
                         finish();

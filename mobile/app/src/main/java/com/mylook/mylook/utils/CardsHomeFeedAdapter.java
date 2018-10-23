@@ -83,6 +83,7 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
                 intent.putExtra("Talle", article.getSize());
                 intent.putExtra("Tienda", article.getStoreName());
                 intent.putExtra("Foto", article.getPicture());
+                intent.putExtra("Title",article.getTitle());
                 mContext.startActivity(intent);
 
             }

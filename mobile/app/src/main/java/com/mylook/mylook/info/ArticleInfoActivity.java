@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,8 +17,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
 
     private Context mContext = ArticleInfoActivity.this;
     private ImageView backArrow, articleImage;
-    private Button visitStore;
-    private TextView articleStore, articleCost, articleStock, articleColors, articleMaterial, articlesSize;
+    private TextView articleStore, articleCost, articleStock, articleColors, articleMaterial, articlesSize, articleTitle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,23 +25,24 @@ public class ArticleInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_more_info_article);
 
         backArrow = (ImageView) findViewById(R.id.backArrow);
-        visitStore = (Button) findViewById(R.id.btn_visit_store);
-        articleColors = (TextView) findViewById(R.id.article_colors);
+        articleColors = (TextView) findViewById(R.id.lblColors);
         articleCost = (TextView) findViewById(R.id.article_cost);
-        articleMaterial = (TextView) findViewById(R.id.article_material);
-        articlesSize = (TextView) findViewById(R.id.article_size);
-        articleStock = (TextView) findViewById(R.id.article_stock);
-        articleStore = (TextView) findViewById(R.id.article_store);
+        articleMaterial = (TextView) findViewById(R.id.lblMaterial);
+        articlesSize = (TextView) findViewById(R.id.lblSizes);
+        articleStock = (TextView) findViewById(R.id.lblstock);
+        articleStore = (TextView) findViewById(R.id.lblstore);
         articleImage = (ImageView) findViewById(R.id.article_image);
+        articleTitle=(TextView)findViewById(R.id.lblTitle);
 
         //retrieve data from intent
         final Intent intent = getIntent();
-        articleStore.setText("Encontralo en: " + intent.getStringExtra("Tienda"));
-        articleCost.setText("Precio($): " + intent.getStringExtra("Costo"));
+        articleStore.setText(intent.getStringExtra("Tienda"));
+        articleCost.setText("$" + intent.getStringExtra("Costo"));
         articleStock.setText("Stock: " + intent.getStringExtra("Stock"));
         articleColors.setText("Colores: " + intent.getStringExtra("Colores"));
         articleMaterial.setText("Material: " + intent.getStringExtra("Material"));
         articlesSize.setText("Talles: " + intent.getStringExtra("Talle"));
+        articleTitle.setText(intent.getStringExtra("Title"));
 
         Glide.with(mContext).load(intent.getStringExtra("Foto")).into(articleImage);
 
@@ -55,7 +54,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
             }
         });
 
-        visitStore.setOnClickListener(new View.OnClickListener() {
+        articleStore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intentVisitStore = new Intent(mContext, StoreActivity.class);
