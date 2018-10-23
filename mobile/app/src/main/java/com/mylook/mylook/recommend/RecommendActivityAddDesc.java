@@ -316,9 +316,9 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Uri> task) {
                             boolean taskReturn = writeFirebaseDocument(task.getResult().toString());
-                            if(!taskReturn){
-                                taskReturn = writeFirebaseDocument(task.getResult().toString());
-                            }
+//                            if(!taskReturn){
+//                                taskReturn = writeFirebaseDocument(task.getResult().toString());
+//                            }
                         }
                     });
 
@@ -405,7 +405,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
 
         @Override
         public void onProviderEnabled(String s) {
-            sendToFirebase();
+            //sendToFirebase();
         }
 
         @Override
@@ -440,7 +440,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 }).setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
-                        sendToFirebase();
+                        //sendToFirebase();
                     }
                 }).create();
         alert.setOnShowListener(new DialogInterface.OnShowListener() {
