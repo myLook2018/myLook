@@ -1,0 +1,105 @@
+#logo {
+    width: 92px;
+    height: 36px;
+    padding-right: 3px;
+  }
+  
+  
+  .navbar{
+    height: 48px;
+    z-index: 10;
+  }
+  
+  .right-icon {
+    padding: 0 14px;
+  }
+  .spacer {
+    flex: 1 1 auto;
+  }
+  
+  .profilePic{
+    border-radius: 50%;
+    height: 32px;
+    margin: 8px 0 8px 24px;
+    outline: 0;
+    vertical-align: top;
+    width: 32px;
+    margin: 8px 0 8px 8px;
+  }
+  
+  .pageContent{
+    width: 100%;
+    height: calc(100vh);
+    display: flex;
+  }
+  
+  .mat-toolbar-multiple-rows {
+    min-height: 0;
+  }
+  
+  .requestList{
+    width: calc(12vw);
+    min-width: 200px;
+  }
+
+  .articleList{
+    width: calc(10vw);
+    min-width: 200px;
+  }
+  
+  .requestTable {
+    height: calc(60vh - 24px );
+    overflow: auto;
+  }
+
+  .answeredTable { 
+    height: calc(40vh - 24px );
+    overflow: auto;
+  }
+
+  .articleTable{
+    height: calc(100vh - 48px );
+    overflow: auto;
+  }
+
+.requestCard {
+   width: calc(20vw);
+   margin-right: calc(5vh);
+   margin-left: calc(5vh);
+ }
+ .answerCard {
+   width: calc(20vw);
+   margin-top: calc(5vh);
+   margin-right: calc(5vh);
+ }
+
+.miniLogo{
+  background-size: cover;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.mat-row:hover {
+  background-color:  rgb(193, 85, 212);
+}
+
+.highlight{
+  background-color: rgb(218, 154, 230);
+}
+
+.mat-card-image {
+  max-height: calc(40vh);
+  width: calc(100% + 48px);
+  margin: 0 -24px 16px -24px;
+}
+
+.descriptionArea{
+  width: 100%;
+}
+
+.sendRecoButton{
+  background-color: #9C27B0;
+  color: white;
+}

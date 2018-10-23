@@ -1,13 +1,7 @@
-.body{
-    min-height: 100vh;
-    width: 100%;
-    height: auto;
-    overflow: hidden;
-}
+
 .navbar{
     height: 48px;
     z-index: 10;
-    min-height: 0;
   }
 
 #storeName{
@@ -80,6 +74,7 @@
 
 #articleContainer {
     width: 100%;
+    height: calc(100vh - 245px);
 }
 
 .imgContainer{
@@ -186,8 +181,7 @@
     margin: 8px 0 8px 8px;
     }
 
-    .mat-toolbar-multiple-rows {
 
-        min-height: 0px;
-    
-    }
+    .mat-toolbar-multiple-rows {
+        min-height: 0;      
+      }

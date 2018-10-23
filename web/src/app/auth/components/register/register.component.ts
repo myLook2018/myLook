@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { StoreService } from '../../services/store.service';
@@ -7,7 +7,10 @@ import { MatHorizontalStepper } from '@angular/material/stepper';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { DialogAlertComponent } from '../../../dialog/dialog-alert/dialog-alert.component';
 import { SuccesfulDialogComponent } from '../../../dialog/succesful-dialog/succesful-dialog.component';
-
+import { UserService } from '../../services/user.service';
+import { AngularFireUploadTask, AngularFireStorage, AngularFireStorageReference } from 'angularfire2/storage';
+import { finalize } from 'rxjs/operators';
+import { DataService } from '../../../service/dataService';
 
 @Component({
   selector: 'app-register',
@@ -15,50 +18,65 @@ import { SuccesfulDialogComponent } from '../../../dialog/succesful-dialog/succe
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent {
-  firstFormGroup: FormGroup;
-  secondFormGroup: FormGroup;
-  thirdFormGroup: FormGroup;
+  errorMessage = '';
+  registerStoreFormGroup: FormGroup;
+  userLoginForm: FormGroup;
   isLinear = true;
-  email: String;
-  private targetInput = '';
-  urls = new Array<string>();
-  filesSelected: FileList;
+  storeName = '';
+  email: string;
+  password: string;
+  confirmPassword: string;
+  pathProfile;
+  pathPortada;
+  urlsProfile = new Array<string>();
+  urlsPortada = new Array<string>();
+  profileFile: FileList;
+  portadaFile: FileList;
   urlImgProfile: string;
   urlImgShop: string;
+  task: AngularFireUploadTask;
+  ref: AngularFireStorageReference;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     public store: StoreService,
-    private dialog: MatDialog,
-    public authService: AuthService
+    public authService: AuthService,
+    public userService: UserService,
+    public dataService: DataService,
+    private storage: AngularFireStorage,
   ) {
-    this.email = authService.getEmailToRegister();
+    this.email = authService.getEmailToRegister().toString();
     this.createForm();
-    this.urls = [];
+    this.urlsProfile = [];
+    this.urlsProfile.push('/assets/noProfilePic.png');
+    this.urlsPortada = [];
+    this.urlsPortada.push('/assets/noPhoto.png');
   }
 
   createForm() {
-    this.firstFormGroup = this.fb.group({
-      userName: ['', Validators.required],
-      userPicture: ['', Validators.nullValidator],
-      userMail: ['', Validators.email],
-      userPhone: ['', Validators.required]
-    });
-    this.secondFormGroup = this.fb.group({
+    console.log(`emailToRegistre: ${this.email}`);
+    this.registerStoreFormGroup = this.fb.group({
       storeName: ['', Validators.required],
-      storePicture: ['', Validators.nullValidator],
-      storeDescription: ['', Validators.required],
-      attendanceHours: ['', Validators.nullValidator],
-      storeAddress: ['', Validators.required],
-      storeAddressNumber: ['', Validators.required],
-      storeFloor: ['', Validators.nullValidator],
-      storeProvince: ['', Validators.required]
-    });
-    this.thirdFormGroup = this.fb.group({
+      storeMail: [this.email, Validators.email],
+      ownerName: ['', Validators.required],
+      // profilePh: ['', Validators.required],
+      // coverPh:  ['', Validators.required],
       storePhone: ['', Validators.required],
-      storeMail: ['', Validators.required]
+      facebookLink: ['', Validators.required],
+      storeProvince: ['', Validators.required],
+      storeCity: ['', Validators.required],
+      storeAddressNumber: ['', Validators.required],
+      storeFloor: ['', Validators.required],
+      storePosition: ['', Validators.required],
+      storeDescription: ['', Validators.required],
+      instagramLink: ['', Validators.required],
+      twitterLink: ['', Validators.required],
+      storeAddress: ['', Validators.required],
+      provider: ['', Validators.required],
     });
+
+    this.createUserForm();
 
     setTimeout(function waitTargetElem() {
       if (document.body.contains(document.getElementById('userName'))) {
@@ -69,99 +87,80 @@ export class RegisterComponent {
     }, 100);
   }
 
-
-
-  checkUserName(userName, stepper: MatHorizontalStepper) {
-    this.store.checkUserExistance(userName).then(
-      res => {
-        if (res) {
-          stepper.next();
-          setTimeout(function waitTargetElem() {
-            if (document.body.contains(document.getElementById('storeName'))) {
-              document.getElementById('storeName').focus();
-            } else {
-              setTimeout(waitTargetElem, 100);
-            }
-          }, 100);
-
+  isStoreNameAvailable(stepper: MatHorizontalStepper) {
+    console.log(this.storeName);
+    this.userService.checkUserExistance(this.storeName).then(
+      (res) => {
+        if (!res) {
+          this.errorMessage = 'Ya se ha registrado una tienda con ese Nombre.';
+          console.log(this.errorMessage);
         } else {
-          const dialogRef = this.dialog.open(DialogAlertComponent, { data: { userNameDialog: userName.userName } });
-          dialogRef.afterClosed().subscribe(result => {
-            return document.getElementById('userName').focus();
-          });
-        }
-      },
-      err => {
-        console.log(err);
-      });
-
-
-  }
-
-  checkStoreName(value, stepper: MatHorizontalStepper) {
-    this.store.checkStoreExistance(value.storeName).then(
-      res => {
-        if (res) {
+          console.log(`el nombre de la tienda esta disponible? ${res}`);
           stepper.next();
-          setTimeout(function waitTargetElem() {
-            if (document.body.contains(document.getElementById('storePhone'))) {
-              document.getElementById('storePhone').focus();
-            } else {
-              setTimeout(waitTargetElem, 100);
-            }
-          }, 100);
         }
-      });
+      }
+    );
   }
 
-  tryRegister(userForm, storeForm, storeContactForm) {
-    const user = {
-      userMail: userForm.userMail,
-      userName: userForm.userName,
-      userPhone: userForm.userPhone,
-      userPicture: '/images/userImage2'
-    };
-    const store = {
-      storeAddresNumber: storeForm.storeAddressNumber,
-      storeAddress: storeForm.storeAddress,
-      storeDescription: storeForm.storeDescription,
-      storeFloor: storeForm.storeFloor,
-      storeMail: storeContactForm.storeMail,
-      storeName: storeForm.storeName,
-      storePhone: storeContactForm.storePhone
-    };
-
-    this.store.tryRegisterStore(user, store).then(
-      res => {
-        if (res) {
-          const dialogRef = this.dialog.open(SuccesfulDialogComponent);
-          dialogRef.afterClosed().subscribe(result => {
-            this.router.navigateByUrl('/home');
-          });
-
-        }
-
-
-      });
+  createUserForm() {
+    this.userLoginForm = this.fb.group({
+      email: [this.email, Validators.required],
+    });
   }
 
-  detectFiles(event , index) {
-    this.filesSelected = event.target.files;
-  //  this.urls = [];
+
+  tryRegister() {
+    this.userLoginForm.addControl('password', new FormControl(this.password, Validators.required));
+    this.authService.doRegister(this.userLoginForm).then(() => {
+      this.userService.getCurrentUser().then((user) => {
+        this.registerStoreFormGroup.addControl('firebaseUserId', new FormControl(user.uid, Validators.required));
+      }
+      ).then(() => {
+        this.dataService.uploadPicture(this.profileFile).then((fileURL) => {
+          this.registerStoreFormGroup.addControl('profilePh', new FormControl(fileURL, Validators.required));
+        }).then(() => {
+          this.dataService.uploadPicture(this.portadaFile).then((fileURL) => {
+            this.registerStoreFormGroup.addControl('coverPh', new FormControl(fileURL, Validators.required));
+          }).then(() => {
+            this.userService.addStore(this.registerStoreFormGroup.value).then(() => { });
+          }).then(() => {
+            this.authService.doLogin(this.userLoginForm).then(() => {
+              this.router.navigateByUrl('/home');
+            });
+        });
+      });
+    });
+    });
+  }
+
+  detectFilesProfile(event) {
+    this.profileFile = event.target.files;
+    this.urlsProfile = [];
     const files = event.target.files;
     if (files) {
       for (const file of files) {
-        console.log('pasamos a render');
         const reader = new FileReader();
-        reader.onload = (e: any) => {
-          console.log(this.urls.length);
-          console.log(file);
-          if ( index === 0 ) {
-            this.urls[0] = e.target.result;
-           } else { this.urls[1] = e.target.result; }
+        reader.onload = (e: any) => { // no se que hace
+          this.urlsProfile.push(e.target.result);
         };
         reader.readAsDataURL(file);
       }
     }
   }
+
+  detectFilesPortada(event) {
+    this.portadaFile = event.target.files;
+    this.urlsPortada = [];
+    const files = event.target.files;
+    if (files) {
+      for (const file of files) {
+        const reader = new FileReader();
+        reader.onload = (e: any) => { // no se que hace
+          this.urlsPortada.push(e.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  }
+
 }

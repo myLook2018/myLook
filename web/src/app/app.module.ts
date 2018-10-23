@@ -9,8 +9,10 @@ import { AngularFireAuthModule } from 'angularfire2/auth';
 import { environment } from '../environments/environment';
 import { AuthGuard } from './auth/services/auth.guard';
 import { AuthService } from './auth/services/auth.service';
+import { DataService } from './service/dataService';
 import { UserService } from './auth/services/user.service';
 import { ArticleService } from './articles/services/article.service';
+import { RecomendationService } from './recomendations/service/recomendationService';
 import { UserResolver } from './auth/components/user/user.resolver';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -21,7 +23,7 @@ import { RegisterComponent } from './auth/components/register/register.component
 import { InventoryComponent } from './articles/components/inventory/inventory.component';
 import { TagsService } from './articles/services/tags.service';
 import { NgxSpinnerModule } from 'ngx-spinner';
-
+import { MatSidenavModule} from '@angular/material/sidenav';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
@@ -33,6 +35,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatDividerModule } from '@angular/material/divider';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { SignupComponent } from './auth/components/signup/signup.component';
@@ -52,6 +55,10 @@ import { AgmCoreModule } from '@agm/core';
 import { MapsComponent } from './maps/maps.component';
 import { MapsDialogComponent } from './dialog/maps-dialog/maps-dialog.component';
 import { ErrorComponent } from './error/error.component';
+import {MatListModule} from '@angular/material/list';
+import { RecomendationsComponent } from './recomendations/components/recomendations.component';
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -68,7 +75,8 @@ import { ErrorComponent } from './error/error.component';
     MapsDialogComponent,
     EditStoreComponent,
     MapsComponent,
-    ErrorComponent
+    ErrorComponent,
+    RecomendationsComponent
   ],
   imports: [
     NgxSpinnerModule,
@@ -96,10 +104,14 @@ import { ErrorComponent } from './error/error.component';
     MatSortModule,
     MatChipsModule,
     MatAutocompleteModule,
-    AgmCoreModule
+    AgmCoreModule,
+    MatSidenavModule,
+    MatListModule,
+    MatProgressBarModule
   ],
   exports: [RouterModule],
-  providers: [AuthService, UserService, UserResolver, AuthGuard, StoreService, ArticleService, TagsService, ArticleResolver, StoreResolver],
+  providers: [ RecomendationService, DataService, AuthService, UserService, UserResolver, AuthGuard, StoreService,
+     ArticleService, TagsService, ArticleResolver, StoreResolver],
   entryComponents: [DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent,
     DeleteConfirmationDialogComponent, MapsDialogComponent, EditStoreComponent],
   bootstrap: [AppComponent]

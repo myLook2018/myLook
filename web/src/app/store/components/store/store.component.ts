@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Resolve, Router } from '@angular/router';
 import { StoreService } from '../../../auth/services/store.service';
 import * as firebase from 'firebase';
+import { Subscription } from 'rxjs';
 import { Observable } from '../../../../../node_modules/rxjs';
 import { MatDialog } from '@angular/material';
 import { MapsDialogComponent } from '../../../dialog/maps-dialog/maps-dialog.component';
@@ -9,7 +10,7 @@ import { Article } from '../../../articles/models/article';
 import { Store } from '../../model/store.model';
 import { EditStoreComponent } from '../dialogs/editStore';
 import { UserService } from '../../../auth/services/user.service';
-import { FirebaseUserModel } from '../../../auth/models/user.model';
+import { StoreModel } from '../../../auth/models/store.model';
 import { AuthService } from '../../../auth/services/auth.service';
 import { Location } from '@angular/common';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -20,12 +21,14 @@ import { NgxSpinnerService } from 'ngx-spinner';
   templateUrl: './store.component.html',
   styleUrls: ['./store.component.scss']
 })
-export class StoreComponent implements OnInit {
+export class StoreComponent implements OnInit, OnDestroy {
   storeName: string;
   storeService: StoreService;
-  storeData: Store;
-  articles: Article[];
-  user = new FirebaseUserModel();
+  FirebaseUser = new StoreModel();
+  userStore = new StoreModel();
+  articles: Article[] = [];
+  user = new StoreModel();
+  _subscription2: Subscription;
   constructor(
     private route: ActivatedRoute,
     public dialog: MatDialog,
@@ -43,33 +46,40 @@ export class StoreComponent implements OnInit {
     this.route.data.subscribe(routeData => {
       const data = routeData['data'];
       if (data) {
-        this.storeData = data;
+        this.FirebaseUser = data;
       }
-
     });
-    this.route.data.subscribe(routeData => {
-      const articles = routeData['articles'];
-      if (articles) {
-        this.articles = articles;
-      }
-      setTimeout(() => {
-        /** spinner ends after 5 seconds */
-        this.spinner.hide();
-      }, 2000);
+    this._subscription2 = this.userService.getUserInfo(this.FirebaseUser.firebaseUserId).subscribe(userA => {
+      this.userStore = userA[0];
+      if (this.userStore.profilePh === undefined) {this.userStore.profilePh = this.FirebaseUser.profilePh; }
+      this.route.data.subscribe(routeData => {
+        const articles = routeData['articles'];
+        if (articles) {
+          this.articles = articles;
+        }
+        setTimeout(() => {
+          this.spinner.hide();
+        }, 2000);
+      });
+      this.getUserInfo();
+      console.log(4);
     });
-    this.getUserInfo();
   }
 
+  ngOnDestroy(): void {
+    this._subscription2.unsubscribe();
+    }
+
   openMapDialog(): void {
-    if (this.storeData.storePosition) {
+    if (this.userStore.storePosition) {
       const dialogRef = this.dialog.open(MapsDialogComponent, {
         width: '50%',
         height: '50%',
-        data: { data: this.storeData },
+        data: { data: this.userStore },
         id: 'mapDialog'
       });
     } else {
-      const queryLink = encodeURIComponent(this.storeData.storeAddress + ' ' + this.storeData.storeAddressNumber + ', Cordoba, Argentina');
+      const queryLink = encodeURIComponent(this.userStore.storeAddress + ' ' + this.userStore.storeAddressNumber + ', Cordoba, Argentina');
       const url = 'https://www.google.com/maps/search/?api=1&query=' + queryLink;
       const win = window.open(url, '_blank');
       win.focus();
@@ -90,19 +100,18 @@ export class StoreComponent implements OnInit {
   editStoreInfo(): void {
     const dialogRef = this.dialog.open(EditStoreComponent, {
       height: '650px',
-      data: { data: this.storeData }
+      data: { data: this.userStore }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
     });
   }
 
   getUserInfo() {
     this.userService.getCurrentUser().then(
       res => {
-        this.user.image = res.photoURL;
-        this.user.name = res.displayName;
+        this.user.profilePh = res.photoURL;
+        this.user.storeName = res.displayName;
         this.user.provider = res.providerData[0].providerId;
         return;
       }, err => {
@@ -117,10 +126,17 @@ export class StoreComponent implements OnInit {
         this.location.back();
       },
       error => {
-        console.log('Logout error', error);
         this.router.navigate(['/login']);
       }
     );
+  }
+
+  goToInventory() {
+    this.router.navigate([`/home`]);
+  }
+
+  goToRecomendations() {
+    this.router.navigate([`/recomendations`]);
   }
 
 

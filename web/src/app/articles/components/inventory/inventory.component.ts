@@ -1,17 +1,18 @@
-import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy} from '@angular/core';
 import { Article } from '../../models/article';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ArticleDialogComponent } from '../dialogs/articleDialog';
 import { MatDialog, MatTableDataSource, MatSort } from '@angular/material';
 import { AuthService } from '../../../auth/services/auth.service';
 import { Location } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ArticleService } from '../../services/article.service';
 import { DeleteConfirmationDialogComponent } from '../dialogs/deleteConfirmationDialog';
 import { UserService } from '../../../auth/services/user.service';
-import { FirebaseUserModel } from '../../../auth/models/user.model';
+import { StoreModel } from '../../../auth/models/store.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
+import { calcBindingFlags } from '@angular/core/src/view/util';
 
 
 @Component({
@@ -22,29 +23,34 @@ import { Subscription } from 'rxjs';
 export class InventoryComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   options: FormGroup;
-  user = new FirebaseUserModel();
+  FirebaseUser = new StoreModel();
+  userStore = new StoreModel();
   articles: Article[];
   _subscription: Subscription;
+  _subscription2: Subscription;
+
   constructor(
     fb: FormBuilder,
     public articleService: ArticleService,
     public dialog: MatDialog,
     public userService: UserService,
     public authService: AuthService,
-    private location: Location,
     private router: Router,
-    private spinner: NgxSpinnerService
+    private route: ActivatedRoute,
+    private location: Location,
+    private spinner: NgxSpinnerService,
     ) {
       this.options = fb.group({
         hideRequired: false,
         floatLabel: 'never'
       });
-      this.user.image = '/assets/alternativeUserPic.png';
+      this.userStore.profilePh = '/assets/noProfilePic.png';
     }
-    dataSource;
 
+    dataSource;
     displayedColumns: string[] = [
       'picture',
+      'title',
       'cost',
       'size',
       'material',
@@ -60,33 +66,36 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
       this.spinner.show();
-      this._subscription = this.articleService.getArticles().subscribe(articles => {
-        console.log(articles);
-        this.articles = articles;
-        console.log(this.articles.length);
-        this.dataSource = new MatTableDataSource(this.articles);
-        setTimeout(() => {
-          /** spinner ends after 5 seconds */
-          this.spinner.hide();
-        }, 2000);
+      this.route.data.subscribe(routeData => {
+        const data = routeData['data'];
+            if (data) {
+              this.FirebaseUser = data;
+          }
+      });
+      this._subscription2 = this.userService.getUserInfo(this.FirebaseUser.firebaseUserId).subscribe(userA => {
+        this.userStore = userA[0];
+        if (this.userStore.profilePh === '') {this.userStore.profilePh = this.FirebaseUser.profilePh; }
+        this._subscription = this.articleService.getArticles(this.userStore.storeName).subscribe(articles => {
+          this.articles = articles;
+          this.dataSource = new MatTableDataSource(this.articles);
+          setTimeout(() => {
+            this.spinner.hide();
+          }, 2000);
+        }
+        );
       }
-      );
-      this.getUserInfo();
+        );
     }
 
   ngOnDestroy(): void {
-    console.log('no me destruyo la concha de la lora');
+    console.log('destruyendo subscripciones');
     this._subscription.unsubscribe();
+    this._subscription2.unsubscribe();
     }
 
 deleteArticle(article) {
       this.articleService.deleteArticle(article);
-      console.log(`Articulo ${article.id} eliminado`);
   }
-
-  /*ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
-  }*/
 
   openConfirmationDialog(article): void {
     const confirmationRef = this.dialog.open(DeleteConfirmationDialogComponent, {
@@ -104,6 +113,8 @@ deleteArticle(article) {
     let dataToSend = {};
     if (article !== undefined) {
         dataToSend = {
+        storeName: this.userStore.storeName,
+        title: article.title,
         id: article.id,
         picture: article.picture,
         cost: article.cost,
@@ -112,30 +123,21 @@ deleteArticle(article) {
         colors: article.colors,
         initial_stock: article.initial_stock,
         provider: article.provider,
-        tags: article.tags };
+        tags: article.tags};
+        } else {
+        dataToSend = {
+          storeName: this.userStore.storeName,
+          tags: []
+         };
         }
 
     const dialogRef = this.dialog.open(ArticleDialogComponent, {
-      height: '630px',
+     maxHeight: 'calc(95vh)',
       data: dataToSend
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
     });
-  }
-
-  getUserInfo() {
-    this.userService.getCurrentUser().then(
-      res => {
-        this.user.image = res.photoURL;
-        this.user.name = res.displayName;
-        this.user.provider = res.providerData[0].providerId;
-        return;
-      }, err => {
-        this.router.navigate(['/login']);
-      }
-    );
   }
 
   logout() {
@@ -148,5 +150,14 @@ deleteArticle(article) {
         this.router.navigate(['/login']);
       }
     );
+  }
+
+  goToProfile() {
+    console.log(`/store/${this.userStore.storeName}`);
+    this.router.navigate([`/store/${this.userStore.storeName}`]);
+  }
+
+  goToRecomendations() {
+    this.router.navigate([`/recomendations`]);
   }
 }

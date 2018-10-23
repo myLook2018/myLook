@@ -15,6 +15,7 @@ export class LoginComponent {
 
   loginForm: FormGroup;
   errorMessage = '';
+  isLoading = false;
 
   emailFormControl = new FormControl('', [
     Validators.required,
@@ -59,11 +60,15 @@ export class LoginComponent {
     });
   }
 
-  tryLogin(value) {
-    this.authService.doLogin(value)
+  tryLogin() {
+    this.isLoading = true;
+    console.log(this.loginForm.value);
+    this.authService.doLogin(this.loginForm)
     .then(res => {
-      this.router.navigate(['/home']);
+     this.isLoading = false;
+     this.router.navigate(['/home']);
     }, err => {
+      this.isLoading = false;
       console.log(err);
       this.errorMessage = err.message;
     });

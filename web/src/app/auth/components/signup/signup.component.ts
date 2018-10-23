@@ -31,6 +31,17 @@ export class SignupComponent {
     this.createForm();
    }
 
+   checkEmail() {
+     this.authService.isEmailAvaible(this.email).then(
+       (res) => {
+        this.authService.emailToRegister = this.email;
+        this.router.navigate(['/singup']);
+        }, (err) => {
+          this.errorMessage = err;
+        }
+      );
+   }
+
    createForm() {
      this.signupForm = this.fb.group({
        email: ['', Validators.required ],
@@ -60,12 +71,6 @@ export class SignupComponent {
        this.router.navigate(['/home']);
      }, err => console.log(err)
      );
-   }
-
-   goToRegistration() {
-     console.log(this.email);
-    this.authService.emailToRegister = this.email;
-    this.router.navigate(['/register']);
    }
 
    tryRegister(value) {

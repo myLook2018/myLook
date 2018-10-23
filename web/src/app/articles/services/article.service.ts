@@ -18,7 +18,7 @@ export class ArticleService {
     collectionPath: string = 'articles';
 
   constructor(public fst: AngularFirestore, private storage: AngularFireStorage) {
-    this.articleCollection = this.fst.collection(this.collectionPath, ref => ref.orderBy('tags', 'asc'));
+    this.articleCollection = this.fst.collection(this.collectionPath, ref => ref.orderBy('title', 'asc'));
     this.articles = this.articleCollection.snapshotChanges().pipe(map(changes => {
       return changes.map(a => {
         const data = a.payload.doc.data();
@@ -32,8 +32,8 @@ export class ArticleService {
    return this.articleCollection.add(article);
   }
 
-  getArticles() {
-    return this.articles;
+  getArticles(storeName) {
+    return this.articles.pipe(map(items => items.filter(item => item.storeName === storeName)));
   }
 
   deleteArticle(article: Article) {

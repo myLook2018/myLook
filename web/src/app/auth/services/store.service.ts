@@ -1,23 +1,23 @@
 import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from 'angularfire2/firestore';
 import { Injectable, Inject } from '@angular/core';
-import * as firebase from 'firebase';
-import { Observable } from '../../../../node_modules/rxjs';
-import { AngularFireStorageReference } from 'angularfire2/storage';
 import { Store } from '../../store/model/store.model';
+import { UserService } from './user.service';
+import { StoreModel } from '../models/store.model';
 
 @Injectable()
 export class StoreService {
+    userName: string;
 
     constructor(
-        public db: AngularFirestore
-    ) {
-    }
+        public db: AngularFirestore,
+        public usrService: UserService
+    ) {}
 
     checkUserExistance(user) {
         return new Promise<any>((resolve, reject) => {
-            const ref = this.db.collection('usuarios').ref;
+            const ref = this.db.collection('stores').ref;
             console.log(ref);
-            ref.where('userName', '==', user.userName)
+            ref.where('storeName', '==', user.userName)
                 .get()
                 .then(snapshot => {
                     return resolve(snapshot.empty);
@@ -108,11 +108,7 @@ export class StoreService {
                     twitterlink: data.twitterLink,
                     instagramLink: data.instagramLink
                 }).then(error => {
-                    if (error) {
                         return reject('Update failed' + error);
-                    } else {
-                        return resolve(error);
-                    }
                 });
 
             });

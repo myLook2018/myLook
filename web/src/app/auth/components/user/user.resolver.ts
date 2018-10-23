@@ -1,35 +1,31 @@
 import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
-import { FirebaseUserModel } from '../../models/user.model';
+import { StoreModel } from '../../models/store.model';
 
 @Injectable()
-export class UserResolver implements Resolve<FirebaseUserModel> {
+export class UserResolver implements Resolve<StoreModel> {
 
   constructor(public userService: UserService, private router: Router) { }
 
-  resolve(route: ActivatedRouteSnapshot): Promise<FirebaseUserModel> {
+  resolve(route: ActivatedRouteSnapshot): Promise<StoreModel> {
 
-    const user = new FirebaseUserModel();
+    const user = new StoreModel();
 
     return new Promise((resolve, reject) => {
       this.userService.getCurrentUser()
-      .then(res => {
-        if (res.providerData[0].providerId === 'password') {
-          user.image = 'http://dsi-vd.github.io/patternlab-vd/images/fpo_avatar.png';
-          user.name = res.displayName;
+        .then(res => {
+          user.profilePh = res.photoURL;
+          console.log( `fotooo` +  user.profilePh);
+          user.storeName = res.displayName;
+          user.firebaseUserId = res.uid;
           user.provider = res.providerData[0].providerId;
-          return resolve(user);
-        } else {
-          user.image = res.photoURL;
-          user.name = res.displayName;
-          user.provider = res.providerData[0].providerId;
-          return resolve(user);
-        }
-      }, err => {
-        this.router.navigate(['/login']);
-        return reject(err);
+          resolve(user);
+        }, err => {
+          console.log(err);
+          this.router.navigate(['/login']);
+          return reject(err);
+        });
       });
-    });
+    }
   }
-}

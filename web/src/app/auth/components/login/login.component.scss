@@ -16,7 +16,7 @@
   width: 60%;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 10%; // need to be refactor
+  margin-top: calc(10vh); // need to be refactor
   max-width: 400px;
 }
 
@@ -64,4 +64,22 @@ position: absolute;
 
 .centerImage {
   margin: 0 auto;
+}
+
+::ng-deep .mat-progress-bar-fill::after {
+  background-color: #9C27B0;
+}
+
+::ng-deep .mat-progress-bar-buffer {
+  background: rgb(218, 154, 230);
+}
+
+::ng-deep .mat-progress-bar {
+  border-radius: 2px;
+}
+
+.proggressBar{
+  margin-top: 15px;
+  width: 448px;
+  margin-left: -24px;
 }
