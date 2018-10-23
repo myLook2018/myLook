@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.ColorSpace;
 import android.location.Location;
 import android.location.LocationListener;
@@ -416,7 +417,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     }
 
     private AlertDialog showLocationAlert() {
-        final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
         final AlertDialog alert = dialog.setTitle("Activar Ubicación")
                 .setMessage("Tu ubicacion esta desactivada..\nDebes activarla para continuar")
                 .setPositiveButton("Ajustes de localización", new DialogInterface.OnClickListener() {
@@ -432,20 +433,28 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                         sendToFirebase();
                     }
 
+                }).setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        sendToFirebase();
+                    }
                 }).create();
         alert.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-                alert.getButton(AlertDialog.BUTTON_NEGATIVE).setBackgroundColor(getResources().getColor(R.color.white));
+                alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.purple));
+                alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.purple));
             }
         });
+
         alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 sendToFirebase();
             }
         });
-        dialog.show();
+
+        alert.show();
         return alert;
     }
 
