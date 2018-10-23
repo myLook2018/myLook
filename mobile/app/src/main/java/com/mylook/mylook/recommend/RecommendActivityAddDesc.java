@@ -82,7 +82,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     private FloatingActionMenu fabMenu;
     private FloatingActionButton fabPhoto, fabGallery;
     private FirebaseUser user;
-    private String urlLogo ="https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/utils%2Flogo_transparente_50.png?alt=media&token=c72e5b39-3011-4f26-ba4f-4c9f7326c68a";
+    private String urlLogo = "https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/utils%2Flogo_transparente_50.png?alt=media&token=c72e5b39-3011-4f26-ba4f-4c9f7326c68a";
     private ProgressBar mProgressBar;
     private Uri downloadUrl;
     private boolean enviado = false;
@@ -99,7 +99,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
-        mProgressBar= findViewById(R.id.progressBar);
+        mProgressBar = findViewById(R.id.progressBar);
         btnSend = (Button) findViewById(R.id.btnSend);
         imgRecommend = (ImageView) findViewById(R.id.imgRecommend);
         txtDescription = (TextInputEditText) findViewById(R.id.txtDescription);
@@ -119,7 +119,6 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         });
 
 
-
         final Calendar myCalendar = Calendar.getInstance();
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -129,7 +128,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 myCalendar.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
                 limitDate = new Date();
                 limitDate.setTime(myCalendar.getTimeInMillis());
-                editDate.setText(dayOfMonth + "/" + (monthOfYear+1) + "/" + year);
+                editDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
             }
         };
 
@@ -212,10 +211,10 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                             @Override
                             public Task<Object> then(@Nullable Uri uri) {
                                 downloadUrl = uri;
-                                return (Task)uploadTask;
+                                return (Task) uploadTask;
                             }
                         });
-                        return (Task)uploadTask;
+                        return (Task) uploadTask;
                     }
                 });
 
@@ -234,11 +233,11 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                             @Override
                             public Task<Object> then(@Nullable Uri uri) {
                                 downloadUrl = uri;
-                                return (Task)uploadTask;
+                                return (Task) uploadTask;
 
                             }
                         });
-                        return (Task)uploadTask;
+                        return (Task) uploadTask;
                     }
                 });
 
@@ -251,44 +250,43 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     }
 
     private Task writeFirebaseDocument(String uri) {
-            if (!enviado) {
+        if (!enviado) {
+            final Location loc = getLocation();
+            if (loc != null) {
 
-                final Location loc = getLocation();
-                if (loc != null) {
+                final List<Double> latLong = new Vector<>();
+                latLong.add(loc.getLatitude());
+                latLong.add(loc.getLongitude());
+                final Map<String, Object> recommendation = new HashMap<>();
+                recommendation.put("userId", user.getUid());
+                recommendation.put("description", txtDescription.getText().toString());
+                recommendation.put("limitDate", limitDate.getTime());
+                recommendation.put("updateDate", "update");
+                recommendation.put("requestPhoto", uri);
+                recommendation.put("localization", latLong);
+                recommendation.put("isClosed", false);
+                recommendation.put("title", title.getText().toString());
+                recommendation.put("answers", new ArrayList<ArrayList<String>>());
+                dB.collection("requestRecommendations")
+                        .add(recommendation).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        mProgressBar.setVisibility(View.GONE);
+                        displayMessage("Tu solicitud de recomendacion ha sido enviada");
+                        finish();
 
-                    final List<Double> latLong = new Vector<>();
-                    latLong.add(loc.getLatitude());
-                    latLong.add(loc.getLongitude());
-                    final Map<String, Object> recommendation = new HashMap<>();
-                    recommendation.put("userId", user.getUid());
-                    recommendation.put("description", txtDescription.getText().toString());
-                    recommendation.put("limitDate", limitDate.getTime());
-                    recommendation.put("updateDate", "update");
-                    recommendation.put("requestPhoto", uri);
-                    recommendation.put("localization", latLong);
-                    recommendation.put("isClosed", false);
-                    recommendation.put("title", title.getText().toString());
-                    recommendation.put("answers", new ArrayList<ArrayList<String>>());
-                    dB.collection("requestRecommendations")
-                            .add(recommendation).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            mProgressBar.setVisibility(View.GONE);
-                            displayMessage("Tu solicitud de recomendacion ha sido enviada");
-                            finish();
-
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            mProgressBar.setVisibility(View.GONE);
-                            displayMessage("Ha ocurrido un problema con tu recomendacion");
-                        }
-                    });
-                    enviado = true;
-                }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        mProgressBar.setVisibility(View.GONE);
+                        displayMessage("Ha ocurrido un problema con tu recomendacion");
+                    }
+                });
+                enviado = true;
             }
-    return null;
+        }
+        return null;
     }
 
     private void sendToFirebase() {
@@ -308,9 +306,9 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         }
 
         mProgressBar.setVisibility(View.VISIBLE);
-        if(bitmap==null && selectImageUri==null){
+        if (bitmap == null && selectImageUri == null) {
             writeFirebaseDocument(urlLogo);
-        }else{
+        } else {
             final UploadTask uptask = saveImage();
             uptask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -336,33 +334,55 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
 
     private Location getLocation() {
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        AlertDialog enableLocation;
         if (!isLocationEnabled()) {
-            showLocationAlert();
-            return null;
-        }
-        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+            enableLocation = showLocationAlert();
+            if (!enableLocation.isShowing()) {
+                int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
 
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION);
-        }
+                if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getParent(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION);
+                }
+                try {
+                    locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new MyLocationListenerGPS(), null);
+                    currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    if (currentLocation == null) {
+                        locationManager.requestSingleUpdate(LocationManager.PASSIVE_PROVIDER, new MyLocationListenerGPS(), null);
+                        currentLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+                        if (currentLocation == null) {
+                            locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, new MyLocationListenerGPS(), null);
+                            currentLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                        }
+                    }
 
-        try {
-            locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new MyLocationListenerGPS(), null);
-            currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (currentLocation != null) {
-                return currentLocation;
+
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
+
             }
-            locationManager.requestSingleUpdate(LocationManager.PASSIVE_PROVIDER, new MyLocationListenerGPS(), null);
-            currentLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-            if (currentLocation != null) {
-                return currentLocation;
-            }
+        } else {
+            int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
 
-            locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, new MyLocationListenerGPS(), null);
-            currentLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        } catch (SecurityException e) {
-            e.printStackTrace();
+            if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(getParent(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION);
+            }
+            try {
+                locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new MyLocationListenerGPS(), null);
+                currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (currentLocation == null) {
+                    locationManager.requestSingleUpdate(LocationManager.PASSIVE_PROVIDER, new MyLocationListenerGPS(), null);
+                    currentLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+                    if (currentLocation == null) {
+                        locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, new MyLocationListenerGPS(), null);
+                        currentLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+
         return currentLocation;
     }
 
@@ -378,13 +398,14 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
 
         @Override
         public void onProviderEnabled(String s) {
-
+            //sendToFirebase();
         }
 
         @Override
         public void onProviderDisabled(String s) {
-            showLocationAlert();
+            //showLocationAlert();
         }
+
     }
 
     private boolean isLocationEnabled() {
@@ -392,9 +413,9 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
-    private void showLocationAlert() {
-        final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("Activar Ubicación")
+    private AlertDialog showLocationAlert() {
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
+        final AlertDialog alert = dialog.setTitle("Activar Ubicación")
                 .setMessage("Tu ubicacion esta desactivada..\nDebes activarla para continuar")
                 .setPositiveButton("Ajustes de localización", new DialogInterface.OnClickListener() {
                     @Override
@@ -406,9 +427,32 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                        sendToFirebase();
                     }
-                });
-        dialog.show();
+
+                }).setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        sendToFirebase();
+                    }
+                }).create();
+        alert.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.purple));
+                alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.purple));
+            }
+        });
+
+        alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                sendToFirebase();
+            }
+        });
+
+        alert.show();
+        return alert;
     }
 
 
@@ -495,6 +539,8 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 if (grantResults.length > 0
                         && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     showLocationAlert();
+                } else {
+                    sendToFirebase();
                 }
                 break;
             }
@@ -510,7 +556,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
     }
 }
