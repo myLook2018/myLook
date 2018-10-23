@@ -16,7 +16,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -41,14 +40,14 @@ public class RecommendationsActivity extends AppCompatActivity implements Recomm
     private FirebaseFirestore dB;
     private List<RequestRecommendation> requestRecommendationsList;
     private FirebaseUser user;
-    private ProgressBar progressBar;
+   // private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recommendations);
         user = FirebaseAuth.getInstance().getCurrentUser();
-        progressBar=findViewById(R.id.progressBar);
+        //progressBar=findViewById(R.id.progressBar);
         this.dB = FirebaseFirestore.getInstance();
         setupBottomNavigationView();
         initRecyclerView();
@@ -92,7 +91,7 @@ public class RecommendationsActivity extends AppCompatActivity implements Recomm
         initRecyclerView();
     }
     public void  getRequestRecommendations(){
-        progressBar.setVisibility(View.VISIBLE);
+        //progressBar.setVisibility(View.VISIBLE);
         dB.collection("requestRecommendations")
                 .whereEqualTo("userId",user.getUid()).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -109,7 +108,7 @@ public class RecommendationsActivity extends AppCompatActivity implements Recomm
                             recyclerView.setAdapter(adapter);
                             recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                         }
-                        progressBar.setVisibility(View.GONE);
+                        //progressBar.setVisibility(View.GONE);
                     }
                 });
     }

@@ -163,11 +163,11 @@ public class StoreActivity extends AppCompatActivity {
     private void setupButtonSubscribe(boolean subscribed) {
 
         if (subscribed) {
-            btnSubscribe.setText("Subscripto");
+            btnSubscribe.setText("Suscripto");
             btnSubscribe.setBackgroundColor(getResources().getColor(R.color.primary_dark));
             mSubscribed = true;
         } else {
-            btnSubscribe.setText("Subscribirse");
+            btnSubscribe.setText("Suscribirse");
             btnSubscribe.setBackgroundColor(getResources().getColor(R.color.accent));
         }
 
