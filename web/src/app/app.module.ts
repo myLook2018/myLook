@@ -57,7 +57,8 @@ import { MapsDialogComponent } from './dialog/maps-dialog/maps-dialog.component'
 import { ErrorComponent } from './error/error.component';
 import {MatListModule} from '@angular/material/list';
 import { RecomendationsComponent } from './recomendations/components/recomendations.component';
-
+import { ImageCropperModule } from 'ngx-image-cropper';
+import { ImageCropperComponent, CropperSettings } from 'ngx-img-cropper';
 
 @NgModule({
   declarations: [
@@ -76,7 +77,8 @@ import { RecomendationsComponent } from './recomendations/components/recomendati
     EditStoreComponent,
     MapsComponent,
     ErrorComponent,
-    RecomendationsComponent
+    RecomendationsComponent,
+    ImageCropperComponent
   ],
   imports: [
     NgxSpinnerModule,
@@ -107,7 +109,8 @@ import { RecomendationsComponent } from './recomendations/components/recomendati
     AgmCoreModule,
     MatSidenavModule,
     MatListModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    ImageCropperModule
   ],
   exports: [RouterModule],
   providers: [ RecomendationService, DataService, AuthService, UserService, UserResolver, AuthGuard, StoreService,
