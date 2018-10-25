@@ -213,7 +213,7 @@ public class RegisterActivity extends AppCompatActivity {
         dB = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        btnRegister = (Button) findViewById(R.id.register_button);
+        btnRegister = (Button) findViewById(R.id.btnRegister);
         mProgressBar = (ProgressBar) findViewById(R.id.register_progressbar);
         txtEmail = (EditText) findViewById(R.id.txtEmail);
         txtPasswd1 = (EditText) findViewById(R.id.txtPasswd);
