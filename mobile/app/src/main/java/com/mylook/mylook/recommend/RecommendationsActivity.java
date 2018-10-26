@@ -93,7 +93,7 @@ public class RecommendationsActivity extends AppCompatActivity implements Recomm
     public void  getRequestRecommendations(){
         //progressBar.setVisibility(View.VISIBLE);
         dB.collection("requestRecommendations")
-                .whereEqualTo("userId",user.getUid()).get()
+                .whereEqualTo("userId",user.getUid()).orderBy("limitDate").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override

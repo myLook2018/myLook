@@ -30,12 +30,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -64,7 +66,7 @@ import java.util.concurrent.TimeUnit;
 
 public class RecommendActivityAddDesc extends AppCompatActivity {
 
-    private Button btnSend;
+    private ImageButton btnSend;
     private ImageView imgRecommend = null;
     private TextInputEditText txtDescription;
     private Date limitDate;
@@ -100,7 +102,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         mProgressBar = findViewById(R.id.progressBar);
-        btnSend = (Button) findViewById(R.id.btnSend);
+        btnSend = findViewById(R.id.btnSend);
         imgRecommend = (ImageView) findViewById(R.id.imgRecommend);
         txtDescription = (TextInputEditText) findViewById(R.id.txtDescription);
         editDate = (EditText) findViewById(R.id.editDate);
@@ -108,12 +110,11 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         fabMenu = (FloatingActionMenu) findViewById(R.id.fabMenu);
         fabPhoto = (FloatingActionButton) findViewById(R.id.photoFloating);
         fabGallery = (FloatingActionButton) findViewById(R.id.galleryFloating);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        setCurrentLocation();
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                btnSend.setEnabled(false);
-                fabMenu.setEnabled(false);
-                fabMenu.setVisibility(View.INVISIBLE);
                 sendToFirebase();
             }
         });
@@ -251,11 +252,14 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
 
     private boolean writeFirebaseDocument(String uri) {
         if (!enviado) {
-            final Location loc = getLocation();
-            if (loc != null) {
+            mProgressBar.setVisibility(View.VISIBLE);
+            btnSend.setEnabled(false);
+            fabMenu.setVisibility(View.INVISIBLE);
+            setCurrentLocation();
+            if (currentLocation != null) {
                 final List<Double> latLong = new Vector<>();
-                latLong.add(loc.getLatitude());
-                latLong.add(loc.getLongitude());
+                latLong.add(currentLocation.getLatitude());
+                latLong.add(currentLocation.getLongitude());
                 final Map<String, Object> recommendation = new HashMap<>();
                 recommendation.put("userId", user.getUid());
                 recommendation.put("description", txtDescription.getText().toString());
@@ -270,6 +274,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                         .add(recommendation).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
+                        enviado = true;
                         mProgressBar.setVisibility(View.GONE);
                         displayMessage("Tu solicitud de recomendacion ha sido enviada");
                         finish();
@@ -279,10 +284,16 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         mProgressBar.setVisibility(View.GONE);
+                        btnSend.setEnabled(true);
+                        fabMenu.setVisibility(View.VISIBLE);
                         displayMessage("Ha ocurrido un problema con tu recomendacion");
                     }
                 });
-                enviado = true;
+            } else {
+                mProgressBar.setVisibility(View.GONE);
+                btnSend.setEnabled(true);
+                fabMenu.setVisibility(View.VISIBLE);
+                showLocationAlert();
             }
         }
         return enviado;
@@ -304,10 +315,13 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             return;
         }
 
-        mProgressBar.setVisibility(View.VISIBLE);
+
         if (bitmap == null && selectImageUri == null) {
             writeFirebaseDocument(urlLogo);
         } else {
+            mProgressBar.setVisibility(View.VISIBLE);
+            btnSend.setEnabled(false);
+            fabMenu.setVisibility(View.INVISIBLE);
             final UploadTask uptask = saveImage();
             uptask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -315,10 +329,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                     task.getResult().getStorage().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                         @Override
                         public void onComplete(@NonNull Task<Uri> task) {
-                            boolean taskReturn = writeFirebaseDocument(task.getResult().toString());
-//                            if(!taskReturn){
-//                                taskReturn = writeFirebaseDocument(task.getResult().toString());
-//                            }
+                            writeFirebaseDocument(task.getResult().toString());
                         }
                     });
 
@@ -326,71 +337,11 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 }
             });
         }
-//        if(!enviado) {
-//            mProgressBar.setVisibility(View.INVISIBLE);
-//            btnSend.setEnabled(true);
-//            fabMenu.setEnabled(true);
-//            //sendToFirebase();
-//        }
 
     }
 
     private void displayMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
-
-    private Location getLocation() {
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        AlertDialog enableLocation;
-        if (!isLocationEnabled()) {
-            enableLocation = showLocationAlert();
-                int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
-
-                if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION);
-                }
-                try {
-                    locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new MyLocationListenerGPS(), null);
-                    currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    if (currentLocation == null) {
-                        locationManager.requestSingleUpdate(LocationManager.PASSIVE_PROVIDER, new MyLocationListenerGPS(), null);
-                        currentLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-                        if (currentLocation == null) {
-                            locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, new MyLocationListenerGPS(), null);
-                            currentLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                        }
-                    }
-
-
-                } catch (SecurityException e) {
-                    e.printStackTrace();
-                }
-
-
-        } else {
-            int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
-
-            if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION);
-            }
-            try {
-                locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new MyLocationListenerGPS(), null);
-                currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (currentLocation == null) {
-                    locationManager.requestSingleUpdate(LocationManager.PASSIVE_PROVIDER, new MyLocationListenerGPS(), null);
-                    currentLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-                    if (currentLocation == null) {
-                        locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, new MyLocationListenerGPS(), null);
-                        currentLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        return currentLocation;
     }
 
     public class MyLocationListenerGPS implements LocationListener {
@@ -405,14 +356,37 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
 
         @Override
         public void onProviderEnabled(String s) {
-            //sendToFirebase();
+
         }
 
         @Override
         public void onProviderDisabled(String s) {
-            //showLocationAlert();
+
         }
 
+    }
+
+    private void setCurrentLocation() {
+        int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION);
+        }
+        if (isLocationEnabled() && permissionCheck == PackageManager.PERMISSION_GRANTED) {
+            try {
+                locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new MyLocationListenerGPS(), null);
+                currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (currentLocation == null) {
+                    locationManager.requestSingleUpdate(LocationManager.PASSIVE_PROVIDER, new MyLocationListenerGPS(), null);
+                    currentLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+                    if (currentLocation == null) {
+                        locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, new MyLocationListenerGPS(), null);
+                        currentLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                    }
+                }
+            } catch (SecurityException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private boolean isLocationEnabled() {
@@ -420,10 +394,11 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
+
     private AlertDialog showLocationAlert() {
         final AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
         final AlertDialog alert = dialog.setTitle("Activar Ubicación")
-                .setMessage("Tu ubicacion esta desactivada..\nDebes activarla para continuar")
+                .setMessage("Tu ubicación esta desactivada..\nDebes activarla para continuar")
                 .setPositiveButton("Ajustes de localización", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface paramDialogInterface, int paramInt) {
@@ -434,13 +409,13 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 .setNegativeButton("Aceptar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        sendToFirebase();
+
                     }
 
                 }).setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
-                        //sendToFirebase();
+
                     }
                 }).create();
         alert.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -538,9 +513,11 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             case LOCATION_PERMISSION: {
                 if (grantResults.length > 0
                         && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    showLocationAlert();
+                    mProgressBar.setVisibility(View.INVISIBLE);
+                    btnSend.setEnabled(true);
+                    fabMenu.setVisibility(View.VISIBLE);
                 } else {
-                    sendToFirebase();
+                    setCurrentLocation();
                 }
                 break;
             }

@@ -1,5 +1,6 @@
 package com.mylook.mylook.recommend;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -19,6 +20,9 @@ import com.mylook.mylook.entities.RequestRecommendation;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static android.graphics.ColorSpace.Model.RGB;
 
 public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecyclerViewAdapter.ViewHolder> {
 
@@ -40,6 +44,7 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
         return holder;
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder,final int position) {
         Log.d("ALGO", "onBindViewHolder: called.");
@@ -51,7 +56,12 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
         cal.setTimeInMillis(requestRecommendation.getLimitDate());
         int mes=cal.get(Calendar.MONTH)+1;
         final String dateFormat=cal.get(Calendar.DAY_OF_MONTH)+"/"+mes + "/"+cal.get(Calendar.YEAR);
-        holder.txtDate.setText(dateFormat);
+        holder.txtDate.setText("Hasta " + dateFormat);
+        Calendar today = Calendar.getInstance();
+
+        if(TimeUnit.MILLISECONDS.toDays(cal.getTime().getTime() - cal.getTime().getTime()) < 7 ){
+            holder.txtDate.setTextColor(R.color.red);
+        }
         holder.titleRequest.setText(requestRecommendation.getTitle());
         if(!requestRecommendation.getAnswers().isEmpty())
             holder.state.setVisibility(View.VISIBLE);
