@@ -19,7 +19,7 @@ export const rootRouterConfig: Routes = [
   { path: 'login', component: LoginComponent, canActivate: [AuthGuard] },
   { path: 'signup', component: SignupComponent, canActivate: [AuthGuard] },
   { path: 'user', component: UserComponent, resolve: { data: UserResolver } },
-  { path: 'singup', component: RegisterComponent },
+  { path: 'register', component: RegisterComponent },
   { path: 'recomendations', component: RecomendationsComponent, resolve: { data: UserResolver } },
   { path: 'store/:storeName', component: StoreComponent,
     resolve: { data: UserResolver, articles: ArticleResolver }, runGuardsAndResolvers: 'always'

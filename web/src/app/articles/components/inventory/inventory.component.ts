@@ -51,6 +51,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     displayedColumns: string[] = [
       'picture',
       'title',
+      'code',
       'cost',
       'size',
       'material',
@@ -78,6 +79,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
         this._subscription = this.articleService.getArticles(this.userStore.storeName).subscribe(articles => {
           this.articles = articles;
           this.dataSource = new MatTableDataSource(this.articles);
+          console.log(this.articles);
           setTimeout(() => {
             this.spinner.hide();
           }, 2000);
@@ -115,10 +117,11 @@ deleteArticle(article) {
         dataToSend = {
         storeName: this.userStore.storeName,
         title: article.title,
+        code: article.code,
         id: article.id,
         picture: article.picture,
         cost: article.cost,
-        size: article.size,
+        sizes: article.sizes,
         material: article.material,
         colors: article.colors,
         initial_stock: article.initial_stock,
@@ -127,7 +130,8 @@ deleteArticle(article) {
         } else {
         dataToSend = {
           storeName: this.userStore.storeName,
-          tags: []
+          tags: [],
+          sizes: []
          };
         }
 

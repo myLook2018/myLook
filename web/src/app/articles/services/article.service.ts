@@ -29,6 +29,7 @@ export class ArticleService {
   }
 
   addArticle(article: Article) {
+   console.log(article);
    return this.articleCollection.add(article);
   }
 
@@ -43,7 +44,7 @@ export class ArticleService {
   refreshArticle(article: Article) {
     return this.fst.collection(this.collectionPath).doc(`${article.id}`).update({
       cost: article.cost,
-      size: article.size,
+      size: article.sizes,
       material: article.material,
       colors: article.colors,
       initial_stock: article.initial_stock,

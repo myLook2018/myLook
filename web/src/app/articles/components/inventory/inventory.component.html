@@ -57,6 +57,12 @@
                         <mat-cell *matCellDef="let element"> {{element.title}} </mat-cell>
                     </ng-container>
 
+                    <!-- code Column -->
+                    <ng-container matColumnDef="code">
+                            <mat-header-cell *matHeaderCellDef> Código </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.code}} </mat-cell>
+                        </ng-container>
+
                     <!-- cost Column -->
                     <ng-container matColumnDef="cost">
                         <mat-header-cell *matHeaderCellDef> Costo ($) </mat-header-cell>
@@ -66,7 +72,7 @@
                     <!-- size Column -->
                     <ng-container matColumnDef="size">
                         <mat-header-cell *matHeaderCellDef> Talle </mat-header-cell>
-                        <mat-cell *matCellDef="let element"> {{element.size}} </mat-cell>
+                        <mat-cell *matCellDef="let element"> {{element.sizes}} </mat-cell>
                     </ng-container>
 
                     <!-- material Column -->
