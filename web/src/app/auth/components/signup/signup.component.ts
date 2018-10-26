@@ -35,7 +35,7 @@ export class SignupComponent {
      this.authService.isEmailAvaible(this.email).then(
        (res) => {
         this.authService.emailToRegister = this.email;
-        this.router.navigate(['/singup']);
+        this.router.navigate(['/register']);
         }, (err) => {
           this.errorMessage = err;
         }

@@ -40,6 +40,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   croppedImage: any = '';
 
   tags: string[] = [];
+  sizes: string[] = [];
   _subscription: Subscription;
   allTags: Tags;
   visible = true;
@@ -48,14 +49,16 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   addOnBlur = false;
   isUpLoading = false;
   separatorKeysCodes: number[] = [ENTER, COMMA];
-  tagsCtrl = new FormControl();
   filteredTags: Observable<string[]>;
   data: any;
+  tagsCtrl = new FormControl();
+  sizesCtrl = new FormControl();
 
   @ViewChild('cropper', undefined)
   cropper: ImageCropperComponent;
-  @ViewChild('tagsInput') tagsInput: ElementRef<HTMLInputElement>;
   cropperSettings: CropperSettings;
+  @ViewChild('tagsInput') tagsInput: ElementRef<HTMLInputElement>;
+  @ViewChild('sizesInput') sizesInput: ElementRef<HTMLInputElement>;
 
   constructor(
     public tagsService: TagsService,
@@ -73,11 +76,12 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     this.cropperSettings.canvasHeight = 240;
     this.cropperSettings.canvasWidth = 240;
     this.data = {};
+
     this.createForm();
     if (articleData.picture !== undefined) {
-      this.urls.push(articleData.picture); this.isNew = false;
+       this.isNew = false;
     } else {
-      this.urls.push('/assets/hanger.png');
+      this.data.image = ('/assets/hanger.png');
     }
   }
 
@@ -100,13 +104,16 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
 
   createForm() {
     if (this.articleData.tags === null) { this.articleData.tags = []; }
+    if (this.articleData.sizes === null) { this.articleData.sizes = []; }
     this.tags = this.articleData.tags;
+    this.sizes = this.articleData.sizes;
     this.articleForm = this.fb.group({
       // completar los datos de la prenda
       title: [this.articleData.title, Validators.nullValidator],
+      code: [this.articleData.code, Validators.nullValidator],
       cost: [this.articleData.cost, Validators.nullValidator],
       picture: ['', Validators.nullValidator],
-      size: [this.articleData.size, Validators.nullValidator],
+      sizes: [this.articleData.sizes.map(x => x), Validators.nullValidator],
       material: [this.articleData.material, Validators.nullValidator],
       colors: [this.articleData.colors, Validators.nullValidator],
       initial_stock: [this.articleData.initial_stock, Validators.nullValidator],
@@ -136,7 +143,9 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     console.log(2);
     const imageFile = new File([imageBlob], this.articleForm.controls['title'].value, { type: 'image/jpeg' });
     this.articleForm.get('tags').setValue(this.tags.map(x => x));
+    this.articleForm.get('sizes').setValue(this.sizes.map(x => x));
     console.log(this.tags.map(x => x));
+    console.log(this.sizes.map(x => x));
     this.dataService.uploadPictureFile(imageFile).then(pictureURL => {
       console.log(3);
       this.articleForm.get('picture').setValue(pictureURL);
@@ -153,7 +162,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
       id: this.articleData.id,
       title: this.articleData.title,
       cost: this.articleForm.controls['cost'].value,
-      size: this.articleForm.controls['size'].value,
+      sizes: this.articleData.sizes.map(x => x),
       material: this.articleForm.controls['material'].value,
       colors: this.articleForm.controls['colors'].value,
       initial_stock: this.articleForm.controls['initial_stock'].value,
@@ -195,32 +204,46 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
       input.value = '';
     }
   }
+  addSize(event: MatChipInputEvent): void {
+    const input = event.input;
+    const value = event.value;
+    if ((value || '').trim()) {
+      this.sizes.push(value.trim());
+    }
+
+    // Reset the input value
+    if (input) {
+      input.value = '';
+    }
+    console.log(this.sizes);
+  }
 
   selected(event: MatAutocompleteSelectedEvent): void {
     this.tags.push(event.option.viewValue);
     this.tagsInput.nativeElement.value = '';
     this.tagsCtrl.setValue(null);
   }
+
   remove(tag): void {
     const index = this.tags.indexOf(tag);
     if (index >= 0) {
       this.tags.splice(index, 1);
     }
   }
-  detectFiles(event) {
-    this.filesSelected = event.target.files;
-    this.urls = [];
-    const files = event.target.files;
-    if (files) {
-      for (const file of files) {
-        const reader = new FileReader();
-        reader.onload = (e: any) => {
-          this.urls.push(e.target.result);
-        };
-        reader.readAsDataURL(file);
-      }
+
+  selectedSize(event: MatAutocompleteSelectedEvent): void {
+    this.sizes.push(event.option.viewValue);
+    this.sizesInput.nativeElement.value = '';
+    this.sizesCtrl.setValue(null);
+  }
+
+  removeSize(size): void {
+    const index = this.sizes.indexOf(size);
+    if (index >= 0) {
+      this.sizes.splice(index, 1);
     }
   }
+
   fileChangeListener($event) {
     const image: any = new Image();
     const file: File = $event.target.files[0];

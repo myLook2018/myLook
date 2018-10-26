@@ -21,6 +21,9 @@
           <input matInput placeholder="Titulo" formControlName="title" value={{articleData.title}}>
         </mat-form-field>
         <mat-form-field style="width: 95%">
+          <input matInput placeholder="Código" formControlName="code" value={{articleData.code}}>
+        </mat-form-field>
+        <mat-form-field style="width: 95%">
           <input matInput placeholder="Proveedor" formControlName="provider" value={{articleData.provider}}>
         </mat-form-field>
         <mat-form-field style="width: 95%">
@@ -32,9 +35,6 @@
       </div>
       <div>
         <mat-form-field style="width: 95%">
-          <input matInput placeholder="Talle" formControlName="size" value={{articleData.size}}>
-        </mat-form-field>
-        <mat-form-field style="width: 95%">
           <input matInput placeholder="Material" formControlName="material" value={{articleData.material}}>
         </mat-form-field>
       </div>
@@ -42,26 +42,12 @@
     </div>
 
     <div #firstColumn style="display: inline-table; width: 240px; height: 355px; position: relative; margin-left: 5px">
-
-      <!--
-        <div style="height: 247px;padding-top: 10px;">
-          <img *ngFor="let url of urls" [src]="url" class="rounded mb-3" height="240" style="display: block; margin-left: auto; margin-right: auto; max-width:240px">
-        </div>
-      -->
-
       <div style="padding-top: 13px;">
         <img-cropper #cropper [image]="data" [settings]="cropperSettings"></img-cropper>
         <button type="button" mat-raised-button style="display: block; margin-left: auto; margin-right: auto; margin-top: 10px;  background-color: #9C27B0;color: white"
           (click)="imgFileInput.click()">Añade una foto</button>
         <input hidden class="file-input" #imgFileInput type="file" (change)="fileChangeListener($event)" >
-        <!--
-
-          <span class="result rounded" *ngIf="data.image">
-            <img [src]="data.image" [width]="cropperSettings.croppedWidth" [height]="cropperSettings.croppedHeight">
-          </span>
-        -->
       </div>
-
       <mat-form-field style="margin-top: 22px;width: 95%">
         <input matInput placeholder="Colores disponibles" formControlName="colors" [(ngModel)]="articleData.colors">
       </mat-form-field>
@@ -69,8 +55,24 @@
   </form>
 </div>
 
-
 <div #thirtColumn style="margin-left: 10px">
+    <form [formGroup]="articleForm" style="display: flex;">
+        <mat-form-field style="width: 97.5%">
+            <mat-chip-list #chipList2>
+              <mat-chip *ngFor="let size of sizes" [selectable]="selectable" [removable]="removable" (removed)="removeSize(size)">
+                {{size}}
+                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+              </mat-chip>
+              <input style="width: 100%" placeholder="Talles" #sizesInput [formControl]="sizesCtrl"
+                [matChipInputFor]="chipList2" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                 (matChipInputTokenEnd)="addSize($event)" autofocus>
+            </mat-chip-list>
+            <!--<input matInput placeholder="Etiquetas" formControlName="tags" value={{articleData.tags}}>-->
+          </mat-form-field>
+    </form>
+  </div>
+
+<div #forthColumn style="margin-left: 10px">
   <form [formGroup]="articleForm" style="display: flex;">
     <mat-form-field style="width: 97.5%">
       <mat-chip-list #chipList>

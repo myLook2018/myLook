@@ -70,7 +70,7 @@ export class LoginComponent {
     }, err => {
       this.isLoading = false;
       console.log(err);
-      this.errorMessage = err.message;
+      this.errorMessage = err;
     });
     console.log(this.errorMessage);
   }

@@ -18,6 +18,7 @@ import { DataService } from '../../../service/dataService';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent {
+  isRegistering = false;
   errorMessage = '';
   registerStoreFormGroup: FormGroup;
   userLoginForm: FormGroup;
@@ -110,6 +111,7 @@ export class RegisterComponent {
 
 
   tryRegister() {
+    this.isRegistering = true;
     this.userLoginForm.addControl('password', new FormControl(this.password, Validators.required));
     this.authService.doRegister(this.userLoginForm).then(() => {
       this.userService.getCurrentUser().then((user) => {
@@ -124,7 +126,8 @@ export class RegisterComponent {
           }).then(() => {
             this.userService.addStore(this.registerStoreFormGroup.value).then(() => { });
           }).then(() => {
-            this.authService.doLogin(this.userLoginForm).then(() => {
+            this.authService.doFirstLogin(this.userLoginForm).then(() => {
+              this.isRegistering = false;
               this.router.navigateByUrl('/home');
             });
         });
