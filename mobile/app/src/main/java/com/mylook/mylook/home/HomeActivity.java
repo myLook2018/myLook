@@ -20,6 +20,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.iid.MessagingChannel;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Subscription;
@@ -29,6 +32,8 @@ import com.mylook.mylook.utils.CardsHomeFeedAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+
 
 public class HomeActivity extends AppCompatActivity {
 

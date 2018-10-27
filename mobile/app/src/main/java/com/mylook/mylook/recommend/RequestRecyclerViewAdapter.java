@@ -3,6 +3,7 @@ package com.mylook.mylook.recommend;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -56,15 +57,20 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
         cal.setTimeInMillis(requestRecommendation.getLimitDate());
         int mes=cal.get(Calendar.MONTH)+1;
         final String dateFormat=cal.get(Calendar.DAY_OF_MONTH)+"/"+mes + "/"+cal.get(Calendar.YEAR);
-        holder.txtDate.setText("Hasta " + dateFormat);
         Calendar today = Calendar.getInstance();
+        int daysLeft = (int)TimeUnit.MILLISECONDS.toDays(cal.getTime().getTime() - today.getTime().getTime());
+        holder.txtDate.setText("Te quedan "+daysLeft+ " días");
 
-        if(TimeUnit.MILLISECONDS.toDays(cal.getTime().getTime() - cal.getTime().getTime()) < 7 ){
-            holder.txtDate.setTextColor(R.color.red);
+        if(daysLeft < 7 ){
+            holder.txtDate.setTextColor(Color.RED);
         }
         holder.titleRequest.setText(requestRecommendation.getTitle());
-        if(!requestRecommendation.getAnswers().isEmpty())
+        if(!requestRecommendation.getAnswers().isEmpty()) {
             holder.state.setVisibility(View.VISIBLE);
+            holder.state.setText(requestRecommendation.getAnswers().size());
+        } else {
+            holder.state.setVisibility(View.INVISIBLE);
+        }
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,7 +93,7 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
         ImageView requestPhoto;
         TextView titleRequest;
         TextView txtDate;
-        RadioButton state;
+        TextView state;
         LinearLayout parentLayout;
 
         public ViewHolder(View itemView) {
