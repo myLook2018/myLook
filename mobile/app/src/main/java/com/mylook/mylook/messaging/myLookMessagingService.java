@@ -22,6 +22,7 @@ public class myLookMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
     }
+
 }
 
 //    @Override

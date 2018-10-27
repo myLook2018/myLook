@@ -67,7 +67,7 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
         holder.titleRequest.setText(requestRecommendation.getTitle());
         if(!requestRecommendation.getAnswers().isEmpty()) {
             holder.state.setVisibility(View.VISIBLE);
-            holder.state.setText(requestRecommendation.getAnswers().size());
+            holder.state.setText(String.valueOf(requestRecommendation.getAnswers().size()));
         } else {
             holder.state.setVisibility(View.INVISIBLE);
         }

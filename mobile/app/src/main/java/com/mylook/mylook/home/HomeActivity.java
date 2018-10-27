@@ -15,14 +15,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
-import com.google.firebase.iid.MessagingChannel;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Subscription;
@@ -31,8 +32,9 @@ import com.mylook.mylook.utils.BottomNavigationViewHelper;
 import com.mylook.mylook.utils.CardsHomeFeedAdapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 
 
 public class HomeActivity extends AppCompatActivity {
@@ -67,10 +69,12 @@ public class HomeActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
-        //read firestore
-        if(mAuth.getCurrentUser()!=null)
-            readSubscriptions();
 
+        //read firestore
+        if (mAuth.getCurrentUser() != null) {
+            readSubscriptions();
+            updateInstallationToken();
+        }
     }
 
     @Override
@@ -102,6 +106,24 @@ public class HomeActivity extends AppCompatActivity {
                 checkCurrentUser(firebaseAuth.getCurrentUser());
             }
         };
+    }
+
+    private void updateInstallationToken() {
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener( this,  new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+                final String mToken = instanceIdResult.getToken();
+                db.collection("clients").whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        Map<String, Object> update = new HashMap<>();
+                        update.put("installToken",mToken);
+                        db.collection("clients").document(task.getResult().getDocuments().get(0).getId()).set(update, SetOptions.merge());
+                    }
+                });
+            }
+        });
     }
 
     private void readSubscriptions() {

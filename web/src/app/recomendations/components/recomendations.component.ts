@@ -178,7 +178,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
     if (this.requestAnswerForm.get('articleUID').value === undefined) {
       this.error = "Se requiere que selecione una prenda de su catalogo para recomendar";
       console.log(this.error);
-      return this.error; 
+      return this.error;
     } else {
       this.answeredRequestIndex = this.selectedRowIndex;
       this.requestAnswerForm.get("storeName").setValue(this.userStore.storeName);
@@ -187,14 +187,14 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
       this.requestAnswerForm.get("feedBack").setValue("");
       console.log(3);
       this.recomendationsService.addRecomendationAnswer(this.requestAnswerForm.value, this.selectedRequest.FirebaseUID)
-      .then(() => {
-        console.log(4);
-        this.answerForm.get("requestUID").setValue(this.selectedRequest.FirebaseUID);
-        this.answerForm.get("storeName").setValue(this.userStore.storeName);
-        console.log(5);
-        this.recomendationsService.storeAnswer(this.answerForm.value)
         .then(() => {
-          console.log(6);
+          console.log(4);
+          this.answerForm.get("requestUID").setValue(this.selectedRequest.FirebaseUID);
+          this.answerForm.get("storeName").setValue(this.userStore.storeName);
+          console.log(5);
+          this.recomendationsService.storeAnswer(this.answerForm.value)
+            .then(() => {
+              console.log(6);
               this.openSnackBar("Se ha enviado la sugerencia!", "cerrar");
             });
         });
@@ -215,11 +215,13 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
 
   isInAnswers(answers: RecomendationAnswer[]) {
     let res = false;
-    answers.forEach(answer => {
-      if (answer.storeName === this.userStore.storeName) {
-        res = true;
-      }
-    });
+    if (answers) {
+      answers.forEach(answer => {
+        if (answer.storeName === this.userStore.storeName) {
+          res = true;
+        }
+      });
+    }
     return res;
   }
 

@@ -9,7 +9,7 @@ public class Article {
     private String initial_stock;
     private String material;
     private String provider;
-    private String size;
+    private ArrayList<String> size;
     private String storeName;
     private ArrayList<String> tags;
     private String picture;
@@ -17,7 +17,7 @@ public class Article {
 
     public Article() {}
 
-    public Article(String colors, String cost, String initial_stock, String material, String provider, String size, String storeName, ArrayList<String> tags, String picture) {
+    public Article(String colors, String cost, String initial_stock, String material, String provider, ArrayList<String>  size, String storeName, ArrayList<String> tags, String picture) {
         this.colors = colors;
         this.cost = cost;
         this.initial_stock = initial_stock;
@@ -53,11 +53,11 @@ public class Article {
         this.provider = provider;
     }
 
-    public String getSize() {
+    public ArrayList<String>  getSize() {
         return size;
     }
 
-    public void setSize(String size) {
+    public void setSize(ArrayList<String>  size) {
         this.size = size;
     }
 
