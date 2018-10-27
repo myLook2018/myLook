@@ -15,6 +15,7 @@ public class RequestRecommendation implements Serializable {
         private String userId;
         private String title;
         private ArrayList<HashMap<String,String>> answers;
+        private String documentId;
 
         public RequestRecommendation() {}
 
@@ -88,4 +89,11 @@ public class RequestRecommendation implements Serializable {
         this.userId = userId;
     }
 
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
+    }
 }

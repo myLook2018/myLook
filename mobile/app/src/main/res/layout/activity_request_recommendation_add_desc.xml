@@ -125,7 +125,8 @@
                     android:ems="10"
                     android:focusable="false"
                     android:hint="Fecha Límite"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"
+                    android:minWidth="120dp" />
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
@@ -136,8 +137,7 @@
                         android:id="@+id/size_input"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:hint="Talle (opcional)"
-                        android:text="Talle (opcional)" />
+                        android:hint="Talle (opcional)" />
                 </android.support.design.widget.TextInputLayout>
 
                 <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner

@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -102,6 +103,7 @@ public class RecommendationsActivity extends AppCompatActivity implements Recomm
                             requestRecommendationsList = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 RequestRecommendation requestRecommendation = document.toObject(RequestRecommendation.class);
+                                requestRecommendation.setDocumentId(document.getId());
                                 requestRecommendationsList.add(requestRecommendation);
                             }
                             RequestRecyclerViewAdapter adapter = new RequestRecyclerViewAdapter(RecommendationsActivity.this,requestRecommendationsList);
@@ -112,4 +114,6 @@ public class RecommendationsActivity extends AppCompatActivity implements Recomm
                     }
                 });
     }
+
+
 }

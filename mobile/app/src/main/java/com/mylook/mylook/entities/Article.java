@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 public class Article {
 
-    private String colors;
-    private String cost;
-    private String initial_stock;
+    private ArrayList<String> colors;
+    private long cost;
+    private long initial_stock;
     private String material;
     private String provider;
     private ArrayList<String> size;
@@ -17,7 +17,7 @@ public class Article {
 
     public Article() {}
 
-    public Article(String colors, String cost, String initial_stock, String material, String provider, ArrayList<String>  size, String storeName, ArrayList<String> tags, String picture) {
+    public Article(ArrayList<String> colors, long cost, long initial_stock, String material, String provider, ArrayList<String>  size, String storeName, ArrayList<String> tags, String picture) {
         this.colors = colors;
         this.cost = cost;
         this.initial_stock = initial_stock;
@@ -29,11 +29,11 @@ public class Article {
         this.picture = picture;
     }
 
-    public String getCost() {
+    public Long getCost() {
         return cost;
     }
 
-    public void setCost(String cost) {
+    public void setCost(Long cost) {
         this.cost = cost;
     }
 
@@ -69,19 +69,19 @@ public class Article {
         this.tags = tags;
     }
 
-    public String getColors() {
+    public ArrayList<String> getColors() {
         return colors;
     }
 
-    public void setColors(String colors) {
+    public void setColors(ArrayList<String> colors) {
         this.colors = colors;
     }
 
-    public String getInitial_stock() {
+    public long getInitial_stock() {
         return initial_stock;
     }
 
-    public void setInitial_stock(String initial_stock) {
+    public void setInitial_stock(long initial_stock) {
         this.initial_stock = initial_stock;
     }
 
