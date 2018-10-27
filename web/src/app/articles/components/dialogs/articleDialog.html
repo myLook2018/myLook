@@ -1,12 +1,12 @@
 <div class="mat-typography">
   <div style="display:flex">
+      <button [disabled]="isUpLoading" mat-mini-fab style="display: block; margin-left: auto; background-color: #ff9800; "
+        (click)="onNoClick()">
+        <mat-icon>close</mat-icon>
+      </button>
 
     <h2 *ngIf="isNew" style="margin: 0; ">Agrega una nueva prenda a tu catálogo</h2>
     <h2 *ngIf="!isNew" style="margin: 0; ">Actualizar prenda</h2>
-    <button [disabled]="isUpLoading" mat-mini-fab style="display: block; margin-left: auto; background-color: #ff9800;"
-      (click)="onNoClick()">
-      <mat-icon>close</mat-icon>
-    </button>
 
   </div>
   <h4 *ngIf="isNew" style="margin: 0;">A continuación ingresa la información de la prenda.</h4>
@@ -18,19 +18,19 @@
     <div #secondColumn style="display: inline-table;margin-left: 10px; width: 240px">
       <div>
         <mat-form-field style="width: 95%">
-          <input matInput placeholder="Titulo" formControlName="title" value={{articleData.title}}>
+          <input matInput type="text" placeholder="Titulo" formControlName="title" value={{articleData.title}}>
         </mat-form-field>
         <mat-form-field style="width: 95%">
-          <input matInput placeholder="Código" formControlName="code" value={{articleData.code}}>
+          <input matInput type="text" placeholder="Código" formControlName="code" value={{articleData.code}}>
         </mat-form-field>
         <mat-form-field style="width: 95%">
-          <input matInput placeholder="Proveedor" formControlName="provider" value={{articleData.provider}}>
+          <input matInput type="text" placeholder="Proveedor" formControlName="provider" value={{articleData.provider}}>
         </mat-form-field>
         <mat-form-field style="width: 95%">
-          <input matInput placeholder="Costo" formControlName="cost" value={{articleData.cost}}>
+          <input matInput type="number" placeholder="Costo" formControlName="cost" value={{articleData.cost}}>
         </mat-form-field>
         <mat-form-field style="width: 95%">
-          <input matInput placeholder="Stock inicial" formControlName="initial_stock" value={{articleData.initial_stock}}>
+          <input matInput type="number" placeholder="Stock inicial" formControlName="initial_stock" value={{articleData.initial_stock}}>
         </mat-form-field>
       </div>
       <div>
@@ -49,7 +49,16 @@
         <input hidden class="file-input" #imgFileInput type="file" (change)="fileChangeListener($event)" >
       </div>
       <mat-form-field style="margin-top: 22px;width: 95%">
-        <input matInput placeholder="Colores disponibles" formControlName="colors" [(ngModel)]="articleData.colors">
+        <mat-chip-list #chipList3>
+          <mat-chip *ngFor="let color of colors" [selectable]="selectable" [removable]="removable" (removed)="removeColor(color)">
+            {{color}}
+            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+          </mat-chip>
+          <input style="width: 100%" placeholder="Colores Disponibles" #sizesInput [formControl]="colorsCtrl"
+            [matChipInputFor]="chipList3" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+             (matChipInputTokenEnd)="addColor($event)" autofocus>
+        </mat-chip-list>
+        <!--<input matInput placeholder="Etiquetas" formControlName="tags" value={{articleData.tags}}>-->
       </mat-form-field>
     </div>
   </form>
