@@ -2,7 +2,6 @@ import {
   AngularFirestore,
   AngularFirestoreCollection
 } from 'angularfire2/firestore';
-import {  AngularFireStorage } from 'angularfire2/storage';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Article } from '../models/article';
@@ -12,33 +11,63 @@ import { map } from 'rxjs/operators';
 
 @Injectable()
 export class ArticleService {
-    articleCollection: AngularFirestoreCollection<Article>;
-    articles: Observable<Article[]>;
-    // tslint:disable-next-line:no-inferrable-types
-    collectionPath: string = 'articles';
+  articleCollection: AngularFirestoreCollection<Article>;
+  articles: Observable<Article[]>;
+  articlesCopado: Article[] = [];
+  // tslint:disable-next-line:no-inferrable-types
+  collectionPath: string = 'articles';
+  db: any;
 
-  constructor(public fst: AngularFirestore, private storage: AngularFireStorage) {
-    this.articleCollection = this.fst.collection(this.collectionPath, ref => ref.orderBy('title', 'asc'));
-    this.articles = this.articleCollection.snapshotChanges().pipe(map(changes => {
+  constructor(public fst: AngularFirestore) {
+    console.log(`en el collector`);
+    this.articleCollection = this.fst.collection(this.collectionPath);
+    const firebase = require('firebase');
+    // Required for side-effects
+    require('firebase/firestore');
+    this.db = firebase.firestore();
+  }
+
+  getArticles(storeName) {
+    console.log(`en el get`);
+    return this.articles = this.articleCollection.snapshotChanges().pipe(map(changes => {
       return changes.map(a => {
-        const data = a.payload.doc.data();
-        data.id = a.payload.doc.id;
-        return data;
+        if (a.payload.doc.data().storeName === storeName) {
+          const data = a.payload.doc.data();
+          data.id = a.payload.doc.id;
+          console.log(data);
+          return data;
+        }
       });
     }));
   }
 
-  addArticle(article: Article) {
-   console.log(article);
-   return this.articleCollection.add(article);
+  getArticlesCopado(storeName) {
+    return new Promise<any>((resolve, reject) => {
+      console.log(`estamos preguntando por ` + storeName);
+      const res = this.db.collection(this.collectionPath).where('storeName', '==', storeName)
+        .get().then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            data.id = doc.id;
+            this.articlesCopado.push(data);
+          });
+        }).then(() => {
+          resolve(this.articlesCopado);
+        })
+        .catch(function (error) {
+          console.log('Error getting documents: ', error);
+          reject(error);
+        });
+    });
   }
 
-  getArticles(storeName) {
-    return this.articles.pipe(map(items => items.filter(item => item.storeName === storeName)));
+  addArticle(article: Article) {
+    console.log(article);
+    return this.articleCollection.add(article);
   }
 
   deleteArticle(article: Article) {
-   return this.fst.collection(this.collectionPath).doc(`${article.id}`).delete();
+    return this.fst.collection(this.collectionPath).doc(`${article.id}`).delete();
   }
 
   refreshArticle(article: Article) {
@@ -51,12 +80,12 @@ export class ArticleService {
       provider: article.provider,
       tags: article.tags
     })
-    .then(function() {
+      .then(function () {
         console.log('Document successfully updated!');
-    })
-    .catch(function(error) {
+      })
+      .catch(function (error) {
         // The document probably doesn't exist.
         console.error('Error updating document: ', error);
-    });
+      });
   }
 }

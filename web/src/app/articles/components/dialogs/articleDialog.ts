@@ -41,6 +41,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
 
   tags: string[] = [];
   sizes: string[] = [];
+  colors: string[] = [];
   _subscription: Subscription;
   allTags: Tags;
   visible = true;
@@ -53,12 +54,14 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   data: any;
   tagsCtrl = new FormControl();
   sizesCtrl = new FormControl();
+  colorsCtrl = new FormControl();
 
   @ViewChild('cropper', undefined)
   cropper: ImageCropperComponent;
   cropperSettings: CropperSettings;
   @ViewChild('tagsInput') tagsInput: ElementRef<HTMLInputElement>;
   @ViewChild('sizesInput') sizesInput: ElementRef<HTMLInputElement>;
+  @ViewChild('colorsInput') colorsInput: ElementRef<HTMLInputElement>;
 
   constructor(
     public tagsService: TagsService,
@@ -105,6 +108,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   createForm() {
     if (this.articleData.tags === null) { this.articleData.tags = []; }
     if (this.articleData.sizes === null) { this.articleData.sizes = []; }
+    if (this.articleData.colors === null) { this.articleData.colors = []; }
     this.tags = this.articleData.tags;
     this.sizes = this.articleData.sizes;
     this.articleForm = this.fb.group({
@@ -115,7 +119,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
       picture: ['', Validators.nullValidator],
       sizes: [this.articleData.sizes.map(x => x), Validators.nullValidator],
       material: [this.articleData.material, Validators.nullValidator],
-      colors: [this.articleData.colors, Validators.nullValidator],
+      colors: [this.articleData.colors.map(x => x), Validators.nullValidator],
       initial_stock: [this.articleData.initial_stock, Validators.nullValidator],
       provider: [this.articleData.provider, Validators.nullValidator],
       tags: [this.articleData.tags.map(x => x), Validators.nullValidator],
@@ -137,17 +141,12 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     this.isUpLoading = true;
     const origin: string = this.data.image;
     const sub: string = origin.substr(23);
-    console.log(1);
-    console.log(this.data);
     const imageBlob = this.dataURItoBlob(sub);
-    console.log(2);
     const imageFile = new File([imageBlob], this.articleForm.controls['title'].value, { type: 'image/jpeg' });
     this.articleForm.get('tags').setValue(this.tags.map(x => x));
     this.articleForm.get('sizes').setValue(this.sizes.map(x => x));
-    console.log(this.tags.map(x => x));
-    console.log(this.sizes.map(x => x));
+    this.articleForm.get('colors').setValue(this.colors.map(x => x));
     this.dataService.uploadPictureFile(imageFile).then(pictureURL => {
-      console.log(3);
       this.articleForm.get('picture').setValue(pictureURL);
       this.articleService.addArticle(this.articleForm.value).then(() => {
         this.isUpLoading = false;
@@ -164,7 +163,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
       cost: this.articleForm.controls['cost'].value,
       sizes: this.articleData.sizes.map(x => x),
       material: this.articleForm.controls['material'].value,
-      colors: this.articleForm.controls['colors'].value,
+      colors: this.articleData.colors.map(x => x),
       initial_stock: this.articleForm.controls['initial_stock'].value,
       provider: this.articleForm.controls['provider'].value,
       tags: this.articleData.tags.map(x => x),
@@ -198,24 +197,36 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     if ((value || '').trim()) {
       this.tags.push(value.trim());
     }
-
     // Reset the input value
     if (input) {
       input.value = '';
     }
   }
+
   addSize(event: MatChipInputEvent): void {
     const input = event.input;
     const value = event.value;
     if ((value || '').trim()) {
       this.sizes.push(value.trim());
     }
-
     // Reset the input value
     if (input) {
       input.value = '';
     }
     console.log(this.sizes);
+  }
+
+  addColor(event: MatChipInputEvent): void {
+    const input = event.input;
+    const value = event.value;
+    if ((value || '').trim()) {
+      this.colors.push(value.trim());
+    }
+    // Reset the input value
+    if (input) {
+      input.value = '';
+    }
+    console.log(this.colors);
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
@@ -244,9 +255,19 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     }
   }
 
+  removeColor(color): void {
+    const index = this.sizes.indexOf(color);
+    if (index >= 0) {
+      this.colors.splice(index, 1);
+    }
+  }
+
   fileChangeListener($event) {
     const image: any = new Image();
     const file: File = $event.target.files[0];
+    if (file.type.split('/')[1] === 'png') {
+      return this.openSnackBar('Tipo de imagen no soportado!', 'close');
+   }
     const myReader: FileReader = new FileReader();
     const that = this;
     myReader.onloadend = function (loadEvent: any) {

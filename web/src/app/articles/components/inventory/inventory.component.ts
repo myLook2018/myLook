@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, OnDestroy} from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { Article } from '../../models/article';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ArticleDialogComponent } from '../dialogs/articleDialog';
@@ -39,64 +39,67 @@ export class InventoryComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private location: Location,
     private spinner: NgxSpinnerService,
-    ) {
-      this.options = fb.group({
-        hideRequired: false,
-        floatLabel: 'never'
-      });
-      this.userStore.profilePh = '/assets/noProfilePic.png';
-    }
+  ) {
+    this.options = fb.group({
+      hideRequired: false,
+      floatLabel: 'never'
+    });
+    this.userStore.profilePh = '/assets/noProfilePic.png';
+  }
 
-    dataSource;
-    displayedColumns: string[] = [
-      'picture',
-      'title',
-      'code',
-      'cost',
-      'size',
-      'material',
-      'colors',
-      'initial_stock',
-      'tags',
-      'actions'
-    ];
+  dataSource;
+  displayedColumns: string[] = [
+    'picture',
+    'title',
+    'code',
+    'cost',
+    'size',
+    'material',
+    'colors',
+    'initial_stock',
+    'tags',
+    'actions'
+  ];
 
-    applyFilter(filterValue: string) {
-      this.dataSource.filter = filterValue.trim().toLowerCase();
-    }
+  applyFilter(filterValue: string) {
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
 
-    ngOnInit() {
-      this.spinner.show();
-      this.route.data.subscribe(routeData => {
-        const data = routeData['data'];
-            if (data) {
-              this.FirebaseUser = data;
-          }
-      });
-      this._subscription2 = this.userService.getUserInfo(this.FirebaseUser.firebaseUserId).subscribe(userA => {
-        this.userStore = userA[0];
-        if (this.userStore.profilePh === '') {this.userStore.profilePh = this.FirebaseUser.profilePh; }
-        this._subscription = this.articleService.getArticles(this.userStore.storeName).subscribe(articles => {
-          this.articles = articles;
-          this.dataSource = new MatTableDataSource(this.articles);
-          console.log(this.articles);
-          setTimeout(() => {
-            this.spinner.hide();
-          }, 2000);
-        }
-        );
+  ngOnInit() {
+    this.spinner.show();
+    this.route.data.subscribe(routeData => {
+      const data = routeData['data'];
+      if (data) {
+        this.FirebaseUser = data;
       }
-        );
+    });
+    this._subscription2 = this.userService.getUserInfo(this.FirebaseUser.firebaseUserId).subscribe(userA => {
+      this.userStore = userA[0];
+      if (this.userStore.profilePh === '') { this.userStore.profilePh = this.FirebaseUser.profilePh; }
+      /*this._subscription = this.articleService.getArticles(this.userStore.storeName).subscribe(articlesFirebase => {
+        this.articles = articlesFirebase;
+        this.dataSource = new MatTableDataSource(this.articles);
+        console.log(this.articles);*/
+      this.articleService.getArticlesCopado(this.userStore.storeName).then((articles) => {
+        this.articles = articles;
+        this.dataSource = new MatTableDataSource(this.articles);
+      }).then(() => {
+        setTimeout(() => {
+          this.spinner.hide();
+        }, 2000);
+      });
     }
+    );
+  }
 
   ngOnDestroy(): void {
     console.log('destruyendo subscripciones');
     this._subscription.unsubscribe();
     this._subscription2.unsubscribe();
-    }
+  }
 
-deleteArticle(article) {
-      this.articleService.deleteArticle(article);
+  deleteArticle(article) {
+    this.articleService.deleteArticle(article);
   }
 
   openConfirmationDialog(article): void {
@@ -114,7 +117,7 @@ deleteArticle(article) {
   openArticleDialog(article: Article): void {
     let dataToSend = {};
     if (article !== undefined) {
-        dataToSend = {
+      dataToSend = {
         storeName: this.userStore.storeName,
         title: article.title,
         code: article.code,
@@ -126,17 +129,19 @@ deleteArticle(article) {
         colors: article.colors,
         initial_stock: article.initial_stock,
         provider: article.provider,
-        tags: article.tags};
-        } else {
-        dataToSend = {
-          storeName: this.userStore.storeName,
-          tags: [],
-          sizes: []
-         };
-        }
+        tags: article.tags
+      };
+    } else {
+      dataToSend = {
+        storeName: this.userStore.storeName,
+        tags: [],
+        sizes: [],
+        colors: []
+      };
+    }
 
     const dialogRef = this.dialog.open(ArticleDialogComponent, {
-     maxHeight: 'calc(95vh)',
+      maxHeight: 'calc(95vh)',
       data: dataToSend
     });
 

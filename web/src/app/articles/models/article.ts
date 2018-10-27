@@ -6,7 +6,7 @@ export class Article {
     cost?: number;
     sizes?: string[];
     material?: string;
-    colors?: string;
+    colors?: string[];
     initial_stock?: number;
     provider?: string;
     tags?: string[];
