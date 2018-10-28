@@ -43,7 +43,6 @@ public class Article implements Serializable{
     public void setArticleId(String articleId) {
         this.articleId = articleId;
     }
-
     public String getPicture() {
         return picture;
     }
@@ -76,6 +75,7 @@ public class Article implements Serializable{
         this.code = code;
     }
 
+
     public String getProvider() {
         return provider;
     }
@@ -97,9 +97,8 @@ public class Article implements Serializable{
     }
 
     public void setInitial_stock(int initial_stock) {
-        this.initial_stock = initial_stock;
+        this.initial_stock=initial_stock;
     }
-
     public String getMaterial() {
         return material;
     }
