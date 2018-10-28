@@ -23,7 +23,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
+import com.mylook.mylook.entities.Interaction;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +39,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
     private FirebaseUser user;
     private String articleId,downLoadUri;
     private String closetId;
+    private ArrayList<String> tags;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,6 +62,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
         final Intent intent = getIntent();
         Article article= (Article) intent.getSerializableExtra("article");
         articleId=article.getArticleId();
+        tags = intent.getStringArrayListExtra("tags");
         Log.e("ROPERO", article.getArticleId());
 
         downLoadUri=article.getPicture();
@@ -112,7 +116,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
+                        if(task.isSuccessful() && task.getResult().getDocuments().size()>0){
                             closetId=task.getResult().getDocuments().get(0).getId();
                             dB.collection("closets").document(closetId).collection("favorites")
                                     .whereEqualTo("articleId",articleId).get()
@@ -122,6 +126,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
                                             if(task.getResult().getDocuments().size()==0){
                                                 Log.e("CLOSET", closetId);
                                                 dB.collection("closets").document(closetId).collection("favorites").add(favorites);
+                                                sendNewInteraction();
                                                 displayMessage("Se añadió a tu ropero");
                                             }else
                                             {
@@ -146,6 +151,18 @@ public class ArticleInfoActivity extends AppCompatActivity {
     }
     private void displayMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void sendNewInteraction(){
+        Interaction userInteraction = new Interaction();
+        userInteraction.setSavedToCloset(false);
+        userInteraction.setLiked(false);
+        userInteraction.setClickOnArticle(true);
+        userInteraction.setArticleId(this.articleId);
+        userInteraction.setStoreName(this.articleStore.getText().toString());
+        userInteraction.setTags(tags);
+        userInteraction.setUserId(user.getUid());
+        dB.collection("interactions").add(userInteraction);
     }
 
 

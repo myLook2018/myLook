@@ -6,7 +6,7 @@
         android:id="@+id/close_req"
         android:title="@string/close_req"
         android:icon="@drawable/ic_done"
-        app:showAsAction="always"
+        app:showAsAction="never"
         android:iconTint="@color/white"
         />
 
@@ -23,5 +23,5 @@
     <item android:id="@+id/help"
         android:icon="@drawable/ic_help"
         android:title="@string/help"
-        app:showAsAction="never"/>
+        app:showAsAction=""/>
 </menu>

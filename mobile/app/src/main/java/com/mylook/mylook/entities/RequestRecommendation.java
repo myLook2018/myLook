@@ -16,6 +16,8 @@ public class RequestRecommendation implements Serializable {
         private String title;
         private ArrayList<HashMap<String,String>> answers;
         private String documentId;
+        private String size;
+        private String category;
 
         public RequestRecommendation() {}
 
@@ -95,5 +97,21 @@ public class RequestRecommendation implements Serializable {
 
     public void setDocumentId(String documentId) {
         this.documentId = documentId;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }
