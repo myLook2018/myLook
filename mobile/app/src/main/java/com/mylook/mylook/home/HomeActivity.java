@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
@@ -52,9 +53,9 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         setupFirebaseAuth();
         setupBottomNavigationView();
-        Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar tb = findViewById(R.id.toolbar);
         setSupportActionBar(tb);
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view_content);
+        recyclerView = findViewById(R.id.recycler_view_content);
         articleList = new ArrayList<>();
         adapter = new CardsHomeFeedAdapter(this, articleList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
@@ -117,7 +118,13 @@ public class HomeActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful()) {
-                                        articleList.addAll(task.getResult().toObjects(Article.class));
+                                        for (QueryDocumentSnapshot documentSnapshot:task.getResult()){
+                                            Log.e("ROPERO", documentSnapshot.getId());
+                                            Article art=documentSnapshot.toObject(Article.class);
+                                            art.setArticleId(documentSnapshot.getId());
+                                            articleList.add(art);
+                                        }
+                                        //articleList.addAll(task.getResult().toObjects(Article.class));
                                         adapter.notifyDataSetChanged();
                                     } else {
                                         Log.d("Firestore task", "onComplete: " + task.getException());
@@ -135,7 +142,7 @@ public class HomeActivity extends AppCompatActivity {
      * BottomNavigationView setup
      */
     private void setupBottomNavigationView() {
-        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavViewBar);
+        BottomNavigationView bottomNavigationView =  findViewById(R.id.bottomNavViewBar);
         BottomNavigationViewHelper.enableNavigation(mContext, bottomNavigationView);
         Menu menu = bottomNavigationView.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);

@@ -27,6 +27,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
+import com.mylook.mylook.entities.Closet;
 import com.mylook.mylook.home.HomeActivity;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
@@ -141,9 +142,21 @@ public class RegisterActivity extends AppCompatActivity {
                     });
         }
     }
+    private void createCloset(){
+        Closet closet=new Closet(mAuth.getUid());
+        final String[] closetId = new String[1];
+        dB.collection("closets").add(closet)
+            .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentReference> task) {
+                Log.e("CLOSET ON COMPLET", task.getResult().getId());
+            }
+        });
+    }
 
     private boolean saveClient(){
         final boolean[] saved = new boolean[1];
+        createCloset();
         final Map<String,Object> client=new HashMap<>();
         client.put("email",txtEmail.getText().toString());
         client.put("dni",txtDNI.getText().toString());
@@ -157,10 +170,9 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentReference documentReference) {
                 Log.d("SAVE_CLIENT", "Se guarda client");
-
                 saved[0] =true;
-            sendEmailVerification();
-            logInIntent();
+                sendEmailVerification();
+                logInIntent();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

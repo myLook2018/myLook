@@ -65,8 +65,8 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         final Article article = articleList.get(position);
         holder.nameStore.setText(article.getStoreName());
-        holder.costArticle.setText("$" + article.getCost());
-        holder. stockArticle.setText("Stock: " + article.getInitial_stock());
+        holder.costArticle.setText(new StringBuilder().append("$").append(article.getCost()).toString());
+        holder. stockArticle.setText(new StringBuilder().append("Stock: ").append(article.getInitial_stock()).toString());
 
         // loading article image using Glide library
         Glide.with(mContext).load(article.getPicture()).into(holder.articleImage);
@@ -76,14 +76,17 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
             public void onClick(View view) {
                 Intent intent= new Intent(mContext, ArticleInfoActivity.class);
                 Log.d("info del articulo", "onClick: paso por intent la data del articulo");
-                intent.putExtra("Colores", article.getColors());
+               intent.putExtra("article", article);
+
+                /* intent.putExtra("Colores", article.getColors());
                 intent.putExtra("Costo", article.getCost());
                 intent.putExtra("Stock", article.getInitial_stock());
                 intent.putExtra("Material", article.getMaterial());
-                intent.putExtra("Talle", article.getSize());
+                intent.putExtra("Talle", article.getSizes());
                 intent.putExtra("Tienda", article.getStoreName());
                 intent.putExtra("Foto", article.getPicture());
                 intent.putExtra("Title",article.getTitle());
+                //intent.putExtra("articleId",article.getArticleId());*/
                 mContext.startActivity(intent);
 
             }

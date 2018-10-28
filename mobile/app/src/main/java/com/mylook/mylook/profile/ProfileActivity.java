@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.mylook.mylook.R;
+import com.mylook.mylook.closet.ClosetActivity;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -24,12 +25,14 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView txtName;
     private TextView txtEmail;
 
+
     private Context mContext = ProfileActivity.this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
         initElements();
         setOnClickListener();
 
@@ -56,7 +59,8 @@ public class ProfileActivity extends AppCompatActivity {
         layoutCloset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent=new Intent(getApplicationContext(), ClosetActivity.class);
+                startActivity(intent);
             }
         });
         layoutSettings.setOnClickListener(new View.OnClickListener() {
@@ -78,6 +82,8 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
 
     /**

@@ -24,6 +24,14 @@
             android:textColor="@color/white"
             android:textSize="20dp"
             android:textStyle="bold" />
+        <ImageView
+            android:id="@+id/backArrow"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_centerVertical="true"
+            android:clickable="true" />
 
     </android.support.v7.widget.Toolbar>
 
@@ -40,6 +48,16 @@
             android:layout_height="250dp"
             android:layout_centerHorizontal="true"
             android:scaleType="centerInside" />
+
+        <ImageButton
+            android:id="@+id/btnLike"
+            android:layout_width="76dp"
+            android:layout_height="82dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="15dp"
+            android:layout_marginTop="15dp"
+            app:srcCompat="@drawable/ic_favorite" />
 
     </RelativeLayout>
 

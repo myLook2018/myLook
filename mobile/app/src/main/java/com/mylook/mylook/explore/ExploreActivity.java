@@ -51,7 +51,7 @@ public class ExploreActivity extends AppCompatActivity implements ExploreStartFr
 
         setupBottomNavigationView();
         getDiscoverableArticles();
-        Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar tb = findViewById(R.id.toolbar);
         tb.setTitle("Explorar");
         setSupportActionBar(tb);
 
@@ -82,14 +82,7 @@ public class ExploreActivity extends AppCompatActivity implements ExploreStartFr
                 Intent intent = new Intent(mContext, ArticleInfoActivity.class);
                 Log.d("info del articulo", "onClick: paso por intent la data del articulo");
                 Article art = mDiscoverableArticles.get(index);
-                intent.putExtra("Colores", art.getColors());
-                intent.putExtra("Costo", art.getCost());
-                intent.putExtra("Stock", art.getInitial_stock());
-                intent.putExtra("Material", art.getMaterial());
-                intent.putExtra("Talle", art.getSize());
-                intent.putExtra("Tienda", art.getStoreName());
-                intent.putExtra("Foto", art.getPicture());
-                intent.putExtra("Title",art.getTitle());
+                intent.putExtra("article",art);
                 mContext.startActivity(intent);
             }
         });
@@ -115,6 +108,7 @@ public class ExploreActivity extends AppCompatActivity implements ExploreStartFr
                             mDiscoverableArticles = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Article art = document.toObject(Article.class);
+                                art.setArticleId(document.getId());
                                 mDiscoverableArticles.add(art);
                             }
                             if (!mDiscoverableArticles.isEmpty())

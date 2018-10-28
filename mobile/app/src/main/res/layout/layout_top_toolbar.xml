@@ -10,14 +10,18 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="51dp"
             android:background="@color/primary"
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
-            app:titleTextColor="@color/white"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents.Dark">
-
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                app:srcCompat="@drawable/logo_white_no_background" />
         </android.support.v7.widget.Toolbar>
+
 
     </RelativeLayout>
 

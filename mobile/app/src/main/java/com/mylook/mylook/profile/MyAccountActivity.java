@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.support.v7.widget.Toolbar;
 
 import com.mylook.mylook.R;
 
@@ -12,6 +13,7 @@ public class MyAccountActivity extends AppCompatActivity{
     private LinearLayout lnlInfoAccount;
     private LinearLayout lnlAdress;
     private LinearLayout lnlNotifications;
+    private Toolbar tb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +51,12 @@ public class MyAccountActivity extends AppCompatActivity{
     }
 
     private void initElements() {
+        tb=findViewById(R.id.toolbar);
+        tb.setTitle("Mi cuenta");
+        setSupportActionBar(tb);
         lnlInfoAccount=findViewById(R.id.layoutInfoAccount);
         lnlAdress=findViewById(R.id.layouAdress);
         lnlNotifications=findViewById(R.id.layoutNotifications);
     }
+
 }
