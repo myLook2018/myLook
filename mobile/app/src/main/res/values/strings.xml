@@ -40,4 +40,13 @@
     <string name="ImageTitle">ImageTitle</string>
     <string name="image_description">Image description</string>
     <string name="limit_date">Fecha Limite</string>
+
+
+    <!--Related to request Recommendations-->
+    <string name="share_req">Compartir</string>
+    <string name="delete_req">Eliminar</string>
+    <string name="close_req">Cerrar</string>
+    <string name="help">Ayuda</string>
+
 </resources>
+

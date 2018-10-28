@@ -53,14 +53,18 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
         final RequestRecommendation requestRecommendation = requestRecommendationsList.get(position);
 
         Glide.with(mContext).asBitmap().load(requestRecommendation.getRequestPhoto()).into(holder.requestPhoto);
-        Calendar cal=Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(requestRecommendation.getLimitDate());
-        int mes=cal.get(Calendar.MONTH)+1;
-        final String dateFormat=cal.get(Calendar.DAY_OF_MONTH)+"/"+mes + "/"+cal.get(Calendar.YEAR);
+        int mes = cal.get(Calendar.MONTH) + 1;
+        final String dateFormat = cal.get(Calendar.DAY_OF_MONTH) + "/" + mes + "/" + cal.get(Calendar.YEAR);
         Calendar today = Calendar.getInstance();
-        int daysLeft = (int)TimeUnit.MILLISECONDS.toDays(cal.getTime().getTime() - today.getTime().getTime());
-        holder.txtDate.setText("Faltan "+daysLeft+ " días");
-
+        int daysLeft = (int) TimeUnit.MILLISECONDS.toDays(cal.getTime().getTime() - today.getTime().getTime());
+        if(requestRecommendation.getIsClosed()){
+            holder.txtDate.setText("Cerrada");
+            holder.txtDate.setTextColor(Color.RED);
+        } else {
+            holder.txtDate.setText("Faltan " + daysLeft + " días");
+        }
         holder.titleRequest.setText(requestRecommendation.getTitle());
         if(!requestRecommendation.getAnswers().isEmpty()) {
             holder.state.setVisibility(View.VISIBLE);
@@ -68,11 +72,10 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
         } else {
             holder.state.setVisibility(View.INVISIBLE);
         }
+
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("ALGO", "onClick: clicked on: " + position);
-
                 Intent intent = new Intent(mContext, RequestRecommendActivity.class);
                 intent.putExtra("requestRecommendation", requestRecommendation);
                 intent.putExtra("dateFormat", dateFormat);

@@ -31,6 +31,11 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+                <!--<category android:name="android.intent.category.DEFAULT" />-->
+                <!--<category android:name="android.intent.category.BROWSABLE" />-->
+                <!--<action android:name="android.intent.action.VIEW" />-->
+                <!--<data android:scheme="https"-->
+                    <!--android:host="mylook.com/home" />-->
             </intent-filter>
         </activity>
         <activity android:name=".info.ArticleInfoActivity"></activity>
@@ -44,7 +49,16 @@
             android:parentActivityName=".recommend.RecommendationsActivity"
             android:grantUriPermissions="true">
         </activity>
-        <activity android:name=".recommend.RequestRecommendActivity"/>
+        <activity android:name=".recommend.RequestRecommendActivity">
+            <!--<intent-filter android:label="@string/recommendation">-->
+                <!--<action android:name="android.intent.action.VIEW" />-->
+                <!--<category android:name="android.intent.category.DEFAULT" />-->
+                <!--<category android:name="android.intent.category.BROWSABLE" />-->
+                <!--&lt;!&ndash; Accepts URIs that begin with "example://gizmos” &ndash;&gt;-->
+                <!--<data android:scheme="mylook"-->
+                    <!--android:host="recommendation" />-->
+            <!--</intent-filter>-->
+        </activity>
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat"/>
         <activity android:name=".profile.EditInfoActivity"/>
@@ -56,6 +70,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
     </application>
 
 </manifest>

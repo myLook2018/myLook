@@ -27,6 +27,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -47,11 +48,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mylook.mylook.R;
 import com.theartofdev.edmodo.cropper.CropImage;
+import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
@@ -76,6 +79,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     private Uri selectImageUri = null;
     private Bitmap bitmap = null;
     private Uri picUri;
+    private TextInputEditText txtSize;
     private boolean permissionGranted = true;
     private final int REQUEST_CAMERA = 3, SELECT_FILE = 0, READ_EXTERNAL_STORAGE = 1, LOCATION_PERMISSION = 2, PIC_CROP = 4;
     //keep track of cropping intent
@@ -86,6 +90,8 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     private FirebaseUser user;
     private String urlLogo = "https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/utils%2Flogo_transparente_50.png?alt=media&token=c72e5b39-3011-4f26-ba4f-4c9f7326c68a";
     private ProgressBar mProgressBar;
+
+    private MaterialBetterSpinner spinner;
     private Uri downloadUrl;
     private boolean enviado = false;
 
@@ -118,7 +124,9 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 sendToFirebase();
             }
         });
-
+        spinner = findViewById(R.id.category);
+        setCategoryRequest();
+        txtSize = findViewById(R.id.size_input);
 
         final Calendar myCalendar = Calendar.getInstance();
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
@@ -161,6 +169,16 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 intent.setType("image/*");
                 startActivityForResult(intent, SELECT_FILE);
 
+            }
+        });
+    }
+
+    private void setCategoryRequest() {
+        dB.collection("categories").whereEqualTo("name", "recommendation").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                ArrayList<String> categories = (ArrayList<String>) task.getResult().getDocuments().get(0).get("categories");
+                spinner.setAdapter(new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_selectable_list_item, categories));
             }
         });
     }
@@ -270,6 +288,9 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 recommendation.put("isClosed", false);
                 recommendation.put("title", title.getText().toString());
                 recommendation.put("answers", new ArrayList<ArrayList<String>>());
+                recommendation.put("category",spinner.getText().toString() );
+                if (!txtSize.getText().equals(""))
+                    recommendation.put("size", txtSize.getText().toString());
                 dB.collection("requestRecommendations")
                         .add(recommendation).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
@@ -310,9 +331,12 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             return;
         }
         long days = TimeUnit.MILLISECONDS.toDays(limitDate.getTime() - cal.getTime().getTime());
-        if (days < 3) {
-            displayMessage("La fecha limite debe ser mayor a 3 días!");
+        if (days < 7) {
+            displayMessage("La fecha limite debe ser mayor a 7 días!");
             return;
+        }
+        if(spinner.getText().equals("")){
+            displayMessage("Seleccioná una categoría");
         }
 
 

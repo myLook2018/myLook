@@ -65,12 +65,12 @@ public class RequestRecommendation implements Serializable {
         this.requestPhoto = requestPhoto;
     }
 
-    public boolean getClosed() {
+    public boolean getIsClosed() {
         return isClosed;
     }
 
-    public void setClosed(boolean closed) {
-        this.isClosed = closed;
+    public void setIsClosed(boolean isClosed) {
+        this.isClosed = isClosed;
     }
 
     public String getUpdateDate() {
