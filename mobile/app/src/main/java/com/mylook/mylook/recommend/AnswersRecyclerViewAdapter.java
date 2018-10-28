@@ -16,10 +16,13 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
+import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Store;
+import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.info.StoreActivity;
 
 import java.util.HashMap;
@@ -68,18 +71,28 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
                     answer.put("feedBack",String.valueOf(rating));
                 }
             });
-        /*
+
         holder.imgArticle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d("AnswerRecyclerViewAdap", "onClick: clicked on: " + position);
-
-                Intent intent = new Intent(mContext, ProfileActivity.class);
-                //intent.putExtra("requestRecommendation", answer.);
-                mContext.startActivity(intent);
+                dB.collection("articles")
+                        .document(answer.get("articleUID")).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful())
+                        {
+                            Article art= task.getResult().toObject(Article.class);
+                            art.setArticleId(answer.get("articleUID"));
+                            Intent intent = new Intent(mContext, ArticleInfoActivity.class);
+                            intent.putExtra("article", art);
+                            mContext.startActivity(intent);
+                        }
+                    }
+                });
             }
         });
-        */
+
         holder.txtStore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
