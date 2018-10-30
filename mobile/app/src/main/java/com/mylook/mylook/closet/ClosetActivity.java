@@ -3,8 +3,13 @@ package com.mylook.mylook.closet;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -30,101 +35,59 @@ import java.util.ArrayList;
 
 public class ClosetActivity extends AppCompatActivity {
 
-    private FirebaseFirestore dB;
-    private FirebaseUser user;
-    private Closet closet;
-    private ArrayList<Favorite> favorites;
-    private Toolbar tb;
 
-    private GridView gridview;
+    private Toolbar tb;
+    private MenuItem filterMenuItem;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_closet);
-        dB=FirebaseFirestore.getInstance();
-        user=FirebaseAuth.getInstance().getCurrentUser();
-
+        setContentView(R.layout.activity_closet_tablayout);
         initElements();
-        int widthGrid = getResources().getDisplayMetrics().widthPixels;
-        int imageWidth = widthGrid / 3;
-        gridview.setColumnWidth(imageWidth);
-        gridview.setHorizontalSpacing(8);
-        gridview.setNumColumns(3);
-        getCloset();
+        createTabLayout();
 
-
-
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                dB.collection("articles").document((String) parent.getAdapter().getItem(position)).get()
-                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if(task.isSuccessful()){
-                                    String articleId=task.getResult().getId();
-                                    Article art= task.getResult().toObject(Article.class);
-                                    art.setArticleId(articleId);
-                                    Intent intent = new Intent(ClosetActivity.this, ArticleInfoActivity.class);
-                                    intent.putExtra("article",art);
-                                    getApplicationContext().startActivity(intent);
-                                }
-                            }
-                        })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        finish();
-                    }
-                });
-            }
-        });
     }
-    private void initElements(){
-        tb=findViewById(R.id.toolbar);
+
+    private void createTabLayout() {
+        tabLayout = (TabLayout) findViewById(R.id.tablayout);
+        viewPager = findViewById(R.id.closetViewPager);
+        setupViewPager(viewPager);
+        tabLayout.setupWithViewPager(viewPager);
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        ClosetTabAdapter adapter = new ClosetTabAdapter(getSupportFragmentManager(),2);
+        adapter.addFragment(new  FavouritesTab(), "Favoritos");
+        adapter.addFragment(new CategoryTab(), "Colección");
+        viewPager.setAdapter(adapter);
+    }
+
+    private void initElements() {
+        tb = findViewById(R.id.toolbar);
         tb.setTitle("Mi Ropero");
         setSupportActionBar(tb);
-        gridview =  findViewById(R.id.gridview);
-        favorites=new ArrayList<Favorite>();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void getCloset(){
-        Log.e("GET_CLOSET","--");
-        dB.collection("closets")
-                .whereEqualTo("userID",user.getUid())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                closet=document.toObject(Closet.class);
-                                String id= document.getId();
-                                Log.e("FAVORITESIDDDDDDDDDDDD",id);
-                                dB.collection("closets").document(id).collection("favorites").get()
-                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                if (task.isSuccessful()){
-                                                    ArrayList<String>arrayList=new ArrayList<>();
-                                                    for (QueryDocumentSnapshot documentSnapshot:task.getResult())
-                                                    {
-                                                        Favorite fav=documentSnapshot.toObject(Favorite.class);
-                                                        favorites.add(fav);
-                                                        arrayList.add(fav.getDownloadUri());
-                                                        Log.e("FAVORITES","---");
-                                                    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        Log.e("Crete Options Menu", "Finalmente entro");
+        getMenuInflater().inflate(R.menu.closet_menu, menu);
+        filterMenuItem = menu.findItem(R.id.new_outfit);
+        Log.e("Options Menu", filterMenuItem.getTitle().toString());
+        return true;
+    }
 
-                                                    GridImageAdapter gridAdapter = new GridImageAdapter(ClosetActivity.this, R.layout.activity_closet, arrayList);
-                                                    gridview.setAdapter(new com.mylook.mylook.utils.ImageAdapter(ClosetActivity.this,favorites));
-                                                }else
-                                                    Log.e("FAVORITES","Nuuuuuuuuuuuuuuuuuuuuuu");
-                                            }
-                                        });
-                            }
-                        }else{
-                            Log.e("FAVORITES","NOOOOOOOOOOOOO");
-                        }
-                    }
-                });
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.new_outfit) {
+            Intent intent = new Intent(getApplicationContext(), OutfitActivity.class);
+            //intent.putExtra("favoritos", favorites);
+            startActivity(intent);
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

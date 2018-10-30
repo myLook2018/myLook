@@ -48,5 +48,7 @@
     <string name="close_req">Cerrar</string>
     <string name="help">Ayuda</string>
 
+    <!--Related to Outfits-->
+    <string name="new_outfit">Nuevo Conjunto</string>
 </resources>
 
