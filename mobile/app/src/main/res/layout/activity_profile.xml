@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout"
-    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/imgProfile"
@@ -50,7 +50,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout7"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtEmail">
@@ -58,14 +60,16 @@
         <LinearLayout
             android:id="@+id/layoutAccount"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
             android:clickable="true"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:textAlignment="gravity">
 
             <ImageView
                 android:id="@+id/imageView7"
                 android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:tint="@color/primary_light"
@@ -74,25 +78,27 @@
             <TextView
                 android:id="@+id/txtAccount"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:padding="10dp"
                 android:text="Mi cuenta"
-                android:textSize="17sp" />
+                android:textAlignment="textStart"
+                android:textSize="24sp" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layoutCloset"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
             android:clickable="true"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:textAlignment="gravity">
 
             <ImageView
                 android:id="@+id/imageView5"
                 android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:tint="@color/primary_light"
                 app:srcCompat="@drawable/ic_favorite" />
@@ -102,23 +108,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:padding="10dp"
                 android:text="Mi Ropero"
-                android:textSize="17sp" />
+                android:textSize="24sp" />
 
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layoutSettings"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
             android:clickable="true"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:textAlignment="gravity">
 
             <ImageView
                 android:id="@+id/imageView10"
                 android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:tint="@color/primary_light"
                 app:srcCompat="@drawable/ic_settings" />
@@ -128,22 +135,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:padding="10dp"
                 android:text="Configuración"
-                android:textSize="17sp" />
+                android:textSize="24sp" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layoutHelp"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
             android:clickable="true"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:textAlignment="gravity">
 
             <ImageView
                 android:id="@+id/imageView8"
                 android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:tint="@color/primary_light"
                 app:srcCompat="@drawable/ic_help" />
@@ -153,22 +161,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:padding="10dp"
                 android:text="Ayuda y FAQ"
-                android:textSize="17sp" />
+                android:textSize="24sp" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layoutExit"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
             android:clickable="true"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:textAlignment="gravity">
 
             <ImageView
                 android:id="@+id/imageView9"
                 android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:tint="@android:color/holo_red_dark"
                 app:srcCompat="@drawable/ic_exit" />
@@ -178,13 +187,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:padding="10dp"
                 android:text="Salir"
-                android:textSize="17sp" />
+                android:textSize="24sp" />
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/linearLayout7"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"

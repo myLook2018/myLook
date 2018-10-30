@@ -20,6 +20,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.closet.ClosetActivity;
 import com.mylook.mylook.login.LoginActivity;
@@ -128,8 +129,19 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void setUserProfile() {
-        txtName.setText(user.getDisplayName());
+        getUserName();
         txtEmail.setText(user.getEmail().equals("") ? "" : user.getEmail());
+    }
+
+    private void getUserName(){
+        final String [] userName = new String[1];
+        dB.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+               userName[0] =  task.getResult().getDocuments().get(0).get("name").toString() + " " + task.getResult().getDocuments().get(0).get("surname").toString();
+                txtName.setText(userName[0]);
+            }
+        });
     }
 
 
