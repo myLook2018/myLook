@@ -78,51 +78,49 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
     });
     console.log(1);
     this.userSubscription = this.userService
-    .getUserInfo(this.firebaseUser.firebaseUserId)
-    .subscribe(userA => {
-      console.log(2);
-      this.userStore = userA[0];
-      if (this.userStore.profilePh === undefined) {
-        console.log(3);
-        this.userStore.profilePh = this.firebaseUser.profilePh;
-      }
-      console.log(4);
-      this.articleSubscription = this.articleService
-      .getArticles(this.userStore.storeName)
-      .subscribe(articles => {
-        console.log(5);
-        this.articles = articles;
-        this.dataSourceArticles = new MatTableDataSource(this.articles);
-        console.log(articles);
-        this.recomendationSubscription = this.recomendationsService
-        .getRecomendations()
-        .subscribe(recomendations => {
-          console.log(recomendations);
-          console.log(6);
-          this.recomendationsRequests = recomendations;
-          this.determineRequestToAnswer();
-          this.dataSourceRequests = new MatTableDataSource(
-            this.recomendationsToAnswer
-            );
-            console.log(7);
-            this.dataSourceAnswered = new MatTableDataSource(
-              this.recomendationsAnswered
+      .getUserInfo(this.firebaseUser.firebaseUserId)
+      .subscribe(userA => {
+        console.log(2);
+        this.userStore = userA[0];
+        if (this.userStore.profilePh === undefined) {
+          console.log(3);
+          this.userStore.profilePh = this.firebaseUser.profilePh;
+        }
+        console.log(4);
+        this.articleService.getArticlesCopado(this.userStore.storeName).then((articles) => {
+          this.dataSourceArticles = [];
+          console.log(articles);
+          this.articles = articles;
+          this.dataSourceArticles = new MatTableDataSource(this.articles);
+          console.log(articles);
+          this.recomendationSubscription = this.recomendationsService
+            .getRecomendations()
+            .subscribe(recomendations => {
+              console.log(recomendations);
+              console.log(6);
+              this.recomendationsRequests = recomendations;
+              this.determineRequestToAnswer();
+              this.dataSourceRequests = new MatTableDataSource(
+                this.recomendationsToAnswer
+              );
+              console.log(7);
+              this.dataSourceAnswered = new MatTableDataSource(
+                this.recomendationsAnswered
               );
               console.log(8);
             });
-            setTimeout(() => {
-              console.log(9);
-              /** spinner ends after  seconds */
-              this.spinner.hide();
-            }, 2000);
-          });
+          setTimeout(() => {
+            console.log(9);
+            /** spinner ends after  seconds */
+            this.spinner.hide();
+          }, 2000);
+        });
       });
   }
 
   ngOnDestroy() {
     console.log('destruyendo subscripciones');
     this.userSubscription.unsubscribe();
-    this.articleSubscription.unsubscribe();
     this.recomendationSubscription.unsubscribe();
   }
 

@@ -151,6 +151,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
       this.articleService.addArticle(this.articleForm.value).then(() => {
         this.isUpLoading = false;
         this.openSnackBar('Prenda guardada en MyLook!', 'close');
+        this.dialogRef.close();
       });
     });
   }
