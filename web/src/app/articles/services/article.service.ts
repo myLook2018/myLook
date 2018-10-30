@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Article } from '../models/article';
 import { map, filter } from 'rxjs/operators';
+import firebase = require('firebase');
 
 
 
@@ -25,7 +26,6 @@ export class ArticleService {
     console.log(`en el collector`);
     this.articleCollection = this.fst.collection(this.collectionPath);
     this.promoteCollection = this.fst.collection(this.promotePath);
-    const firebase = require('firebase');
     // Required for side-effects
     this.db = firebase.firestore();
   }
