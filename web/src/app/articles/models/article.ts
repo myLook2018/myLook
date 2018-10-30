@@ -1,11 +1,12 @@
 export class Article {
-    id?: String;
-    title?: String;
-    picture?: String;
+    id?: string;
+    title?: string;
+    code?: number;
+    picture?: string;
     cost?: number;
-    size?: String;
+    sizes?: string[];
     material?: string;
-    colors?: string;
+    colors?: string[];
     initial_stock?: number;
     provider?: string;
     tags?: string[];

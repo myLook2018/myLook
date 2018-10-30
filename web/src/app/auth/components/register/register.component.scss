@@ -109,3 +109,21 @@
   background-color: #9C27B0;
   color: rgba(255,255,255,.87);
 }
+
+::ng-deep .mat-progress-bar-fill::after {
+  background-color: #9C27B0;
+}
+
+::ng-deep .mat-progress-bar-buffer {
+  background: rgb(218, 154, 230);
+}
+
+::ng-deep .mat-progress-bar {
+  border-radius: 2px;
+}
+
+.proggressBar{
+  margin-top: 15px;
+  width: 548px;
+  margin-left: -24px;
+}
