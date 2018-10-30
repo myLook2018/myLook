@@ -76,14 +76,8 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
             public void onClick(View view) {
                 Intent intent= new Intent(mContext, ArticleInfoActivity.class);
                 Log.d("info del articulo", "onClick: paso por intent la data del articulo");
-                intent.putExtra("Colores", article.getColors());
-                intent.putExtra("Costo", article.getCost());
-                intent.putExtra("Stock", article.getInitial_stock());
-                intent.putExtra("Material", article.getMaterial());
-                intent.putExtra("Talle", article.getSize());
-                intent.putExtra("Tienda", article.getStoreName());
-                intent.putExtra("Foto", article.getPicture());
-                intent.putExtra("Title",article.getTitle());
+                intent.putExtra("article", article);
+
                 mContext.startActivity(intent);
 
             }

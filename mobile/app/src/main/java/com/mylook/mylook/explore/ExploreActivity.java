@@ -86,7 +86,7 @@ public class ExploreActivity extends AppCompatActivity implements ExploreStartFr
                 intent.putExtra("Costo", art.getCost());
                 intent.putExtra("Stock", art.getInitial_stock());
                 intent.putExtra("Material", art.getMaterial());
-                intent.putExtra("Talle", art.getSize());
+                intent.putExtra("Talle", art.getSizes());
                 intent.putExtra("Tienda", art.getStoreName());
                 intent.putExtra("Foto", art.getPicture());
                 intent.putExtra("Title",art.getTitle());

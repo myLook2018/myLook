@@ -1,0 +1,26 @@
+[debug] [2018-10-27T04:22:26.061Z] ----------------------------------------------------------------------
+[debug] [2018-10-27T04:22:26.070Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Mateo Ochandorena\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js functions:shell
+[debug] [2018-10-27T04:22:26.070Z] CLI Version:   6.0.0
+[debug] [2018-10-27T04:22:26.071Z] Platform:      win32
+[debug] [2018-10-27T04:22:26.071Z] Node Version:  v8.11.1
+[debug] [2018-10-27T04:22:26.073Z] Time:          Sat Oct 27 2018 01:22:26 GMT-0300 (Hora estándar de Argentina)
+[debug] [2018-10-27T04:22:26.073Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-10-27T04:22:26.120Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-10-27T04:22:26.124Z] > authorizing via signed-in user
+[debug] [2018-10-27T04:22:26.124Z] [iam] checking project mylook-develop for permissions ["firebase.projects.get"]
+[debug] [2018-10-27T04:22:26.132Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/mylook-develop:testIamPermissions  
+
+[debug] [2018-10-27T04:22:27.484Z] <<< HTTP RESPONSE 200
+[info] i  functions: Preparing to emulate functions.
+[debug] [2018-10-27T04:22:37.237Z] Fetching environment
+[debug] [2018-10-27T04:22:37.258Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/mylook-develop  
+ 
+[debug] [2018-10-27T04:22:38.487Z] <<< HTTP RESPONSE 200
+[debug] [2018-10-27T04:22:38.488Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/259536885025:getServerAppConfig  
+ 
+[debug] [2018-10-27T04:22:39.699Z] <<< HTTP RESPONSE 200
+[debug] [2018-10-27T04:22:39.700Z] Starting @google-cloud/functions-emulator
+[debug] [2018-10-27T04:22:49.030Z] Parsing function triggers
+[debug] [2018-10-27T04:22:49.992Z] Deploying functions locally
+[info] +  functions: sendRequestNotification

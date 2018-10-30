@@ -3,7 +3,9 @@ package com.mylook.mylook.info;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -11,59 +13,65 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
+import com.mylook.mylook.entities.Article;
+import com.mylook.mylook.entities.Interaction;
 import com.mylook.mylook.utils.ExpandableListViewAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ArticleInfoActivity extends AppCompatActivity {
 
     private Context mContext = ArticleInfoActivity.this;
     private ImageView backArrow, articleImage;
-    //private TextView articleStore, articleCost, articleStock, articleColors, articleMaterial, articlesSize,
-    private TextView articleTitle, articleCost;
 
     private ExpandableListAdapter expandableListAdapter;
     private ExpandableListView expandableListView;
     private List<String> listDataGroup;
     private HashMap<String, List<String>> listDataChild;
+    private FloatingActionButton btnCloset;
 
-    private Intent intent;
+    private String articleId,closetId;
+    private ArrayList<String> tags;
+    private String downLoadUri;
+    private Article article;
+    private FirebaseUser user;
+    private FirebaseFirestore dB;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_more_info_article_collapsing);
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        dB = FirebaseFirestore.getInstance();
 
-        backArrow = (ImageView) findViewById(R.id.backArrow);
-        //articleColors = (TextView) findViewById(R.id.lblColors);
-        //articleCost = (TextView) findViewById(R.id.article_cost);
-        //articleMaterial = (TextView) findViewById(R.id.lblMaterial);
-        //articlesSize = (TextView) findViewById(R.id.lblSizes);
-        //articleStock = (TextView) findViewById(R.id.lblstock);
-        //articleStore = (TextView) findViewById(R.id.lblstore);
-        articleImage = (ImageView) findViewById(R.id.article_image);
-        articleTitle=(TextView)findViewById(R.id.lblTitle);
-        expandableListView = (ExpandableListView) findViewById(R.id.article_list_view_expandable);
+        backArrow = findViewById(R.id.backArrow);
+        expandableListView = findViewById(R.id.article_list_view_expandable);
+        btnCloset=findViewById(R.id.btnCloset);
+        articleImage=findViewById(R.id.article_image);
 
         //retrieve data from intent
-        intent = getIntent();
-        //articleStore.setText(intent.getStringExtra("Tienda"));
-        //articleCost.setText("$" + intent.getStringExtra("Costo"));
-        //articleStock.setText("Stock: " + intent.getStringExtra("Stock"));
-        //articleColors.setText("Colores: " + intent.getStringExtra("Colores"));
-        //articleMaterial.setText("Material: " + intent.getStringExtra("Material"));
-        //articlesSize.setText("Talles: " + intent.getStringExtra("Talle"));
-        articleTitle.setText(intent.getStringExtra("Title"));
+        Intent intent = getIntent();
+        article= (Article) intent.getSerializableExtra("article");
+        Log.e("ROPERO", article.getArticleId());
+        articleId=article.getArticleId();
+        tags = intent.getStringArrayListExtra("tags");
+        downLoadUri=article.getPicture();
 
-        Glide.with(mContext).load(intent.getStringExtra("Foto")).into(articleImage);
-
+        Glide.with(mContext).load(downLoadUri).into(articleImage);
         //extensible list view
         prepareListData();
         expandableListAdapter = new ExpandableListViewAdapter(mContext, listDataGroup, listDataChild);
@@ -77,15 +85,12 @@ public class ArticleInfoActivity extends AppCompatActivity {
             }
         });
 
-        /*articleStore.setOnClickListener(new View.OnClickListener() {
+        btnCloset.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Intent intentVisitStore = new Intent(mContext, StoreActivity.class);
-                Log.d("Nombre tienda", "onClick: Paso el nombre de la tienda: " + intent.getStringExtra("Tienda"));
-                intentVisitStore.putExtra("Tienda", intent.getStringExtra("Tienda"));
-                mContext.startActivity(intentVisitStore);
+            public void onClick(View v) {
+                saveOnCloset();
             }
-        });*/
+        });
     }
 
     private void initExpandableListeners() {
@@ -93,7 +98,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
         expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-
                 setListViewHeight(parent, groupPosition);
                 return false;
             }
@@ -105,14 +109,13 @@ public class ArticleInfoActivity extends AppCompatActivity {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
                                         int groupPosition, int childPosition, long id) {
-                Toast.makeText(
-                        getApplicationContext(),
-                        listDataGroup.get(groupPosition)
-                                + " : "
-                                + listDataChild.get(
-                                listDataGroup.get(groupPosition)).get(
-                                childPosition), Toast.LENGTH_SHORT)
-                        .show();
+
+                String storeName=listDataChild.get(listDataGroup.get(groupPosition)).get(childPosition);
+                Intent intentVisitStore = new Intent(mContext, StoreActivity.class);
+                Log.d("Nombre tienda", "onClick: Paso el nombre de la tienda: " );
+                intentVisitStore.putExtra("Tienda", storeName);
+                mContext.startActivity(intentVisitStore);
+
                 return false;
             }
         });
@@ -122,9 +125,9 @@ public class ArticleInfoActivity extends AppCompatActivity {
 
             @Override
             public void onGroupExpand(int groupPosition) {
-                Toast.makeText(getApplicationContext(),
-                        listDataGroup.get(groupPosition),
-                        Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(),
+                        //listDataGroup.get(groupPosition),
+                        //Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -133,9 +136,9 @@ public class ArticleInfoActivity extends AppCompatActivity {
 
             @Override
             public void onGroupCollapse(int groupPosition) {
-                Toast.makeText(getApplicationContext(),
-                        listDataGroup.get(groupPosition),
-                        Toast.LENGTH_SHORT).show();
+               // Toast.makeText(getApplicationContext(),
+                 //       listDataGroup.get(groupPosition),
+                //     Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -153,24 +156,14 @@ public class ArticleInfoActivity extends AppCompatActivity {
         listDataGroup.add("Stock");
 
         List<String> infoTienda = new ArrayList<String>();
-        Log.d("info tienda", "info intent: " + intent.getStringExtra("Tienda"));
-        infoTienda.add(intent.getStringExtra("Tienda"));
-
-
-        List<String> infoTalles = new ArrayList<String>();
-        infoTalles.add(intent.getStringExtra("Talle"));
-
-
-        List<String> infoColores = new ArrayList<String>();
-        infoColores.add(intent.getStringExtra("Colores"));
-
-
+        Log.d("info tienda", "info intent: " );
+        infoTienda.add(article.getStoreName());
+        List<String> infoTalles = article.getSizes();
+        List<String> infoColores = article.getColors();
         List<String> infoMateriales = new ArrayList<String>();
-        infoMateriales.add(intent.getStringExtra("Material"));
-
-
+        infoMateriales.add(article.getMaterial());
         List<String> infoStock = new ArrayList<String>();
-        infoStock.add(intent.getStringExtra("Stock"));
+        infoStock.add(String.valueOf(article.getInitial_stock()));
 
         listDataChild.put(listDataGroup.get(0),infoTienda);
         listDataChild.put(listDataGroup.get(1),infoTalles);
@@ -214,5 +207,66 @@ public class ArticleInfoActivity extends AppCompatActivity {
         listView.setLayoutParams(params);
         listView.requestLayout();
 
+    }
+    private void saveOnCloset() {
+
+        final Map<String, Object> favorites = new HashMap<>();
+        favorites.put("articleId", articleId);
+        favorites.put("downloadUri", downLoadUri);
+        favorites.put("collecion", null);
+
+        dB.collection("closets")
+                .whereEqualTo("userID",user.getUid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful() && task.getResult().getDocuments().size()>0){
+                            closetId=task.getResult().getDocuments().get(0).getId();
+                            dB.collection("closets").document(closetId).collection("favorites")
+                                    .whereEqualTo("articleId",articleId).get()
+                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if(task.getResult().getDocuments().size()==0){
+                                                Log.e("CLOSET", closetId);
+                                                dB.collection("closets").document(closetId).collection("favorites").add(favorites);
+                                                //sendNewInteraction();
+                                                displayMessage("Se añadió a tu ropero");
+                                            }else
+                                            {
+                                                displayMessage("Ya es favorito");
+                                            }
+                                        }
+                                    });
+                        }else
+                        {
+                            displayMessage("No tienes un ropero asociado");
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        displayMessage("Error al guardar en ropero");
+                    }
+                });
+
+
+    }
+    private void displayMessage(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void sendNewInteraction(){
+        Interaction userInteraction = new Interaction();
+        userInteraction.setSavedToCloset(false);
+        userInteraction.setLiked(false);
+        userInteraction.setClickOnArticle(true);
+        userInteraction.setArticleId(this.articleId);
+        userInteraction.setStoreName(this.article.getStoreName());
+        userInteraction.setTags(tags);
+        userInteraction.setUserId(user.getUid());
+        dB.collection("interactions").add(userInteraction);
     }
 }
