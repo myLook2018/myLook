@@ -5,25 +5,28 @@ import {
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Article } from '../models/article';
-import { map } from 'rxjs/operators';
+import { map, filter } from 'rxjs/operators';
 
 
 
 @Injectable()
 export class ArticleService {
   articleCollection: AngularFirestoreCollection<Article>;
+  promoteCollection: AngularFirestoreCollection;
   articles: Observable<Article[]>;
   articlesCopado: Article[] = [];
   // tslint:disable-next-line:no-inferrable-types
   collectionPath: string = 'articles';
+  promotePath = 'promotedArticles';
   db: any;
+  require: any;
 
   constructor(public fst: AngularFirestore) {
     console.log(`en el collector`);
     this.articleCollection = this.fst.collection(this.collectionPath);
+    this.promoteCollection = this.fst.collection(this.promotePath);
     const firebase = require('firebase');
     // Required for side-effects
-    require('firebase/firestore');
     this.db = firebase.firestore();
   }
 
@@ -31,17 +34,16 @@ export class ArticleService {
     console.log(`en el get`);
     return this.articles = this.articleCollection.snapshotChanges().pipe(map(changes => {
       return changes.map(a => {
-        if (a.payload.doc.data().storeName === storeName) {
-          const data = a.payload.doc.data();
-          data.id = a.payload.doc.id;
-          console.log(data);
-          return data;
-        }
+        const data = a.payload.doc.data();
+        data.id = a.payload.doc.id;
+        console.log(data);
+        return data;
       });
     }));
   }
 
   getArticlesCopado(storeName) {
+    this.articlesCopado = [];
     return new Promise<any>((resolve, reject) => {
       console.log(`estamos preguntando por ` + storeName);
       const res = this.db.collection(this.collectionPath).where('storeName', '==', storeName)
@@ -87,5 +89,16 @@ export class ArticleService {
         // The document probably doesn't exist.
         console.error('Error updating document: ', error);
       });
+  }
+
+  promoteArticle(date, article) {
+    const promotion = {
+      articleId: article.id,
+      endOfPromotion: date,
+      storeName: article.storeName,
+      promotionLevel: 1
+    };
+    console.log(promotion);
+    return this.promoteCollection.add(promotion);
   }
 }

@@ -76,31 +76,42 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
         this.firebaseUser = data;
       }
     });
+    console.log(1);
     this.userSubscription = this.userService
-      .getUserInfo(this.firebaseUser.firebaseUserId)
-      .subscribe(userA => {
-        this.userStore = userA[0];
-        if (this.userStore.profilePh === undefined) {
-          this.userStore.profilePh = this.firebaseUser.profilePh;
-        }
-        this.articleSubscription = this.articleService
-          .getArticles(this.userStore.storeName)
-          .subscribe(articles => {
-            this.articles = articles;
-            this.dataSourceArticles = new MatTableDataSource(this.articles);
-            this.recomendationSubscription = this.recomendationsService
-              .getRecomendations()
-              .subscribe(recomendations => {
-                this.recomendationsRequests = recomendations;
-                this.determineRequestToAnswer();
-                this.dataSourceRequests = new MatTableDataSource(
-                  this.recomendationsToAnswer
-                );
-                this.dataSourceAnswered = new MatTableDataSource(
-                  this.recomendationsAnswered
-                );
-              });
+    .getUserInfo(this.firebaseUser.firebaseUserId)
+    .subscribe(userA => {
+      console.log(2);
+      this.userStore = userA[0];
+      if (this.userStore.profilePh === undefined) {
+        console.log(3);
+        this.userStore.profilePh = this.firebaseUser.profilePh;
+      }
+      console.log(4);
+      this.articleSubscription = this.articleService
+      .getArticles(this.userStore.storeName)
+      .subscribe(articles => {
+        console.log(5);
+        this.articles = articles;
+        this.dataSourceArticles = new MatTableDataSource(this.articles);
+        console.log(articles);
+        this.recomendationSubscription = this.recomendationsService
+        .getRecomendations()
+        .subscribe(recomendations => {
+          console.log(recomendations);
+          console.log(6);
+          this.recomendationsRequests = recomendations;
+          this.determineRequestToAnswer();
+          this.dataSourceRequests = new MatTableDataSource(
+            this.recomendationsToAnswer
+            );
+            console.log(7);
+            this.dataSourceAnswered = new MatTableDataSource(
+              this.recomendationsAnswered
+              );
+              console.log(8);
+            });
             setTimeout(() => {
+              console.log(9);
               /** spinner ends after  seconds */
               this.spinner.hide();
             }, 2000);
@@ -187,14 +198,14 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
       this.requestAnswerForm.get('feedBack').setValue('');
       console.log(3);
       this.recomendationsService.addRecomendationAnswer(this.requestAnswerForm.value, this.selectedRequest.FirebaseUID)
-      .then(() => {
-        console.log(4);
-        this.answerForm.get('requestUID').setValue(this.selectedRequest.FirebaseUID);
-        this.answerForm.get('storeName').setValue(this.userStore.storeName);
-        console.log(5);
-        this.recomendationsService.storeAnswer(this.answerForm.value)
         .then(() => {
-          console.log(6);
+          console.log(4);
+          this.answerForm.get('requestUID').setValue(this.selectedRequest.FirebaseUID);
+          this.answerForm.get('storeName').setValue(this.userStore.storeName);
+          console.log(5);
+          this.recomendationsService.storeAnswer(this.answerForm.value)
+            .then(() => {
+              console.log(6);
               this.openSnackBar('Se ha enviado la sugerencia!', 'cerrar');
             });
         });

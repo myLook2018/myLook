@@ -23,6 +23,7 @@
             <mat-nav-list>
                 <a mat-list-item (click)="goToProfile()">Visita tu Perfil!</a>
                 <a mat-list-item (click)="goToRecomendations()">Haz una recomendación!</a>
+                <a mat-list-item (click)="goToAnalytics()">Estadisticas!</a>
             </mat-nav-list>
         </mat-sidenav>
 
@@ -114,7 +115,7 @@
                             <button mat-icon-button class="actionIcon" (click)="openArticleDialog(element)">
                                 <mat-icon>edit</mat-icon>
                             </button>
-                            <button mat-icon-button class="actionIcon">
+                            <button mat-icon-button class="actionIcon" (click)="openPromoteDialog(element)">
                                 <mat-icon>favorite</mat-icon>
                             </button>
                         </mat-cell>

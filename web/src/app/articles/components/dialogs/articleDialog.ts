@@ -256,7 +256,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   }
 
   removeColor(color): void {
-    const index = this.sizes.indexOf(color);
+    const index = this.colors.indexOf(color);
     if (index >= 0) {
       this.colors.splice(index, 1);
     }
