@@ -31,7 +31,7 @@
             <LinearLayout
                 android:id="@+id/layoutInfoAccount"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:clickable="true"
                 android:orientation="horizontal">
 
@@ -41,23 +41,24 @@
                     android:layout_height="40dp"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
+                    android:tint="@color/primary_light"
                     app:srcCompat="@drawable/ic_account" />
 
                 <TextView
                     android:id="@+id/txtInfoAccount"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:padding="10dp"
                     android:text="Info de Cuenta"
-                    android:textSize="17sp" />
+                    android:textSize="24sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/layouAdress"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:clickable="true"
                 android:orientation="horizontal">
 
@@ -66,6 +67,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_weight="1"
+                    android:tint="@color/primary_light"
                     app:srcCompat="@drawable/ic_favorite" />
 
                 <TextView
@@ -75,14 +77,14 @@
                     android:layout_weight="1"
                     android:padding="10dp"
                     android:text="Dirección"
-                    android:textSize="17sp" />
+                    android:textSize="24sp" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/layoutNotifications"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:clickable="true"
                 android:orientation="horizontal">
 
@@ -91,6 +93,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_weight="1"
+                    android:tint="@color/primary_light"
                     app:srcCompat="@drawable/ic_settings" />
 
                 <TextView
@@ -100,7 +103,7 @@
                     android:layout_weight="1"
                     android:padding="10dp"
                     android:text="Notificaciones"
-                    android:textSize="17sp" />
+                    android:textSize="24sp" />
             </LinearLayout>
 
         </LinearLayout>

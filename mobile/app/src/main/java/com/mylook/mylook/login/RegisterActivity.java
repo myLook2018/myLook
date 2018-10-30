@@ -26,11 +26,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Closet;
 import com.mylook.mylook.home.HomeActivity;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -237,11 +239,17 @@ public class RegisterActivity extends AppCompatActivity {
         mLayout = (LinearLayout) findViewById(R.id.register_form);
         mContext = RegisterActivity.this;
         spinner = (MaterialBetterSpinner) findViewById(R.id.spinner);
-        setSpinnerSex();
+        setCategoryRequest();
     }
-    private void setSpinnerSex(){
-        String[] sexoType = {"Femenino","Masculino","Otre"};
-        spinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, sexoType));
+
+    private void setCategoryRequest() {
+        dB.collection("categories").whereEqualTo("name", "sexo").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                ArrayList<String> categories = (ArrayList<String>) task.getResult().getDocuments().get(0).get("categories");
+                spinner.setAdapter(new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_selectable_list_item, categories));
+            }
+        });
     }
     private void sendEmailVerification() {
          // Send verification email

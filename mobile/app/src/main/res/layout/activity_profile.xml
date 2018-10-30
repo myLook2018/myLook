@@ -27,6 +27,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:text="TextView"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imgProfile" />
@@ -39,6 +40,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="TextView"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtName" />
@@ -81,8 +83,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
+                android:padding="10dp"
                 android:text="Mi cuenta"
-                android:textAlignment="textStart"
+                android:textAlignment="viewStart"
                 android:textSize="24sp" />
         </LinearLayout>
 
@@ -108,7 +111,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:padding="10dp"
                 android:text="Mi Ropero"
+                android:textAlignment="viewStart"
                 android:textSize="24sp" />
 
         </LinearLayout>
@@ -135,7 +140,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:padding="10dp"
                 android:text="Configuración"
+                android:textAlignment="viewStart"
                 android:textSize="24sp" />
         </LinearLayout>
 
@@ -161,7 +168,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:padding="10dp"
                 android:text="Ayuda y FAQ"
+                android:textAlignment="viewStart"
                 android:textSize="24sp" />
         </LinearLayout>
 
@@ -187,7 +196,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:padding="10dp"
                 android:text="Salir"
+                android:textAlignment="viewStart"
                 android:textSize="24sp" />
         </LinearLayout>
     </LinearLayout>
