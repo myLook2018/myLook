@@ -12,8 +12,7 @@ import { UserService } from '../../../auth/services/user.service';
 import { StoreModel } from '../../../auth/models/store.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
-import { calcBindingFlags } from '@angular/core/src/view/util';
-
+import { PromoteDialogComponent } from '../dialogs/promoteDialog';
 
 @Component({
   selector: 'app-inventory',
@@ -26,7 +25,6 @@ export class InventoryComponent implements OnInit, OnDestroy {
   FirebaseUser = new StoreModel();
   userStore = new StoreModel();
   articles: Article[];
-  _subscription: Subscription;
   _subscription2: Subscription;
 
   constructor(
@@ -81,6 +79,8 @@ export class InventoryComponent implements OnInit, OnDestroy {
         this.dataSource = new MatTableDataSource(this.articles);
         console.log(this.articles);*/
       this.articleService.getArticlesCopado(this.userStore.storeName).then((articles) => {
+        this.dataSource = [];
+        console.log(articles);
         this.articles = articles;
         this.dataSource = new MatTableDataSource(this.articles);
       }).then(() => {
@@ -94,12 +94,29 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     console.log('destruyendo subscripciones');
-    this._subscription.unsubscribe();
     this._subscription2.unsubscribe();
   }
 
   deleteArticle(article) {
     this.articleService.deleteArticle(article);
+  }
+
+  openPromoteDialog(article): void {
+    const promoteRef = this.dialog.open(PromoteDialogComponent, {
+      width: '300px',
+      data: article
+    });
+    promoteRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+        console.log(result);
+        this.promoteArticle(result, article);
+      }
+    });
+  }
+
+  promoteArticle(date, article) {
+    console.log(date);
+    this.articleService.promoteArticle(date, article);
   }
 
   openConfirmationDialog(article): void {
@@ -152,11 +169,10 @@ export class InventoryComponent implements OnInit, OnDestroy {
   logout() {
     this.authService.doLogout().then(
       res => {
-        this.location.back();
+        this.router.navigate(['/login']);
       },
       error => {
         console.log('Logout error', error);
-        this.router.navigate(['/login']);
       }
     );
   }
@@ -168,5 +184,9 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   goToRecomendations() {
     this.router.navigate([`/recomendations`]);
+  }
+
+  goToAnalytics() {
+    this.router.navigate([`/estadisticas`]);
   }
 }

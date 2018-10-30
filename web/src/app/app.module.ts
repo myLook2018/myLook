@@ -40,10 +40,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { SignupComponent } from './auth/components/signup/signup.component';
 import { StoreService } from './auth/services/store.service';
-import { MatDialogModule, MatSort, MatSortModule } from '@angular/material';
+import { MatDialogModule, MatSort, MatSortModule, MatNativeDateModule } from '@angular/material';
 import { DialogAlertComponent } from './dialog/dialog-alert/dialog-alert.component';
 import { MatChipsModule } from '@angular/material/chips';
 import { ArticleDialogComponent } from './articles/components/dialogs/articleDialog';
+import { PromoteDialogComponent } from './articles/components/dialogs/promoteDialog';
 import { SuccesfulDialogComponent } from './dialog/succesful-dialog/succesful-dialog.component';
 import { DeleteConfirmationDialogComponent } from './articles/components/dialogs/deleteConfirmationDialog';
 import { MatAutocompleteModule } from '@angular/material';
@@ -59,6 +60,10 @@ import {MatListModule} from '@angular/material/list';
 import { RecomendationsComponent } from './recomendations/components/recomendations.component';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { ImageCropperComponent, CropperSettings } from 'ngx-img-cropper';
+import {ChartModule} from 'primeng/chart';
+import { DonutchartComponent } from './anylitics/components/donutchart/donutchart.component';
+import { DashboardComponent } from './anylitics/components/dashboard/dashboard.component';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 
 @NgModule({
   declarations: [
@@ -78,7 +83,10 @@ import { ImageCropperComponent, CropperSettings } from 'ngx-img-cropper';
     MapsComponent,
     ErrorComponent,
     RecomendationsComponent,
-    ImageCropperComponent
+    ImageCropperComponent,
+    DonutchartComponent,
+    DashboardComponent,
+    PromoteDialogComponent
   ],
   imports: [
     NgxSpinnerModule,
@@ -110,12 +118,15 @@ import { ImageCropperComponent, CropperSettings } from 'ngx-img-cropper';
     MatSidenavModule,
     MatListModule,
     MatProgressBarModule,
-    ImageCropperModule
-  ],
+    ImageCropperModule,
+    ChartModule,
+    MatDatepickerModule,
+    MatNativeDateModule
+ ],
   exports: [RouterModule],
-  providers: [ RecomendationService, DataService, AuthService, UserService, UserResolver, AuthGuard, StoreService,
+  providers: [ MatDatepickerModule, RecomendationService, DataService, AuthService, UserService, UserResolver, AuthGuard, StoreService,
      ArticleService, TagsService, ArticleResolver, StoreResolver],
-  entryComponents: [DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent,
+  entryComponents: [PromoteDialogComponent, DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent,
     DeleteConfirmationDialogComponent, MapsDialogComponent, EditStoreComponent],
   bootstrap: [AppComponent]
 })

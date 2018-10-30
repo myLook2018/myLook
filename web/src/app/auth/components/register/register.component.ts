@@ -4,12 +4,8 @@ import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { StoreService } from '../../services/store.service';
 import { MatHorizontalStepper } from '@angular/material/stepper';
-import { MatDialog, MatDialogRef } from '@angular/material';
-import { DialogAlertComponent } from '../../../dialog/dialog-alert/dialog-alert.component';
-import { SuccesfulDialogComponent } from '../../../dialog/succesful-dialog/succesful-dialog.component';
 import { UserService } from '../../services/user.service';
 import { AngularFireUploadTask, AngularFireStorage, AngularFireStorageReference } from 'angularfire2/storage';
-import { finalize } from 'rxjs/operators';
 import { DataService } from '../../../service/dataService';
 
 @Component({
@@ -112,28 +108,39 @@ export class RegisterComponent {
 
   tryRegister() {
     this.isRegistering = true;
-    this.userLoginForm.addControl('password', new FormControl(this.password, Validators.required));
-    this.authService.doRegister(this.userLoginForm).then(() => {
-      this.userService.getCurrentUser().then((user) => {
-        this.registerStoreFormGroup.addControl('firebaseUserId', new FormControl(user.uid, Validators.required));
-      }
-      ).then(() => {
-        this.dataService.uploadPicture(this.profileFile).then((fileURL) => {
-          this.registerStoreFormGroup.addControl('profilePh', new FormControl(fileURL, Validators.required));
-        }).then(() => {
-          this.dataService.uploadPicture(this.portadaFile).then((fileURL) => {
-            this.registerStoreFormGroup.addControl('coverPh', new FormControl(fileURL, Validators.required));
-          }).then(() => {
-            this.userService.addStore(this.registerStoreFormGroup.value).then(() => { });
-          }).then(() => {
-            this.authService.doFirstLogin(this.userLoginForm).then(() => {
-              this.isRegistering = false;
-              this.router.navigateByUrl('/home');
+    if (this.password === this.confirmPassword) {
+      if (this.password.length > 6) {
+
+        this.userLoginForm.addControl('password', new FormControl(this.password, Validators.required));
+        this.authService.doRegister(this.userLoginForm).then(() => {
+          this.userService.getCurrentUser().then((user) => {
+            this.registerStoreFormGroup.addControl('firebaseUserId', new FormControl(user.uid, Validators.required));
+          }
+          ).then(() => {
+            this.dataService.uploadPicture(this.profileFile).then((fileURL) => {
+              this.registerStoreFormGroup.addControl('profilePh', new FormControl(fileURL, Validators.required));
+            }).then(() => {
+              this.dataService.uploadPicture(this.portadaFile).then((fileURL) => {
+                this.registerStoreFormGroup.addControl('coverPh', new FormControl(fileURL, Validators.required));
+              }).then(() => {
+                this.userService.addStore(this.registerStoreFormGroup.value).then(() => { });
+              }).then(() => {
+                this.authService.doFirstLogin(this.userLoginForm).then(() => {
+                  this.isRegistering = false;
+                  this.router.navigateByUrl('/home');
+                });
+              });
             });
+          });
         });
-      });
-    });
-    });
+      } else {
+        console.log(`la contraseña debe ser de al menos 6 caracteres`);
+        this.isRegistering = false;
+      }
+    } else {
+      console.log(`las contraseñas son diferentes`);
+      this.isRegistering = false;
+    }
   }
 
   detectFilesProfile(event) {
