@@ -6,9 +6,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Article } from '../models/article';
 import { map, filter } from 'rxjs/operators';
-import firebase = require('firebase');
-
-
+import * as firebase from 'firebase';
 
 @Injectable()
 export class ArticleService {
