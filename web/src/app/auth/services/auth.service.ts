@@ -120,10 +120,10 @@ export class AuthService {
       firebase.auth().signInWithEmailAndPassword(formControl.controls['email'].value, formControl.controls['password'].value)
         .then(res => {
           console.log(firebase.auth().currentUser.emailVerified);
-          if (!firebase.auth().currentUser.emailVerified) {
+          /*if (!firebase.auth().currentUser.emailVerified) {
             this.doLogout();
             reject('no se ha verificado Email');
-          }
+          }*/
           resolve(res);
         }, err => reject(err + `error en doLogin`));
     });
