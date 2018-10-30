@@ -64,7 +64,7 @@ import {ChartModule} from 'primeng/chart';
 import { DonutchartComponent } from './anylitics/components/donutchart/donutchart.component';
 import { DashboardComponent } from './anylitics/components/dashboard/dashboard.component';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-
+import { AnyliticService } from './anylitics/components/services/anylitics.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -125,7 +125,7 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
  ],
   exports: [RouterModule],
   providers: [ MatDatepickerModule, RecomendationService, DataService, AuthService, UserService, UserResolver, AuthGuard, StoreService,
-     ArticleService, TagsService, ArticleResolver, StoreResolver],
+     ArticleService, TagsService,AnyliticService, ArticleResolver, StoreResolver],
   entryComponents: [PromoteDialogComponent, DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent,
     DeleteConfirmationDialogComponent, MapsDialogComponent, EditStoreComponent],
   bootstrap: [AppComponent]

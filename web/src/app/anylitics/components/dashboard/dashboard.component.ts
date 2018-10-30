@@ -6,6 +6,8 @@ import { AuthService } from 'src/app/auth/services/auth.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
+import { AnyliticService } from '../services/anylitics.service';
+import { Interaction } from '../../model/interaction';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,8 +19,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   FirebaseUser = new StoreModel();
   userStore = new StoreModel();
   _subscription: Subscription;
+  interactions: Interaction[];
+
   constructor(
     fb: FormBuilder,
+    public anyliticService: AnyliticService,
     public userService: UserService,
     public authService: AuthService,
     private router: Router,
@@ -42,7 +47,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
     this._subscription = this.userService.getUserInfo(this.FirebaseUser.firebaseUserId).subscribe(userA => {
       this.userStore = userA[0];
-      if (this.userStore.profilePh === '') { this.userStore.profilePh = this.FirebaseUser.profilePh; }
+      if (this.userStore.profilePh === '') { this.userStore.profilePh = this.FirebaseUser.profilePh; 
+      this.anyliticService.getArticlesCopado(this.userStore.storeName).then((interactionsFb) => {
+        // limpiar sources
+        console.log(interactionsFb);
+        this.interactions = interactionsFb;});
+      }
       setTimeout(() => {
         this.spinner.hide();
       }, 2000);

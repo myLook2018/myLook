@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-donutchart',
@@ -6,6 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./donutchart.component.css']
 })
 export class DonutchartComponent implements OnInit {
+  @Input() positiveInteractions: any;
   data: any;
 
   constructor() {
