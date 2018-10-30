@@ -231,7 +231,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
                                             if(task.getResult().getDocuments().size()==0){
                                                 Log.e("CLOSET", closetId);
                                                 dB.collection("closets").document(closetId).collection("favorites").add(favorites);
-                                                //sendNewInteraction();
+                                                sendNewInteraction();
                                                 displayMessage("Se añadió a tu ropero");
                                             }else
                                             {

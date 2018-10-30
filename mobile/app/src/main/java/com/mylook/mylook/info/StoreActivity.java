@@ -19,13 +19,16 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Store;
 import com.mylook.mylook.entities.Subscription;
+import com.mylook.mylook.entities.Visit;
 import com.mylook.mylook.utils.GridImageAdapter;
 
 import java.util.ArrayList;
@@ -43,11 +46,16 @@ public class StoreActivity extends AppCompatActivity {
     private ArrayList<Store> storeList;
     private boolean mSubscribed;
     private String documentId="";
+    private Visit visit;
+    private String visitId=null;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store_final);
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        loadVisit();
 
         backArrow = (ImageView) findViewById(R.id.backArrow);
         storePhoto = (ImageView) findViewById(R.id.store_profile_photo);
@@ -139,6 +147,43 @@ public class StoreActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void loadVisit() {
+        db.collection("visits").whereEqualTo("storeName",nombreTiendaPerfil).whereEqualTo("userId",user.getUid()).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            if(task.getResult().getDocuments().size()==0){
+                                visit=new Visit(nombreTiendaPerfil,user.getUid(),1);
+                                db.collection("visits").add(visit.toMap());
+
+                            }else{
+                                visit=task.getResult().getDocuments().get(0).toObject(Visit.class);
+                                visit.toVisit();
+                                visitId=task.getResult().getDocuments().get(0).getId();
+                                db.collection("visits").document(visitId).set(visit.toMap(), SetOptions.merge());
+
+                            }
+                        }
+                    }
+                });
+
+    }
+    private void saveVisit(){
+        if(visitId!=null){
+            Log.e("VISIT","ID: " +visitId);
+            db.collection("visits").document(visitId).set(visit.toMap(), SetOptions.merge());
+        }else{
+            db.collection("visits").add(visit.toMap());
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+       // saveVisit();
     }
 
     private void checkFollow() {
