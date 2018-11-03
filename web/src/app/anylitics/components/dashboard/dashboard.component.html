@@ -34,12 +34,12 @@
                     <span>Estadisticas</span>
                 </mat-toolbar-row>
             </mat-toolbar>
-            <div class="mainContainer">
-                <mat-card class="chartCard">
+            <div class="mainContainer" *ngIf="readyToRender">
+                <mat-card class="chartCard mat-elevation-z6">
                     <mat-card-header>
                         <mat-card-title>Grafico de torta</mat-card-title>
                     </mat-card-header>
-                    <app-donutchart></app-donutchart>
+                    <app-donutchart *ngIf="readyToRender" [usersClickedArticle]="usersClickedArticle" [articlesSavedToCloset]="articlesSavedToCloset"></app-donutchart>
                 </mat-card>
 
             </div>
