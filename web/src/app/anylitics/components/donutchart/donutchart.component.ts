@@ -6,15 +6,25 @@ import { Component, OnInit, Input } from '@angular/core';
   styleUrls: ['./donutchart.component.css']
 })
 export class DonutchartComponent implements OnInit {
-  @Input() positiveInteractions: any;
+  @Input() usersClickedArticle: any;
+  @Input() articlesSavedToCloset: any;
+
+  visited = 1;
+  saved = 1;
   data: any;
 
+
   constructor() {
+  }
+  ngOnInit() {
+    console.log(`dibujando ` + this.articlesSavedToCloset + this.usersClickedArticle);
+    this.visited = this.usersClickedArticle;
+    this.saved = this.articlesSavedToCloset;
     this.data = {
-      labels: ['A', 'B', 'C'],
+      labels: ['Articulos visitados', 'Articulos guardados en ropero'],
       datasets: [
         {
-          data: [300, 50, 100],
+          data: [this.visited, this.saved],
           backgroundColor: [
             '#FF6384',
             '#36A2EB',
@@ -27,8 +37,6 @@ export class DonutchartComponent implements OnInit {
           ]
         }]
     };
-  }
-  ngOnInit() {
   }
 
 }

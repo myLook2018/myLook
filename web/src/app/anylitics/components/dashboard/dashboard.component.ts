@@ -15,6 +15,16 @@ import { Interaction } from '../../model/interaction';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit, OnDestroy {
+  readyToRender = false;
+  totalInteractions;
+  positiveInteractions;
+  usersReached;
+  usersClickedArticle;
+  articlesSavedToCloset;
+  popularTags;
+  popularityOfTags;
+  matrix;
+  popularityXtag;
   options: FormGroup;
   FirebaseUser = new StoreModel();
   userStore = new StoreModel();
@@ -47,17 +57,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
     this._subscription = this.userService.getUserInfo(this.FirebaseUser.firebaseUserId).subscribe(userA => {
       this.userStore = userA[0];
-      if (this.userStore.profilePh === '') { this.userStore.profilePh = this.FirebaseUser.profilePh; 
-      this.anyliticService.getArticlesCopado(this.userStore.storeName).then((interactionsFb) => {
-        // limpiar sources
-        console.log(interactionsFb);
-        this.interactions = interactionsFb;});
-      }
-      setTimeout(() => {
-        this.spinner.hide();
-      }, 2000);
-    });
-  }
+      if (this.userStore.profilePh === '') { this.userStore.profilePh = this.FirebaseUser.profilePh; }
+        this.anyliticService.getInteractions(this.userStore.storeName).then((res) => this.interactions = res).then(() => {
+          this.getAnylitics();
+          setTimeout(() => {
+            this.spinner.hide();
+        }, 2000);
+        });
+       /* this.anyliticService.getAllInteractions(this.userStore.storeName).then((interactionsFb) => {
+          console.log(interactionsFb);
+          this.interactions = interactionsFb; }).then(() => {
+            setTimeout(() => {
+              this.spinner.hide();
+          }, 2000);
+          });*/
+        });
+    }
 
   ngOnDestroy(): void {
     console.log('destruyendo subscripciones');
@@ -73,6 +88,75 @@ export class DashboardComponent implements OnInit, OnDestroy {
         console.log('Logout error', error);
       }
     );
+  }
+
+  getAnylitics() {
+    console.log(1);
+    this.getTotalInteractions();
+    this.getPositiveInteractions();
+    this.getUsersReached();
+    this.getUsersClickedArticle();
+    this.getArticlesSavedToCloset();
+    this.getPopularsTags();
+  }
+
+  getTotalInteractions() {
+    this.totalInteractions = this.interactions.length;
+    console.log(`tolalInteractions: ` + this.totalInteractions);
+  }
+
+  getPositiveInteractions() {
+    this.positiveInteractions = this.interactions.filter( interaction => interaction.liked === true).length;
+    console.log(`positiveInteractions: ` + this.positiveInteractions);
+  }
+
+  getUsersReached() {
+    this.usersReached = 0;
+    const usersFound = [];
+    this.interactions.forEach( (interaction) => {
+      if (!usersFound.includes(interaction.userId) ) {
+        this.usersReached++;
+        usersFound.push(interaction.userId);
+      }
+    });
+    console.log(`usersReached: ` + this.usersReached);
+  }
+
+  getUsersClickedArticle() {
+    this.usersClickedArticle = this.interactions.filter( interaction => interaction.clickOnArticle === true).length;
+    console.log(`clickedOnArticle: ` + this.usersClickedArticle);
+  }
+
+  getArticlesSavedToCloset() {
+    this.articlesSavedToCloset = this.interactions.filter( interaction => interaction.savedToCloset === true).length;
+    console.log(`savedToCloset: ` + this.articlesSavedToCloset);
+  }
+
+  getPopularsTags() {
+    this.popularityXtag = [];
+    this.popularTags = [];
+    this.popularityOfTags = [];
+    let index;
+    this.interactions.forEach( (interaction) => {
+      interaction.tags.map( (tag) => {
+        if (!this.popularTags.includes(tag) ) {
+          this.popularTags.push(tag);
+          this.popularityOfTags.push(0);
+        }
+        index = this.popularTags.indexOf(tag);
+        this.popularityOfTags[index]++;
+      });
+    });
+    this.matrix = {};
+    for (let i = 0; i < this.popularTags.length; i++) {
+      this.matrix = {
+        tag: this.popularTags[i],
+        count: this.popularityOfTags[i]
+      };
+      this.popularityXtag.push(this.matrix);
+      console.log(2);
+      this.readyToRender = true;
+    }
   }
 
 }
