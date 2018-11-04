@@ -8,9 +8,11 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 export class PromoteDialogComponent {
   onAdd = new EventEmitter();
   dailyCost;
+  promotionCost;
+  diferenceInDays;
   minDate = new Date();
   dueDate;
-  selectedPromotion: Number;
+  selectedPromotion;
   selectedPayMethod: Number;
   promotionData;
 
@@ -21,7 +23,7 @@ export class PromoteDialogComponent {
   ];
 
   payMethods = [
-    { value: 0, viewValue: 'Gratis!'}
+    { value: 0, viewValue: 'Gratis!' }
   ];
   constructor(
     public dialogRef: MatDialogRef<PromoteDialogComponent>,
@@ -36,8 +38,22 @@ export class PromoteDialogComponent {
       dueDate: this.dueDate,
       promotionLevel: this.selectedPromotion,
       payMethod: this.selectedPayMethod,
-      dailyCost: this.dailyCost,
+      promotionCost: this.promotionCost,
     };
     this.onAdd.emit(this.promotionData);
+  }
+
+  tryCalculateCost() {
+    try {
+      const diff = Math.abs(this.dueDate.getTime() - new Date().getTime());
+      this.diferenceInDays = Math.ceil(diff / (1000 * 3600 * 24));
+      console.log(`diference in days ` + this.diferenceInDays);
+      console.log(`promotion ` + this.selectedPromotion);
+      this.dailyCost  = (this.selectedPromotion - 1 ) * 5;
+      this.promotionCost = this.diferenceInDays * (this.selectedPromotion - 1 ) * 5;
+      console.log(`dailyCost ` + this.dailyCost);
+    } catch {
+      console.log(`no pude calcular diff`);
+    }
   }
 }
