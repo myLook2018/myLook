@@ -1,6 +1,9 @@
 package com.mylook.mylook.entities;
 
-public class Favorite {
+import java.io.Serializable;
+import java.sql.Timestamp;
+
+public class Favorite implements Serializable {
     private String articleId;
     private String collection;
     private String downloadUri;

@@ -55,6 +55,7 @@
         <activity android:name=".profile.EditInfoActivity"/>
         <activity android:name=".profile.MyAccountActivity"/>
         <activity android:name=".closet.ClosetActivity"/>
+        <activity android:name=".closet.OutfitActivity"/>
         <service
             android:name=".messaging.myLookMessagingService"
             android:stopWithTask="false">

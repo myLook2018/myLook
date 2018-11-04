@@ -47,6 +47,13 @@ public class FavouritesTab extends Fragment {
         // Required empty public constructor
     }
 
+    public ArrayList<Favorite> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(ArrayList<Favorite> favorites) {
+        this.favorites = favorites;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,7 +98,6 @@ public class FavouritesTab extends Fragment {
     }
 
     private void getCloset() {
-        Log.e("GET_CLOSET", "--");
         dB.collection("closets")
                 .whereEqualTo("userID", user.getUid())
                 .get()
@@ -102,7 +108,6 @@ public class FavouritesTab extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 closet = document.toObject(Closet.class);
                                 String id = document.getId();
-                                Log.e("FAVORITESIDDDDDDDDDDDD", id);
                                 dB.collection("closets").document(id).collection("favorites").get()
                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                             @Override

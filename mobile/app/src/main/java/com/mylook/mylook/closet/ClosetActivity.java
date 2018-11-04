@@ -40,6 +40,9 @@ public class ClosetActivity extends AppCompatActivity {
     private MenuItem filterMenuItem;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private ArrayList<Favorite> favorites;
+    private  FavouritesTab newFabTab;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_closet_tablayout);
@@ -56,8 +59,9 @@ public class ClosetActivity extends AppCompatActivity {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        ClosetTabAdapter adapter = new ClosetTabAdapter(getSupportFragmentManager(),2);
-        adapter.addFragment(new  FavouritesTab(), "Favoritos");
+        ClosetTabAdapter adapter = new ClosetTabAdapter(getSupportFragmentManager(), 2);
+        newFabTab = new FavouritesTab();
+        adapter.addFragment(newFabTab, "Favoritos");
         adapter.addFragment(new CategoryTab(), "Colección");
         viewPager.setAdapter(adapter);
     }
@@ -71,10 +75,8 @@ public class ClosetActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        Log.e("Crete Options Menu", "Finalmente entro");
         getMenuInflater().inflate(R.menu.closet_menu, menu);
         filterMenuItem = menu.findItem(R.id.new_outfit);
-        Log.e("Options Menu", filterMenuItem.getTitle().toString());
         return true;
     }
 
@@ -82,8 +84,7 @@ public class ClosetActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.new_outfit) {
-            Intent intent = new Intent(getApplicationContext(), OutfitActivity.class);
-            //intent.putExtra("favoritos", favorites);
+            Intent intent = new Intent(getApplication(), OutfitActivity.class);
             startActivity(intent);
             finish();
         }
