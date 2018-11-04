@@ -3,13 +3,13 @@ package com.mylook.mylook.entities;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Collection {
+public class Outfit {
     private String name;
     private String category;
     private HashMap<String, String> items;
 
 
-    public Collection() {
+    public Outfit() {
     }
 
     public String getName() {
