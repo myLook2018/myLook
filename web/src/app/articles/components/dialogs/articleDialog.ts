@@ -143,6 +143,8 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     const sub: string = origin.substr(23);
     const imageBlob = this.dataURItoBlob(sub);
     const imageFile = new File([imageBlob], this.articleForm.controls['title'].value, { type: 'image/jpeg' });
+    this.articleForm.addControl('promotionLevel', new FormControl(1, Validators.required));
+    this.articleForm.addControl('creationDate', new FormControl(new Date(), Validators.required));
     this.articleForm.get('tags').setValue(this.tags.map(x => x));
     this.articleForm.get('sizes').setValue(this.sizes.map(x => x));
     this.articleForm.get('colors').setValue(this.colors.map(x => x));

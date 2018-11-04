@@ -106,17 +106,21 @@ export class InventoryComponent implements OnInit, OnDestroy {
       width: '300px',
       data: article
     });
-    promoteRef.afterClosed().subscribe(result => {
-      if (result !== undefined) {
-        console.log(result);
-        this.promoteArticle(result, article);
+    const sub = promoteRef.componentInstance.onAdd.subscribe((res) => {
+      if (res !== undefined) {
+        this.promoteArticle(res, article);
       }
+    });
+    promoteRef.afterClosed().subscribe(result => {
+      console.log(`resutl close ` + result);
+      sub.unsubscribe();
     });
   }
 
-  promoteArticle(date, article) {
-    console.log(date);
-    this.articleService.promoteArticle(date, article);
+  promoteArticle(data, article) {
+    console.log(data);
+    console.log(article);
+    this.articleService.promoteArticle(data, article);
   }
 
   openConfirmationDialog(article): void {

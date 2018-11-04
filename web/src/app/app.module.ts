@@ -65,6 +65,8 @@ import { DonutchartComponent } from './anylitics/components/donutchart/donutchar
 import { DashboardComponent } from './anylitics/components/dashboard/dashboard.component';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { AnyliticService } from './anylitics/components/services/anylitics.service';
+import {MatSelectModule} from '@angular/material/select';
+import {MatSliderModule} from '@angular/material/slider';
 @NgModule({
   declarations: [
     AppComponent,
@@ -121,11 +123,13 @@ import { AnyliticService } from './anylitics/components/services/anylitics.servi
     ImageCropperModule,
     ChartModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatSelectModule,
+    MatSliderModule
  ],
   exports: [RouterModule],
   providers: [ MatDatepickerModule, RecomendationService, DataService, AuthService, UserService, UserResolver, AuthGuard, StoreService,
-     ArticleService, TagsService,AnyliticService, ArticleResolver, StoreResolver],
+     ArticleService, TagsService, AnyliticService, ArticleResolver, StoreResolver],
   entryComponents: [PromoteDialogComponent, DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent,
     DeleteConfirmationDialogComponent, MapsDialogComponent, EditStoreComponent],
   bootstrap: [AppComponent]
