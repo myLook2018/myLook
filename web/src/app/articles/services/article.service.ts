@@ -16,7 +16,7 @@ export class ArticleService {
   articlesCopado: Article[] = [];
   // tslint:disable-next-line:no-inferrable-types
   collectionPath: string = 'articles';
-  promotePath = 'promotedArticles';
+  promotePath = 'promotions';
   db: any;
   require: any;
 
@@ -89,14 +89,25 @@ export class ArticleService {
       });
   }
 
-  promoteArticle(date, article) {
+  addPromotionToArticle(promotion) {
+    return this.fst.collection(this.collectionPath).doc(`${promotion.articleId}`).update({
+      promotionLevel: promotion.promotionLevel
+    }).then(() => { console.log(`promocion añadida con exito`); })
+      .catch(() => { console.log(`error al cargar la promoció`); })
+      ;
+  }
+
+  promoteArticle(data, article) {
     const promotion = {
       articleId: article.id,
-      endOfPromotion: date,
+      endOfPromotion: data.dueDate,
       storeName: article.storeName,
-      promotionLevel: 1
+      promotionLevel: data.promotionLevel,
+      payMethod: data.payMethod,
+      dailyCost: data.dailyCost
     };
     console.log(promotion);
+    this.addPromotionToArticle(promotion);
     return this.promoteCollection.add(promotion);
   }
 }
