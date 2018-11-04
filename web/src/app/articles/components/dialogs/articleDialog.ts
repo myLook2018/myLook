@@ -13,9 +13,10 @@ import { MatSnackBar } from '@angular/material';
 import { finalize, startWith, map } from 'rxjs/operators';
 import { Article } from '../../models/article';
 import { TagsService } from '../../services/tags.service';
-import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Tags } from '../../models/tags';
 import { DataService } from '../../../service/dataService';
+import { ImageCropperComponent, CropperSettings } from 'ngx-img-cropper';
 
 @Component({
   selector: 'app-article-dialog',
@@ -36,8 +37,11 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   articleForm: FormGroup;
   urls = new Array<String>();
   filesSelected: FileList;
+  croppedImage: any = '';
 
   tags: string[] = [];
+  sizes: string[] = [];
+  colors: string[] = [];
   _subscription: Subscription;
   allTags: Tags;
   visible = true;
@@ -46,9 +50,18 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   addOnBlur = false;
   isUpLoading = false;
   separatorKeysCodes: number[] = [ENTER, COMMA];
-  tagsCtrl = new FormControl();
   filteredTags: Observable<string[]>;
+  data: any;
+  tagsCtrl = new FormControl();
+  sizesCtrl = new FormControl();
+  colorsCtrl = new FormControl();
+
+  @ViewChild('cropper', undefined)
+  cropper: ImageCropperComponent;
+  cropperSettings: CropperSettings;
   @ViewChild('tagsInput') tagsInput: ElementRef<HTMLInputElement>;
+  @ViewChild('sizesInput') sizesInput: ElementRef<HTMLInputElement>;
+  @ViewChild('colorsInput') colorsInput: ElementRef<HTMLInputElement>;
 
   constructor(
     public tagsService: TagsService,
@@ -58,18 +71,28 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<ArticleDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public articleData: Article
-    ) { this.createForm();
-    if (articleData.picture !== undefined ) {
-      this.urls.push(articleData.picture); this.isNew = false;
-     } else {
-       this.urls.push('/assets/hanger.png'); }
+  ) {
+    this.cropperSettings = new CropperSettings();
+    this.cropperSettings.noFileInput = true;
+    this.cropperSettings.croppedWidth =  400;
+    this.cropperSettings.croppedHeight =  400;
+    this.cropperSettings.canvasHeight = 240;
+    this.cropperSettings.canvasWidth = 240;
+    this.data = {};
+
+    this.createForm();
+    if (articleData.picture !== undefined) {
+       this.isNew = false;
+    } else {
+      this.data.image = ('/assets/hanger.png');
+    }
   }
 
   ngOnInit(): void {
     this._subscription = this.tagsService.getTags().subscribe(tags => {
       this.allTags = tags[0];
       this.filteredTags = this.tagsCtrl.valueChanges.pipe(startWith(null),
-      map((tag: string | null) => tag ? this._filter(tag) : this.allTags.preset.slice()));
+        map((tag: string | null) => tag ? this._filter(tag) : this.allTags.preset.slice()));
     });
   }
 
@@ -84,15 +107,19 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
 
   createForm() {
     if (this.articleData.tags === null) { this.articleData.tags = []; }
+    if (this.articleData.sizes === null) { this.articleData.sizes = []; }
+    if (this.articleData.colors === null) { this.articleData.colors = []; }
     this.tags = this.articleData.tags;
+    this.sizes = this.articleData.sizes;
     this.articleForm = this.fb.group({
       // completar los datos de la prenda
       title: [this.articleData.title, Validators.nullValidator],
+      code: [this.articleData.code, Validators.nullValidator],
       cost: [this.articleData.cost, Validators.nullValidator],
       picture: ['', Validators.nullValidator],
-      size: [this.articleData.size, Validators.nullValidator],
+      sizes: [this.articleData.sizes.map(x => x), Validators.nullValidator],
       material: [this.articleData.material, Validators.nullValidator],
-      colors: [this.articleData.colors, Validators.nullValidator],
+      colors: [this.articleData.colors.map(x => x), Validators.nullValidator],
       initial_stock: [this.articleData.initial_stock, Validators.nullValidator],
       provider: [this.articleData.provider, Validators.nullValidator],
       tags: [this.articleData.tags.map(x => x), Validators.nullValidator],
@@ -112,13 +139,19 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
 
   startUpload() {
     this.isUpLoading = true;
+    const origin: string = this.data.image;
+    const sub: string = origin.substr(23);
+    const imageBlob = this.dataURItoBlob(sub);
+    const imageFile = new File([imageBlob], this.articleForm.controls['title'].value, { type: 'image/jpeg' });
     this.articleForm.get('tags').setValue(this.tags.map(x => x));
-    console.log(this.tags.map(x => x));
-    this.dataService.uploadPicture(this.filesSelected).then(pictureURL => {
+    this.articleForm.get('sizes').setValue(this.sizes.map(x => x));
+    this.articleForm.get('colors').setValue(this.colors.map(x => x));
+    this.dataService.uploadPictureFile(imageFile).then(pictureURL => {
       this.articleForm.get('picture').setValue(pictureURL);
       this.articleService.addArticle(this.articleForm.value).then(() => {
         this.isUpLoading = false;
         this.openSnackBar('Prenda guardada en MyLook!', 'close');
+        this.dialogRef.close();
       });
     });
   }
@@ -129,9 +162,9 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
       id: this.articleData.id,
       title: this.articleData.title,
       cost: this.articleForm.controls['cost'].value,
-      size: this.articleForm.controls['size'].value,
+      sizes: this.articleData.sizes.map(x => x),
       material: this.articleForm.controls['material'].value,
-      colors: this.articleForm.controls['colors'].value,
+      colors: this.articleData.colors.map(x => x),
       initial_stock: this.articleForm.controls['initial_stock'].value,
       provider: this.articleForm.controls['provider'].value,
       tags: this.articleData.tags.map(x => x),
@@ -158,22 +191,6 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     this.dialogRef.close();
   }
 
-  // Genera el preview de las imagenes a cargar
-  detectFiles(event) {
-    this.filesSelected = event.target.files;
-    this.urls = [];
-    const files = event.target.files;
-    if (files) {
-      for (const file of files) {
-        const reader = new FileReader();
-        reader.onload = (e: any) => {
-          this.urls.push(e.target.result);
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-  }
-
   // aniade un nuevo tag a la prenda
   add(event: MatChipInputEvent): void {
     const input = event.input;
@@ -181,11 +198,36 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     if ((value || '').trim()) {
       this.tags.push(value.trim());
     }
-
     // Reset the input value
     if (input) {
       input.value = '';
     }
+  }
+
+  addSize(event: MatChipInputEvent): void {
+    const input = event.input;
+    const value = event.value;
+    if ((value || '').trim()) {
+      this.sizes.push(value.trim());
+    }
+    // Reset the input value
+    if (input) {
+      input.value = '';
+    }
+    console.log(this.sizes);
+  }
+
+  addColor(event: MatChipInputEvent): void {
+    const input = event.input;
+    const value = event.value;
+    if ((value || '').trim()) {
+      this.colors.push(value.trim());
+    }
+    // Reset the input value
+    if (input) {
+      input.value = '';
+    }
+    console.log(this.colors);
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
@@ -200,5 +242,54 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
       this.tags.splice(index, 1);
     }
   }
+
+  selectedSize(event: MatAutocompleteSelectedEvent): void {
+    this.sizes.push(event.option.viewValue);
+    this.sizesInput.nativeElement.value = '';
+    this.sizesCtrl.setValue(null);
+  }
+
+  removeSize(size): void {
+    const index = this.sizes.indexOf(size);
+    if (index >= 0) {
+      this.sizes.splice(index, 1);
+    }
+  }
+
+  removeColor(color): void {
+    const index = this.colors.indexOf(color);
+    if (index >= 0) {
+      this.colors.splice(index, 1);
+    }
+  }
+
+  fileChangeListener($event) {
+    const image: any = new Image();
+    const file: File = $event.target.files[0];
+    if (file.type.split('/')[1] === 'png') {
+      return this.openSnackBar('Tipo de imagen no soportado!', 'close');
+   }
+    const myReader: FileReader = new FileReader();
+    const that = this;
+    myReader.onloadend = function (loadEvent: any) {
+      image.src = loadEvent.target.result;
+      that.cropper.setImage(image);
+
+    };
+
+    myReader.readAsDataURL(file);
+  }
+
+  dataURItoBlob(dataURI) {
+    const byteString = atob(dataURI);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([arrayBuffer], { type: 'image/jpeg' });
+    return blob;
+ }
 
 }

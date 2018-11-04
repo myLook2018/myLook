@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { AngularFireAuth } from 'angularfire2/auth';
 import * as firebase from 'firebase';
 import { AngularFirestore } from 'angularfire2/firestore';
@@ -14,6 +13,22 @@ export class AuthService {
 
   emailToRegister: String;
 
+  actionCodeSettings = {
+    // URL you want to redirect back to. The domain (www.example.com) for this
+    // URL must be whitelisted in the Firebase Console.
+    url: 'https://www.example.com/finishSignUp?cartId=1234',
+    // This must be true.
+    handleCodeInApp: true,
+    iOS: {
+      bundleId: 'com.example.ios'
+    },
+    android: {
+      packageName: 'com.example.android',
+      installApp: true,
+      minimumVersion: '12'
+    }
+};
+
   isEmailAvaible(email) {
     return new Promise<any>((resolve, reject) => {
       firebase.auth().fetchSignInMethodsForEmail(email).then((res) => {
@@ -25,17 +40,6 @@ export class AuthService {
       });
     });
   }
-
-  /*checkEmailExistance(email) {
-    return new Promise<any>((resolve, reject) => {
-        const ref = this.db.collection('stores').ref;
-        ref.where('storeMail', '==', email)
-            .get()
-            .then(snapshot => {
-                return resolve(snapshot.empty);
-            });
-    });
-  }*/
 
   doFacebookLogin() {
     return new Promise<any>((resolve, reject) => {
@@ -81,6 +85,15 @@ export class AuthService {
     });
   }
 
+  sendEmailVerification() {
+    const user = firebase.auth().currentUser;
+    user.sendEmailVerification().then( () => {
+      return('¡Se ha enviado un email a su correo electrónico! Es necesario que realice la verificación de la cuenta antes de seguir. ');
+    }).catch(function(error) {
+      return (error);
+    });
+  }
+
   doRegister(formControl) {
     return new Promise<any>((resolve, reject) => {
       firebase.auth().createUserWithEmailAndPassword(formControl.controls['email'].value, formControl.controls['password'].value)
@@ -91,10 +104,26 @@ export class AuthService {
     });
   }
 
+  doFirstLogin(formControl) {
+    return new Promise<any>((resolve, reject) => {
+      firebase.auth().signInWithEmailAndPassword(formControl.controls['email'].value, formControl.controls['password'].value)
+        .then(res => {
+          const isLoged = this.sendEmailVerification(); // no aca
+          console.log(isLoged);
+          resolve(res);
+        }, err => reject(err + `error en doLogin`));
+    });
+  }
+
   doLogin(formControl) {
     return new Promise<any>((resolve, reject) => {
       firebase.auth().signInWithEmailAndPassword(formControl.controls['email'].value, formControl.controls['password'].value)
         .then(res => {
+          console.log(firebase.auth().currentUser.emailVerified);
+          /*if (!firebase.auth().currentUser.emailVerified) {
+            this.doLogout();
+            reject('no se ha verificado Email');
+          }*/
           resolve(res);
         }, err => reject(err + `error en doLogin`));
     });

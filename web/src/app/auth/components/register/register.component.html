@@ -157,20 +157,20 @@
             <ng-template matStepLabel>Confirmar Datos</ng-template>
 
             <mat-form-field class="full-length">
-              <input matInput placeholder="Contraseña" [(ngModel)]='password' type="password">
+              <input matInput [disabled]="isRegistering" placeholder="Contraseña" [(ngModel)]='password' type="password">
             </mat-form-field>
 
             <mat-form-field class="full-length">
-              <input matInput placeholder="Confirmar contraseña" [(ngModel)]='confirmPassword' type="password">
+              <input matInput [disabled]="isRegistering" placeholder="Confirmar contraseña" [(ngModel)]='confirmPassword' type="password">
             </mat-form-field>
 
             <mat-toolbar>
               <mat-toolbar-row style="background-color: white">
-                <button mat-mini-fab matStepperPrevious class="nextButton orangeButton">
+                <button mat-mini-fab [disabled]="isRegistering" matStepperPrevious class="nextButton orangeButton">
                   <mat-icon>navigate_before</mat-icon>
                 </button>
                 <span class="fill-space"></span>
-                <button mat-mini-fab matStepperNext class="nextButton orangeButton" (click)="tryRegister()">
+                <button mat-mini-fab matStepperNext [disabled]="isRegistering" class="nextButton orangeButton" (click)="tryRegister()">
                   <mat-icon class="material-icons">done</mat-icon>
                 </button>
               </mat-toolbar-row>
@@ -178,6 +178,9 @@
          
         </mat-step>
       </mat-horizontal-stepper>
+    </div>
+    <div class="proggressBar">
+      <mat-progress-bar *ngIf="isRegistering" mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>
     </div>
   </mat-card>
 </div>

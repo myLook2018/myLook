@@ -34,7 +34,6 @@
 .externalLogin{
   width: 80%;
   margin-left: 10%;
-  margin-bottom: 24px;
   color: white;
 }
 
@@ -82,4 +81,13 @@ position: absolute;
   margin-top: 15px;
   width: 448px;
   margin-left: -24px;
+}
+
+.mat-card .mat-divider-horizontal {
+
+  position: relative;
+  left: 0;
+  width: 100%;
+  margin-top: 10px;
+
 }

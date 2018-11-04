@@ -1,11 +1,12 @@
 <div class="mat-typography">
   <div style="display:flex">
-
-    <h2 *ngIf="isNew" style="margin: 0; ">Agrega una nueva prenda a tu catálogo</h2>
-    <h2 *ngIf="!isNew" style="margin: 0; ">Actualizar prenda</h2>
-    <button [disabled]="isUpLoading" mat-mini-fab style="display: block; margin-left: auto; background-color: #ff9800;" (click)="onNoClick()">
-      <mat-icon>close</mat-icon>
-    </button>
+      
+      <h2 *ngIf="isNew" style="margin: 0; ">Agrega una nueva prenda a tu catálogo</h2>
+      <h2 *ngIf="!isNew" style="margin: 0; ">Actualizar prenda</h2>
+      <button [disabled]="isUpLoading" mat-mini-fab style="display: block; margin-left: auto; background-color: #ff9800; "
+        (click)="onNoClick()">
+        <mat-icon>close</mat-icon>
+      </button>
 
   </div>
   <h4 *ngIf="isNew" style="margin: 0;">A continuación ingresa la información de la prenda.</h4>
@@ -17,22 +18,22 @@
     <div #secondColumn style="display: inline-table;margin-left: 10px; width: 240px">
       <div>
         <mat-form-field style="width: 95%">
-          <input matInput placeholder="Titulo" formControlName="title" value={{articleData.title}}>
+          <input matInput type="text" placeholder="Titulo" formControlName="title" value={{articleData.title}}>
         </mat-form-field>
         <mat-form-field style="width: 95%">
-          <input matInput placeholder="Proveedor" formControlName="provider" value={{articleData.provider}}>
+          <input matInput type="text" placeholder="Código" formControlName="code" value={{articleData.code}}>
         </mat-form-field>
         <mat-form-field style="width: 95%">
-          <input matInput placeholder="Costo" formControlName="cost" value={{articleData.cost}}>
+          <input matInput type="text" placeholder="Proveedor" formControlName="provider" value={{articleData.provider}}>
         </mat-form-field>
         <mat-form-field style="width: 95%">
-          <input matInput placeholder="Stock inicial" formControlName="initial_stock" value={{articleData.initial_stock}}>
+          <input matInput type="number" placeholder="Costo" formControlName="cost" value={{articleData.cost}}>
+        </mat-form-field>
+        <mat-form-field style="width: 95%">
+          <input matInput type="number" placeholder="Stock inicial" formControlName="initial_stock" value={{articleData.initial_stock}}>
         </mat-form-field>
       </div>
       <div>
-        <mat-form-field style="width: 95%">
-          <input matInput placeholder="Talle" formControlName="size" value={{articleData.size}}>
-        </mat-form-field>
         <mat-form-field style="width: 95%">
           <input matInput placeholder="Material" formControlName="material" value={{articleData.material}}>
         </mat-form-field>
@@ -41,52 +42,74 @@
     </div>
 
     <div #firstColumn style="display: inline-table; width: 240px; height: 355px; position: relative; margin-left: 5px">
-
-      <div style="height: 247px;padding-top: 10px;">
-        <img *ngFor="let url of urls" [src]="url" class="rounded mb-3" height="240" style="display: block; margin-left: auto; margin-right: auto; max-width:240px">
-      </div>
-
-      <div>
+      <div style="padding-top: 13px;">
+        <img-cropper #cropper [image]="data" [settings]="cropperSettings"></img-cropper>
         <button type="button" mat-raised-button style="display: block; margin-left: auto; margin-right: auto; margin-top: 10px;  background-color: #9C27B0;color: white"
           (click)="imgFileInput.click()">Añade una foto</button>
-        <input hidden class="file-input" #imgFileInput type="file" (change)="detectFiles($event)">
+        <input hidden class="file-input" #imgFileInput type="file" (change)="fileChangeListener($event)" >
       </div>
-
       <mat-form-field style="margin-top: 22px;width: 95%">
-          <input matInput placeholder="Colores disponibles" formControlName="colors" [(ngModel)]="articleData.colors">
-        </mat-form-field>
+        <mat-chip-list #chipList3>
+          <mat-chip *ngFor="let color of colors" [selectable]="selectable" [removable]="removable" (removed)="removeColor(color)">
+            {{color}}
+            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+          </mat-chip>
+          <input style="width: 100%" placeholder="Colores Disponibles" #sizesInput [formControl]="colorsCtrl"
+            [matChipInputFor]="chipList3" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+             (matChipInputTokenEnd)="addColor($event)" autofocus>
+        </mat-chip-list>
+        <!--<input matInput placeholder="Etiquetas" formControlName="tags" value={{articleData.tags}}>-->
+      </mat-form-field>
     </div>
-  </form>  
+  </form>
 </div>
-
 
 <div #thirtColumn style="margin-left: 10px">
     <form [formGroup]="articleForm" style="display: flex;">
         <mat-form-field style="width: 97.5%">
-          <mat-chip-list #chipList>
-            <mat-chip *ngFor="let tag of tags" [selectable]="selectable" [removable]="removable" (removed)="remove(tag)">
-              {{tag}}
-              <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-            </mat-chip>
-            <input style="width: 100%" placeholder="Elije las etiquetas" #tagsInput [formControl]="tagsCtrl" [matAutocomplete]="auto"
-            [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
-            (matChipInputTokenEnd)="add($event)" autofocus>
-          </mat-chip-list>
-          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
-            <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
-              {{tag}}
-            </mat-option>
-          </mat-autocomplete>
-          <!--<input matInput placeholder="Etiquetas" formControlName="tags" value={{articleData.tags}}>-->
-        </mat-form-field> 
-      </form>
+            <mat-chip-list #chipList2>
+              <mat-chip *ngFor="let size of sizes" [selectable]="selectable" [removable]="removable" (removed)="removeSize(size)">
+                {{size}}
+                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+              </mat-chip>
+              <input style="width: 100%" placeholder="Talles" #sizesInput [formControl]="sizesCtrl"
+                [matChipInputFor]="chipList2" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                 (matChipInputTokenEnd)="addSize($event)" autofocus>
+            </mat-chip-list>
+            <!--<input matInput placeholder="Etiquetas" formControlName="tags" value={{articleData.tags}}>-->
+          </mat-form-field>
+    </form>
+  </div>
+
+<div #forthColumn style="margin-left: 10px">
+  <form [formGroup]="articleForm" style="display: flex;">
+    <mat-form-field style="width: 97.5%">
+      <mat-chip-list #chipList>
+        <mat-chip *ngFor="let tag of tags" [selectable]="selectable" [removable]="removable" (removed)="remove(tag)">
+          {{tag}}
+          <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+        </mat-chip>
+        <input style="width: 100%" placeholder="Elije las etiquetas" #tagsInput [formControl]="tagsCtrl"
+          [matAutocomplete]="auto" [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event)" autofocus>
+      </mat-chip-list>
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+        <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+          {{tag}}
+        </mat-option>
+      </mat-autocomplete>
+      <!--<input matInput placeholder="Etiquetas" formControlName="tags" value={{articleData.tags}}>-->
+    </mat-form-field>
+  </form>
 </div>
 
 <div mat-dialog-actions align="end">
-    <button *ngIf="!isNew" [disabled]="isUpLoading" style="background-color: #9C27B0; color: white" type="button" mat-raised-button (click)="refreshArticle($event)">Actualizar
-      Prenda
-    </button>
-    <button *ngIf="isNew" [disabled]="isUpLoading" style="background-color: #9C27B0; color: white" type="button" mat-raised-button (click)="startUpload($event.target.files)">Agregar
-      Prenda
-    </button>
+  <button *ngIf="!isNew" [disabled]="isUpLoading" style="background-color: #9C27B0; color: white" type="button"
+    mat-raised-button (click)="refreshArticle($event)">Actualizar
+    Prenda
+  </button>
+  <button *ngIf="isNew" [disabled]="isUpLoading" style="background-color: #9C27B0; color: white" type="button"
+    mat-raised-button (click)="startUpload($event.target.files)">Agregar
+    Prenda
+  </button>
 </div>
