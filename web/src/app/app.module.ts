@@ -67,6 +67,7 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import { AnyliticService } from './anylitics/components/services/anylitics.service';
 import {MatSelectModule} from '@angular/material/select';
 import {MatSliderModule} from '@angular/material/slider';
+import { MomentModule } from 'ngx-moment';
 @NgModule({
   declarations: [
     AppComponent,
@@ -125,7 +126,8 @@ import {MatSliderModule} from '@angular/material/slider';
     MatDatepickerModule,
     MatNativeDateModule,
     MatSelectModule,
-    MatSliderModule
+    MatSliderModule,
+    MomentModule
  ],
   exports: [RouterModule],
   providers: [ MatDatepickerModule, RecomendationService, DataService, AuthService, UserService, UserResolver, AuthGuard, StoreService,

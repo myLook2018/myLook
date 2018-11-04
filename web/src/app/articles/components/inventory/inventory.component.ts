@@ -108,7 +108,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     });
     const sub = promoteRef.componentInstance.onAdd.subscribe((res) => {
       if (res !== undefined) {
-        this.promoteArticle(res, article);
+        this.promoteArticle(res, article, this.userStore.firebaseUID);
       }
     });
     promoteRef.afterClosed().subscribe(result => {
@@ -117,10 +117,10 @@ export class InventoryComponent implements OnInit, OnDestroy {
     });
   }
 
-  promoteArticle(data, article) {
+  promoteArticle(data, article, storeUID) {
     console.log(data);
     console.log(article);
-    this.articleService.promoteArticle(data, article);
+    this.articleService.promoteArticle(data, article, storeUID);
   }
 
   openConfirmationDialog(article): void {

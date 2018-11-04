@@ -97,14 +97,14 @@ export class ArticleService {
       ;
   }
 
-  promoteArticle(data, article) {
+  promoteArticle(data, article, storeUID) {
     const promotion = {
       articleId: article.id,
       endOfPromotion: data.dueDate,
-      storeName: article.storeName,
+      storeId: storeUID,
       promotionLevel: data.promotionLevel,
       payMethod: data.payMethod,
-      dailyCost: data.dailyCost
+      promotionCost: data.promotionCost
     };
     console.log(promotion);
     this.addPromotionToArticle(promotion);
