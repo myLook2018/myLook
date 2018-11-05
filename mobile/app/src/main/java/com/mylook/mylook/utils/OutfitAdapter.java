@@ -16,12 +16,10 @@ import java.util.ArrayList;
 
 public class OutfitAdapter extends BaseAdapter {
     private Context mContext;
-
     private ArrayList<Outfit> outfits;
     public OutfitAdapter(Context c,ArrayList favorites) {
         mContext = c;
         this.outfits=favorites;
-        //getCloset();
 
     }
 
@@ -46,6 +44,7 @@ public class OutfitAdapter extends BaseAdapter {
         } else {
             imageView = (ImageView) convertView;
         }
+        imageView.setAdjustViewBounds(true);
         Glide.with(mContext).asDrawable().load(R.drawable.photo_gallery).into(imageView);
         return imageView;
     }

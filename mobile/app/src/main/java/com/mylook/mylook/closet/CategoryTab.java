@@ -3,6 +3,7 @@ package com.mylook.mylook.closet;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaMuxer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -76,32 +77,47 @@ public class CategoryTab extends Fragment {
         outfitGrid.setHorizontalSpacing(8);
         outfitGrid.setNumColumns(2);
         getOutfits();
-//        outfitGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            public void onItemClick(AdapterView<?> parent, View v,
-//                                    int position, long id) {
-//                dB.collection("articles").document((String) parent.getAdapter().getItem(position)).get()
-//                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                                if (task.isSuccessful()) {
-//                                    String articleId = task.getResult().getId();
-//                                    Article art = task.getResult().toObject(Article.class);
-//                                    art.setArticleId(articleId);
-//                                    Intent intent = new Intent(getContext(), ArticleInfoActivity.class);
-//                                    intent.putExtra("article", art);
-//                                    getContext().startActivity(intent);
-//                                }
-//                            }
-//                        })
-//                        .addOnFailureListener(new OnFailureListener() {
-//                            @Override
-//                            public void onFailure(@NonNull Exception e) {
-//                                Toast.makeText(getContext(), "No se ha podido cargar tus favoritos", Toast.LENGTH_LONG).show();
-//                            }
-//                        });
-//            }
-//        });
+        outfitGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                loadOutfit(parent, position);
+
+            }
+        });
     }
+
+    private void loadOutfit(AdapterView<?> parent, int position) {
+        final String outfitId = ((Outfit) parent.getAdapter().getItem(position)).getOutfitId();
+        dB.collection("closets").whereEqualTo("userID",user.getUid()).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            String id = task.getResult().getDocuments().get(0).getId();
+                            dB.collection("closets").document(id).collection("outfits")
+                                    .document(outfitId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    Outfit outfit = task.getResult().toObject(Outfit.class);
+                                    Intent intent = new Intent(getContext(),ViewOutfitActivity.class);
+                                    intent.putExtra("items",outfit.getItems());
+                                    intent.putExtra("name", outfit.getName());
+                                    intent.putExtra("category", outfit.getCategory());
+                                    startActivity(intent);
+
+                                }
+                            });
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getContext(), "No se ha podido cargar tus favoritos", Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -115,7 +131,7 @@ public class CategoryTab extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
+                            for (final QueryDocumentSnapshot document : task.getResult()) {
                                 closet = document.toObject(Closet.class);
                                 String id = document.getId();
                                 dB.collection("closets").document(id).collection("outfits").get()
@@ -126,6 +142,7 @@ public class CategoryTab extends Fragment {
                                                     ArrayList<String> arrayList = new ArrayList<>();
                                                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                                         Outfit outfit = documentSnapshot.toObject(Outfit.class);
+                                                        outfit.setOutfitId(documentSnapshot.getId());
                                                         outfits.add(outfit);
                                                     }
                                                     outfitGrid.setAdapter(new com.mylook.mylook.utils.OutfitAdapter(act, outfits));
