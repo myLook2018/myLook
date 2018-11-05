@@ -71,7 +71,6 @@ public class ExploreActivity extends AppCompatActivity implements ExploreStartFr
 
             @Override
             public void onCardSwiped(SwipeDirection direction) {
-                Log.d("CardStackView", "onCardSwiped: " + direction.toString());
                 Interaction userInteraction = new Interaction();
                 userInteraction.setSavedToCloset(false);
                 userInteraction.setClickOnArticle(false);
@@ -110,7 +109,7 @@ public class ExploreActivity extends AppCompatActivity implements ExploreStartFr
                 Intent intent = new Intent(mContext, ArticleInfoActivity.class);
                 Log.d("info del articulo", "onClick: paso por intent la data del articulo");
                 Article art = mDiscoverableArticles.get(index);
-                intent.putExtra("article",art);
+                intent.putExtra("article", art);
                 intent.putExtra("tags", userInteraction.getTags());
                 mContext.startActivity(intent);
             }
@@ -162,18 +161,16 @@ public class ExploreActivity extends AppCompatActivity implements ExploreStartFr
         super.onDestroy();
     }
 
-        @Override
+    @Override
     protected void onStop() {
         uploadInteractions();
         super.onStop();
     }
 
-    private void uploadInteractions(){
-        for (Interaction interaction: interactions) {
-            // verifica que alguna de las interacciones sea verdadera
-            if(interaction.isValid()) {
-                db.collection("interactions").add(interaction);
-            }
+    private void uploadInteractions() {
+        for (Interaction interaction : interactions) {
+            db.collection("interactions").add(interaction);
+
         }
         interactions.clear();
     }
