@@ -3,12 +3,11 @@ package com.mylook.mylook.utils;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
 import com.mylook.mylook.R;
@@ -60,6 +59,8 @@ public class GridImageAdapter extends ArrayAdapter<String>{
         String imgUrls = getItem(position);
 
         //aca iria el Glide
+        Log.e("CONTEXT2",mContext.toString());
+        Log.e("HOLDER", holder.image.toString());
         Glide.with(mContext).load(imgUrls).into(holder.image);
 
         return convertView;

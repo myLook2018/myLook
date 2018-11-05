@@ -1,5 +1,7 @@
 package com.mylook.mylook.entities;
 
+import java.util.Date;
+
 public class Store {
 
     private String firebaseUserId;
@@ -20,9 +22,18 @@ public class Store {
     private String twitterLink;
     private String facebookLink;
     private String provider;
+    private Date registerDate;
     //private String storeCreationDate;
 
     public Store(){}
+
+    public Date getRegisterDate() {
+        return registerDate;
+    }
+
+    public void setRegisterDate(Date registerDate) {
+        this.registerDate = registerDate;
+    }
 
     public String getStorePhone() {
         return storePhone;

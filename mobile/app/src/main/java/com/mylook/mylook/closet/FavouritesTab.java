@@ -1,7 +1,6 @@
 package com.mylook.mylook.closet;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -29,7 +28,6 @@ import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Closet;
 import com.mylook.mylook.entities.Favorite;
 import com.mylook.mylook.info.ArticleInfoActivity;
-import com.mylook.mylook.utils.GridImageAdapter;
 
 import java.util.ArrayList;
 
