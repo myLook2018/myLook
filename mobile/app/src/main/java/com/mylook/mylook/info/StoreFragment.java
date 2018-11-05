@@ -110,7 +110,7 @@ public class StoreFragment extends Fragment {
                         articlesPhotosUrls.add(art.getPicture());
                     }
                     Log.e("CONTEXT", getActivity().getLocalClassName());
-                    grid.setAdapter(new GridImageAdapter( getActivity(),R.layout.layout_grid_imageview,articlesPhotosUrls));
+                    grid.setAdapter(new GridImageAdapter( getActivity(),R.layout.layout_grid_imageview,storeArticles));
                 } else {
                     Log.d("Firestore task", "onComplete: " + task.getException());
                 }
