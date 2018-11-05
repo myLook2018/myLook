@@ -34,14 +34,21 @@
                     <span>Estadisticas</span>
                 </mat-toolbar-row>
             </mat-toolbar>
-            <div class="mainContainer" *ngIf="readyToRender">
-                <mat-card class="chartCard mat-elevation-z6">
-                    <mat-card-header>
-                        <mat-card-title>Grafico de torta</mat-card-title>
-                    </mat-card-header>
-                    <app-donutchart *ngIf="readyToRender" [usersClickedArticle]="usersClickedArticle" [articlesSavedToCloset]="articlesSavedToCloset"></app-donutchart>
-                </mat-card>
 
+            <div style="display:flex;">
+
+                <div class="mainContainer" *ngIf="readyToRender">
+                    <mat-card class="chartCard mat-elevation-z6"  style="width:40vw">
+                        <app-donutchart *ngIf="readyToRender" [usersClickedArticle]="usersClickedArticle" [articlesSavedToCloset]="articlesSavedToCloset" [positiveInteractions]="positiveInteractions"></app-donutchart>
+                    </mat-card>
+                </div>
+                
+                <div class="mainContainer" *ngIf="readyToRender">
+                    <mat-card class="chartCard mat-elevation-z6" style="width:40vw">
+                        <app-polar-area *ngIf="readyToRender" [popularTags]="popularTags" [popularityOfTags]="popularityOfTags"></app-polar-area>
+                    </mat-card>
+                </div>
+                
             </div>
         </mat-sidenav-content>
     </mat-sidenav-container>

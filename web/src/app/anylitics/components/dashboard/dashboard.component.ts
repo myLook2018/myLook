@@ -58,21 +58,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this._subscription = this.userService.getUserInfo(this.FirebaseUser.firebaseUserId).subscribe(userA => {
       this.userStore = userA[0];
       if (this.userStore.profilePh === '') { this.userStore.profilePh = this.FirebaseUser.profilePh; }
-        this.anyliticService.getInteractions(this.userStore.storeName).then((res) => this.interactions = res).then(() => {
-          this.getAnylitics();
-          setTimeout(() => {
-            this.spinner.hide();
+      this.anyliticService.getInteractions(this.userStore.storeName).then((res) => this.interactions = res).then(() => {
+        console.log(this.interactions);
+        this.getAnylitics();
+        setTimeout(() => {
+          this.spinner.hide();
+          this.readyToRender = true;
         }, 2000);
-        });
-       /* this.anyliticService.getAllInteractions(this.userStore.storeName).then((interactionsFb) => {
-          console.log(interactionsFb);
-          this.interactions = interactionsFb; }).then(() => {
-            setTimeout(() => {
-              this.spinner.hide();
-          }, 2000);
-          });*/
-        });
-    }
+      });
+      /* this.anyliticService.getAllInteractions(this.userStore.storeName).then((interactionsFb) => {
+         console.log(interactionsFb);
+         this.interactions = interactionsFb; }).then(() => {
+           setTimeout(() => {
+             this.spinner.hide();
+         }, 2000);
+         });*/
+    });
+  }
 
   ngOnDestroy(): void {
     console.log('destruyendo subscripciones');
@@ -106,15 +108,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getPositiveInteractions() {
-    this.positiveInteractions = this.interactions.filter( interaction => interaction.liked === true).length;
+    this.positiveInteractions = this.interactions.filter(interaction => interaction.liked === true).length;
     console.log(`positiveInteractions: ` + this.positiveInteractions);
   }
 
   getUsersReached() {
     this.usersReached = 0;
     const usersFound = [];
-    this.interactions.forEach( (interaction) => {
-      if (!usersFound.includes(interaction.userId) ) {
+    this.interactions.forEach((interaction) => {
+      if (!usersFound.includes(interaction.userId)) {
         this.usersReached++;
         usersFound.push(interaction.userId);
       }
@@ -123,12 +125,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getUsersClickedArticle() {
-    this.usersClickedArticle = this.interactions.filter( interaction => interaction.clickOnArticle === true).length;
+    this.usersClickedArticle = this.interactions.filter(interaction => interaction.clickOnArticle === true).length;
     console.log(`clickedOnArticle: ` + this.usersClickedArticle);
   }
 
   getArticlesSavedToCloset() {
-    this.articlesSavedToCloset = this.interactions.filter( interaction => interaction.savedToCloset === true).length;
+    this.articlesSavedToCloset = this.interactions.filter(interaction => interaction.savedToCloset === true).length;
     console.log(`savedToCloset: ` + this.articlesSavedToCloset);
   }
 
@@ -137,15 +139,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.popularTags = [];
     this.popularityOfTags = [];
     let index;
-    this.interactions.forEach( (interaction) => {
-      interaction.tags.map( (tag) => {
-        if (!this.popularTags.includes(tag) ) {
-          this.popularTags.push(tag);
-          this.popularityOfTags.push(0);
-        }
-        index = this.popularTags.indexOf(tag);
-        this.popularityOfTags[index]++;
-      });
+    this.interactions.forEach((interaction) => {
+      if (interaction.liked === true || interaction.savedToCloset === true || interaction.clickOnArticle === true) {
+        interaction.tags.map((tag) => {
+          if (!this.popularTags.includes(tag)) {
+            this.popularTags.push(tag);
+            this.popularityOfTags.push(0);
+          }
+          index = this.popularTags.indexOf(tag);
+          this.popularityOfTags[index]++;
+        });
+      }
     });
     this.matrix = {};
     for (let i = 0; i < this.popularTags.length; i++) {
@@ -154,9 +158,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
         count: this.popularityOfTags[i]
       };
       this.popularityXtag.push(this.matrix);
-      console.log(2);
-      this.readyToRender = true;
     }
+
+    console.log(this.popularityXtag);
   }
 
 }
