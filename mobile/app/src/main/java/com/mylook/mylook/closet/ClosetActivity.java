@@ -69,7 +69,7 @@ public class ClosetActivity extends AppCompatActivity {
         ClosetTabAdapter adapter = new ClosetTabAdapter(getSupportFragmentManager(), 2);
         newFabTab = new FavouritesTab();
         adapter.addFragment(newFabTab, "Favoritos");
-        adapter.addFragment(new CategoryTab(), "Colección");
+        adapter.addFragment(new CategoryTab(), "Conjuntos");
         viewPager.setAdapter(adapter);
     }
 

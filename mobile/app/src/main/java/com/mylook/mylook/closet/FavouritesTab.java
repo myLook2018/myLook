@@ -47,14 +47,6 @@ public class FavouritesTab extends Fragment {
         // Required empty public constructor
     }
 
-    public ArrayList<Favorite> getFavorites() {
-        return favorites;
-    }
-
-    public void setFavorites(ArrayList<Favorite> favorites) {
-        this.favorites = favorites;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,7 +110,6 @@ public class FavouritesTab extends Fragment {
                                                         Favorite fav = documentSnapshot.toObject(Favorite.class);
                                                         favorites.add(fav);
                                                         arrayList.add(fav.getDownloadUri());
-                                                        Log.e("FAVORITES", "---");
                                                     }
                                                     gridview.setAdapter(new com.mylook.mylook.utils.ImageAdapter(act, favorites));
                                                     return;
@@ -148,6 +139,16 @@ public class FavouritesTab extends Fragment {
         setGridview();
         super.onViewCreated(view, savedInstanceState);
     }
+
+
+    public ArrayList<Favorite> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(ArrayList<Favorite> favorites) {
+        this.favorites = favorites;
+    }
+
 
 
 }
