@@ -68,6 +68,7 @@ import { AnyliticService } from './anylitics/components/services/anylitics.servi
 import {MatSelectModule} from '@angular/material/select';
 import {MatSliderModule} from '@angular/material/slider';
 import { MomentModule } from 'ngx-moment';
+import { PolarAreaComponent } from './anylitics/components/polar-area/polar-area.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -89,7 +90,8 @@ import { MomentModule } from 'ngx-moment';
     ImageCropperComponent,
     DonutchartComponent,
     DashboardComponent,
-    PromoteDialogComponent
+    PromoteDialogComponent,
+    PolarAreaComponent
   ],
   imports: [
     NgxSpinnerModule,
