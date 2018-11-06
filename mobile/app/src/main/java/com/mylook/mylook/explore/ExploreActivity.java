@@ -176,13 +176,17 @@ public class ExploreActivity extends AppCompatActivity {
                                 mMessage.setVisibility(View.VISIBLE);
                             }
                             else {
-                                createArticleList(task.getResult());
-                                mCardAdapter = new CardsExploreAdapter(getApplicationContext(), R.layout.article_card);
-                                mCardAdapter.addAll(mDiscoverableArticles);
-                                mCardStack.setAdapter(mCardAdapter);
-                                mProgressBar.setVisibility(View.GONE);
-                                mMessage.setVisibility(View.GONE);
-                                mCardStack.setVisibility(View.VISIBLE);
+                                if (createArticleList(task.getResult())) {
+                                    mCardAdapter = new CardsExploreAdapter(getApplicationContext(), R.layout.article_card);
+                                    mCardAdapter.addAll(mDiscoverableArticles);
+                                    mCardStack.setAdapter(mCardAdapter);
+                                    mProgressBar.setVisibility(View.GONE);
+                                    mMessage.setVisibility(View.GONE);
+                                    mCardStack.setVisibility(View.VISIBLE);
+                                } else {
+                                    mProgressBar.setVisibility(View.GONE);
+                                    mMessage.setVisibility(View.VISIBLE);
+                                }
                             }
                         } else {
                             mProgressBar.setVisibility(View.GONE);
@@ -193,7 +197,7 @@ public class ExploreActivity extends AppCompatActivity {
                 });
     }
 
-    private void createArticleList(QuerySnapshot result) {
+    private boolean createArticleList(QuerySnapshot result) {
         mDiscoverableArticles = new ArrayList<>();
         List<Article> promo1 = new ArrayList<>();
         List<Article> promo2 = new ArrayList<>();
@@ -222,9 +226,7 @@ public class ExploreActivity extends AppCompatActivity {
             }
         }
         if (totalArticles == 0) {
-            mProgressBar.setVisibility(View.GONE);
-            mMessage.setVisibility(View.VISIBLE);
-            return;
+            return false;
         }
         if (!promo3.isEmpty()) {
             Collections.shuffle(promo3);
@@ -290,6 +292,7 @@ public class ExploreActivity extends AppCompatActivity {
                 }
             }
         }
+        return true;
     }
 
     private boolean isNew(String id) {
