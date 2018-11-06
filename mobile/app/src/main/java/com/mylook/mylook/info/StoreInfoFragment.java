@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -97,6 +98,7 @@ public class StoreInfoFragment extends Fragment {
                             Log.d("Firestore task", "DocumentSnapshot written with ID: " + documentReference.getId());
                             documentId = documentReference.getId();
                             setupButtonSubscribe(true);
+                            displayMessage("Ahora estas suscripto a "+storeNameString);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -114,6 +116,7 @@ public class StoreInfoFragment extends Fragment {
                                 setupButtonSubscribe(false);
                                 documentId = "";
                                 Log.e("BUTTON",documentId);
+                                displayMessage("Ya no estás suscripto");
                             }
                             btnSubscribe.setEnabled(true);
                         }
@@ -126,7 +129,7 @@ public class StoreInfoFragment extends Fragment {
     private void setupButtonSubscribe(boolean subscribed) {
 
         if (subscribed) {
-            btnSubscribe.setText("Suscripto");
+            btnSubscribe.setText("Desuscribirse");
             btnSubscribe.setBackgroundColor(getResources().getColor(R.color.primary_dark));
             mSubscribed = true;
         } else {
@@ -163,5 +166,9 @@ public class StoreInfoFragment extends Fragment {
         txtDescription=rootView.findViewById(R.id.txtDescription);
         txtDescription.setMovementMethod(new ScrollingMovementMethod());
         btnMoreInfo=rootView.findViewById(R.id.btnMasInfo);
+    }
+
+    private void displayMessage(String message) {
+        Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 }

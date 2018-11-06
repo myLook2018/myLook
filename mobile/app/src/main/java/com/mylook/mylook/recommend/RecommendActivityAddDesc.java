@@ -110,7 +110,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         imgRecommend = (ImageView) findViewById(R.id.imgRecommend);
         txtDescription = (TextInputEditText) findViewById(R.id.txtDescription);
         editDate = (EditText) findViewById(R.id.editDate);
-        title = (EditText) findViewById(R.id.title);
+        title = (EditText) findViewById(R.id.txtTitle);
         fabMenu = (FloatingActionMenu) findViewById(R.id.fabMenu);
         fabPhoto = (FloatingActionButton) findViewById(R.id.photoFloating);
         fabGallery = (FloatingActionButton) findViewById(R.id.galleryFloating);

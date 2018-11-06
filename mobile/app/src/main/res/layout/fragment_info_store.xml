@@ -86,7 +86,7 @@
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_gravity="right"
-            android:layout_marginLeft="8dp"
+            android:layout_marginLeft="5dp"
             android:enabled="true"
             android:text="INFO"
             android:textSize="14sp" />
