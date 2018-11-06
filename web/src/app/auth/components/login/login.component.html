@@ -5,15 +5,9 @@
     </div>
   </mat-card-title>
   <mat-card-title>Iniciar sesión</mat-card-title>
-  <form>
-    <button mat-button [disabled]="isLoading" class="externalLogin" style="background-color: #3b5998;margin-bottom: 10px" (click)="tryFacebookLogin()">Acceder con Facebook</button>
-    <button mat-button [disabled]="isLoading"class="externalLogin" style="background-color: #d34836" (click)="tryGoogleLogin()">Acceder con Google</button>
-  </form>
-  <mat-divider id="divider"></mat-divider>
   <form [formGroup]="loginForm">
-    <mat-form-field class="inputForm">
-      <label>Email</label>
-      <input matInput class="form-control" formControlName="email">
+    <mat-form-field class="inputForm">      
+      <input matInput placeholder="Ingrese su email" class="form-control" formControlName="email">
       <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
         Por favor ingrese un Email valido
       </mat-error>
@@ -22,15 +16,14 @@
         <strong>Email</strong>
       </mat-error>
     </mat-form-field>
-    <mat-form-field class="inputForm">
-      <label>Contraseña</label>
-      <input matInput type="password" class="form-control" formControlName="password">
+    <mat-form-field class="inputForm">      
+      <input matInput placeholder="Contraseña" type="password" class="form-control" formControlName="password">
     </mat-form-field>
     <label class="error">{{errorMessage}}</label>
     <label class="success">{{successMessage}}</label>
   </form>
   <form>
-    <div> 
+    <div>
       <button mat-button [disabled]="isLoading" (click)="tryLogin()" class="acceptButton">Acceder</button>
     </div>
     <div style="display: grid;">
@@ -39,7 +32,14 @@
     </div>
     <span class="spacer"></span>
   </form>
+  <mat-divider id="divider"></mat-divider>
+  <form>
+    <button mat-button [disabled]="isLoading" class="externalLogin" style="background-color: #3b5998;margin-top: 15px; margin-bottom: 7px;"
+      (click)="tryFacebookLogin()">Acceder con Facebook</button>
+    <button mat-button [disabled]="isLoading" class="externalLogin" style="background-color: #d34836" (click)="tryGoogleLogin()">Acceder
+      con Google</button>
+  </form>
   <div class="proggressBar">
-    <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="deeppurple-amber" ></mat-progress-bar>
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>
   </div>
 </mat-card>

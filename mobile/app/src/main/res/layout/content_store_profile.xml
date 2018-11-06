@@ -4,7 +4,12 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-        <RelativeLayout
+    <android.support.v4.view.ViewPager
+        android:id="@+id/storeInfoViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="150dp" />
+
+    <!--<RelativeLayout
             android:id="@+id/profile_store_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -14,45 +19,33 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="horizontal"
+                android:padding="16dp">
 
-                <TextView
-                    android:id="@+id/profile_store_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Nombre de la Tienda"
-                    android:textColor="@color/black"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:paddingTop="16dp"
-                    android:layout_gravity="center"/>
+                <ImageView
+                    android:id="@+id/store_profile_photo"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_weight="1"
+                    android:scaleType="centerCrop" />
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:orientation="vertical">
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:layout_width="140dp"
-                            android:layout_height="140dp"
-                            android:scaleType="centerCrop"
-                            android:id="@+id/store_profile_photo"/>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/profile_store_name"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_weight="3"
-                        android:padding="5dp">
+                        android:layout_gravity="center"
+                        android:text="StoreName"
+                        android:textColor="@color/primary_dark"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
 
-                        <LinearLayout
+                    <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
@@ -103,25 +96,52 @@
                                 android:layout_gravity="center"
                                 android:id="@+id/store_schedule"/>
                         </LinearLayout>
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="SUSCRIBIRSE"
-                            android:id="@+id/btn_subscribe"
-                            android:enabled="false"/>
+
+                    <TextView
+                        android:id="@+id/txtDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="TextView" />
+
+                    <Button
+                        android:id="@+id/btn_subscribe"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:layout_weight="1"
+                        android:enabled="false"
+                        android:text="SUSCRIBIRSE"
+                        android:textSize="14sp" />
+
                 </LinearLayout>
             </LinearLayout>
 
-            </LinearLayout>
         </RelativeLayout>
+ -->
 
-        <RelativeLayout
+    <RelativeLayout
+        android:id="@+id/relLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/profile_store_layout"
+        android:layout_marginTop="150dp">
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabTextColor="@color/primary_dark" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/storeViewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/relLayout2"
-            android:layout_below="@id/profile_store_layout">
+            android:layout_marginTop="50dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <GridView
+        </android.support.v4.view.ViewPager>
+        <!--<GridView
                 android:id="@+id/profile_store_grid_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -131,6 +151,7 @@
                 android:stretchMode="columnWidth"
                 android:verticalSpacing="1dp"
                 android:paddingHorizontal="1dp"></GridView>
+                -->
 
-        </RelativeLayout>
+    </RelativeLayout>
 </RelativeLayout>

@@ -24,26 +24,16 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
     private List<Article> articleList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView nameStore, costArticle,stockArticle;
+        public TextView nameStore, txtTitle;
         public ImageView articleImage;
         public CardView articleCardView;
 
         public MyViewHolder(View view) {
             super(view);
-            articleCardView = (CardView) view.findViewById(R.id.article_card_view);
-            nameStore = (TextView) view.findViewById(R.id.store_name);
-            costArticle = (TextView) view.findViewById(R.id.cost_article);
-            stockArticle = (TextView) view.findViewById(R.id.stock_article);
-            articleImage = (ImageView) view.findViewById(R.id.article_image_feed);
-
-            /*articleCardView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent= new Intent(mContext, ArticleInfoActivity.class);;
-                    mContext.startActivity(intent);
-
-                }
-            });*/
+            articleCardView =  view.findViewById(R.id.article_card_view);
+            nameStore =  view.findViewById(R.id.store_name);
+            articleImage =  view.findViewById(R.id.article_image_feed);
+            txtTitle= view.findViewById(R.id.txtTitle);
         }
     }
 
@@ -56,7 +46,7 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.article_card_feed, parent, false);
+                .inflate(R.layout.article_card_home, parent, false);
 
         return new MyViewHolder(itemView);
     }
@@ -65,9 +55,7 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         final Article article = articleList.get(position);
         holder.nameStore.setText(article.getStoreName());
-        holder.costArticle.setText(new StringBuilder().append("$").append(article.getCost()).toString());
-        holder. stockArticle.setText(new StringBuilder().append("Stock: ").append(article.getInitial_stock()).toString());
-
+        holder.txtTitle.setText(article.getTitle());
         // loading article image using Glide library
         Glide.with(mContext).load(article.getPicture()).into(holder.articleImage);
 
@@ -76,19 +64,18 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
             public void onClick(View view) {
                 Intent intent= new Intent(mContext, ArticleInfoActivity.class);
                 Log.d("info del articulo", "onClick: paso por intent la data del articulo");
-               intent.putExtra("article", article);
-
-                /* intent.putExtra("Colores", article.getColors());
-                intent.putExtra("Costo", article.getCost());
-                intent.putExtra("Stock", article.getInitial_stock());
-                intent.putExtra("Material", article.getMaterial());
-                intent.putExtra("Talle", article.getSizes());
-                intent.putExtra("Tienda", article.getStoreName());
-                intent.putExtra("Foto", article.getPicture());
-                intent.putExtra("Title",article.getTitle());
-                //intent.putExtra("articleId",article.getArticleId());*/
+                intent.putExtra("article", article);
                 mContext.startActivity(intent);
 
+            }
+        });
+        holder.articleImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent= new Intent(mContext, ArticleInfoActivity.class);
+                Log.d("info del articulo", "onClick: paso por intent la data del articulo");
+                intent.putExtra("article", article);
+                mContext.startActivity(intent);
             }
         });
 

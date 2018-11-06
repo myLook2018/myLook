@@ -26,7 +26,6 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:text="TextView"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -70,8 +69,8 @@
 
             <ImageView
                 android:id="@+id/imageView7"
-                android:layout_width="40dp"
-                android:layout_height="match_parent"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:tint="@color/primary_light"
@@ -100,8 +99,8 @@
 
             <ImageView
                 android:id="@+id/imageView5"
-                android:layout_width="40dp"
-                android:layout_height="match_parent"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_weight="1"
                 android:tint="@color/primary_light"
                 app:srcCompat="@drawable/ic_favorite" />
@@ -129,8 +128,8 @@
 
             <ImageView
                 android:id="@+id/imageView10"
-                android:layout_width="40dp"
-                android:layout_height="match_parent"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_weight="1"
                 android:tint="@color/primary_light"
                 app:srcCompat="@drawable/ic_settings" />
@@ -157,8 +156,8 @@
 
             <ImageView
                 android:id="@+id/imageView8"
-                android:layout_width="40dp"
-                android:layout_height="match_parent"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_weight="1"
                 android:tint="@color/primary_light"
                 app:srcCompat="@drawable/ic_help" />
@@ -185,8 +184,8 @@
 
             <ImageView
                 android:id="@+id/imageView9"
-                android:layout_width="40dp"
-                android:layout_height="match_parent"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_weight="1"
                 android:tint="@android:color/holo_red_dark"
                 app:srcCompat="@drawable/ic_exit" />

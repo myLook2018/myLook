@@ -1,0 +1,15 @@
+<h1 mat-dialog-title style="text-align:center">Promociona tú prenda!</h1>
+<div class="mat-typography" mat-dialog-content style="display: inline; margin-left: auto; margin-right: auto; padding: 0">
+    <h3>{{data.title}}</h3>
+    <img style="margin-left:auto;margin-right:auto;margin-bottom:10px" height="250" width="250" src={{data.picture}}>
+    <mat-form-field style="width: 100%">
+        <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="picker" placeholder="Fecha finalización" [(ngModel)]="dueDate" >
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-raised-button [mat-dialog-close]="false" cdkFocusInitial (click)="onNoClick()">Cancelar</button>
+    <button mat-raised-button style="background-color: #9C27B0 ; color: #ffffff" [mat-dialog-close]="dueDate" cdkFocusInitial >Aceptar</button>
+</div>

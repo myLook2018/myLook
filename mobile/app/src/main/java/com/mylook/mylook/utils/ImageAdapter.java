@@ -25,7 +25,6 @@ public class ImageAdapter extends BaseAdapter {
 
     }
     public int getCount() {
-        Log.e("FAVORITES",String.valueOf(favorites.size()));
         return favorites.size();
     }
     public Object getItem(int position) {

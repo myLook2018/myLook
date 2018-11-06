@@ -7,9 +7,10 @@
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#757575</color>
     <color name="icons">#ffffff</color>
-    <color name="divider">#BDBDBD</color>
+    <color name="divider">#bdbdbd</color>
     <color name="link_blue">#0000EE</color>
     <color name="grey">#A0A0A0</color>
+    <color name="greyBackground">#eaeaea</color>
     <color name="white">#fff</color>
     <color name="purple">#9C27B0</color>
     <color name="black">#000</color>
@@ -17,7 +18,5 @@
     <color name="green">#007F17</color>
     <color name="red">#7F0000</color>
     <color name="article_title">#4c4c4c</color>
-    <color name="grey1">#424242</color>
-    <color name="grey2">#303030</color>
-
+    <color name="background_outfit">#b7efbdff</color>
 </resources>

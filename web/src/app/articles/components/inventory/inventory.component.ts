@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, OnDestroy} from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { Article } from '../../models/article';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ArticleDialogComponent } from '../dialogs/articleDialog';
@@ -12,8 +12,7 @@ import { UserService } from '../../../auth/services/user.service';
 import { StoreModel } from '../../../auth/models/store.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
-import { calcBindingFlags } from '@angular/core/src/view/util';
-
+import { PromoteDialogComponent } from '../dialogs/promoteDialog';
 
 @Component({
   selector: 'app-inventory',
@@ -26,7 +25,6 @@ export class InventoryComponent implements OnInit, OnDestroy {
   FirebaseUser = new StoreModel();
   userStore = new StoreModel();
   articles: Article[];
-  _subscription: Subscription;
   _subscription2: Subscription;
 
   constructor(
@@ -39,62 +37,86 @@ export class InventoryComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private location: Location,
     private spinner: NgxSpinnerService,
-    ) {
-      this.options = fb.group({
-        hideRequired: false,
-        floatLabel: 'never'
-      });
-      this.userStore.profilePh = '/assets/noProfilePic.png';
-    }
+  ) {
+    this.options = fb.group({
+      hideRequired: false,
+      floatLabel: 'never'
+    });
+    this.userStore.profilePh = '/assets/noProfilePic.png';
+  }
 
-    dataSource;
-    displayedColumns: string[] = [
-      'picture',
-      'title',
-      'cost',
-      'size',
-      'material',
-      'colors',
-      'initial_stock',
-      'tags',
-      'actions'
-    ];
+  dataSource;
+  displayedColumns: string[] = [
+    'picture',
+    'title',
+    'code',
+    'cost',
+    'size',
+    'material',
+    'colors',
+    'initial_stock',
+    'tags',
+    'actions'
+  ];
 
-    applyFilter(filterValue: string) {
-      this.dataSource.filter = filterValue.trim().toLowerCase();
-    }
+  applyFilter(filterValue: string) {
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
 
-    ngOnInit() {
-      this.spinner.show();
-      this.route.data.subscribe(routeData => {
-        const data = routeData['data'];
-            if (data) {
-              this.FirebaseUser = data;
-          }
-      });
-      this._subscription2 = this.userService.getUserInfo(this.FirebaseUser.firebaseUserId).subscribe(userA => {
-        this.userStore = userA[0];
-        if (this.userStore.profilePh === '') {this.userStore.profilePh = this.FirebaseUser.profilePh; }
-        this._subscription = this.articleService.getArticles(this.userStore.storeName).subscribe(articles => {
-          this.articles = articles;
-          this.dataSource = new MatTableDataSource(this.articles);
-          setTimeout(() => {
-            this.spinner.hide();
-          }, 2000);
-        }
-        );
+  ngOnInit() {
+    this.spinner.show();
+    this.route.data.subscribe(routeData => {
+      const data = routeData['data'];
+      if (data) {
+        this.FirebaseUser = data;
       }
-        );
+    });
+    this._subscription2 = this.userService.getUserInfo(this.FirebaseUser.firebaseUserId).subscribe(userA => {
+      this.userStore = userA[0];
+      if (this.userStore.profilePh === '') { this.userStore.profilePh = this.FirebaseUser.profilePh; }
+      /*this._subscription = this.articleService.getArticles(this.userStore.storeName).subscribe(articlesFirebase => {
+        this.articles = articlesFirebase;
+        this.dataSource = new MatTableDataSource(this.articles);
+        console.log(this.articles);*/
+      this.articleService.getArticlesCopado(this.userStore.storeName).then((articles) => {
+        this.dataSource = [];
+        console.log(articles);
+        this.articles = articles;
+        this.dataSource = new MatTableDataSource(this.articles);
+      }).then(() => {
+        setTimeout(() => {
+          this.spinner.hide();
+        }, 2000);
+      });
     }
+    );
+  }
 
   ngOnDestroy(): void {
     console.log('destruyendo subscripciones');
-    this._subscription.unsubscribe();
     this._subscription2.unsubscribe();
-    }
+  }
 
-deleteArticle(article) {
-      this.articleService.deleteArticle(article);
+  deleteArticle(article) {
+    this.articleService.deleteArticle(article);
+  }
+
+  openPromoteDialog(article): void {
+    const promoteRef = this.dialog.open(PromoteDialogComponent, {
+      width: '300px',
+      data: article
+    });
+    promoteRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+        console.log(result);
+        this.promoteArticle(result, article);
+      }
+    });
+  }
+
+  promoteArticle(date, article) {
+    console.log(date);
+    this.articleService.promoteArticle(date, article);
   }
 
   openConfirmationDialog(article): void {
@@ -112,27 +134,31 @@ deleteArticle(article) {
   openArticleDialog(article: Article): void {
     let dataToSend = {};
     if (article !== undefined) {
-        dataToSend = {
+      dataToSend = {
         storeName: this.userStore.storeName,
         title: article.title,
+        code: article.code,
         id: article.id,
         picture: article.picture,
         cost: article.cost,
-        size: article.size,
+        sizes: article.sizes,
         material: article.material,
         colors: article.colors,
         initial_stock: article.initial_stock,
         provider: article.provider,
-        tags: article.tags};
-        } else {
-        dataToSend = {
-          storeName: this.userStore.storeName,
-          tags: []
-         };
-        }
+        tags: article.tags
+      };
+    } else {
+      dataToSend = {
+        storeName: this.userStore.storeName,
+        tags: [],
+        sizes: [],
+        colors: []
+      };
+    }
 
     const dialogRef = this.dialog.open(ArticleDialogComponent, {
-     maxHeight: 'calc(95vh)',
+      maxHeight: 'calc(95vh)',
       data: dataToSend
     });
 
@@ -143,11 +169,10 @@ deleteArticle(article) {
   logout() {
     this.authService.doLogout().then(
       res => {
-        this.location.back();
+        this.router.navigate(['/login']);
       },
       error => {
         console.log('Logout error', error);
-        this.router.navigate(['/login']);
       }
     );
   }
@@ -159,5 +184,9 @@ deleteArticle(article) {
 
   goToRecomendations() {
     this.router.navigate([`/recomendations`]);
+  }
+
+  goToAnalytics() {
+    this.router.navigate([`/estadisticas`]);
   }
 }

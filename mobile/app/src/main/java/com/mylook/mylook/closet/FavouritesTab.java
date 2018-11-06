@@ -1,7 +1,6 @@
 package com.mylook.mylook.closet;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -29,7 +28,6 @@ import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Closet;
 import com.mylook.mylook.entities.Favorite;
 import com.mylook.mylook.info.ArticleInfoActivity;
-import com.mylook.mylook.utils.GridImageAdapter;
 
 import java.util.ArrayList;
 
@@ -46,7 +44,6 @@ public class FavouritesTab extends Fragment {
     public FavouritesTab() {
         // Required empty public constructor
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,7 +88,6 @@ public class FavouritesTab extends Fragment {
     }
 
     private void getCloset() {
-        Log.e("GET_CLOSET", "--");
         dB.collection("closets")
                 .whereEqualTo("userID", user.getUid())
                 .get()
@@ -102,7 +98,6 @@ public class FavouritesTab extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 closet = document.toObject(Closet.class);
                                 String id = document.getId();
-                                Log.e("FAVORITESIDDDDDDDDDDDD", id);
                                 dB.collection("closets").document(id).collection("favorites").get()
                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                             @Override
@@ -113,7 +108,6 @@ public class FavouritesTab extends Fragment {
                                                         Favorite fav = documentSnapshot.toObject(Favorite.class);
                                                         favorites.add(fav);
                                                         arrayList.add(fav.getDownloadUri());
-                                                        Log.e("FAVORITES", "---");
                                                     }
                                                     gridview.setAdapter(new com.mylook.mylook.utils.ImageAdapter(act, favorites));
                                                     return;
@@ -143,6 +137,16 @@ public class FavouritesTab extends Fragment {
         setGridview();
         super.onViewCreated(view, savedInstanceState);
     }
+
+
+    public ArrayList<Favorite> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(ArrayList<Favorite> favorites) {
+        this.favorites = favorites;
+    }
+
 
 
 }

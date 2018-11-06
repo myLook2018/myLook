@@ -260,9 +260,9 @@ public class ArticleInfoActivity extends AppCompatActivity {
 
     private void sendNewInteraction(){
         Interaction userInteraction = new Interaction();
-        userInteraction.setSavedToCloset(false);
+        userInteraction.setSavedToCloset(true);
         userInteraction.setLiked(false);
-        userInteraction.setClickOnArticle(true);
+        userInteraction.setClickOnArticle(false);
         userInteraction.setArticleId(this.articleId);
         userInteraction.setStoreName(this.article.getStoreName());
         userInteraction.setTags(tags);
