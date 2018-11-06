@@ -23,7 +23,6 @@
                 android:id="@+id/article_image_feed"
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
-                android:layout_margin="2dp"
                 android:clickable="true"
                 android:scaleType="fitXY" />
 

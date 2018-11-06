@@ -62,15 +62,8 @@ public class ArticleInfoActivity extends AppCompatActivity {
         expandableListView = findViewById(R.id.article_list_view_expandable);
         btnCloset=findViewById(R.id.btnCloset);
         articleImage=findViewById(R.id.article_image);
-
-        //retrieve data from intent
-        Intent intent = getIntent();
-        article= (Article) intent.getSerializableExtra("article");
-        Log.e("ROPERO", article.getArticleId());
-        articleId=article.getArticleId();
-        tags = intent.getStringArrayListExtra("tags");
+        getArticleFromIntent();
         downLoadUri=article.getPicture();
-
         Glide.with(mContext).load(downLoadUri).into(articleImage);
         //extensible list view
         prepareListData();
@@ -91,11 +84,20 @@ public class ArticleInfoActivity extends AppCompatActivity {
                 saveOnCloset();
             }
         });
+
+    }
+    private void getArticleFromIntent(){
+        //retrieve data from intent
+        Intent intent = getIntent();
+        article= (Article) intent.getSerializableExtra("article");
+        Log.e("ROPERO", article.getArticleId());
+        articleId=article.getArticleId();
+        tags = intent.getStringArrayListExtra("tags");
     }
 
     private void initExpandableListeners() {
         //esto hace que ande el collapsing
-        expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+      expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
                 setListViewHeight(parent, groupPosition);
@@ -175,7 +177,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
 
     private void setListViewHeight(ExpandableListView listView,
                                    int group) {
-        ExpandableListAdapter listAdapter = (ExpandableListAdapter) listView.getExpandableListAdapter();
+        ExpandableListAdapter listAdapter = listView.getExpandableListAdapter();
         int totalHeight = 0;
         int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(),
                 View.MeasureSpec.EXACTLY);
