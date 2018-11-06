@@ -10,7 +10,7 @@ import com.mylook.mylook.explore.ExploreActivity;
 import com.mylook.mylook.home.HomeActivity;
 import com.mylook.mylook.profile.ProfileActivity;
 import com.mylook.mylook.R;
-import com.mylook.mylook.recommend.RecommendActivity;
+import com.mylook.mylook.recommend.RecommendationsActivity;
 
 public class BottomNavigationViewHelper {
 
@@ -28,7 +28,7 @@ public class BottomNavigationViewHelper {
                         context.startActivity(intent2);
                         break;
                     case R.id.ic_recommend:
-                        Intent intent3 = new Intent(context, RecommendActivity.class);
+                        Intent intent3 = new Intent(context, RecommendationsActivity.class);
                         context.startActivity(intent3);
                         break;
                     case R.id.ic_profile:

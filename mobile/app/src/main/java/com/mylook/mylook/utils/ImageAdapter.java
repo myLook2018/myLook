@@ -1,61 +1,50 @@
-package com.mylook.myapp.Utils;
+package com.mylook.mylook.utils;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
-import com.mylook.myapp.R;
+import com.bumptech.glide.Glide;
+import com.mylook.mylook.entities.Favorite;
+
+import java.util.ArrayList;
+
 
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
 
-    public ImageAdapter(Context c) {
+    private ArrayList<Favorite> favorites;
+
+    public ImageAdapter(Context c,ArrayList favorites) {
         mContext = c;
-    }
+        this.favorites=favorites;
+        //getCloset();
 
+    }
     public int getCount() {
-        return mThumbIds.length;
+        return favorites.size();
     }
-
     public Object getItem(int position) {
-        return null;
+        return favorites.get(position).getArticleId();
     }
-
     public long getItemId(int position) {
         return 0;
     }
-
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView;
         if (convertView == null) {
+
             // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new ViewGroup.LayoutParams(85, 85));
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageView.setPadding(1, 1, 1, 1);
         } else {
             imageView = (ImageView) convertView;
         }
-
-        imageView.setImageResource(mThumbIds[position]);
+        Glide.with(mContext).asBitmap().load(favorites.get(position).getDownloadUri()).into(imageView);
         return imageView;
     }
-
-    // references to our images
-    private Integer[] mThumbIds = {
-            R.drawable.imagenbuzo, R.drawable.imagencamisa,
-            R.drawable.imagenremera, R.drawable.imagenzapatillasdepotivas,
-            R.drawable.imagenzapatoshombre, R.drawable.imagencampera,
-            /*R.drawable.sample_0, R.drawable.sample_1,
-            R.drawable.sample_2, R.drawable.sample_3,
-            R.drawable.sample_4, R.drawable.sample_5,
-            R.drawable.sample_6, R.drawable.sample_7,
-            R.drawable.sample_0, R.drawable.sample_1,
-            R.drawable.sample_2, R.drawable.sample_3,
-            R.drawable.sample_4, R.drawable.sample_5,
-            R.drawable.sample_6, R.drawable.sample_7*/
-    };
 }

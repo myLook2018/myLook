@@ -1,5 +1,54 @@
 <resources>
-    <string name="app_name">My Look</string>
+    <string name="app_name">myLook</string>
+    <string name="edit_message">Enter a message</string>
+    <string name="button_send">Send</string>
+    <string name="title_activity_login">Sign in</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="profileImage">Profile Image</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="title_activity_client">ClientActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_activity_store">StoreActivity</string>
+
+    <!-- Strings related to store -->
+    <string name="storeName">Store name</string>
+    <string name="userNameStore">User name</string>
+    <string name="storeDescription">Store description</string>
+    <string name="webSite">Web Site</string>
+    <string name="ubication">Ubication</string>
+    <string name="openHour">Open</string>
+    <string name="closeHour">Close</string>
+    <string name="privateInfo">Private information</string>
+    <string name="recommendation">Recomendaciones</string>
     <string name="edit_profile_fragment">Editar perfil</string>
     <string name="sign_out_fragment">Cerrar sesion</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="ImageTitle">ImageTitle</string>
+    <string name="image_description">Image description</string>
+    <string name="limit_date">Fecha Limite</string>
+
+
+    <!--Related to request Recommendations-->
+    <string name="share_req">Compartir</string>
+    <string name="delete_req">Eliminar</string>
+    <string name="close_req">Cerrar</string>
+    <string name="help">Ayuda</string>
+
+    <!--Related to Outfits-->
+    <string name="new_outfit">Nuevo Conjunto</string>
 </resources>
+

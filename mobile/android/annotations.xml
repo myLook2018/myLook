@@ -1,0 +1,6 @@
+<root>
+    <item name='android.Manifest.permission MEDIA_CONTENT_CONTROL'>
+        <annotation name='java.lang.Deprecated' />
+        <annotation name='android.support.annotation.Nullable' />
+    </item>
+</root>
