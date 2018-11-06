@@ -17,5 +17,7 @@
     <color name="green">#007F17</color>
     <color name="red">#7F0000</color>
     <color name="article_title">#4c4c4c</color>
+    <color name="grey1">#424242</color>
+    <color name="grey2">#303030</color>
 
 </resources>

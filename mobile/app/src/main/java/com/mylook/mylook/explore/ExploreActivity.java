@@ -2,7 +2,6 @@ package com.mylook.mylook.explore;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -11,6 +10,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -23,31 +25,42 @@ import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Interaction;
 import com.mylook.mylook.info.ArticleInfoActivity;
+import com.mylook.mylook.room.AppDatabase;
+import com.mylook.mylook.room.LocalInteraction;
+import com.mylook.mylook.room.LocalInteractionDAO;
 import com.mylook.mylook.utils.BottomNavigationViewHelper;
-import com.mylook.mylook.utils.CardsDataAdapter;
+import com.mylook.mylook.utils.CardsExploreAdapter;
 import com.yuyakaido.android.cardstackview.CardStackView;
 import com.yuyakaido.android.cardstackview.SwipeDirection;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
-public class ExploreActivity extends AppCompatActivity implements ExploreStartFragment.OnFragmentInteractionListener, ExploreSearchFragment.OnFragmentInteractionListener {
+public class ExploreActivity extends AppCompatActivity {
 
     private static final int ACTIVITY_NUM = 1;
 
     private Context mContext = ExploreActivity.this;
     private List<Article> mDiscoverableArticles;
-    //private CardStack mCardStack;
     private CardStackView mCardStack;
-    private CardsDataAdapter mCardAdapter;
+    private CardsExploreAdapter mCardAdapter;
     private ArrayList<Interaction> interactions;
+    private List<LocalInteraction> mLocalInteractions;
+    private ProgressBar mProgressBar;
+    private TextView mMessage;
+
+    private AppDatabase dbSQL;
+    private LocalInteractionDAO localDAO;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     private int currentIndex = 0;
-
+    private int totalArticles = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +68,15 @@ public class ExploreActivity extends AppCompatActivity implements ExploreStartFr
         setContentView(R.layout.activity_explore);
 
         mCardStack = findViewById(R.id.container);
-        //mCardStack.setContentResource(R.layout.article_card);
+        mCardStack.setVisibility(View.GONE);
+        mProgressBar = findViewById(R.id.explore_progress_bar);
+        mProgressBar.setVisibility(View.VISIBLE);
+        mMessage = findViewById(R.id.explore_message);
+        mMessage.setVisibility(View.GONE);
+
+        dbSQL = AppDatabase.getDatabase(mContext);
+        localDAO = dbSQL.getLocalInteractionDAO();
+        mLocalInteractions = localDAO.getAllByUser(user.getUid());
 
         setupBottomNavigationView();
         getDiscoverableArticles();
@@ -81,7 +102,20 @@ public class ExploreActivity extends AppCompatActivity implements ExploreStartFr
                 userInteraction.setTags(mDiscoverableArticles.get(currentIndex).getTags());
                 userInteraction.setUserId(user.getUid());
                 interactions.add(userInteraction);
+
+                LocalInteraction local = new LocalInteraction();
+                local.setUid(mDiscoverableArticles.get(currentIndex).getArticleId());
+                local.setUserId(user.getUid());
+                local.setDate(Calendar.getInstance().getTime());
+                localDAO.insert(local);
+
                 currentIndex++;
+                totalArticles--;
+                if (totalArticles == 0) {
+                    mCardStack.setVisibility(View.GONE);
+                    mMessage.setText("No quedan artículos para explorar.\n Intentá más tarde.");
+                    mMessage.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
@@ -129,32 +163,147 @@ public class ExploreActivity extends AppCompatActivity implements ExploreStartFr
     }
 
     private void getDiscoverableArticles() {
-        db.collection("articles").get()
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -14);
+        Date dateBefore2Weeks = cal.getTime();
+
+        db.collection("articles").whereGreaterThan("creationDate", dateBefore2Weeks).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            mDiscoverableArticles = new ArrayList<>();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Article art = document.toObject(Article.class);
-                                art.setArticleId(document.getId());
-                                mDiscoverableArticles.add(art);
+                            if (task.getResult().isEmpty()) {
+                                mProgressBar.setVisibility(View.GONE);
+                                mMessage.setVisibility(View.VISIBLE);
                             }
-                            if (!mDiscoverableArticles.isEmpty())
-                                Collections.shuffle(mDiscoverableArticles);
-                            mCardAdapter = new CardsDataAdapter(getApplicationContext(), R.layout.article_card);
-                            mCardAdapter.addAll(mDiscoverableArticles);
-                            mCardStack.setAdapter(mCardAdapter);
+                            else {
+                                createArticleList(task.getResult());
+                                mCardAdapter = new CardsExploreAdapter(getApplicationContext(), R.layout.article_card);
+                                mCardAdapter.addAll(mDiscoverableArticles);
+                                mCardStack.setAdapter(mCardAdapter);
+                                mProgressBar.setVisibility(View.GONE);
+                                mMessage.setVisibility(View.GONE);
+                                mCardStack.setVisibility(View.VISIBLE);
+                            }
                         } else {
+                            mProgressBar.setVisibility(View.GONE);
+                            mMessage.setVisibility(View.VISIBLE);
                             Log.w("", task.getException());
                         }
                     }
                 });
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
+    private void createArticleList(QuerySnapshot result) {
+        mDiscoverableArticles = new ArrayList<>();
+        List<Article> promo1 = new ArrayList<>();
+        List<Article> promo2 = new ArrayList<>();
+        List<Article> promo3 = new ArrayList<>();
 
+        for (QueryDocumentSnapshot document : result) {
+            if (isNew(document.getId())) {
+                Article art = document.toObject(Article.class);
+                art.setArticleId(document.getId());
+                int pl = art.getPromotionLevel();
+                switch (pl) {
+                    case 1:
+                        Log.d("ADDING", "PROMO1");
+                        promo1.add(art);
+                        break;
+                    case 2:
+                        Log.d("ADDING", "PROMO2");
+                        promo2.add(art);
+                        break;
+                    case 3:
+                        Log.d("ADDING", "PROMO3");
+                        promo3.add(art);
+                        break;
+                }
+                totalArticles++;
+            }
+        }
+        if (totalArticles == 0) {
+            mProgressBar.setVisibility(View.GONE);
+            mMessage.setVisibility(View.VISIBLE);
+            return;
+        }
+        if (!promo3.isEmpty()) {
+            Collections.shuffle(promo3);
+        }
+        if (!promo2.isEmpty()) {
+            Collections.shuffle(promo2);
+        }
+        if (!promo1.isEmpty()) {
+            Collections.shuffle(promo1);
+        }
+        Random r = new Random();
+        int v;
+        while (true) {
+            if (!promo3.isEmpty()) {
+                if (!promo2.isEmpty()) {
+                    if (!promo1.isEmpty()) {
+                        v = r.nextInt(100);
+                        if (v > 54) {
+                            mDiscoverableArticles.add(promo3.remove(0));
+                        } else if (v > 21) {
+                            mDiscoverableArticles.add(promo2.remove(0));
+                        } else {
+                            mDiscoverableArticles.add(promo1.remove(0));
+                        }
+                    } else {
+                        v = r.nextInt(100);
+                        if (v > 35) {
+                            mDiscoverableArticles.add(promo3.remove(0));
+                        } else {
+                            mDiscoverableArticles.add(promo2.remove(0));
+                        }
+                    }
+                } else {
+                    if (!promo1.isEmpty()) {
+                        v = r.nextInt(100);
+                        if (v > 32) {
+                            mDiscoverableArticles.add(promo3.remove(0));
+                        } else {
+                            mDiscoverableArticles.add(promo1.remove(0));
+                        }
+                    } else {
+                        mDiscoverableArticles.add(promo3.remove(0));
+                    }
+                }
+            } else {
+                if (!promo2.isEmpty()) {
+                    if (!promo1.isEmpty()) {
+                        v = r.nextInt(100);
+                        if (v > 39) {
+                            mDiscoverableArticles.add(promo2.remove(0));
+                        } else {
+                            mDiscoverableArticles.add(promo1.remove(0));
+                        }
+                    } else {
+                        mDiscoverableArticles.add(promo2.remove(0));
+                    }
+                } else {
+                    if (!promo1.isEmpty()) {
+                        mDiscoverableArticles.add(promo1.remove(0));
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean isNew(String id) {
+        Log.d("isNew", "starting " + id);
+        for (LocalInteraction li : mLocalInteractions) {
+            Log.d("isNew", li.getUid());
+            if (li.getUid().equals(id)) {
+                Log.d("isNew", "false");
+                return false;
+            }
+        }
+        Log.d("isNew", "true");
+        return true;
     }
 
     @Override

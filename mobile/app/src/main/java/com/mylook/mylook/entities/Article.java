@@ -2,6 +2,7 @@ package com.mylook.mylook.entities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Article implements Serializable{
 
@@ -17,6 +18,8 @@ public class Article implements Serializable{
     private ArrayList<String> colors;
     private ArrayList<String> sizes;
     private ArrayList<String> tags;
+    private Date creationDate;
+    private int promotionLevel;
 
     public Article() {
     }
@@ -43,6 +46,7 @@ public class Article implements Serializable{
     public void setArticleId(String articleId) {
         this.articleId = articleId;
     }
+
     public String getPicture() {
         return picture;
     }
@@ -99,6 +103,7 @@ public class Article implements Serializable{
     public void setInitial_stock(int initial_stock) {
         this.initial_stock=initial_stock;
     }
+
     public String getMaterial() {
         return material;
     }
@@ -129,5 +134,21 @@ public class Article implements Serializable{
 
     public void setTags(ArrayList<String> tags) {
         this.tags = tags;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public int getPromotionLevel() {
+        return promotionLevel;
+    }
+
+    public void setPromotionLevel(int promotionLevel) {
+        this.promotionLevel = promotionLevel;
     }
 }
