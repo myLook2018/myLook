@@ -1,6 +1,6 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { Article } from '../../models/article';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ArticleDialogComponent } from '../dialogs/articleDialog';
 import { MatDialog, MatTableDataSource, MatSort } from '@angular/material';
 import { AuthService } from '../../../auth/services/auth.service';
@@ -22,13 +22,17 @@ import { PromoteDialogComponent } from '../dialogs/promoteDialog';
 export class InventoryComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   options: FormGroup;
+  storeFront: FormGroup;
+  articlesToGenerateFront: Article[] = [];
   FirebaseUser = new StoreModel();
   userStore = new StoreModel();
   articles: Article[];
   _subscription2: Subscription;
+  selectionMode = false;
+  selectedIndexes = [];
 
   constructor(
-    fb: FormBuilder,
+    public fb: FormBuilder,
     public articleService: ArticleService,
     public dialog: MatDialog,
     public userService: UserService,
@@ -38,6 +42,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     private location: Location,
     private spinner: NgxSpinnerService,
   ) {
+    this.createForm();
     this.options = fb.group({
       hideRequired: false,
       floatLabel: 'never'
@@ -97,6 +102,16 @@ export class InventoryComponent implements OnInit, OnDestroy {
     this._subscription2.unsubscribe();
   }
 
+  createForm() {
+    this.storeFront = this.fb.group({
+      // completar los datos de la prenda
+    });
+  }
+
+  deleteForm() {
+    this.storeFront = undefined;
+  }
+
   deleteArticle(article) {
     this.articleService.deleteArticle(article);
   }
@@ -142,7 +157,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
         storeName: this.userStore.storeName,
         title: article.title,
         code: article.code,
-        id: article.id,
+        id: article.articleId,
         picture: article.picture,
         cost: article.cost,
         sizes: article.sizes,
@@ -181,6 +196,30 @@ export class InventoryComponent implements OnInit, OnDestroy {
     );
   }
 
+  createSubCollection() {
+    for (let i = 0; i < this.selectedIndexes.length ; i++ ) {
+      const index = this.selectedIndexes[i];
+      this.articlesToGenerateFront.push(this.articles[index]);
+    }
+    this.articleService.addStoreFront(this.userStore.storeName, this.articlesToGenerateFront, 1);
+    this.articlesToGenerateFront = [];
+  }
+
+  addIdToSelecteds(row, event) {
+    const index = this.selectedIndexes.indexOf(row, 0);
+    if (index > -1) {
+       this.selectedIndexes.splice(index, 1);
+    } else {
+      this.selectedIndexes.push(row);
+    }
+    console.log(`estado actual ` + this.selectedIndexes);
+  }
+
+  changeMode() {
+    this.selectionMode = !this.selectionMode;
+    this.selectedIndexes = [];
+  }
+
   goToProfile() {
     console.log(`/store/${this.userStore.storeName}`);
     this.router.navigate([`/store/${this.userStore.storeName}`]);
@@ -193,4 +232,5 @@ export class InventoryComponent implements OnInit, OnDestroy {
   goToAnalytics() {
     this.router.navigate([`/estadisticas`]);
   }
+
 }

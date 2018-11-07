@@ -183,7 +183,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
   }
 
   sendAnswer() {
-    this.requestAnswerForm.get('articleUID').setValue(this.selectedArticle.id);
+    this.requestAnswerForm.get('articleUID').setValue(this.selectedArticle.articleId);
     if (this.requestAnswerForm.get('articleUID').value === undefined) {
       this.error = 'Se requiere que selecione una prenda de su catalogo para recomendar';
       console.log(this.error);

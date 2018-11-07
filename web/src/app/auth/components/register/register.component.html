@@ -40,7 +40,8 @@
                         </object>
                       -->
                         <div>
-                          <img *ngFor="let url of urlsProfile" [src]="url" class="rounded mb-3" height="200px" width="200px" style="display: block;">
+                          <img *ngFor="let url of urlsProfile" [src]="url" class="rounded mb-3" height="200px" width="200px"
+                            style="display: block;">
                         </div>
                       </div>
                       <div>
@@ -111,6 +112,11 @@
                 <input matInput placeholder="Ciudad" formControlName="storeCity">
               </mat-form-field>
             </div>
+            <!-- this creates a google map on the page with the given lat/lng from -->
+            <!-- the component as the initial center of the map: -->
+            <agm-map [latitude]="lat" [longitude]="lng" style="height: 300px;">
+              <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
+            </agm-map>
 
             <div style="display: flex">
               <mat-form-field id="storeAddress" style="width: 45%">
@@ -153,29 +159,30 @@
 
 
         <mat-step [stepControl]="step3">
-          
-            <ng-template matStepLabel>Confirmar Datos</ng-template>
 
-            <mat-form-field class="full-length">
-              <input matInput [disabled]="isRegistering" placeholder="Contraseña" [(ngModel)]='password' type="password">
-            </mat-form-field>
+          <ng-template matStepLabel>Confirmar Datos</ng-template>
 
-            <mat-form-field class="full-length">
-              <input matInput [disabled]="isRegistering" placeholder="Confirmar contraseña" [(ngModel)]='confirmPassword' type="password">
-            </mat-form-field>
+          <mat-form-field class="full-length">
+            <input matInput [disabled]="isRegistering" placeholder="Contraseña" [(ngModel)]='password' type="password">
+          </mat-form-field>
 
-            <mat-toolbar>
-              <mat-toolbar-row style="background-color: white">
-                <button mat-mini-fab [disabled]="isRegistering" matStepperPrevious class="nextButton orangeButton">
-                  <mat-icon>navigate_before</mat-icon>
-                </button>
-                <span class="fill-space"></span>
-                <button mat-mini-fab matStepperNext [disabled]="isRegistering" class="nextButton orangeButton" (click)="tryRegister()">
-                  <mat-icon class="material-icons">done</mat-icon>
-                </button>
-              </mat-toolbar-row>
-            </mat-toolbar>
-         
+          <mat-form-field class="full-length">
+            <input matInput [disabled]="isRegistering" placeholder="Confirmar contraseña" [(ngModel)]='confirmPassword'
+              type="password">
+          </mat-form-field>
+
+          <mat-toolbar>
+            <mat-toolbar-row style="background-color: white">
+              <button mat-mini-fab [disabled]="isRegistering" matStepperPrevious class="nextButton orangeButton">
+                <mat-icon>navigate_before</mat-icon>
+              </button>
+              <span class="fill-space"></span>
+              <button mat-mini-fab matStepperNext [disabled]="isRegistering" class="nextButton orangeButton" (click)="tryRegister()">
+                <mat-icon class="material-icons">done</mat-icon>
+              </button>
+            </mat-toolbar-row>
+          </mat-toolbar>
+
         </mat-step>
       </mat-horizontal-stepper>
     </div>

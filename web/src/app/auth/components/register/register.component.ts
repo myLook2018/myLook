@@ -7,13 +7,17 @@ import { MatHorizontalStepper } from '@angular/material/stepper';
 import { UserService } from '../../services/user.service';
 import { AngularFireUploadTask, AngularFireStorage, AngularFireStorageReference } from 'angularfire2/storage';
 import { DataService } from '../../../service/dataService';
+import { ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
+  title = 'My first AGM project';
+  lat = 51.678418;
+  lng = 7.809007;
   isRegistering = false;
   errorMessage = '';
   registerStoreFormGroup: FormGroup;
@@ -50,7 +54,8 @@ export class RegisterComponent {
     this.urlsPortada = [];
     this.urlsPortada.push('/assets/noPhoto.png');
   }
-
+  ngOnInit(): void {
+  }
   createForm() {
     console.log(`emailToRegistre: ${this.email}`);
     this.registerStoreFormGroup = this.fb.group({

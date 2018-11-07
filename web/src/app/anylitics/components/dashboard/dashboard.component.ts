@@ -8,6 +8,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
 import { AnyliticService } from '../services/anylitics.service';
 import { Interaction } from '../../model/interaction';
+import { min } from 'moment';
 
 @Component({
   selector: 'app-dashboard',
@@ -140,7 +141,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.popularityOfTags = [];
     let index;
     this.interactions.forEach((interaction) => {
-      if (interaction.liked === true || interaction.savedToCloset === true || interaction.clickOnArticle === true) {
+      if ((interaction.liked === true || interaction.savedToCloset === true || interaction.clickOnArticle === true)
+       && interaction.tags !== null) {
         interaction.tags.map((tag) => {
           if (!this.popularTags.includes(tag)) {
             this.popularTags.push(tag);
