@@ -161,7 +161,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   // actualiza la descripcion de una prenda
   refreshArticle(event) {
     const articleUpdated: Article = {
-      id: this.articleData.id,
+      articleId: this.articleData.articleId,
       title: this.articleData.title,
       cost: this.articleForm.controls['cost'].value,
       sizes: this.articleData.sizes.map(x => x),

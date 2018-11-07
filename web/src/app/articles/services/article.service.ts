@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 import { Article } from '../models/article';
 import { map, filter } from 'rxjs/operators';
 import * as firebase from 'firebase';
+import { StoreFront } from '../models/storeFront';
 
 @Injectable()
 export class ArticleService {
@@ -16,6 +17,7 @@ export class ArticleService {
   articlesCopado: Article[] = [];
   // tslint:disable-next-line:no-inferrable-types
   collectionPath: string = 'articles';
+  storeFrontPath = 'storeFronts';
   promotePath = 'promotions';
   db: any;
   require: any;
@@ -28,17 +30,17 @@ export class ArticleService {
     this.db = firebase.firestore();
   }
 
-  getArticles(storeName) {
+  /*getArticles(storeName) {
     console.log(`en el get`);
     return this.articles = this.articleCollection.snapshotChanges().pipe(map(changes => {
       return changes.map(a => {
         const data = a.payload.doc.data();
-        data.id = a.payload.doc.id;
+        data.articleId = a.payload.doc.id;
         console.log(data);
         return data;
       });
     }));
-  }
+  }*/
 
   getArticlesCopado(storeName) {
     this.articlesCopado = [];
@@ -48,7 +50,7 @@ export class ArticleService {
         .get().then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
             const data = doc.data();
-            data.id = doc.id;
+            data.articleId = doc.id;
             this.articlesCopado.push(data);
           });
         }).then(() => {
@@ -67,11 +69,11 @@ export class ArticleService {
   }
 
   deleteArticle(article: Article) {
-    return this.fst.collection(this.collectionPath).doc(`${article.id}`).delete();
+    return this.fst.collection(this.collectionPath).doc(`${article.articleId}`).delete();
   }
 
   refreshArticle(article: Article) {
-    return this.fst.collection(this.collectionPath).doc(`${article.id}`).update({
+    return this.fst.collection(this.collectionPath).doc(`${article.articleId}`).update({
       cost: article.cost,
       size: article.sizes,
       material: article.material,
@@ -109,5 +111,58 @@ export class ArticleService {
     console.log(promotion);
     this.addPromotionToArticle(promotion);
     return this.promoteCollection.add(promotion);
+  }
+
+  addStoreFront(storeName, articles, storeFrontNumber) {
+    const sf = this.getStoreFront(storeName).then(res => {
+      if (res !== undefined) {
+        console.log(`en el if`);
+        this.addSubCollection( res, articles, storeFrontNumber);
+      } else {
+        console.log(`en el else`);
+        this.createStoreFront(storeName).then(() => {
+        // this.addStoreFront(storeFirebaseUID, article, storeFrontNumber);
+        });
+      }
+    });
+  }
+
+  addSubCollection( doc, articles, frontNumber) {
+    this.fst.collection(this.storeFrontPath).doc(`${doc.id}`).collection(`storeFronts`).add({
+      storeFrontNumber: frontNumber,
+      articles: articles.map(x => x)
+    });
+  }
+
+  getStoreFront(storeName) {
+    let lala;
+    return new Promise<StoreFront>((resolve, reject) => {
+      this.db.collection(this.storeFrontPath).where('storeName', '==', storeName)
+        .get().then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const data: StoreFront = doc.data();
+            data.id = doc.id;
+            console.log(`encontre algo`);
+            lala = data;
+          });
+        }).then(() => {
+          return resolve(lala);
+        })
+        .catch(function (error) {
+          console.log('Error getting storeFront: ', error);
+          reject(error);
+        });
+        console.log(`lala` + lala);
+      });
+  }
+
+  createStoreFront(storeName) {
+    console.log(`creando`);
+    return new Promise<any>((resolve, reject) => {
+      const res = this.fst.collection(this.storeFrontPath).add({
+        storeName: storeName,
+      });
+      res.then(ref => console.log(ref.id));
+    });
   }
 }
