@@ -7,6 +7,20 @@
         </i></button>
       <img id="logo" src="/assets/brandNoBackground.png" />
       <span class="spacer"></span>
+      <mat-form-field floatLabel="never" style="font-size: 15px">
+        <mat-select [(value)]="selectedCatego" placeholder="Categoria">
+          <mat-option >Ninguna</mat-option>
+          <mat-option *ngFor="let cat of categories" [value]="cat">{{cat}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field floatLabel="never" style="font-size: 15px" >
+        <mat-select [(value)]="selectedSex" placeholder="Sexo">
+          <mat-option>Indistinto</mat-option>
+          <mat-option *ngFor="let sex of sexes" [value]="sex">{{sex}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-button (click)="filterRecos()" >Filtrar Recomendaciones</button>
+      <span class="spacer"></span>
       <button mat-icon-button [matMenuTriggerFor]="menu">
         <mat-icon>more_vert</mat-icon>
       </button>
