@@ -17,8 +17,13 @@ export class RecomendationService {
   recomendations: Observable<RecomendationRequest[]>;
   requestCollectionPath = 'requestRecommendations';
   answerCollectionPath = 'answeredRecommendations';
+  categories: any[];
+  db: firebase.firestore.Firestore;
+  categoriesPath = 'categories';
+  sexes: any[];
 
   constructor(public fst: AngularFirestore, private storage: AngularFireStorage) {
+    this.db = firebase.firestore();
     this.recomendationAnswerCollection = this.fst.collection(this.answerCollectionPath);
     this.recomendationRequestCollection = this.fst.collection(this.requestCollectionPath);
     this.recomendations = this.recomendationRequestCollection.snapshotChanges().pipe(map(changes => {
@@ -40,6 +45,48 @@ export class RecomendationService {
   getRecomendations() { // aca va el filtro
     console.log('ya estoy pidiendo cosas para recomendar');
     return this.recomendations; // devolvemos todo
+  }
+
+  getCategories() {
+    this.categories = [];
+    return new Promise<any>((resolve, reject) => {
+      console.log(`estamos trayendo categorias`);
+      const res = this.db.collection(this.categoriesPath).where('name', '==', 'recommendation')
+        .get().then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            data.id = doc.id;
+            resolve(data.categories);
+            console.log(data.categories);
+          });
+        }).then(() => {
+          resolve(this.categories);
+        })
+        .catch(function (error) {
+          console.log('Error getting documents: ', error);
+          reject(error);
+        });
+    });
+  }
+
+  getSexes() {
+    this.sexes = [];
+    return new Promise<any>((resolve, reject) => {
+      console.log(`estamos trayendo sexes`);
+      const res = this.db.collection(this.categoriesPath).where('name', '==', 'sexo')
+        .get().then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            resolve(data.categories);
+          });
+        }).then(() => {
+          resolve(this.sexes);
+        })
+        .catch(function (error) {
+          console.log('Error getting documents: ', error);
+          reject(error);
+        });
+    });
   }
 
   updateRequest(rRequest: RecomendationRequest, recomendationAnswer: RecomendationAnswer) {
