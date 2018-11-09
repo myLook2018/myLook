@@ -1,4 +1,4 @@
-package com.mylook.mylook.info;
+package com.mylook.mylook.storeProfile;
 
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;

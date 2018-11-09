@@ -1,4 +1,4 @@
-package com.mylook.mylook.info;
+package com.mylook.mylook.storeProfile;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,9 +17,9 @@ public class StoreTabAdapter extends FragmentPagerAdapter {
         this.mNumOfTabs = NumOfTabs;
     }
 
-    public void addFragment(Fragment fragment, String title) {
-        mFragmentList.add(fragment);
-        mFragmentTitleList.add(title);
+    public void addFragment(int index, Fragment fragment, String title) {
+        mFragmentList.add(index,fragment);
+        mFragmentTitleList.add(index,title);
     }
 
     @Override

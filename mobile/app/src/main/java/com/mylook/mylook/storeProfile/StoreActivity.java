@@ -1,4 +1,4 @@
-package com.mylook.mylook.info;
+package com.mylook.mylook.storeProfile;
 
 import android.content.Context;
 import android.content.Intent;
@@ -46,7 +46,7 @@ public class StoreActivity extends AppCompatActivity {
     private StoreInfoFragment infoStoreFragment;
     private StoreContactFragment contactStoreFragment;
     private String coverPh;
-    private StoreReputation reputationFragment;
+    private ReputationFragment reputationFragment;
 
 
     @Override
@@ -65,7 +65,7 @@ public class StoreActivity extends AppCompatActivity {
         nombreTiendaPerfil = intentStore.getStringExtra("Tienda");
         contactStoreFragment = new StoreContactFragment(StoreActivity.this, nombreTiendaPerfil);
         infoStoreFragment = new StoreInfoFragment(StoreActivity.this, nombreTiendaPerfil);
-        reputationFragment=new StoreReputation(nombreTiendaPerfil);
+        reputationFragment=new ReputationFragment(nombreTiendaPerfil);
 
         setupViewPagerInfo(viewPagerStoreInfo);
 
@@ -89,7 +89,6 @@ public class StoreActivity extends AppCompatActivity {
                     coverPh=storeAux.getCoverPh();
                     reputationFragment.setRegisterDate(storeAux.getRegisterDate());
                     setupViewPager(viewPagerStoreArticles);
-
                     tab.setupWithViewPager(viewPagerStoreArticles);
                 } else {
                     Log.d("Firestore task", "onComplete: " + task.getException());
@@ -189,12 +188,16 @@ public class StoreActivity extends AppCompatActivity {
      * @param viewPager Nueva instancia
      */
     private void setupViewPager(ViewPager viewPager) {
-        StoreTabAdapter adapter = new StoreTabAdapter(getSupportFragmentManager(),2);
-        Log.e("COVERRRRRRRRRRRRRRRR",coverPh);
-        adapter.addFragment(StoreFragment.newInstance(1,nombreTiendaPerfil,coverPh),"Vidriera");
-        adapter.addFragment(StoreFragment.newInstance(2,nombreTiendaPerfil,coverPh),"Catalogo");
-        adapter.addFragment(reputationFragment,"Reputación");
+        StoreTabAdapter adapter = new StoreTabAdapter(getSupportFragmentManager(),3);
+        Log.e("VIEW PAGER","CARGAAAAAAAAAA");
+        adapter.addFragment(0,new ShopwindowFragment(nombreTiendaPerfil,coverPh),"Vidriera");
+        adapter.addFragment(1,new CatalogFragment(nombreTiendaPerfil,coverPh),"Catalogo");
+
+
+        adapter.addFragment(2,reputationFragment,"Reputación");
         viewPager.setAdapter(adapter);
+        viewPager.setCurrentItem(1);
+        viewPager.setCurrentItem(0);
     }
     private void setupViewPagerInfo(ViewPager viewPager){
         SectionsPagerAdapter adapter=new SectionsPagerAdapter(getSupportFragmentManager());

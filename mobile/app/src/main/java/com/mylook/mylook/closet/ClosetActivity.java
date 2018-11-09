@@ -3,6 +3,7 @@ package com.mylook.mylook.closet;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import android.widget.EditText;
 import com.mylook.mylook.R;
 
 import com.mylook.mylook.entities.Favorite;
+import com.mylook.mylook.utils.BottomNavigationViewHelper;
 
 
 import java.util.ArrayList;
@@ -23,6 +25,8 @@ import java.util.ArrayList;
 public class ClosetActivity extends AppCompatActivity {
 
 
+
+    private static final int ACTIVITY_NUM = 3;
     private Toolbar tb;
     private MenuItem filterMenuItem;
     private TabLayout tabLayout;
@@ -48,7 +52,7 @@ public class ClosetActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         ClosetTabAdapter adapter = new ClosetTabAdapter(getSupportFragmentManager(), 2);
         newFabTab = new FavouritesTab();
-        adapter.addFragment(newFabTab, "Favoritos");
+        adapter.addFragment(newFabTab, "Tus prendas");
         adapter.addFragment(new CategoryTab(), "Conjuntos");
         viewPager.setAdapter(adapter);
     }
@@ -58,6 +62,7 @@ public class ClosetActivity extends AppCompatActivity {
         tb.setTitle("Mi Ropero");
         setSupportActionBar(tb);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setupBottomNavigationView();
     }
 
     @Override
@@ -116,6 +121,16 @@ public class ClosetActivity extends AppCompatActivity {
         });
 
         alert.show();
+    }
+    /**
+     * BottomNavigationView setup
+     */
+    private void setupBottomNavigationView() {
+        BottomNavigationView bottomNavigationView =  findViewById(R.id.bottomNavViewBar);
+        BottomNavigationViewHelper.enableNavigation(getApplicationContext(), bottomNavigationView);
+        Menu menu = bottomNavigationView.getMenu();
+        MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
+        menuItem.setChecked(true);
     }
 }
 

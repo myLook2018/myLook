@@ -2,7 +2,6 @@
 
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/profile_store_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -78,8 +77,7 @@
             android:layout_height="40dp"
             android:layout_gravity="right"
             android:enabled="true"
-            android:text="SUSCRIBIRSE"
-            android:textSize="14sp" />
+            android:textSize="12dp" />
 
         <Button
             android:id="@+id/btnMasInfo"
@@ -89,7 +87,7 @@
             android:layout_marginLeft="5dp"
             android:enabled="true"
             android:text="INFO"
-            android:textSize="14sp" />
+            android:textSize="12dp" />
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

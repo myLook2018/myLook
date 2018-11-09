@@ -38,7 +38,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".info.ArticleInfoActivity"></activity>
-        <activity android:name=".info.StoreActivity"></activity>
+        <activity android:name=".storeProfile.StoreActivity"></activity>
         <activity android:name=".explore.ExploreActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".profile.ProfileActivity" />

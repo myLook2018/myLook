@@ -3,6 +3,7 @@ package com.mylook.mylook.entities;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 public class Article implements Serializable{
 
@@ -150,5 +151,21 @@ public class Article implements Serializable{
 
     public void setPromotionLevel(int promotionLevel) {
         this.promotionLevel = promotionLevel;
+    }
+
+    public Article toObject(HashMap<String,Object> map){
+        this.articleId = (String) map.get("articleId");
+        this.title = (String) map.get("title");
+        this.code = (String) map.get("code");
+        this.provider = (String) map.get("provider");
+        this.cost = Float.parseFloat(String.valueOf(map.get("cost")));
+        this.initial_stock =  Integer.parseInt(String.valueOf(map.get("initial_stock")));
+        this.material = (String) map.get("material");
+        this.picture = (String) map.get("picture");
+        this.storeName = (String) map.get("storeName");
+        this.colors = (ArrayList<String>) map.get("colors");
+        this.sizes = (ArrayList<String>) map.get("sizes");
+        this.tags = (ArrayList<String>) map.get("tags");
+        return this;
     }
 }

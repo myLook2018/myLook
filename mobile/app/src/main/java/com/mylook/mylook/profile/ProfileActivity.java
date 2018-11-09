@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -28,7 +27,7 @@ import com.mylook.mylook.utils.BottomNavigationViewHelper;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private static final int ACTIVITY_NUM = 3;
+    private static final int ACTIVITY_NUM = 4;
     private LinearLayout layoutAccount;
     private LinearLayout layoutCloset;
     private LinearLayout layoutSettings;
