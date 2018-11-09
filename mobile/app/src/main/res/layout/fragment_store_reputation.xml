@@ -125,9 +125,11 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_weight="2"
+                        android:hapticFeedbackEnabled="false"
                         android:maxHeight="24dp"
                         android:minHeight="24dp"
-                        android:padding="8dp" />
+                        android:padding="8dp"
+                        android:soundEffectsEnabled="false" />
 
                     <TextView
                         android:id="@+id/lblRecomendationsDescr"

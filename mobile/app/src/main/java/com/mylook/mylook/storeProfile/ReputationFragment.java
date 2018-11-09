@@ -1,4 +1,4 @@
-package com.mylook.mylook.info;
+package com.mylook.mylook.storeProfile;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -22,7 +22,7 @@ import java.util.Date;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 @SuppressLint("ValidFragment")
-public class StoreReputation extends Fragment {
+public class ReputationFragment extends Fragment {
 
     private TextView lblActiveStore;
     private TextView lblDate;
@@ -36,11 +36,11 @@ public class StoreReputation extends Fragment {
     private int recommendCount=0;
     private String registerDate;
 
-    public StoreReputation() {
+    public ReputationFragment() {
     }
 
     @SuppressLint("ValidFragment")
-    public StoreReputation(String name) {
+    public ReputationFragment(String name) {
 
         dB=FirebaseFirestore.getInstance();
         this.storeName=name;
@@ -91,6 +91,8 @@ public class StoreReputation extends Fragment {
                     else
                         lblCantRecommendations.setText(String.format("Recomendó %d veces", recommendCount));
                     lblRecommendationsDescr.setText(typeRecommendation(prom));
+                    recommendCount=0;
+                    ratingSum=0;
                 }else{
                     ratingBar.setVisibility(View.INVISIBLE);
                     lblCantRecommendations.setVisibility(View.INVISIBLE);

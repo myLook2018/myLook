@@ -26,6 +26,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Interaction;
+import com.mylook.mylook.storeProfile.StoreActivity;
 import com.mylook.mylook.utils.ExpandableListViewAdapter;
 
 import java.util.ArrayList;

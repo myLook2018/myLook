@@ -21,6 +21,12 @@
         android:title="">
 
     </item>
+    <item
+        android:id="@+id/ic_closet"
+        android:icon="@drawable/ic_closet"
+        android:title="">
+
+    </item>
 
     <item
         android:id="@+id/ic_profile"

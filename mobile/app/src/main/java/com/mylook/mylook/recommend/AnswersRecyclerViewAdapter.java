@@ -23,7 +23,7 @@ import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Store;
 import com.mylook.mylook.info.ArticleInfoActivity;
-import com.mylook.mylook.info.StoreActivity;
+import com.mylook.mylook.storeProfile.StoreActivity;
 
 import java.util.HashMap;
 import java.util.List;

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,8 +62,7 @@ public class GridImageAdapter extends ArrayAdapter<Article>{
         String imgUrls = getItem(position).getPicture();
 
         //aca iria el Glide
-        Log.e("CONTEXT2",mContext.toString());
-        Log.e("HOLDER", holder.image.toString());
+
         Glide.with(mContext).load(imgUrls).into(holder.image);
         holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
