@@ -6,20 +6,23 @@
           menu
         </i></button>
       <img id="logo" src="/assets/brandNoBackground.png" />
-      <span class="spacer"></span>
-      <mat-form-field floatLabel="never" style="font-size: 15px">
-        <mat-select [(value)]="selectedCatego" placeholder="Categoria">
-          <mat-option >Ninguna</mat-option>
-          <mat-option *ngFor="let cat of categories" [value]="cat">{{cat}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field floatLabel="never" style="font-size: 15px" >
-        <mat-select [(value)]="selectedSex" placeholder="Sexo">
-          <mat-option>Indistinto</mat-option>
-          <mat-option *ngFor="let sex of sexes" [value]="sex">{{sex}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <button mat-button (click)="filterRecos()" >Filtrar Recomendaciones</button>
+      <!--
+
+        <span class="spacer"></span>
+        <mat-form-field floatLabel="never" style="font-size: 15px">
+          <mat-select [(value)]="selectedCatego" placeholder="Categoria">
+            <mat-option>Ninguna</mat-option>
+            <mat-option *ngFor="let cat of categories" [value]="cat">{{cat}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field floatLabel="never" style="font-size: 15px">
+          <mat-select [(value)]="selectedSex" placeholder="Sexo">
+            <mat-option>Indistinto</mat-option>
+            <mat-option *ngFor="let sex of sexes" [value]="sex">{{sex}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button mat-button (click)="filterRecos()">Filtrar Recomendaciones</button>
+      -->
       <span class="spacer"></span>
       <button mat-icon-button [matMenuTriggerFor]="menu">
         <mat-icon>more_vert</mat-icon>
@@ -45,7 +48,31 @@
 
       <!-- Recomendations -->
       <div class="requestList">
+
+        <button (click)="$event.stopPropagation()" class="requestList" mat-raised-button [matMenuTriggerFor]="filters">Filtrar
+          Recomendaciones</button>
+        <mat-menu class="my-full-width-menu" (click)="$event.stopPropagation()" #filters="matMenu" xPosition="after">
+          <div style="display:grid">
+
+            <mat-form-field (click)="$event.stopPropagation()" floatLabel="never" style="font-size: 15px; margin-right: auto; margin-left: auto">
+              <mat-select (click)="$event.stopPropagation()" [(value)]="selectedCatego" placeholder="Categoria">
+                <mat-option (click)="$event.stopPropagation()">Ninguna</mat-option>
+                <mat-option (click)="$event.stopPropagation()" *ngFor="let cat of categories" [value]="cat">{{cat}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field (click)="$event.stopPropagation()" floatLabel="never" style="font-size: 15px; margin-right: auto; margin-left: auto">
+              <mat-select (click)="$event.stopPropagation()" [(value)]="selectedSex" placeholder="Sexo">
+                <mat-option (click)="$event.stopPropagation()">Indistinto</mat-option>
+                <mat-option (click)="$event.stopPropagation()" *ngFor="let sex of sexes" [value]="sex">{{sex}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <button mat-raised-button (click)="filterRecos()" style=" margin-right: auto; margin-left: auto">Filtrar Recomendaciones</button>
+          </div>
+        </mat-menu>
+
+
         <mat-table class="requestTable mat-elevation-z2" [dataSource]="dataSourceRequests" matSort>
+
           <ng-container matColumnDef="ListaPeticiones">
             <mat-header-cell *matHeaderCellDef> Solicitudes que puede responder </mat-header-cell>
             <mat-cell *matCellDef="let element" style="height: 60px">{{element.title}}</mat-cell>
@@ -110,7 +137,8 @@
               </mat-form-field>
             </mat-card-content>
             <mat-card-actions align="end">
-              <button class="sendRecoButton" *ngIf="isRequestSelected" mat-raised-button (click)="sendAnswer()">Enviar Recomendación!</button>
+              <button class="sendRecoButton" *ngIf="isRequestSelected" mat-raised-button (click)="sendAnswer()">Enviar
+                Recomendación!</button>
             </mat-card-actions>
           </mat-card>
         </form>

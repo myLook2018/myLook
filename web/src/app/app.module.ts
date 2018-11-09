@@ -75,8 +75,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
   declarations: [
     AppComponent,
     LoginComponent,
-    UserComponent,
     RegisterComponent,
+    UserComponent,
     InventoryComponent,
     SignupComponent,
     DialogAlertComponent,
