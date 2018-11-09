@@ -111,3 +111,8 @@
 .mat-option{
   font-size: 15px;
 }
+
+::ng-deep .mat-menu-panel.my-full-width-menu {
+  width: calc(12vw);
+  min-width: 200px;
+}
