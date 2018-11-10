@@ -114,7 +114,7 @@ public class OutfitActivity extends AppCompatActivity {
                     Glide.with(getApplicationContext()).asBitmap().load(uri).into((ImageView) v);
                     nuevaPrenda.setZ(5);
                     v.setTag(String.valueOf(position));
-                    outfitItems.put(String.valueOf(v.getId()), articleId);
+                    outfitItems.put(String.valueOf(getResources().getResourceName(v.getId())), articleId);
                     if (!isFromOutfit) {
                         favoritosModificados.remove(position);
                         loadRecycleViewer();

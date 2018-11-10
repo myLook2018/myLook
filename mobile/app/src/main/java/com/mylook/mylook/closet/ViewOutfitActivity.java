@@ -57,23 +57,34 @@ public class ViewOutfitActivity extends AppCompatActivity {
     }
 
     private void loadOutfit() {
+        final HashMap<String,String> pictures = new HashMap<>();
         for (final String item : outfitItems.keySet()) {
             String articleId = outfitItems.get(item);
-            dB.collection("articles").document(articleId).get()
-                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        Article art = task.getResult().toObject(Article.class);
-                        if(art!=null)
-                        Glide.with(ViewOutfitActivity.this).asBitmap().load(art.getPicture())
-                                .into((ImageView) findViewById(Integer.parseInt(item)));
-                    }
-                }
-            });
+            loadImage(item, outfitItems.get(item), articleId);
 
-            ;
         }
+
+    }
+
+    private void loadImage(final String item,final String picture, String articleId){
+        dB.collection("articles").document(articleId).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            View v = null;
+                            if(item.getClass().equals( Integer.class))
+                                v = findViewById(Integer.parseInt(item));
+                            if(v == null) {
+                                v = findViewById(getResources().getIdentifier(item, "id", getApplicationContext().getPackageName()));
+                            }
+                            String art = (String)task.getResult().get("picture");
+                            Glide.with(ViewOutfitActivity.this).asBitmap().load(art)
+                                    .into((ImageView) v);
+
+                        }
+                    }
+                });
     }
 
     private void hideCreationItems() {
