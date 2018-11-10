@@ -4,11 +4,9 @@ package com.mylook.mylook.recommend;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,17 +15,16 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.RequestRecommendation;
 
@@ -109,7 +106,21 @@ public class RequestRecommendActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
                 dB.collection("requestRecommendations").document(requestId).update("answers",answers);
+                dB.collection("answeredRecommendations").whereEqualTo("requestUID", requestId).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        for (HashMap<String,String> answer: answers ){
+                            for (DocumentSnapshot doc:task.getResult().getDocuments()){
+                                if(doc.get("storeName").equals(answer.get("storeName")))
+                                {
+                                    dB.collection("answeredRecommendations").document(doc.getId()).update("feedBack", answer.get("feedBack"));
+                                }
 
+                            }
+                        }
+                    }
+                });
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

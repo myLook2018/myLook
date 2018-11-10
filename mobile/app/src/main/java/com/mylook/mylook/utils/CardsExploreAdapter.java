@@ -14,9 +14,9 @@ import com.bumptech.glide.Glide;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 
-public class CardsDataAdapter extends ArrayAdapter<Article> {
+public class CardsExploreAdapter extends ArrayAdapter<Article> {
 
-    public CardsDataAdapter(@NonNull Context context, int resource) {
+    public CardsExploreAdapter(@NonNull Context context, int resource) {
         super(context, resource);
     }
 
@@ -43,6 +43,12 @@ public class CardsDataAdapter extends ArrayAdapter<Article> {
         Article a = getItem(position);
         holder.name.setText(a.getStoreName());
         Glide.with(getContext()).load(a.getPicture()).into(holder.image);
+
+        if (a.getPromotionLevel() > 1) {
+            contentView.findViewById(R.id.ad_layout).setVisibility(View.VISIBLE);
+        } else {
+            contentView.findViewById(R.id.ad_layout).setVisibility(View.INVISIBLE);
+        }
 
         return contentView;
     }

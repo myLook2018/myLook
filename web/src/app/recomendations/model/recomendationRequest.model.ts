@@ -2,6 +2,8 @@ import { RecomendationAnswer } from './recomendationAnswer.model';
 
 export class RecomendationRequest {
     FirebaseUID?: string;
+    category?: string;
+    sex?: string;
     title?: string;
     userName?: string;
     state?: boolean;

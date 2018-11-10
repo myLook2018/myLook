@@ -11,20 +11,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="2"
+        android:background="@color/greyBackground"
         android:textColor="@color/primary_text"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        />
+        android:textColorLink="@color/primary_dark"
+        android:textSize="17dp" />
 
     <ExpandableListView
+        android:id="@+id/article_list_view_expandable"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:nestedScrollingEnabled="true"
-        android:id="@+id/article_list_view_expandable">
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:nestedScrollingEnabled="false"
+       >
+
     </ExpandableListView>
 
 </LinearLayout>

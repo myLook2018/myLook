@@ -23,7 +23,7 @@ import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Store;
 import com.mylook.mylook.info.ArticleInfoActivity;
-import com.mylook.mylook.info.StoreActivity;
+import com.mylook.mylook.storeProfile.StoreActivity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -62,8 +62,10 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
         Glide.with(mContext).asBitmap().load(answer.get("articlePhoto")).into(holder.imgArticle);
         holder.txtStore.setText(answer.get("storeName"));
         holder.txtDescription.setText(answer.get("description"));
-        if(!answer.get("feedBack").equals(""))
+        if(!answer.get("feedBack").equals("")) {
             holder.ratingBar.setRating(Float.parseFloat(answer.get("feedBack")));
+            holder.ratingBar.setEnabled(false);
+        }
         else
             holder.ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                 @Override

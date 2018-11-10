@@ -23,7 +23,7 @@ import { RegisterComponent } from './auth/components/register/register.component
 import { InventoryComponent } from './articles/components/inventory/inventory.component';
 import { TagsService } from './articles/services/tags.service';
 import { NgxSpinnerModule } from 'ngx-spinner';
-import { MatSidenavModule} from '@angular/material/sidenav';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
@@ -35,7 +35,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatDividerModule } from '@angular/material/divider';
-import {MatProgressBarModule} from '@angular/material/progress-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { SignupComponent } from './auth/components/signup/signup.component';
@@ -56,15 +56,21 @@ import { AgmCoreModule } from '@agm/core';
 import { MapsComponent } from './maps/maps.component';
 import { MapsDialogComponent } from './dialog/maps-dialog/maps-dialog.component';
 import { ErrorComponent } from './error/error.component';
-import {MatListModule} from '@angular/material/list';
+import { MatListModule } from '@angular/material/list';
 import { RecomendationsComponent } from './recomendations/components/recomendations.component';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { ImageCropperComponent, CropperSettings } from 'ngx-img-cropper';
-import {ChartModule} from 'primeng/chart';
+import { ChartModule } from 'primeng/chart';
 import { DonutchartComponent } from './anylitics/components/donutchart/donutchart.component';
 import { DashboardComponent } from './anylitics/components/dashboard/dashboard.component';
-import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { AnyliticService } from './anylitics/components/services/anylitics.service';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSliderModule } from '@angular/material/slider';
+import { MomentModule } from 'ngx-moment';
+import { PolarAreaComponent } from './anylitics/components/polar-area/polar-area.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -86,7 +92,8 @@ import { AnyliticService } from './anylitics/components/services/anylitics.servi
     ImageCropperComponent,
     DonutchartComponent,
     DashboardComponent,
-    PromoteDialogComponent
+    PromoteDialogComponent,
+    PolarAreaComponent
   ],
   imports: [
     NgxSpinnerModule,
@@ -121,11 +128,18 @@ import { AnyliticService } from './anylitics/components/services/anylitics.servi
     ImageCropperModule,
     ChartModule,
     MatDatepickerModule,
-    MatNativeDateModule
- ],
+    MatNativeDateModule,
+    MatSelectModule,
+    MatSliderModule,
+    MomentModule,
+    MatCheckboxModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyC7gRAUi_0C-w5gqsWIVp0IKyEZT-3UiUA'
+    })
+  ],
   exports: [RouterModule],
-  providers: [ MatDatepickerModule, RecomendationService, DataService, AuthService, UserService, UserResolver, AuthGuard, StoreService,
-     ArticleService, TagsService,AnyliticService, ArticleResolver, StoreResolver],
+  providers: [MatDatepickerModule, RecomendationService, DataService, AuthService, UserService, UserResolver, AuthGuard, StoreService,
+    ArticleService, TagsService, AnyliticService, ArticleResolver, StoreResolver],
   entryComponents: [PromoteDialogComponent, DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent,
     DeleteConfirmationDialogComponent, MapsDialogComponent, EditStoreComponent],
   bootstrap: [AppComponent]

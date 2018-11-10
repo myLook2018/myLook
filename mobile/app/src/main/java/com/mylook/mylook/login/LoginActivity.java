@@ -83,8 +83,13 @@ public class LoginActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
 
                             } else {
-                                Toast.makeText(mContext, "Algo salio mal",
+                                if(task.getException().getMessage().equals("A network error (such as timeout, interrupted connection or unreachable host) has occurred."))
+                                    Toast.makeText(mContext, "Revisa tu conexión a internet",
                                         Toast.LENGTH_SHORT).show();
+                                else
+                                    Toast.makeText(mContext, "Algo salió mal :(",
+                                            Toast.LENGTH_SHORT).show();
+                                Log.e("NO LOGUEA",task.getException().getMessage());
                                 Intent intent = new Intent(mContext, LoginActivity.class);
                                 startActivity(intent);
                                 finish();

@@ -1,7 +1,6 @@
 package com.mylook.mylook.utils;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,9 +89,7 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
 
         TextView textViewGroup = convertView
                 .findViewById(R.id.textViewGroup);
-        textViewGroup.setTypeface(null, Typeface.BOLD);
         textViewGroup.setText(headerTitle);
-
         return convertView;
     }
 

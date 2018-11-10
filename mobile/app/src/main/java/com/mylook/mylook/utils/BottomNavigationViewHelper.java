@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.view.MenuItem;
 
+import com.mylook.mylook.closet.ClosetActivity;
 import com.mylook.mylook.explore.ExploreActivity;
 import com.mylook.mylook.home.HomeActivity;
 import com.mylook.mylook.profile.ProfileActivity;
@@ -31,9 +32,13 @@ public class BottomNavigationViewHelper {
                         Intent intent3 = new Intent(context, RecommendationsActivity.class);
                         context.startActivity(intent3);
                         break;
-                    case R.id.ic_profile:
-                        Intent intent4 = new Intent(context, ProfileActivity.class);
+                    case R.id.ic_closet:
+                        Intent intent4 = new Intent(context, ClosetActivity.class);
                         context.startActivity(intent4);
+                        break;
+                    case R.id.ic_profile:
+                        Intent intent5 = new Intent(context, ProfileActivity.class);
+                        context.startActivity(intent5);
                         break;
                 }
 

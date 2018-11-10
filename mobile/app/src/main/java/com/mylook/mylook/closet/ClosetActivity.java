@@ -3,46 +3,30 @@ package com.mylook.mylook.closet;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TabLayout;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.InputType;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
+import android.text.InputType;
 import android.widget.EditText;
-import android.widget.GridView;
-import android.support.v7.widget.Toolbar;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
-import com.mylook.mylook.entities.Article;
-import com.mylook.mylook.entities.Closet;
+
 import com.mylook.mylook.entities.Favorite;
-import com.mylook.mylook.entities.Outfit;
-import com.mylook.mylook.info.ArticleInfoActivity;
-import com.mylook.mylook.login.LoginActivity;
-import com.mylook.mylook.utils.GridImageAdapter;
+import com.mylook.mylook.utils.BottomNavigationViewHelper;
+
 
 import java.util.ArrayList;
+
 
 public class ClosetActivity extends AppCompatActivity {
 
 
+
+    private static final int ACTIVITY_NUM = 3;
     private Toolbar tb;
     private MenuItem filterMenuItem;
     private TabLayout tabLayout;
@@ -68,7 +52,7 @@ public class ClosetActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         ClosetTabAdapter adapter = new ClosetTabAdapter(getSupportFragmentManager(), 2);
         newFabTab = new FavouritesTab();
-        adapter.addFragment(newFabTab, "Favoritos");
+        adapter.addFragment(newFabTab, "Tus prendas");
         adapter.addFragment(new CategoryTab(), "Conjuntos");
         viewPager.setAdapter(adapter);
     }
@@ -78,6 +62,7 @@ public class ClosetActivity extends AppCompatActivity {
         tb.setTitle("Mi Ropero");
         setSupportActionBar(tb);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setupBottomNavigationView();
     }
 
     @Override
@@ -136,6 +121,16 @@ public class ClosetActivity extends AppCompatActivity {
         });
 
         alert.show();
+    }
+    /**
+     * BottomNavigationView setup
+     */
+    private void setupBottomNavigationView() {
+        BottomNavigationView bottomNavigationView =  findViewById(R.id.bottomNavViewBar);
+        BottomNavigationViewHelper.enableNavigation(getApplicationContext(), bottomNavigationView);
+        Menu menu = bottomNavigationView.getMenu();
+        MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
+        menuItem.setChecked(true);
     }
 }
 
