@@ -57,7 +57,6 @@ public class ViewOutfitActivity extends AppCompatActivity {
     }
 
     private void loadOutfit() {
-
         for (final String item : outfitItems.keySet()) {
             String articleId = outfitItems.get(item);
             dB.collection("articles").document(articleId).get()
