@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -49,6 +50,7 @@ public class OutfitActivity extends AppCompatActivity {
     private String collectionName, category;
     private ImageButton btnSend;
     private ProgressBar mProgressBar;
+    private String outfitId;
 
 
     @Override
@@ -75,6 +77,9 @@ public class OutfitActivity extends AppCompatActivity {
         initElements();
         getCloset();
         setupDragListener();
+        if(!outfitId.isEmpty()){
+            loadOutfit();
+        }
 
     }
 
@@ -163,6 +168,7 @@ public class OutfitActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         collectionName = getIntent().getExtras().get("name").toString();
         category = getIntent().getExtras().get("category").toString();
+        outfitId = getIntent().getExtras().get("id").toString();
     }
 
     private void getCloset() {
@@ -238,5 +244,34 @@ public class OutfitActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp(){
         finish();
         return true;
+    }
+
+    private void loadOutfit() {
+        for (final String item : outfitItems.keySet()) {
+            String articleId = outfitItems.get(item);
+            loadImage(item, outfitItems.get(item), articleId);
+        }
+
+    }
+
+    private void loadImage(final String item,final String picture, String articleId){
+        dB.collection("articles").document(articleId).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            View v = null;
+                            if(item.getClass().equals( Integer.class))
+                                v = findViewById(Integer.parseInt(item));
+                            if(v == null) {
+                                v = findViewById(getResources().getIdentifier(item, "id", getApplicationContext().getPackageName()));
+                            }
+                            String art = (String)task.getResult().get("picture");
+                            Glide.with(OutfitActivity.this).asBitmap().load(art)
+                                    .into((ImageView) v);
+
+                        }
+                    }
+                });
     }
 }

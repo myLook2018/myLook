@@ -58,7 +58,6 @@ public class CategoryTab extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         outfits = new ArrayList<>();
-
         super.onCreate(savedInstanceState);
     }
 
@@ -108,7 +107,7 @@ public class CategoryTab extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if(task.isSuccessful()){
-                            String id = task.getResult().getDocuments().get(0).getId();
+                            final String id = task.getResult().getDocuments().get(0).getId();
                             dB.collection("closets").document(id).collection("outfits")
                                     .document(outfitId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
@@ -118,6 +117,7 @@ public class CategoryTab extends Fragment {
                                     intent.putExtra("items",outfit.getItems());
                                     intent.putExtra("name", outfit.getName());
                                     intent.putExtra("category", outfit.getCategory());
+                                    intent.putExtra("id", task.getResult().getId());
                                     startActivity(intent);
 
                                 }

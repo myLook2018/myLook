@@ -50,5 +50,7 @@
 
     <!--Related to Outfits-->
     <string name="new_outfit">Nuevo Conjunto</string>
+    <string name="edit_outfit">Editar</string>
+    <string name="delete_outfit">Eliminar</string>
 </resources>
 
