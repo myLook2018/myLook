@@ -217,26 +217,48 @@ public class OutfitActivity extends AppCompatActivity {
 
     private void sendOutfit() {
         final Outfit nuevo = createOutfit();
-        dB.collection("closets")
-                .whereEqualTo("userID", user.getUid())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            closet = task.getResult().getDocuments().get(0).toObject(Closet.class);
-                            String id = task.getResult().getDocuments().get(0).getId();
-                            dB.collection("closets").document(id).collection("outfits").add(nuevo).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentReference> task) {
-                                    Toast.makeText(OutfitActivity.this, "Se ha creado tu conjunto", Toast.LENGTH_SHORT).show();
-                                    finish();
-                                }
-                            });
+        if(outfitId != null) {
+            dB.collection("closets")
+                    .whereEqualTo("userID", user.getUid())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                closet = task.getResult().getDocuments().get(0).toObject(Closet.class);
+                                String id = task.getResult().getDocuments().get(0).getId();
+                                dB.collection("closets").document(id).collection("outfits").add(nuevo).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                                        Toast.makeText(OutfitActivity.this, "Se ha creado tu conjunto", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    }
+                                });
 
+                            }
                         }
-                    }
-                });
+                    });
+        } else {
+            mProgressBar.setVisibility(View.VISIBLE);
+            dB.collection("closets").whereEqualTo("userID", user.getUid()).get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if(task.isSuccessful()){
+                                String id = task.getResult().getDocuments().get(0).getId();
+                                dB.collection("closets").document(id).collection("outfits").document(outfitId)
+                                        .update("items", outfitItems ).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        mProgressBar.setVisibility(View.INVISIBLE);
+                                        Toast.makeText(getApplicationContext(), "Cambiaste tu conjunto", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    }
+                                });
+                            }
+                        }
+                    });
+        }
     }
 
     private Outfit createOutfit() {
