@@ -1,6 +1,7 @@
 package com.mylook.mylook.recommend;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -26,6 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
+import com.mylook.mylook.closet.ClosetActivity;
 import com.mylook.mylook.entities.RequestRecommendation;
 import com.mylook.mylook.utils.BottomNavigationViewHelper;
 
@@ -113,6 +115,42 @@ public class RecommendationsActivity extends AppCompatActivity implements Recomm
                         //progressBar.setVisibility(View.GONE);
                     }
                 });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.closet_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.help_menu) {
+            createHelpDialog();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void createHelpDialog(){
+        final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(RecommendationsActivity.this, R.style.AlertDialogTheme);
+        final android.app.AlertDialog alert = dialog.setTitle("Ayuda")
+                .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                }).setMessage("Cuando no sepas que ponerte pedile a las tiendas que te ayuden a encontrar algo que te guste, apretá en" +
+                        " el botón + para empezar")
+                .create();
+        alert.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                alert.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.purple));
+            }
+        });
+
+        alert.show();
     }
 
 
