@@ -1,5 +1,6 @@
 package com.mylook.mylook.closet;
 
+import android.app.MediaRouteButton;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -35,6 +37,7 @@ public class ViewOutfitActivity extends AppCompatActivity {
     private ConstraintLayout container;
     private Toolbar tb;
     private String collectionName, category, outfitId;
+    private ProgressBar mProgressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,8 @@ public class ViewOutfitActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view_outfit);
         container = findViewById(R.id.outfitLayout);
         user = FirebaseAuth.getInstance().getCurrentUser();
+        mProgressBar = findViewById(R.id.mProgressBar);
+        mProgressBar.setVisibility(View.VISIBLE);
         initElements();
         loadOutfit();
     }
@@ -51,6 +56,7 @@ public class ViewOutfitActivity extends AppCompatActivity {
             String articleId = outfitItems.get(item);
             loadImage(item, outfitItems.get(item), articleId);
         }
+        mProgressBar.setVisibility(View.INVISIBLE);
 
     }
 
@@ -80,6 +86,7 @@ public class ViewOutfitActivity extends AppCompatActivity {
         category = getIntent().getExtras().get("category").toString();
         outfitItems = (HashMap<String, String>) getIntent().getExtras().get("items");
         outfitId = getIntent().getExtras().get("id").toString();
+
         tb = findViewById(R.id.toolbar);
         tb.setTitle(collectionName);
         setSupportActionBar(tb);
@@ -99,7 +106,12 @@ public class ViewOutfitActivity extends AppCompatActivity {
         if (id == R.id.delete_outfit) {
             deleteAlert();
         } else if(id == R.id.edit_outfit){
-
+            Intent intent = new Intent(getApplicationContext(), OutfitActivity.class);
+            intent.putExtra("name",collectionName);
+            intent.putExtra("category",category);
+            intent.putExtra("id",outfitId);
+            startActivity(intent);
+            finish();
         }
 
         return super.onOptionsItemSelected(item);

@@ -75,11 +75,15 @@ public class OutfitActivity extends AppCompatActivity {
         mProgressBar = findViewById(R.id.mProgressBar);
         mProgressBar.setVisibility(View.VISIBLE);
         initElements();
-        getCloset();
-        setupDragListener();
-        if(!outfitId.isEmpty()){
-            loadOutfit();
+
+        if(outfitId !=  null){
+            getOutfit();
+
+        } else {
+            getCloset();
+
         }
+        setupDragListener();
 
     }
 
@@ -168,7 +172,11 @@ public class OutfitActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         collectionName = getIntent().getExtras().get("name").toString();
         category = getIntent().getExtras().get("category").toString();
-        outfitId = getIntent().getExtras().get("id").toString();
+        try {
+            outfitId = getIntent().getExtras().get("id").toString();
+        } catch (Exception e){
+            Log.e("Outfit", "Its a new outfit");
+        }
     }
 
     private void getCloset() {
@@ -239,6 +247,34 @@ public class OutfitActivity extends AppCompatActivity {
         nuevo.setItems(outfitItems);
 
         return nuevo;
+    }
+
+    private void getOutfit(){
+        dB.collection("closets")
+                .whereEqualTo("userID", user.getUid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                closet = document.toObject(Closet.class);
+                                String id = document.getId();
+                                dB.collection("closets").document(id).collection("outfits").document(outfitId).get()
+                                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                Outfit old = task.getResult().toObject(Outfit.class);
+                                                outfitItems = old.getItems();
+                                                loadOutfit();
+                                            }
+                                        });
+                            }
+                        } else {
+                            Log.e("FAVORITES", "NOOOOOOOOOOOOO");
+                        }
+                    }
+                });
     }
     @Override
     public boolean onSupportNavigateUp(){

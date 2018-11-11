@@ -44,6 +44,14 @@ public class ClosetActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        setupViewPager(viewPager);
+        tabLayout.setupWithViewPager(viewPager);
+        super.onResume();
+
+    }
+
     private void createTabLayout() {
         tabLayout = (TabLayout) findViewById(R.id.tablayout);
         viewPager = findViewById(R.id.closetViewPager);

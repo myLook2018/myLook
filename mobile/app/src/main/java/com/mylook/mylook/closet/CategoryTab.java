@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -50,6 +51,7 @@ public class CategoryTab extends Fragment {
     private GridView outfitGrid;
     private Activity act;
     private FloatingActionButton addOutfit;
+    private ProgressBar mProgressBar;
 
     public CategoryTab() {
         // Required empty public constructor
@@ -65,16 +67,19 @@ public class CategoryTab extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         act = getActivity();
-
         return inflater.inflate(R.layout.tab_categories, container, false);
 
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        mProgressBar = view.findViewById(R.id.mProgressBar);
+        mProgressBar.setVisibility(View.VISIBLE);
         outfitGrid = view.findViewById(R.id.grid_colecciones);
         setGridview();
         addOutfit = view.findViewById(R.id.addOutfit);
+
+
         addOutfit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,6 +106,7 @@ public class CategoryTab extends Fragment {
     }
 
     private void loadOutfit(AdapterView<?> parent, int position) {
+        mProgressBar.setVisibility(View.VISIBLE);
         final String outfitId = ((Outfit) parent.getAdapter().getItem(position)).getOutfitId();
         dB.collection("closets").whereEqualTo("userID",user.getUid()).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -118,6 +124,7 @@ public class CategoryTab extends Fragment {
                                     intent.putExtra("name", outfit.getName());
                                     intent.putExtra("category", outfit.getCategory());
                                     intent.putExtra("id", task.getResult().getId());
+                                    mProgressBar.setVisibility(View.INVISIBLE);
                                     startActivity(intent);
 
                                 }
@@ -155,12 +162,14 @@ public class CategoryTab extends Fragment {
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                 if (task.isSuccessful()) {
                                                     ArrayList<String> arrayList = new ArrayList<>();
+                                                    outfits = new ArrayList<>();
                                                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                                         Outfit outfit = documentSnapshot.toObject(Outfit.class);
                                                         outfit.setOutfitId(documentSnapshot.getId());
                                                         outfits.add(outfit);
                                                     }
                                                     outfitGrid.setAdapter(new com.mylook.mylook.utils.OutfitAdapter(act, outfits));
+                                                    mProgressBar.setVisibility(View.INVISIBLE);
                                                     return;
                                                 } else
                                                     Log.e("FAVORITES", "Nuuuuuuuuuuuuuuuuuuuuuu");

@@ -106,12 +106,14 @@ public class FavouritesTab extends Fragment {
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                 if (task.isSuccessful()) {
                                                     ArrayList<String> arrayList = new ArrayList<>();
+                                                    favorites = new ArrayList<>();
                                                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                                         Favorite fav = documentSnapshot.toObject(Favorite.class);
                                                         favorites.add(fav);
                                                         arrayList.add(fav.getDownloadUri());
                                                     }
                                                     gridview.setAdapter(new com.mylook.mylook.utils.ImageAdapter(act, favorites));
+                                                    mProgressBar.setVisibility(View.INVISIBLE);
                                                     return;
                                                 } else
                                                     Log.e("FAVORITES", "Nuuuuuuuuuuuuuuuuuuuuuu");
@@ -139,7 +141,7 @@ public class FavouritesTab extends Fragment {
         mProgressBar = view.findViewById(R.id.mProgressBar);
         mProgressBar.setVisibility(View.VISIBLE);
         setGridview();
-        mProgressBar.setVisibility(View.INVISIBLE);
+
         super.onViewCreated(view, savedInstanceState);
     }
 
