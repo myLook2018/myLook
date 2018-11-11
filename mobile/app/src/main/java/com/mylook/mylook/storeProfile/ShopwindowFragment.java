@@ -9,13 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import com.mylook.mylook.R;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.utils.GridImageAdapter;
 
@@ -47,8 +47,8 @@ public class ShopwindowFragment extends Fragment {
         // Obtención del grid view
         GridViewWithHeaderAndFooter grid = rootView.findViewById(R.id.gridview);
         // Inicializar el grid view
-        setupShopWindowGridView(grid);
         grid.addHeaderView(createHeaderView());
+        setupShopWindowGridView(grid);
         return rootView;
     }
 
@@ -73,25 +73,28 @@ public class ShopwindowFragment extends Fragment {
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            documentID[0] =task.getResult().getDocuments().get(0).getId();
-                            dB.collection("storeFronts").document(documentID[0]).collection("storeFronts").get()
-                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                            ArrayList<HashMap> array= (ArrayList<HashMap>) task.getResult().getDocuments().get(0).get("articles");
-                                            for (HashMap o:array){
-                                                Article art=new Article();
-                                                storeShopWindowArticles.add(art.toObject(o));
+                        if (task.isSuccessful() && !task.getResult().getDocuments().isEmpty()) {
+                                documentID[0] = task.getResult().getDocuments().get(0).getId();
+                                dB.collection("storeFronts").document(documentID[0]).collection("storeFronts").get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                ArrayList<HashMap> array = (ArrayList<HashMap>) task.getResult().getDocuments().get(0).get("articles");
+                                                for (HashMap o : array) {
+                                                    Article art = new Article();
+                                                    storeShopWindowArticles.add(art.toObject(o));
+                                                }
                                             }
-                                        }
-                                    });
-                            Log.e("VIDRIERAAAA", getActivity().getLocalClassName());
-
-                            grid.setAdapter(new GridImageAdapter( getActivity(),R.layout.layout_grid_imageview,storeShopWindowArticles));
+                                        });
+                                Log.e("VIDRIERAAAA", getActivity().getLocalClassName());
+                                grid.setAdapter(new GridImageAdapter( getActivity(),R.layout.layout_grid_imageview,storeShopWindowArticles));
 
                         } else {
+                            if(task.getException()!=null)
                             Log.e("Firestore task", "onComplete: " + task.getException());
+                            else
+                                Log.e("Firestore task", "onComplete: No existe vidriera");
+
                         }
                     }
                 });

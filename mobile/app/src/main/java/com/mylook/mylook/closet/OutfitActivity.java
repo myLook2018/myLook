@@ -11,7 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -27,8 +26,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Closet;
-import com.mylook.mylook.entities.Outfit;
 import com.mylook.mylook.entities.Favorite;
+import com.mylook.mylook.entities.Outfit;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -229,5 +228,10 @@ public class OutfitActivity extends AppCompatActivity {
         nuevo.setItems(outfitItems);
 
         return nuevo;
+    }
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
     }
 }

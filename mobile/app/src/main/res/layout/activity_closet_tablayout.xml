@@ -41,13 +41,13 @@
         app:layout_constraintBottom_toBottomOf="parent" />
 
 
-    <LinearLayout
-        android:id="@+id/layout_bottom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        <LinearLayout
+            android:id="@+id/layout_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true">
 
-        <include layout="@layout/layout_bottom_navigation_view" />
-    </LinearLayout>
+            <include layout="@layout/layout_bottom_navigation_view" />
+        </LinearLayout>
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

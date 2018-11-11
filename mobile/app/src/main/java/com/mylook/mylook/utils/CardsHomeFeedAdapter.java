@@ -14,14 +14,16 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
+import com.mylook.mylook.entities.Store;
 import com.mylook.mylook.info.ArticleInfoActivity;
+import com.mylook.mylook.storeProfile.StoreActivity;
 
 import java.util.List;
 
 public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdapter.MyViewHolder> {
 
     private Context mContext;
-    private List<Article> articleList;
+    private List articlesAndStoresList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView nameStore, txtTitle;
@@ -38,9 +40,9 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
     }
 
 
-    public CardsHomeFeedAdapter(Context mContext, List<Article> articleList) {
+    public CardsHomeFeedAdapter(Context mContext, List articleList) {
         this.mContext = mContext;
-        this.articleList = articleList;
+        this.articlesAndStoresList = articleList;
     }
 
     @Override
@@ -53,36 +55,65 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        final Article article = articleList.get(position);
-        holder.nameStore.setText(article.getStoreName());
-        holder.txtTitle.setText(article.getTitle());
-        // loading article image using Glide library
-        Glide.with(mContext).load(article.getPicture()).into(holder.articleImage);
+        if(articlesAndStoresList.get(position).getClass()==Article.class){
+            final Article article =(Article) articlesAndStoresList.get(position);
+            holder.nameStore.setText(article.getStoreName());
+            holder.txtTitle.setText(article.getTitle());
+            // loading article image using Glide library
+            Glide.with(mContext).load(article.getPicture()).into(holder.articleImage);
 
-        holder.articleCardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent= new Intent(mContext, ArticleInfoActivity.class);
-                Log.d("info del articulo", "onClick: paso por intent la data del articulo");
-                intent.putExtra("article", article);
-                mContext.startActivity(intent);
+            holder.articleCardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent= new Intent(mContext, ArticleInfoActivity.class);
+                    Log.d("info del articulo", "onClick: paso por intent la data del articulo");
+                    intent.putExtra("article", article);
+                    mContext.startActivity(intent);
 
-            }
-        });
-        holder.articleImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent= new Intent(mContext, ArticleInfoActivity.class);
-                Log.d("info del articulo", "onClick: paso por intent la data del articulo");
-                intent.putExtra("article", article);
-                mContext.startActivity(intent);
-            }
-        });
+                }
+            });
+            holder.articleImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent= new Intent(mContext, ArticleInfoActivity.class);
+                    Log.d("info del articulo", "onClick: paso por intent la data del articulo");
+                    intent.putExtra("article", article);
+                    mContext.startActivity(intent);
+                }
+            });
+        }else{
+            final Store store =(Store) articlesAndStoresList.get(position);
+            holder.txtTitle.setText(store.getStoreName());
+            holder.nameStore.setText("Ver Tienda");
+            // loading article image using Glide library
+            Glide.with(mContext).load(store.getProfilePh()).into(holder.articleImage);
+
+            holder.articleCardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent= new Intent(mContext, StoreActivity.class);
+                    Log.d("perfil tienda", "onClick: paso por intent la data del articulo");
+                    intent.putExtra("Tienda", store.getStoreName());
+                    mContext.startActivity(intent);
+
+                }
+            });
+            holder.articleImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent= new Intent(mContext, StoreActivity.class);
+                    Log.d("perfil tienda", "onClick: paso por intent la data del articulo");
+                    intent.putExtra("Tienda", store.getStoreName());
+                    mContext.startActivity(intent);
+                }
+            });
+
+        }
 
     }
 
     @Override
     public int getItemCount() {
-        return articleList.size();
+        return articlesAndStoresList.size();
     }
 }

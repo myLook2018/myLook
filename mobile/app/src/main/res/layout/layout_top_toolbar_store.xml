@@ -29,6 +29,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginStart="10dp"
                     android:clickable="true"
+                    android:background="@color/white"
                     android:src="@drawable/ic_back_arrow" />
 
                 <TextView

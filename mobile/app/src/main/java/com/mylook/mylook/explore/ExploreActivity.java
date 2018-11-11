@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -83,6 +84,8 @@ public class ExploreActivity extends AppCompatActivity {
         Toolbar tb = findViewById(R.id.toolbar);
         tb.setTitle("Explorar");
         setSupportActionBar(tb);
+
+
         interactions = new ArrayList<>();
         mCardStack.setCardEventListener(new CardStackView.CardEventListener() {
             @Override
@@ -325,5 +328,37 @@ public class ExploreActivity extends AppCompatActivity {
 
         }
         interactions.clear();
+    }
+    public boolean onCreateOptionsMenu(Menu menu){
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.search_menu, menu);
+        //SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        MenuItem item=menu.findItem(R.id.btnSearch);
+        SearchView searchView=(SearchView) item.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                Log.d("SUBMIT", "onQueryTextSubmit: query->"+s);
+                Intent intent = new Intent(mContext, SearchableActivity.class);
+                intent.putExtra("query",s);
+                startActivity(intent);
+                finish();
+                return true;            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                Log.d("CHANGE", "onQueryTextChange: newText->" + s);
+               return false;
+            }
+        });
+        Log.e("OPTIONSMENU", "onCreateOptionsMenu: mSearchmenuItem->" + item.getActionView());
+        return true;
+    }
+
+    public boolean onSearchRequested(){
+        Bundle appData = new Bundle();
+        startSearch(null, false, appData, false);
+        return true;
+
     }
 }

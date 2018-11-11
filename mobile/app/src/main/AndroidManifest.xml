@@ -30,17 +30,30 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-                <!--<category android:name="android.intent.category.DEFAULT" />-->
-                <!--<category android:name="android.intent.category.BROWSABLE" />-->
-                <!--<action android:name="android.intent.action.VIEW" />-->
-                <!--<data android:scheme="https"-->
-                    <!--android:host="mylook.com/home" />-->
             </intent-filter>
         </activity>
         <activity android:name=".info.ArticleInfoActivity"></activity>
         <activity android:name=".storeProfile.StoreActivity"></activity>
         <activity android:name=".explore.ExploreActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" >
+            <meta-data android:name="android.app.default_searchable"
+                android:value=".SearchableActivity" />
+
+        </activity>
+        <activity android:name=".explore.SearchableActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".explore.ExploreActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".explore.ExploreActivity" />
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+
+        </activity>
+
         <activity android:name=".profile.ProfileActivity" />
         <activity android:name=".recommend.RecommendationsActivity" android:grantUriPermissions="true">
         </activity>
@@ -56,7 +69,8 @@
         <activity android:name=".profile.EditInfoActivity"/>
         <activity android:name=".profile.MyAccountActivity"/>
         <activity android:name=".closet.ClosetActivity"/>
-        <activity android:name=".closet.OutfitActivity"/>
+        <activity android:name=".closet.OutfitActivity"
+            android:parentActivityName=".closet.ClosetActivity"/>
         <activity android:name=".closet.ViewOutfitActivity"/>
         <service
             android:name=".messaging.myLookMessagingService"
