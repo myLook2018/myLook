@@ -151,7 +151,6 @@ public class HomeActivity extends AppCompatActivity {
                                             art.setArticleId(documentSnapshot.getId());
                                             articleList.add(art);
                                         }
-                                        //articleList.addAll(task.getResult().toObjects(Article.class));
                                         adapter.notifyDataSetChanged();
                                     } else {
                                         Log.d("Firestore task", "onComplete: " + task.getException());

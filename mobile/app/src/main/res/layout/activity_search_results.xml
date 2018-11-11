@@ -10,22 +10,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/layout_top"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true">
+        <LinearLayout
+            android:id="@+id/layout_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true">
 
-        <include layout="@layout/layout_top_toolbar" />
-    </LinearLayout>
+            <include layout="@layout/layout_top_toolbar" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layout_center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/layout_top">
+            android:layout_below="@id/layout_top"
+            android:layout_above="@id/layout_bottom">
 
-            <include layout="@layout/content_store_profile" />
+            <include layout="@layout/content_home" />
 
         </LinearLayout>
 

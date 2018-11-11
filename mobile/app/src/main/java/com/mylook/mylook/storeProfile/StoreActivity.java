@@ -7,9 +7,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.widget.GridView;
 import android.widget.ImageView;
 
@@ -55,11 +56,15 @@ public class StoreActivity extends AppCompatActivity {
         setContentView(R.layout.activity_store_final);
         user = FirebaseAuth.getInstance().getCurrentUser();
         loadVisit();
-        backArrow = findViewById(R.id.backArrow);
         tab = findViewById(R.id.tab);
         viewPagerStoreInfo = findViewById(R.id.storeInfoViewPager);
         viewPagerStoreArticles = findViewById(R.id.storeViewPager);
 
+        Toolbar tb =  findViewById(R.id.toolbar);
+        tb.setTitle("Tienda");
+        setSupportActionBar(tb);
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
         storeList = new ArrayList<Store>();
         Intent intentStore = getIntent();
         nombreTiendaPerfil = intentStore.getStringExtra("Tienda");
@@ -96,12 +101,7 @@ public class StoreActivity extends AppCompatActivity {
             }
         });
 
-        backArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+
 
     }
 
@@ -191,7 +191,7 @@ public class StoreActivity extends AppCompatActivity {
         StoreTabAdapter adapter = new StoreTabAdapter(getSupportFragmentManager(),3);
         Log.e("VIEW PAGER","CARGAAAAAAAAAA");
         adapter.addFragment(0,new ShopwindowFragment(nombreTiendaPerfil,coverPh),"Vidriera");
-        adapter.addFragment(1,new CatalogFragment(nombreTiendaPerfil,coverPh),"Catalogo");
+        adapter.addFragment(1,new CatalogFragment(nombreTiendaPerfil),"Catalogo");
 
 
         adapter.addFragment(2,reputationFragment,"Reputación");
@@ -205,5 +205,10 @@ public class StoreActivity extends AppCompatActivity {
 
         adapter.addFragment(contactStoreFragment);
         viewPagerStoreInfo.setAdapter(adapter);
+    }
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
     }
 }

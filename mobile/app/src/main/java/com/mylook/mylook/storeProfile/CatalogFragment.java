@@ -26,16 +26,14 @@ public class CatalogFragment extends Fragment {
 
     private  FirebaseFirestore dB=null;
     private static String storeName;
-    private static String coverPh;
 
     public CatalogFragment() {
     }
 
     @SuppressLint("ValidFragment")
-    public CatalogFragment(String name, String cover) {
+    public CatalogFragment(String name) {
         dB = FirebaseFirestore.getInstance();
         storeName=name;
-        coverPh=cover;
     }
 
     @Override

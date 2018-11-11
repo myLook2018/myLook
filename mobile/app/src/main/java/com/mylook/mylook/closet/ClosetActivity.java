@@ -8,16 +8,14 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.text.InputType;
 import android.widget.EditText;
 
 import com.mylook.mylook.R;
-
 import com.mylook.mylook.entities.Favorite;
 import com.mylook.mylook.utils.BottomNavigationViewHelper;
-
 
 import java.util.ArrayList;
 
@@ -33,6 +31,7 @@ public class ClosetActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private ArrayList<Favorite> favorites;
     private FavouritesTab newFabTab;
+    private BottomNavigationView bottomNavigationView;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +60,6 @@ public class ClosetActivity extends AppCompatActivity {
         tb = findViewById(R.id.toolbar);
         tb.setTitle("Mi Ropero");
         setSupportActionBar(tb);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setupBottomNavigationView();
     }
 
@@ -126,11 +124,12 @@ public class ClosetActivity extends AppCompatActivity {
      * BottomNavigationView setup
      */
     private void setupBottomNavigationView() {
-        BottomNavigationView bottomNavigationView =  findViewById(R.id.bottomNavViewBar);
-        BottomNavigationViewHelper.enableNavigation(getApplicationContext(), bottomNavigationView);
+         bottomNavigationView =  findViewById(R.id.bottomNavViewBar);
+        BottomNavigationViewHelper.enableNavigation(ClosetActivity.this, bottomNavigationView);
         Menu menu = bottomNavigationView.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);
     }
+
 }
 
