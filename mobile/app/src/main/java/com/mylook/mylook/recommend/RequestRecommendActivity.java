@@ -85,7 +85,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
             RequestRecommendation requestRecommendation = (RequestRecommendation) intent.getSerializableExtra("requestRecommendation");
             txtDescription.setText(requestRecommendation.getDescription());
             txtTitle.setText(requestRecommendation.getTitle());
-            txtLimitDate.setText(intent.getStringExtra("dateFormat"));
+            txtLimitDate.setText("Hasta el "+intent.getStringExtra("dateFormat"));
             setImage(requestRecommendation.getRequestPhoto());
             answers = requestRecommendation.getAnswers();
             requestId = requestRecommendation.getDocumentId();
