@@ -18,50 +18,30 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
-import com.mylook.mylook.entities.Article;
-import com.mylook.mylook.entities.Closet;
-import com.mylook.mylook.entities.Favorite;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class ViewOutfitActivity extends AppCompatActivity {
-    private RecyclerView recyclerView;
     private FirebaseFirestore dB = FirebaseFirestore.getInstance();
     private HashMap<String, String> outfitItems;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private ConstraintLayout container;
-    private ImageView bottomCloth, mediumCloth, topCloth, topAccesory, bottomAccesory, activeView;
     private Toolbar tb;
-    private boolean isFromOutfit;
     private String collectionName, category;
-    private ImageButton btnSend;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_outfit);
-        recyclerView = findViewById(R.id.recycleItems);
+        setContentView(R.layout.activity_view_outfit);
         container = findViewById(R.id.outfitLayout);
-        topCloth = findViewById(R.id.topCloth);
-        bottomCloth = findViewById(R.id.bottomCloth);
-        mediumCloth = findViewById(R.id.mediumCloth);
-        bottomAccesory = findViewById(R.id.bottomAccesory);
-        topAccesory = findViewById(R.id.topAccesory);
         user = FirebaseAuth.getInstance().getCurrentUser();
-        btnSend = findViewById(R.id.btnSendOutfit);
         initElements();
-        hideCreationItems();
         loadOutfit();
     }
 
     private void loadOutfit() {
-        final HashMap<String,String> pictures = new HashMap<>();
         for (final String item : outfitItems.keySet()) {
             String articleId = outfitItems.get(item);
             loadImage(item, outfitItems.get(item), articleId);
-
         }
 
     }
@@ -85,11 +65,6 @@ public class ViewOutfitActivity extends AppCompatActivity {
                         }
                     }
                 });
-    }
-
-    private void hideCreationItems() {
-        btnSend.setVisibility(View.INVISIBLE);
-        recyclerView.setVisibility(View.INVISIBLE);
     }
 
     private void initElements() {

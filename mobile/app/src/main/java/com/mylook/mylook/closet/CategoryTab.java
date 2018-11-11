@@ -12,12 +12,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -178,9 +180,22 @@ public class CategoryTab extends Fragment {
         final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(getContext(), R.style.AlertDialogTheme);
         final EditText input = new EditText(getContext());
         input.setInputType(InputType.TYPE_CLASS_TEXT);
-        input.setMaxWidth(50);
         input.setHint((CharSequence) "Nombre");
-        dialog.setView(input);
+
+
+
+        LinearLayout linearLayout = new LinearLayout(getContext());
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        layoutParams.gravity = Gravity.CENTER;
+
+        input.setHint("Nombre");
+        input.setLayoutParams(layoutParams);
+
+        linearLayout.addView(input);
+        linearLayout.setPadding(60, 20, 60, 20);
+
+        dialog.setView(linearLayout);
 
         final android.app.AlertDialog alert = dialog.setTitle("Elegí un nombre para tu conjunto")
                 .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
@@ -198,6 +213,7 @@ public class CategoryTab extends Fragment {
             @Override
             public void onShow(DialogInterface dialog) {
                 alert.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.purple));
+
             }
         });
 
