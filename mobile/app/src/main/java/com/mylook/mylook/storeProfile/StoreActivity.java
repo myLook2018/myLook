@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -55,7 +56,6 @@ public class StoreActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store_final);
         user = FirebaseAuth.getInstance().getCurrentUser();
-        loadVisit();
         tab = findViewById(R.id.tab);
         viewPagerStoreInfo = findViewById(R.id.storeInfoViewPager);
         viewPagerStoreArticles = findViewById(R.id.storeViewPager);
@@ -71,7 +71,7 @@ public class StoreActivity extends AppCompatActivity {
         contactStoreFragment = new StoreContactFragment(StoreActivity.this, nombreTiendaPerfil);
         infoStoreFragment = new StoreInfoFragment(StoreActivity.this, nombreTiendaPerfil);
         reputationFragment=new ReputationFragment(nombreTiendaPerfil);
-
+        loadVisit();
         setupViewPagerInfo(viewPagerStoreInfo);
 
         db.collection("stores").whereEqualTo("storeName", nombreTiendaPerfil)
@@ -112,73 +112,52 @@ public class StoreActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if(task.isSuccessful()){
                             if(task.getResult().getDocuments().size()==0){
+                                visitId=null;
                                 visit=new Visit(nombreTiendaPerfil,user.getUid(),1);
-                                db.collection("visits").add(visit.toMap());
+                                //db.collection("visits").add(visit.toMap());
 
                             }else{
+                                Log.e("OLD VISIT","ID: " +visitId);
+                                visit = null;
+                                visitId=null;
                                 visit=task.getResult().getDocuments().get(0).toObject(Visit.class);
                                 visit.toVisit();
                                 visitId=task.getResult().getDocuments().get(0).getId();
-                                db.collection("visits").document(visitId).set(visit.toMap(), SetOptions.merge());
+                                }
 
                             }
                         }
-                    }
-                });
+                    });
 
     }
     private void saveVisit(){
         if(visitId!=null){
             Log.e("VISIT","ID: " +visitId);
-            db.collection("visits").document(visitId).set(visit.toMap(), SetOptions.merge());
+            db.collection("visits").document(visitId).set(visit.toMap(), SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    finish();
+                }
+            });
         }else{
-            db.collection("visits").add(visit.toMap());
+            db.collection("visits").add(visit.toMap()).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentReference> task) {
+                    finish();
+                }
+            });
         }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-       // saveVisit();
+       saveVisit();
     }
 
     public static void moreInfo(){
         viewPagerStoreInfo.setCurrentItem(1);
     }
-
-
-
-
-
-   /* private void setupGridView() {
-
-        Log.d("Store gridView", "setupGridView: Setting up store grid.");
-        final ArrayList<Article> storeArticles = new ArrayList<Article>();
-        db.collection("articles").whereEqualTo("storeName", nombreTiendaPerfil).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    storeArticles.addAll(task.getResult().toObjects(Article.class));
-
-                    int widthGrid = getResources().getDisplayMetrics().widthPixels;
-                    int imageWidth = widthGrid / NUM_COLUMNS;
-                    gridArticlesStore.setColumnWidth(imageWidth);
-
-                    ArrayList<String> articlesPhotosUrls = new ArrayList<String>();
-                    for (int i = 0; i < storeArticles.size(); i++) {
-                        articlesPhotosUrls.add(storeArticles.get(i).getPicture());
-                    }
-
-                    GridImageAdapter gridAdapter = new GridImageAdapter(mContext, R.layout.layout_grid_imageview, articlesPhotosUrls);
-                    gridArticlesStore.setAdapter(gridAdapter);
-
-                } else {
-                    Log.d("Firestore task", "onComplete: " + task.getException());
-                }
-            }
-        });
-
-    }*/
 
 
     /**
