@@ -79,10 +79,8 @@ public class OutfitActivity extends AppCompatActivity {
         if(outfitId !=  null){
             getOutfit();
 
-        } else {
-            getCloset();
-
         }
+        getCloset();
         setupDragListener();
 
     }
@@ -98,6 +96,7 @@ public class OutfitActivity extends AppCompatActivity {
         topAccesory.setOnLongClickListener(new MyTouchListener());
         bottomAccesory.setOnDragListener(new MyDragListener());
         bottomAccesory.setOnLongClickListener(new MyTouchListener());
+        mProgressBar.setVisibility(View.INVISIBLE);
     }
 
     private class MyDragListener implements View.OnDragListener {
