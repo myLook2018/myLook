@@ -13,6 +13,7 @@ import android.view.DragEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -47,6 +48,7 @@ public class OutfitActivity extends AppCompatActivity {
     private boolean isFromOutfit;
     private String collectionName, category;
     private ImageButton btnSend;
+    private ProgressBar mProgressBar;
 
 
     @Override
@@ -68,6 +70,8 @@ public class OutfitActivity extends AppCompatActivity {
                 sendOutfit();
             }
         });
+        mProgressBar = findViewById(R.id.mProgressBar);
+        mProgressBar.setVisibility(View.VISIBLE);
         initElements();
         getCloset();
         setupDragListener();
@@ -138,6 +142,7 @@ public class OutfitActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         OutfitRecycleViewAdapter adapter = new OutfitRecycleViewAdapter(getApplicationContext(), favoritosModificados);
         recyclerView.setAdapter(adapter);
+        mProgressBar.setVisibility(View.INVISIBLE);
     }
 
     private final class MyTouchListener implements View.OnLongClickListener {

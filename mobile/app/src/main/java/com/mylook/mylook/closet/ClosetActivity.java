@@ -84,17 +84,15 @@ public class ClosetActivity extends AppCompatActivity {
 
     private void createHelpDialog(){
         final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(ClosetActivity.this, R.style.AlertDialogTheme);
-        final TextView input = new TextView(this);
-        input.setText("Acá podés ver toda tu ropa favorita y los conjuntos que armás. Para armar un " +
-                "nuevo conjunto andá a la pestaña conjuntos y apretá en el botón +");
-
-        final android.app.AlertDialog alert = dialog.setTitle("Ayuda")
+       final android.app.AlertDialog alert = dialog.setTitle("Ayuda")
                 .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                     }
-                }).create();
+                }).setMessage("Acá podés ver toda tu ropa favorita y los conjuntos que armás. Para armar un " +
+                        "nuevo conjunto andá a la pestaña conjuntos y apretá en el botón +")
+                .create();
         alert.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
