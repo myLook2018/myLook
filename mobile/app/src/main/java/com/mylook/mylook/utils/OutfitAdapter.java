@@ -1,7 +1,6 @@
 package com.mylook.mylook.utils;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +15,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
-import com.mylook.mylook.entities.Favorite;
 import com.mylook.mylook.entities.Outfit;
 
 import java.util.ArrayList;
@@ -46,7 +44,7 @@ public class OutfitAdapter extends BaseAdapter {
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater factory = LayoutInflater.from(mContext);
-        View myView = factory.inflate(R.layout.outfit_item, null);
+        View myView = factory.inflate(R.layout.outfit_card, null);
         ImageView imageView = myView.findViewById(R.id.topLeftCloth);
 
         imageView.setAdjustViewBounds(true);
