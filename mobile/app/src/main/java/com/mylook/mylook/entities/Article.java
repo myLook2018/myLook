@@ -21,11 +21,13 @@ public class Article implements Serializable{
     private ArrayList<String> tags;
     private Date creationDate;
     private int promotionLevel;
+    private boolean estaEnVidriera;
 
     public Article() {
     }
 
-    public Article(String articleId, String title, String code, String provider, float cost, int initial_stock, String material, String picture, String storeName, ArrayList<String> colors, ArrayList<String> sizes, ArrayList<String> tags) {
+
+    public Article(Boolean estaEnVidriera,String articleId, String title, String code, String provider, float cost, int initial_stock, String material, String picture, String storeName, ArrayList<String> colors, ArrayList<String> sizes, ArrayList<String> tags) {
         this.articleId = articleId;
         this.title = title;
         this.code = code;
@@ -38,6 +40,16 @@ public class Article implements Serializable{
         this.colors = colors;
         this.sizes = sizes;
         this.tags = tags;
+        this.estaEnVidriera=estaEnVidriera;
+
+    }
+
+    public boolean isEstaEnVidriera() {
+        return estaEnVidriera;
+    }
+
+    public void setEstaEnVidriera(boolean estaEnVidriera) {
+        this.estaEnVidriera = estaEnVidriera;
     }
 
     public String getArticleId() {
@@ -166,6 +178,7 @@ public class Article implements Serializable{
         this.colors = (ArrayList<String>) map.get("colors");
         this.sizes = (ArrayList<String>) map.get("sizes");
         this.tags = (ArrayList<String>) map.get("tags");
+        this.estaEnVidriera=(boolean) map.get("estaEnVidriera");
         return this;
     }
 }

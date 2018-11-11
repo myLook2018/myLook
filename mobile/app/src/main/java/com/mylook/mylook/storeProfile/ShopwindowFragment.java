@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
@@ -20,7 +21,6 @@ import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.utils.GridImageAdapter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import in.srain.cube.views.GridViewWithHeaderAndFooter;
 
@@ -63,8 +63,32 @@ public class ShopwindowFragment extends Fragment {
         Glide.with(image.getContext()).load(coverPh).into(image);
         return view;
     }
+    private void setupShopWindowGridView(final GridViewWithHeaderAndFooter grid){
+        Log.d("Store Catalog gridView", "setupGridView: Setting up store grid.");
+        final ArrayList<Article> storeShopWindowArticles = new ArrayList<Article>();
+        dB.collection("articles").whereEqualTo("storeName", storeName).whereEqualTo("estaEnVidriera",true).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && !task.getResult().getDocuments().isEmpty()) {
+                            for (DocumentSnapshot documentSnapshot : task.getResult().getDocuments()) {
+                                Article art = documentSnapshot.toObject(Article.class);
+                                art.setArticleId(documentSnapshot.getId());
+                                storeShopWindowArticles.add(art);
+                            }
+                            Log.e("VIDRIERAAAA", getActivity().getLocalClassName());
+                            grid.setAdapter(new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview, storeShopWindowArticles));
+                        } else {
+                            if (task.getException() != null)
+                                Log.e("Firestore task", "onComplete: " + task.getException());
+                            else
+                                Log.e("Firestore task", "onComplete: No existe vidriera");
+                        }
+                    }
+                });
+    }
 
-    private void setupShopWindowGridView(final GridViewWithHeaderAndFooter grid) {
+    /*private void setupShopWindowGridView(final GridViewWithHeaderAndFooter grid) {
 
         Log.d("Store Catalog gridView", "setupGridView: Setting up store grid.");
         final ArrayList<Article> storeShopWindowArticles = new ArrayList<Article>();
@@ -99,7 +123,7 @@ public class ShopwindowFragment extends Fragment {
                     }
                 });
 
-    }
+    }*/
 
 }
 

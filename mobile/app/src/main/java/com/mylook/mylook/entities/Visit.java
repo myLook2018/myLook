@@ -11,7 +11,6 @@ public class Visit {
     private  Timestamp interactionTime;
     private String storeName;
     private String userId;
-    private long count;
 
 
     public Visit() {
@@ -20,10 +19,9 @@ public class Visit {
 
     }
 
-    public Visit(String storeName, String userId, long count) {
+    public Visit(String storeName, String userId) {
         this.storeName = storeName;
         this.userId = userId;
-        this.count = count;
         Calendar cal = Calendar.getInstance();
         this.interactionTime = new Timestamp(cal.getTime());
     }
@@ -52,21 +50,11 @@ public class Visit {
         this.userId = userId;
     }
 
-    public long getCount() {
-        return count;
-    }
 
-    public void setCount(long count) {
-        this.count = count;
-    }
-    public void toVisit(){
-        count++;
-    }
     public Map<String,Object> toMap(){
         HashMap<String,Object> map=new HashMap<>();
         map.put("storeName",storeName);
         map.put("userId",userId);
-        map.put("count",count);
         map.put("interactionTime",interactionTime);
         return map;
     }

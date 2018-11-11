@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -52,6 +53,7 @@ public class HomeActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private TextView mMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,13 +65,13 @@ public class HomeActivity extends AppCompatActivity {
         Toolbar tb = findViewById(R.id.toolbar);
         setSupportActionBar(tb);
         recyclerView = findViewById(R.id.recycler_view_content);
+        mMessage=findViewById(R.id.home_message);
         articleList = new ArrayList<>();
         adapter = new CardsHomeFeedAdapter(this, articleList);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
-
 
         //read firestore
         if (mAuth.getCurrentUser() != null) {
@@ -158,10 +160,24 @@ public class HomeActivity extends AppCompatActivity {
                                 }
                             });
                         }
-                    }
+                    }/*else{
+                        recyclerView.setVisibility(View.GONE);
+                        mMessage.setText("No estas suscripto a ninguna tienda .\n Intentá más tarde.");
+                        mMessage.setGravity(Gravity.CENTER);
+                        mMessage.setVisibility(View.VISIBLE);
+
+                    }*/
                 }
             }
         });
+        /*if(articleList.isEmpty()){
+            recyclerView.setVisibility(View.GONE);
+            mMessage.setText("No estas suscripto a ninguna tienda .\n Intentá más tarde.");
+            mMessage.setGravity(Gravity.CENTER);
+            mMessage.setGravity(Gravity.CENTER_HORIZONTAL);
+            mMessage.setGravity(Gravity.CENTER_VERTICAL);
+            mMessage.setVisibility(View.VISIBLE);
+        }*/
     }
 
     /**

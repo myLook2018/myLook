@@ -8,6 +8,14 @@
     tools:showIn="@layout/activity_home"
     android:background="@color/greyBackground">
 
+    <TextView
+        android:id="@+id/home_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="No se encontraron artículos.\n Intentá más tarde."
+        android:visibility="invisible" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view_content"
         android:layout_width="match_parent"
