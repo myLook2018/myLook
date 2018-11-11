@@ -2,17 +2,21 @@ package com.mylook.mylook.closet;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaMuxer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -43,7 +47,7 @@ public class CategoryTab extends Fragment {
     private Context context;
     private GridView outfitGrid;
     private Activity act;
-
+    private FloatingActionButton addOutfit;
 
     public CategoryTab() {
         // Required empty public constructor
@@ -52,6 +56,7 @@ public class CategoryTab extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         outfits = new ArrayList<>();
+
         super.onCreate(savedInstanceState);
     }
 
@@ -59,6 +64,7 @@ public class CategoryTab extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         act = getActivity();
+
         return inflater.inflate(R.layout.tab_categories, container, false);
 
     }
@@ -67,6 +73,13 @@ public class CategoryTab extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         outfitGrid = view.findViewById(R.id.grid_colecciones);
         setGridview();
+        addOutfit = view.findViewById(R.id.addOutfit);
+        addOutfit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createInputDialog();
+            }
+        });
         super.onViewCreated(view, savedInstanceState);
     }
 
@@ -157,5 +170,37 @@ public class CategoryTab extends Fragment {
                         }
                     }
                 });
+    }
+
+
+    public void createInputDialog() {
+
+        final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(getContext(), R.style.AlertDialogTheme);
+        final EditText input = new EditText(getContext());
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setMaxWidth(50);
+        input.setHint((CharSequence) "Nombre");
+        dialog.setView(input);
+
+        final android.app.AlertDialog alert = dialog.setTitle("Elegí un nombre para tu conjunto")
+                .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                        String newOutfitName = input.getText().toString();
+                        Intent intent = new Intent(getContext(), OutfitActivity.class);
+                        intent.putExtra("name", newOutfitName);
+                        intent.putExtra("category", "normal");
+                        startActivity(intent);
+                    }
+
+                }).create();
+        alert.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                alert.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.purple));
+            }
+        });
+
+        alert.show();
     }
 }

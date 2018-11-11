@@ -3,16 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
-    <item
-        android:id="@+id/new_outfit"
-        android:title="@string/new_outfit"
-        android:icon="@drawable/ic_done"
-        app:showAsAction="never"
-        android:iconTint="@color/white"
-        />
-
     <item android:id="@+id/help_menu"
         android:icon="@drawable/ic_help"
+        android:iconTint="@color/white"
         android:title="@string/help"
-        app:showAsAction="never"/>
+        app:showAsAction="ifRoom"/>
 </menu>
