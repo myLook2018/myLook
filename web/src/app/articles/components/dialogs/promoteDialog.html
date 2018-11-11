@@ -2,14 +2,39 @@
 <div class="mat-typography" mat-dialog-content style="display: inline; margin-left: auto; margin-right: auto; padding: 0">
     <h3>{{data.title}}</h3>
     <img style="margin-left:auto;margin-right:auto;margin-bottom:10px" height="250" width="250" src={{data.picture}}>
+
     <mat-form-field style="width: 100%">
-        <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="picker" placeholder="Fecha finalización" [(ngModel)]="dueDate" >
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
+        <h3 *ngIf="dueDate !== undefined">
+            {{ dueDate | amDifference: today :'days' : true | number:'1.0-0'}} dias de promoción
+        </h3>
+        <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="picker" placeholder="Fecha finalización"
+            [(ngModel)]="dueDate" (dateChange)="tryCalculateCost()">
+        <mat-datepicker-toggle matSuffix [for]="picker" (click)="tryCalculateCost()"></mat-datepicker-toggle>
+        <mat-datepicker #picker (click)="tryCalculateCost()"></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field style="width: 100%">
+        <h3 *ngIf="dueDate !== undefined && selectedPromotion !== undefined">
+            ${{ promotionCost | number:'1.0-0'}} final por los {{diferenceInDays}} dias.
+        </h3>
+        <mat-select placeholder="Nivel de Promoción" [(ngModel)]="selectedPromotion" name="prom">
+            <mat-option *ngFor="let prom of promotionsLevels" [value]="prom.value" (click)="tryCalculateCost()">
+                {{prom.viewValue}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field style="width: 100%">
+        <mat-select placeholder="Método de pago" [(ngModel)]="selectedPayMethod" name="pay">
+            <mat-option *ngFor="let method of payMethods" [value]="method.value">
+                {{method.viewValue}}
+            </mat-option>
+        </mat-select>
     </mat-form-field>
 
 </div>
 <div mat-dialog-actions align="end">
     <button mat-raised-button [mat-dialog-close]="false" cdkFocusInitial (click)="onNoClick()">Cancelar</button>
-    <button mat-raised-button style="background-color: #9C27B0 ; color: #ffffff" [mat-dialog-close]="dueDate" cdkFocusInitial >Aceptar</button>
+    <button mat-raised-button style="background-color: #9C27B0 ; color: #ffffff" [mat-dialog-close]="promotionData"
+        cdkFocusInitial (click)="sendData()">Aceptar</button>
 </div>

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -40,6 +41,7 @@ public class FavouritesTab extends Fragment {
     private Closet closet;
     private ArrayList<Favorite> favorites;
     private Activity act;
+    private ProgressBar mProgressBar;
 
     public FavouritesTab() {
         // Required empty public constructor
@@ -104,12 +106,14 @@ public class FavouritesTab extends Fragment {
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                 if (task.isSuccessful()) {
                                                     ArrayList<String> arrayList = new ArrayList<>();
+                                                    favorites = new ArrayList<>();
                                                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                                         Favorite fav = documentSnapshot.toObject(Favorite.class);
                                                         favorites.add(fav);
                                                         arrayList.add(fav.getDownloadUri());
                                                     }
                                                     gridview.setAdapter(new com.mylook.mylook.utils.ImageAdapter(act, favorites));
+                                                    mProgressBar.setVisibility(View.INVISIBLE);
                                                     return;
                                                 } else
                                                     Log.e("FAVORITES", "Nuuuuuuuuuuuuuuuuuuuuuu");
@@ -134,7 +138,10 @@ public class FavouritesTab extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         gridview = view.findViewById(R.id.grid_favoritos);
+        mProgressBar = view.findViewById(R.id.mProgressBar);
+        mProgressBar.setVisibility(View.VISIBLE);
         setGridview();
+
         super.onViewCreated(view, savedInstanceState);
     }
 

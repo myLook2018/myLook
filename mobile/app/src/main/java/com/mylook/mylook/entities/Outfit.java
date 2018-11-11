@@ -7,6 +7,7 @@ public class Outfit {
     private String name;
     private String category;
     private HashMap<String, String> items;
+    private String outfitId;
 
 
     public Outfit() {
@@ -34,5 +35,13 @@ public class Outfit {
 
     public void setItems(HashMap<String, String> items) {
         this.items = items;
+    }
+
+    public String getOutfitId() {
+        return outfitId;
+    }
+
+    public void setOutfitId(String outfitId) {
+        this.outfitId = outfitId;
     }
 }

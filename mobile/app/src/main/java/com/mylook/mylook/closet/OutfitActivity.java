@@ -13,6 +13,7 @@ import android.view.DragEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -21,6 +22,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -47,6 +49,8 @@ public class OutfitActivity extends AppCompatActivity {
     private boolean isFromOutfit;
     private String collectionName, category;
     private ImageButton btnSend;
+    private ProgressBar mProgressBar;
+    private String outfitId;
 
 
     @Override
@@ -68,8 +72,17 @@ public class OutfitActivity extends AppCompatActivity {
                 sendOutfit();
             }
         });
+        mProgressBar = findViewById(R.id.mProgressBar);
+        mProgressBar.setVisibility(View.VISIBLE);
         initElements();
-        getCloset();
+
+        if(outfitId !=  null){
+            getOutfit();
+
+        } else {
+            getCloset();
+
+        }
         setupDragListener();
 
     }
@@ -113,7 +126,7 @@ public class OutfitActivity extends AppCompatActivity {
                     Glide.with(getApplicationContext()).asBitmap().load(uri).into((ImageView) v);
                     nuevaPrenda.setZ(5);
                     v.setTag(String.valueOf(position));
-                    outfitItems.put(String.valueOf(v.getId()), articleId);
+                    outfitItems.put(String.valueOf(getResources().getResourceName(v.getId())), articleId);
                     if (!isFromOutfit) {
                         favoritosModificados.remove(position);
                         loadRecycleViewer();
@@ -138,6 +151,7 @@ public class OutfitActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         OutfitRecycleViewAdapter adapter = new OutfitRecycleViewAdapter(getApplicationContext(), favoritosModificados);
         recyclerView.setAdapter(adapter);
+        mProgressBar.setVisibility(View.INVISIBLE);
     }
 
     private final class MyTouchListener implements View.OnLongClickListener {
@@ -158,6 +172,11 @@ public class OutfitActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         collectionName = getIntent().getExtras().get("name").toString();
         category = getIntent().getExtras().get("category").toString();
+        try {
+            outfitId = getIntent().getExtras().get("id").toString();
+        } catch (Exception e){
+            Log.e("Outfit", "Its a new outfit");
+        }
     }
 
     private void getCloset() {
@@ -229,9 +248,66 @@ public class OutfitActivity extends AppCompatActivity {
 
         return nuevo;
     }
+
+    private void getOutfit(){
+        dB.collection("closets")
+                .whereEqualTo("userID", user.getUid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                closet = document.toObject(Closet.class);
+                                String id = document.getId();
+                                dB.collection("closets").document(id).collection("outfits").document(outfitId).get()
+                                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                Outfit old = task.getResult().toObject(Outfit.class);
+                                                outfitItems = old.getItems();
+                                                loadOutfit();
+                                            }
+                                        });
+                            }
+                        } else {
+                            Log.e("FAVORITES", "NOOOOOOOOOOOOO");
+                        }
+                    }
+                });
+    }
     @Override
     public boolean onSupportNavigateUp(){
         finish();
         return true;
+    }
+
+    private void loadOutfit() {
+        for (final String item : outfitItems.keySet()) {
+            String articleId = outfitItems.get(item);
+            loadImage(item, outfitItems.get(item), articleId);
+        }
+
+    }
+
+    private void loadImage(final String item,final String picture, String articleId){
+        dB.collection("articles").document(articleId).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            View v = null;
+                            if(item.getClass().equals( Integer.class))
+                                v = findViewById(Integer.parseInt(item));
+                            if(v == null) {
+                                v = findViewById(getResources().getIdentifier(item, "id", getApplicationContext().getPackageName()));
+                            }
+                            String art = (String)task.getResult().get("picture");
+                            Glide.with(OutfitActivity.this).asBitmap().load(art)
+                                    .into((ImageView) v);
+
+                        }
+                    }
+                });
     }
 }

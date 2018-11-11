@@ -24,10 +24,15 @@ import { RecomendationAnswer } from '../model/recomendationAnswer.model';
   styleUrls: ['./recomendations.component.scss']
 })
 export class RecomendationsComponent implements OnInit, OnDestroy {
+  selectedCatego = undefined;
+  selectedSex = undefined;
+  newRecos: RecomendationRequest[] = [];
   error: any;
   firebaseUser = new StoreModel();
   userStore = new StoreModel();
   articles: Article[];
+  categories = [];
+  sexes = [];
   recomendationsRequests: RecomendationRequest[];
   recomendationsAnswered: RecomendationRequest[] = [];
   recomendationsToAnswer: RecomendationRequest[] = [];
@@ -93,8 +98,15 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
           this.articles = articles;
           this.dataSourceArticles = new MatTableDataSource(this.articles);
           console.log(articles);
-          this.recomendationSubscription = this.recomendationsService
-            .getRecomendations()
+          this.recomendationsService.getCategories().then((categos) => {
+            console.log(categos);
+            this.categories = categos;
+          });
+          this.recomendationsService.getSexes().then((sexs) => {
+            console.log(sexs);
+            this.sexes = sexs;
+          });
+          this.recomendationSubscription = this.recomendationsService.getRecomendations()
             .subscribe(recomendations => {
               console.log(recomendations);
               console.log(6);
@@ -183,7 +195,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
   }
 
   sendAnswer() {
-    this.requestAnswerForm.get('articleUID').setValue(this.selectedArticle.id);
+    this.requestAnswerForm.get('articleUID').setValue(this.selectedArticle.articleId);
     if (this.requestAnswerForm.get('articleUID').value === undefined) {
       this.error = 'Se requiere que selecione una prenda de su catalogo para recomendar';
       console.log(this.error);
@@ -243,5 +255,30 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
       /** spinner ends after  seconds */
       this.finishedLoading = true;
     }, 2000);
+  }
+
+  filterRecos() {
+    this.newRecos = [];
+    if (this.selectedCatego !== undefined && this.selectedSex !== undefined) {
+      console.log(`filtrando ambos: ${this.selectedCatego} y ${this.selectedSex} `);
+      this.newRecos = this.recomendationsToAnswer.filter(x => x.category === this.selectedCatego && x.sex === this.selectedSex);
+      console.log(this.newRecos);
+    } else if (this.selectedCatego !== undefined) {
+      console.log(`filtrando catego ${this.selectedCatego}`);
+      this.newRecos = this.recomendationsToAnswer.filter(x => x.category === this.selectedCatego);
+      console.log(this.newRecos);
+    } else if ( this.selectedSex !== undefined ) {
+      console.log(`filtrando sex ${this.selectedSex}`);
+      this.newRecos = this.recomendationsToAnswer.filter(x => x.sex === this.selectedSex);
+      console.log(this.newRecos);
+    } else {
+      console.log(`filtros reseteados, traigo todo`);
+      this.newRecos = this.recomendationsToAnswer;
+      console.log(this.newRecos);
+    }
+    this.dataSourceRequests = new MatTableDataSource(
+      this.newRecos
+    );
+
   }
 }

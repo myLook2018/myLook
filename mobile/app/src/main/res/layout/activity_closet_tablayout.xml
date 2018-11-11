@@ -49,5 +49,7 @@
 
             <include layout="@layout/layout_bottom_navigation_view" />
         </LinearLayout>
+
     </RelativeLayout>
+
 </android.support.design.widget.CoordinatorLayout>

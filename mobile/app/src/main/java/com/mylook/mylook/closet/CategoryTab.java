@@ -2,17 +2,25 @@ package com.mylook.mylook.closet;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaMuxer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -42,7 +50,8 @@ public class CategoryTab extends Fragment {
     private Context context;
     private GridView outfitGrid;
     private Activity act;
-
+    private FloatingActionButton addOutfit;
+    private ProgressBar mProgressBar;
 
     public CategoryTab() {
         // Required empty public constructor
@@ -64,8 +73,19 @@ public class CategoryTab extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        mProgressBar = view.findViewById(R.id.mProgressBar);
+        mProgressBar.setVisibility(View.VISIBLE);
         outfitGrid = view.findViewById(R.id.grid_colecciones);
         setGridview();
+        addOutfit = view.findViewById(R.id.addOutfit);
+
+
+        addOutfit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createInputDialog();
+            }
+        });
         super.onViewCreated(view, savedInstanceState);
     }
 
@@ -76,32 +96,50 @@ public class CategoryTab extends Fragment {
         outfitGrid.setHorizontalSpacing(8);
         outfitGrid.setNumColumns(2);
         getOutfits();
-//        outfitGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            public void onItemClick(AdapterView<?> parent, View v,
-//                                    int position, long id) {
-//                dB.collection("articles").document((String) parent.getAdapter().getItem(position)).get()
-//                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                                if (task.isSuccessful()) {
-//                                    String articleId = task.getResult().getId();
-//                                    Article art = task.getResult().toObject(Article.class);
-//                                    art.setArticleId(articleId);
-//                                    Intent intent = new Intent(getContext(), ArticleInfoActivity.class);
-//                                    intent.putExtra("article", art);
-//                                    getContext().startActivity(intent);
-//                                }
-//                            }
-//                        })
-//                        .addOnFailureListener(new OnFailureListener() {
-//                            @Override
-//                            public void onFailure(@NonNull Exception e) {
-//                                Toast.makeText(getContext(), "No se ha podido cargar tus favoritos", Toast.LENGTH_LONG).show();
-//                            }
-//                        });
-//            }
-//        });
+        outfitGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                loadOutfit(parent, position);
+
+            }
+        });
     }
+
+    private void loadOutfit(AdapterView<?> parent, int position) {
+        mProgressBar.setVisibility(View.VISIBLE);
+        final String outfitId = ((Outfit) parent.getAdapter().getItem(position)).getOutfitId();
+        dB.collection("closets").whereEqualTo("userID",user.getUid()).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            final String id = task.getResult().getDocuments().get(0).getId();
+                            dB.collection("closets").document(id).collection("outfits")
+                                    .document(outfitId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    Outfit outfit = task.getResult().toObject(Outfit.class);
+                                    Intent intent = new Intent(getContext(),ViewOutfitActivity.class);
+                                    intent.putExtra("items",outfit.getItems());
+                                    intent.putExtra("name", outfit.getName());
+                                    intent.putExtra("category", outfit.getCategory());
+                                    intent.putExtra("id", task.getResult().getId());
+                                    mProgressBar.setVisibility(View.INVISIBLE);
+                                    startActivity(intent);
+
+                                }
+                            });
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getContext(), "No se ha podido cargar tus favoritos", Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -115,7 +153,7 @@ public class CategoryTab extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
+                            for (final QueryDocumentSnapshot document : task.getResult()) {
                                 closet = document.toObject(Closet.class);
                                 String id = document.getId();
                                 dB.collection("closets").document(id).collection("outfits").get()
@@ -124,11 +162,14 @@ public class CategoryTab extends Fragment {
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                 if (task.isSuccessful()) {
                                                     ArrayList<String> arrayList = new ArrayList<>();
+                                                    outfits = new ArrayList<>();
                                                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                                         Outfit outfit = documentSnapshot.toObject(Outfit.class);
+                                                        outfit.setOutfitId(documentSnapshot.getId());
                                                         outfits.add(outfit);
                                                     }
                                                     outfitGrid.setAdapter(new com.mylook.mylook.utils.OutfitAdapter(act, outfits));
+                                                    mProgressBar.setVisibility(View.INVISIBLE);
                                                     return;
                                                 } else
                                                     Log.e("FAVORITES", "Nuuuuuuuuuuuuuuuuuuuuuu");
@@ -140,5 +181,51 @@ public class CategoryTab extends Fragment {
                         }
                     }
                 });
+    }
+
+
+    public void createInputDialog() {
+
+        final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(getContext(), R.style.AlertDialogTheme);
+        final EditText input = new EditText(getContext());
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setHint((CharSequence) "Nombre");
+
+
+
+        LinearLayout linearLayout = new LinearLayout(getContext());
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        layoutParams.gravity = Gravity.CENTER;
+
+        input.setHint("Nombre");
+        input.setLayoutParams(layoutParams);
+
+        linearLayout.addView(input);
+        linearLayout.setPadding(60, 20, 60, 20);
+
+        dialog.setView(linearLayout);
+
+        final android.app.AlertDialog alert = dialog.setTitle("Elegí un nombre para tu conjunto")
+                .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                        String newOutfitName = input.getText().toString();
+                        Intent intent = new Intent(getContext(), OutfitActivity.class);
+                        intent.putExtra("name", newOutfitName);
+                        intent.putExtra("category", "normal");
+                        startActivity(intent);
+                    }
+
+                }).create();
+        alert.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                alert.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.purple));
+
+            }
+        });
+
+        alert.show();
     }
 }
