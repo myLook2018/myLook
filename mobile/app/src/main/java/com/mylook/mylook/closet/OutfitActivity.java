@@ -1,13 +1,16 @@
 package com.mylook.mylook.closet;
 
 import android.content.ClipData;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.constraint.Guideline;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
@@ -17,6 +20,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,8 +48,7 @@ public class OutfitActivity extends AppCompatActivity {
     private HashMap<String, String > outfitItems;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private Closet closet;
-    private ConstraintLayout container;
-    private ImageView bottomCloth, mediumCloth, topCloth, topAccesory, bottomAccesory, activeView;
+    private ImageView bottomCloth, mediumCloth, topCloth, topAccesory, activeView;
     private Toolbar tb;
     private boolean isFromOutfit;
     private String collectionName, category;
@@ -58,11 +62,9 @@ public class OutfitActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_outfit);
         recyclerView = findViewById(R.id.recycleItems);
-        container = findViewById(R.id.outfitLayout);
         topCloth = findViewById(R.id.topCloth);
         bottomCloth = findViewById(R.id.bottomCloth);
         mediumCloth = findViewById(R.id.mediumCloth);
-        bottomAccesory = findViewById(R.id.bottomAccesory);
         topAccesory = findViewById(R.id.topAccesory);
         user = FirebaseAuth.getInstance().getCurrentUser();
         btnSend = findViewById(R.id.btnSendOutfit);
@@ -94,8 +96,6 @@ public class OutfitActivity extends AppCompatActivity {
         mediumCloth.setOnLongClickListener(new MyTouchListener());
         topAccesory.setOnDragListener(new MyDragListener());
         topAccesory.setOnLongClickListener(new MyTouchListener());
-        bottomAccesory.setOnDragListener(new MyDragListener());
-        bottomAccesory.setOnLongClickListener(new MyTouchListener());
         mProgressBar.setVisibility(View.INVISIBLE);
     }
 
@@ -176,6 +176,7 @@ public class OutfitActivity extends AppCompatActivity {
         } catch (Exception e){
             Log.e("Outfit", "Its a new outfit");
         }
+
     }
 
     private void getCloset() {
@@ -217,7 +218,7 @@ public class OutfitActivity extends AppCompatActivity {
 
     private void sendOutfit() {
         final Outfit nuevo = createOutfit();
-        if(outfitId != null) {
+        if(outfitId == null) {
             dB.collection("closets")
                     .whereEqualTo("userID", user.getUid())
                     .get()
@@ -252,7 +253,9 @@ public class OutfitActivity extends AppCompatActivity {
                                     public void onComplete(@NonNull Task<Void> task) {
                                         mProgressBar.setVisibility(View.INVISIBLE);
                                         Toast.makeText(getApplicationContext(), "Cambiaste tu conjunto", Toast.LENGTH_SHORT).show();
-                                        finish();
+                                        Intent intent = new Intent(getApplicationContext(), ClosetActivity.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                                        startActivityIfNeeded(intent, 0);
                                     }
                                 });
                             }
@@ -324,7 +327,8 @@ public class OutfitActivity extends AppCompatActivity {
                                 v = findViewById(getResources().getIdentifier(item, "id", getApplicationContext().getPackageName()));
                             }
                             String art = (String)task.getResult().get("picture");
-                            Glide.with(OutfitActivity.this).asBitmap().load(art)
+                            Glide.with(OutfitActivity.this).asBitmap().load(art).apply(new RequestOptions()
+                                    .diskCacheStrategy(DiskCacheStrategy.DATA))
                                     .into((ImageView) v);
 
                         }
