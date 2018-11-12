@@ -35,20 +35,59 @@
                 </mat-toolbar-row>
             </mat-toolbar>
 
-            <div style="display:flex;">
+            <div style="display:grid;">
 
-                <div class="mainContainer" *ngIf="readyToRender">
-                    <mat-card class="chartCard mat-elevation-z6"  style="width:40vw">
-                        <app-donutchart *ngIf="readyToRender" [usersClickedArticle]="usersClickedArticle" [articlesSavedToCloset]="articlesSavedToCloset" [positiveInteractions]="positiveInteractions"></app-donutchart>
+                <div id="graficos" style="display:inline-flex">
+                    <div class="mainContainer" *ngIf="readyToRender">
+                        <mat-card class="chartCard mat-elevation-z6">
+                            <app-donutchart *ngIf="readyToRender" [usersClickedArticle]="usersClickedArticle"
+                                [articlesSavedToCloset]="articlesSavedToCloset" [positiveInteractions]="positiveInteractions"></app-donutchart>
+                        </mat-card>
+                    </div>
+
+                    <div class="mainContainer" *ngIf="readyToRender">
+                        <mat-card class="chartCard mat-elevation-z6">
+                            <app-polar-area *ngIf="readyToRender" [popularTags]="popularTags" [popularityOfTags]="popularityOfTags"></app-polar-area>
+                        </mat-card>
+                    </div>
+                </div>
+
+                <div *ngIf="readyToRender" id="datos en bruto" style="display:inline-flex">
+                    <mat-card class="dats mat-elevation-z6">
+                        <h3>Interacciones Totales</h3>
+                        <h1>{{totalInteractions}}</h1>
+                    </mat-card>
+                    <mat-card class="dats mat-elevation-z6">
+                        <h3>Interacciones Positivas</h3>
+                        <h1>{{(sumPositiveInteractions)*100/totalInteractions | number:'1.0-0'}}%</h1>
+                    </mat-card>
+                    <mat-card class="dats mat-elevation-z6">
+                        <h3>Usuarios Alcanzados</h3>
+                        <h1>{{usersReached}}</h1>
+                    </mat-card>
+                    <mat-card class="dats mat-elevation-z6">
+                        <h3>Visitas a tu tienda</h3>
+                        <h1>{{visits.length}}</h1>
+                    </mat-card>
+                    <mat-card class="dats mat-elevation-z6">
+                        <h3>Subscripciones</h3>
+                        <h1>{{totalInteractions}}</h1>
+                    </mat-card>
+                    <mat-card class="dats mat-elevation-z6">
+                        <h3>Etiqueta más popular</h3>
+                        <h1>{{bestTag}}</h1>
                     </mat-card>
                 </div>
-                
-                <div class="mainContainer" *ngIf="readyToRender">
-                    <mat-card class="chartCard mat-elevation-z6" style="width:40vw">
-                        <app-polar-area *ngIf="readyToRender" [popularTags]="popularTags" [popularityOfTags]="popularityOfTags"></app-polar-area>
-                    </mat-card>
+
+                <div *ngIf="readyToRender" id="timeline" style="display:inline-flex">
+                    <div class="mainContainer" *ngIf="readyToRender">
+                        <mat-card class="chartCard mat-elevation-z6">
+                            <app-timeline *ngIf="readyToRender" [interactionsByDay]="interactionsByDay"
+                                [daysOfTheWeek]="daysOfTheWeek"></app-timeline>
+                        </mat-card>
+                    </div>
                 </div>
-                
+
             </div>
         </mat-sidenav-content>
     </mat-sidenav-container>

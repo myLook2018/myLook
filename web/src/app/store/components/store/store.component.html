@@ -111,123 +111,59 @@
 
 <ngx-spinner bdColor="rgba(255,255,255,1)" size="large" color="#9c27b0" type="ball-grid-pulse"></ngx-spinner>
 <div class="mat-typography" style="position:sticky;top: 0">
-    <mat-toolbar>
-        <mat-toolbar-row class="mat-elevation-z8 navbar">
-            <button mat-icon-button id="toggleButton" (click)="sidenav.toggle()"><i class="material-icons">
-                    menu
-                </i></button>
-            <img id="logo" src="/assets/brandNoBackground.png" />
-            <span class="spacer"></span>
-            <button mat-icon-button [matMenuTriggerFor]="menu">
-                <mat-icon>more_vert</mat-icon>
-            </button>
-            <mat-menu #menu="matMenu">
-                <button mat-menu-item>Configuración</button>
-                <button mat-menu-item (click)="logout()">Salir</button>
-            </mat-menu>
-            <img class="profilePic" [src]="userStore.profilePh">
-        </mat-toolbar-row>
-    </mat-toolbar>
+  <mat-toolbar>
+    <mat-toolbar-row class="mat-elevation-z8 navbar">
+      <button mat-icon-button id="toggleButton" (click)="sidenav.toggle()"><i class="material-icons">
+          menu
+        </i></button>
+      <img id="logo" src="/assets/brandNoBackground.png" />
+      <span class="spacer"></span>
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>Configuración</button>
+        <button mat-menu-item (click)="logout()">Salir</button>
+      </mat-menu>
+      <img class="profilePic" [src]="userStore.profilePh">
+    </mat-toolbar-row>
+  </mat-toolbar>
 
-    <mat-sidenav-container style="height: 100%;">
-        <mat-sidenav #sidenav [mode]="over">
-            <mat-nav-list>
-                <a mat-list-item (click)="goToProfile()">Visita tu Perfil!</a>
-                <a mat-list-item (click)="goToRecomendations()">Haz una recomendación!</a>
-            </mat-nav-list>
-        </mat-sidenav>
+  <mat-sidenav-container style="height: 100%;">
+    <mat-sidenav #sidenav [mode]="over">
+      <mat-nav-list>
+        <a mat-list-item (click)="goToProfile()">¡Gestiona tú inventario!</a>
+        <a mat-list-item (click)="goToRecomendations()">¡Haz una recomendación!</a>
+        <a mat-list-item (click)="goToRecomendations()">¡Estadisticas!</a>
+      </mat-nav-list>
+    </mat-sidenav>
 
-        <mat-sidenav-content>
+    <mat-sidenav-content>
 
-            <mat-toolbar>
-                <mat-toolbar-row class="stickyNavbar mat-elevation-z2">
-                    <span>Lista de Prendas</span>
-                    <div style="margin-left: auto">
-                        <button id="uploadArticle" mat-flat-button (click)="openArticleDialog()">Subir Prenda</button>
-                    </div>
-                </mat-toolbar-row>
-            </mat-toolbar>
-            <div>
-                <mat-table class="table" [dataSource]="dataSource" matSort>
-
-                    <!--- Note that these columns can be defined in any order.
-            The actual rendered columns are set as a property on the row definition" -->
-
-                    <!-- Picture Column -->
-                    <ng-container matColumnDef="picture">
-                        <mat-header-cell *matHeaderCellDef>
-                            <mat-icon>photo</mat-icon>
-                        </mat-header-cell>
-                        <mat-cell *matCellDef="let element">
-                            <img height="100" width="100" src={{element.picture}}> </mat-cell>
-                    </ng-container>
-
-                    <!-- title Column -->
-                    <ng-container matColumnDef="title">
-                        <mat-header-cell *matHeaderCellDef> Titulo </mat-header-cell>
-                        <mat-cell *matCellDef="let element"> {{element.title}} </mat-cell>
-                    </ng-container>
-
-                    <!-- cost Column -->
-                    <ng-container matColumnDef="cost">
-                        <mat-header-cell *matHeaderCellDef> Costo ($) </mat-header-cell>
-                        <mat-cell *matCellDef="let element"> {{element.cost}} </mat-cell>
-                    </ng-container>
-
-                    <!-- size Column -->
-                    <ng-container matColumnDef="size">
-                        <mat-header-cell *matHeaderCellDef> Talle </mat-header-cell>
-                        <mat-cell *matCellDef="let element"> {{element.size}} </mat-cell>
-                    </ng-container>
-
-                    <!-- material Column -->
-                    <ng-container matColumnDef="material">
-                        <mat-header-cell *matHeaderCellDef> Material </mat-header-cell>
-                        <mat-cell *matCellDef="let element"> {{element.material}} </mat-cell>
-                    </ng-container>
-
-                    <!-- colors Column -->
-                    <ng-container matColumnDef="colors">
-                        <mat-header-cell *matHeaderCellDef> Colores Disp. </mat-header-cell>
-                        <mat-cell *matCellDef="let element"> {{element.colors}} </mat-cell>
-                    </ng-container>
-
-                    <!-- initial_stock Column -->
-                    <ng-container matColumnDef="initial_stock">
-                        <mat-header-cell *matHeaderCellDef> Stock Inicial </mat-header-cell>
-                        <mat-cell *matCellDef="let element"> {{element.initial_stock}} </mat-cell>
-                    </ng-container>
-
-                    <!-- provider Column -->
-                    <ng-container matColumnDef="provider">
-                        <mat-header-cell *matHeaderCellDef> Proveedor </mat-header-cell>
-                        <mat-cell *matCellDef="let element"> {{element.provider}} </mat-cell>
-                    </ng-container>
-
-                    <!-- tags Column -->
-                    <ng-container matColumnDef="tags">
-                        <mat-header-cell *matHeaderCellDef> Etiquetas </mat-header-cell>
-                        <mat-cell *matCellDef="let element"> {{element.tags}} </mat-cell>
-                    </ng-container>
-
-                    <ng-container matColumnDef="actions">
-                        <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
-                        <mat-cell *matCellDef="let element">
-                            <button mat-icon-button class="actionIcon" (click)="openConfirmationDialog(element)">
-                                <mat-icon>delete</mat-icon>
-                            </button>
-                            <button mat-icon-button class="actionIcon" (click)="openArticleDialog(element)">
-                                <mat-icon>edit</mat-icon>
-                            </button>
-                            <button mat-icon-button class="actionIcon">
-                                <mat-icon>favorite</mat-icon>
-                            </button>
-                        </mat-cell>
-                    </ng-container>
-
-                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-                </mat-table>
+      <div class="mainContainer mat-typography">
+        <div class="profileDats" [ngStyle]="{ 'background-image': 'url(' + userStore.coverPh + ')'}">
+          <div class="profile">
+            <img class="profileImg" src={{userStore.profilePh}}>
+            <div class="contact">
+              <div>
+                <h1 class="profileName" style="font-size: 40px;">{{userStore.storeName}}</h1>
+                <p class="direction"> Dirección: {{userStore.storeAddress}} {{userStore.storeAddressNumber}} </p>
+                <p class="direction"> {{userStore.storeCity}}, {{userStore.storeProvince}} </p>
+                <p class="direction"> Teléfono: {{userStore.storePhone}} </p>
+              </div>
+              <div class="description">
+                <p>{{userStore.storeDescription}}</p>
+              </div>
             </div>
-        </mat-sidenav-content>
-    </mat-sidenav-container>
+          </div>
+        </div>
+        <div class="frontArticles">
+          <div style="display: flex; flex-wrap: wrap;">
+              <div style="padding: 0px; margin: 9px" *ngFor="let art of articles">
+                  <img height="321" width="321" src={{art.picture}}>
+              </div>
+          </div>
+        </div>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>

@@ -45,7 +45,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
   requestAnswerForm: FormGroup;
   answerForm: FormGroup;
   answeredRequestIndex = -1;
-  selectedArticleRowIndex: any;
+  selectedArticleRowIndex: -1;
   finishedLoading = false;
   selectedAnswer: RecomendationAnswer;
   description = '';
@@ -125,6 +125,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
             console.log(9);
             /** spinner ends after  seconds */
             this.spinner.hide();
+            console.log(`este es el row index ` + this.selectedArticleRowIndex);
           }, 2000);
         });
       });
@@ -174,7 +175,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
 
   showInformationAnswer(row) {
     this.selectedArticle = row;
-    this.selectedArticleRowIndex = undefined;
+    this.selectedArticleRowIndex = -1;
     this.isRequestSelected = false;
     this.selectedRowIndex = row.FirebaseUID;
     this.selectedRequest = row;
@@ -187,9 +188,9 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
       .setValue(this.selectedAnswer.description);
   }
 
-  showInformationArticle(row) {
+  showInformationArticle(row, index) {
     if (this.isRequestSelected) {
-      this.selectedArticleRowIndex = row.id;
+      this.selectedArticleRowIndex = row.articleId;
       this.selectedArticle = row;
     }
   }
@@ -226,10 +227,12 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
     this.recomendationsToAnswer = [];
     this.recomendationsAnswered = [];
     this.recomendationsRequests.map(request => {
-      if (this.isInAnswers(request.answers)) {
-        this.recomendationsAnswered.push(request);
-      } else {
-        this.recomendationsToAnswer.push(request);
+      if (request.isClosed === false) {
+        if (this.isInAnswers(request.answers)) {
+          this.recomendationsAnswered.push(request);
+        } else {
+          this.recomendationsToAnswer.push(request);
+        }
       }
     });
   }
@@ -267,7 +270,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
       console.log(`filtrando catego ${this.selectedCatego}`);
       this.newRecos = this.recomendationsToAnswer.filter(x => x.category === this.selectedCatego);
       console.log(this.newRecos);
-    } else if ( this.selectedSex !== undefined ) {
+    } else if (this.selectedSex !== undefined) {
       console.log(`filtrando sex ${this.selectedSex}`);
       this.newRecos = this.recomendationsToAnswer.filter(x => x.sex === this.selectedSex);
       console.log(this.newRecos);

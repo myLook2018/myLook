@@ -24,6 +24,7 @@
                 <a mat-list-item (click)="goToProfile()">Visita tu Perfil!</a>
                 <a mat-list-item (click)="goToRecomendations()">Haz una recomendación!</a>
                 <a mat-list-item (click)="goToAnalytics()">Estadisticas!</a>
+                <a mat-list-item (click)="openFrontDialog()">Selecciona tú vidriera!</a>
             </mat-nav-list>
         </mat-sidenav>
 
@@ -33,12 +34,16 @@
                 <mat-toolbar-row class="stickyNavbar mat-elevation-z2">
                     <span>Lista de Prendas</span>
                     <div style="margin-left: auto">
-                        <button id="uploadArticle" mat-flat-button *ngIf="selectionMode" (click)="createSubCollection()">Probando subcoleccion</button>
+                       <!--
+                           <button id="uploadArticle" mat-flat-button *ngIf="selectionMode" (click)="createSubCollection()">Probando subcoleccion</button>
+                        --> 
                     </div>
-
+                    
                     <div style="margin-left: auto">
-                        <button style="margin-right:5px" id="uploadArticle" mat-flat-button (click)="changeMode()">Selección de vidriera!</button>
-                        <button id="uploadArticle" mat-flat-button [disabled]="selectionMode" (click)="openArticleDialog()">Subir Prenda</button>
+                        <button style="margin-right:5px" id="uploadArticle" mat-flat-button *ngIf="selectionMode" (click)="cancelSetting()">Cancelar</button>
+                        <button id="uploadArticle" mat-flat-button *ngIf="selectionMode" (click)="setVidriera()">¡Aceptar!</button>
+                        <button style="margin-right:5px" id="uploadArticle" mat-flat-button *ngIf="!selectionMode" (click)="changeMode()">¡Elije tú vidriera!</button>
+                        <button id="uploadArticle" mat-flat-button [disabled]="selectionMode" *ngIf="!selectionMode" (click)="openArticleDialog()">Subir Prenda</button>
                     </div>
                 </mat-toolbar-row>
             </mat-toolbar>

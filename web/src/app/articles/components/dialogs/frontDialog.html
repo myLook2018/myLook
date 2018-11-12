@@ -1,0 +1,27 @@
+<div class="mat-typography">
+    <div style="display:flex">
+        <h2 style="margin: 0; ">Selecciona las prendas para tú vidriera!</h2>
+        <button [disabled]="isUpLoading" mat-mini-fab style="display: block; margin-left: auto; background-color: #ff9800; "
+            (click)="onNoClick()">
+            <mat-icon>close</mat-icon>
+        </button>
+
+    </div>
+    <h4 style="margin: 0;">Prendas de tu catalogo:</h4>
+</div>
+
+
+<div style="display: flex; flex-wrap: wrap;">
+    <mat-card style="padding: 4px; margin: 2px" *ngFor="let dat of data">
+        <mat-card-content>
+            <img height="250" width="250" src={{dat.picture}}>
+            <mat-checkbox style="position: absolute; right: 3px; background-color: white" (change)="addIdToSelecteds(dat)" ></mat-checkbox>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<div mat-dialog-actions align="end">
+    <button mat-raised-button [mat-dialog-close]="false" cdkFocusInitial (click)="onNoClick()">Cancelar</button>
+    <button mat-raised-button style="background-color: #9C27B0 ; color: #ffffff" [mat-dialog-close]="promotionData"
+        cdkFocusInitial (click)="sendData()">Aceptar</button>
+</div>

@@ -2,7 +2,7 @@ import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { Article } from '../../models/article';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ArticleDialogComponent } from '../dialogs/articleDialog';
-import { MatDialog, MatTableDataSource, MatSort } from '@angular/material';
+import { MatDialog, MatTableDataSource, MatSort, MatSnackBar } from '@angular/material';
 import { AuthService } from '../../../auth/services/auth.service';
 import { Location } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -13,6 +13,7 @@ import { StoreModel } from '../../../auth/models/store.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
 import { PromoteDialogComponent } from '../dialogs/promoteDialog';
+import { FrontDialogComponent } from '../dialogs/frontDialog';
 
 @Component({
   selector: 'app-inventory',
@@ -32,6 +33,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
   selectedIndexes = [];
 
   constructor(
+    public snackBar: MatSnackBar,
     public fb: FormBuilder,
     public articleService: ArticleService,
     public dialog: MatDialog,
@@ -150,6 +152,22 @@ export class InventoryComponent implements OnInit, OnDestroy {
     });
   }
 
+  openFrontDialog(): void {
+    const frontRef = this.dialog.open(FrontDialogComponent, {
+      data: this.articles
+    });
+    const sub = frontRef.componentInstance.onAdd.subscribe((res) => {
+      if (res !== undefined) {
+        console.log(`devolcimos ` + res);
+        this.setVidriera(res);
+        // action this.promoteArticle(res, article, this.userStore.firebaseUID);
+      }
+    });
+    frontRef.afterClosed().subscribe(result => {
+      console.log(`resutl close ` + result);
+      sub.unsubscribe();
+    });
+  }
   openArticleDialog(article: Article): void {
     let dataToSend = {};
     if (article !== undefined) {
@@ -196,6 +214,30 @@ export class InventoryComponent implements OnInit, OnDestroy {
     );
   }
 
+  resetSelectedVidriera() {
+    for (let i = 0; i < this.articles.length ; i++ ) {
+      console.log(`sacando de vidriera ` + this.articles[i].title);
+      this.articleService.refreshVidrieraAttribute(this.articles[i].articleId, false);
+    }
+  }
+
+  setVidriera(idOfFrontsArticles: string[]) {
+    this.resetSelectedVidriera();
+    for (let i = 0; i < idOfFrontsArticles.length ; i++ ) {
+      console.log(`ahora ponemos en vidriera a ` + idOfFrontsArticles[i]);
+      this.articleService.refreshVidrieraAttribute(idOfFrontsArticles[i], true);
+    }
+    this.articlesToGenerateFront = [];
+    this.openSnackBar('Su vidriera ha sido actualizada!', 'close');
+    this.selectionMode = false;
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 2000,
+    });
+  }
+
   createSubCollection() {
     for (let i = 0; i < this.selectedIndexes.length ; i++ ) {
       const index = this.selectedIndexes[i];
@@ -231,6 +273,11 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   goToAnalytics() {
     this.router.navigate([`/estadisticas`]);
+  }
+
+  cancelSetting() {
+    this.selectionMode = false;
+    this.selectedIndexes = [];
   }
 
 }

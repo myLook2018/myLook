@@ -28,6 +28,4 @@ export const rootRouterConfig: Routes = [
     resolve: { data: UserResolver, articles: ArticleResolver }, runGuardsAndResolvers: 'always'
   },
   { path: '404', component: ErrorComponent },
-  { path: 'anylitics', component: DonutchartComponent },
-
 ];

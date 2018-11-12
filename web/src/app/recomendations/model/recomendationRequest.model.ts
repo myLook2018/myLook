@@ -6,7 +6,7 @@ export class RecomendationRequest {
     sex?: string;
     title?: string;
     userName?: string;
-    state?: boolean;
+    isClosed?: boolean;
     description?: String;
     limitDate?: Date;
     updateDate?: Date;
