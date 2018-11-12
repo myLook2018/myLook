@@ -1,7 +1,5 @@
 package com.mylook.mylook.entities;
 
-import android.support.annotation.NonNull;
-
 import java.util.HashMap;
 
 public class User implements  Comparable<User> {
@@ -13,6 +11,7 @@ public class User implements  Comparable<User> {
     private String dni;
     private String birthday;
     private String installToken;
+    private boolean isPremium;
 
     public User() {
     }
@@ -40,7 +39,7 @@ public class User implements  Comparable<User> {
         return 0;
     }
 
-    public User(String name, String surname, String userId, String gender, String email, String dni, String birthday) {
+    public User(String name, String surname, String userId, String gender, String email, String dni, String birthday,boolean isPremium) {
         this.name = name;
         this.surname = surname;
         this.userId = userId;
@@ -48,6 +47,15 @@ public class User implements  Comparable<User> {
         this.email = email;
         this.dni = dni;
         this.birthday = birthday;
+        this.isPremium=isPremium;
+    }
+
+    public boolean getPremium() {
+        return isPremium;
+    }
+
+    public void setPremium(boolean premium) {
+        isPremium = premium;
     }
 
     public String getInstallToken() {
