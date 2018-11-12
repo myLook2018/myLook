@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.constraint.Guideline;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,19 +36,23 @@ public class ViewOutfitActivity extends AppCompatActivity {
     private FirebaseFirestore dB = FirebaseFirestore.getInstance();
     private HashMap<String, String> outfitItems;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    private ConstraintLayout container;
     private Toolbar tb;
     private String collectionName, category, outfitId;
     private ProgressBar mProgressBar;
+    private ImageView topLeft, topRight, bottomLeft, bottomRight;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_outfit);
-        container = findViewById(R.id.outfitLayout);
         user = FirebaseAuth.getInstance().getCurrentUser();
         mProgressBar = findViewById(R.id.mProgressBar);
         mProgressBar.setVisibility(View.VISIBLE);
+        topLeft = findViewById(R.id.topCloth);
+        topRight = findViewById(R.id.topAccesory);
+        bottomLeft = findViewById(R.id.mediumCloth);
+        bottomRight = findViewById(R.id.bottomCloth);
+
         initElements();
         loadOutfit();
     }
@@ -91,7 +97,6 @@ public class ViewOutfitActivity extends AppCompatActivity {
         tb.setTitle(collectionName);
         setSupportActionBar(tb);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
     }
 
     @Override
