@@ -58,7 +58,7 @@ public class SearchableActivity extends AppCompatActivity {
             String query = intent.getStringExtra("query");
             recyclerView.removeAllViewsInLayout();
             recyclerView.removeAllViews();
-            results.clear();
+            results.clear(); //new
             doMySearchTags(query);
             doMySearchTitles(query);
             doMySearchStoreNames(query);

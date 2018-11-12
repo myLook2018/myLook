@@ -47,7 +47,8 @@ public class ShopwindowFragment extends Fragment {
         // Obtención del grid view
         GridViewWithHeaderAndFooter grid = rootView.findViewById(R.id.gridview);
         // Inicializar el grid view
-        grid.addHeaderView(createHeaderView());
+        if(coverPh!=null)
+            grid.addHeaderView(createHeaderView());
         setupShopWindowGridView(grid);
         return rootView;
     }
