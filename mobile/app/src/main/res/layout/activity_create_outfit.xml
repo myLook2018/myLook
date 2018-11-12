@@ -17,74 +17,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <android.support.v7.widget.GridLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            app:columnCount="2"
-            app:layout_constraintBottom_toTopOf="@+id/recycleItems"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layutTop"
-            app:orientation="horizontal"
-            app:rowCount="2">
-
-            <ImageView
-                android:id="@+id/mediumCloth"
-                android:layout_width="180dp"
-                android:layout_height="180dp"
-                android:layout_margin="4dp"
-                android:background="@drawable/image_border"
-                app:layout_column="1"
-                app:layout_gravity="center"
-                app:layout_row="1"
-                app:srcCompat="@android:color/background_light"
-                tools:layout_editor_absoluteX="4dp"
-                tools:layout_editor_absoluteY="204dp" />
-
-            <ImageView
-                android:id="@+id/topAccesory"
-                android:layout_width="180dp"
-                android:layout_height="180dp"
-                android:layout_margin="4dp"
-                android:background="@drawable/image_border"
-                app:layout_column="1"
-                app:layout_gravity="center"
-                app:layout_row="0"
-                app:srcCompat="@android:color/background_light"
-                tools:layout_editor_absoluteX="192dp"
-                tools:layout_editor_absoluteY="8dp" />
-
-            <ImageView
-                android:id="@+id/bottomCloth"
-                android:layout_width="180dp"
-                android:layout_height="180dp"
-                android:layout_margin="4dp"
-                android:background="@drawable/image_border"
-                app:layout_column="0"
-                app:layout_gravity="center"
-                app:layout_row="1"
-                app:srcCompat="@android:color/background_light"
-                tools:layout_editor_absoluteX="192dp"
-                tools:layout_editor_absoluteY="202dp" />
-
-            <ImageView
-                android:id="@+id/topCloth"
-                android:layout_width="180dp"
-                android:layout_height="180dp"
-                android:layout_margin="4dp"
-                android:background="@drawable/image_border"
-                app:layout_column="0"
-                app:layout_gravity="center"
-                app:layout_row="0"
-                app:srcCompat="@android:color/background_light"
-                tools:layout_editor_absoluteX="4dp"
-                tools:layout_editor_absoluteY="8dp" />
-        </android.support.v7.widget.GridLayout>
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycleItems"
             android:layout_width="384dp"
@@ -117,6 +49,78 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </android.support.constraint.ConstraintLayout>
 
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/outfitLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/recycleItems"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layutTop">
+
+            <ImageView
+                android:id="@+id/bottomAccesory"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="36dp"
+                android:background="@drawable/image_border"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/mediumCloth"
+                app:srcCompat="@android:color/background_light" />
+
+            <ImageView
+                android:id="@+id/topAccesory"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="60dp"
+                android:layout_marginEnd="36dp"
+                android:background="@drawable/image_border"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@android:color/background_light" />
+
+            <ImageView
+                android:id="@+id/mediumCloth"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginStart="88dp"
+                android:layout_marginTop="136dp"
+                android:background="@drawable/image_border"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/outfitLayout"
+                app:srcCompat="@android:color/background_light" />
+
+            <ImageView
+                android:id="@+id/topCloth"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/image_border"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/outfitLayout"
+                app:srcCompat="@android:color/background_light" />
+
+            <ImageView
+                android:id="@+id/bottomCloth"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginStart="44dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/image_border"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/mediumCloth"
+                app:srcCompat="@android:color/background_light" />
+        </android.support.constraint.ConstraintLayout>
+
     </android.support.constraint.ConstraintLayout>
 
     <ProgressBar
@@ -131,6 +135,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/relativeLayout2" />
 
 </android.support.constraint.ConstraintLayout>
