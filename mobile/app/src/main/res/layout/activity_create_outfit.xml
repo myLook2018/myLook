@@ -18,14 +18,13 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <android.support.v7.widget.GridLayout
+            android:id="@+id/gridLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             app:columnCount="2"
-            app:layout_constraintBottom_toTopOf="@+id/recycleItems"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/layutTop"
@@ -41,7 +40,6 @@
                 app:layout_column="1"
                 app:layout_gravity="center"
                 app:layout_row="1"
-                app:srcCompat="@android:color/background_light"
                 tools:layout_editor_absoluteX="4dp"
                 tools:layout_editor_absoluteY="204dp" />
 
@@ -54,7 +52,6 @@
                 app:layout_column="1"
                 app:layout_gravity="center"
                 app:layout_row="0"
-                app:srcCompat="@android:color/background_light"
                 tools:layout_editor_absoluteX="192dp"
                 tools:layout_editor_absoluteY="8dp" />
 
@@ -67,7 +64,6 @@
                 app:layout_column="0"
                 app:layout_gravity="center"
                 app:layout_row="1"
-                app:srcCompat="@android:color/background_light"
                 tools:layout_editor_absoluteX="192dp"
                 tools:layout_editor_absoluteY="202dp" />
 
@@ -80,7 +76,6 @@
                 app:layout_column="0"
                 app:layout_gravity="center"
                 app:layout_row="0"
-                app:srcCompat="@android:color/background_light"
                 tools:layout_editor_absoluteX="4dp"
                 tools:layout_editor_absoluteY="8dp" />
         </android.support.v7.widget.GridLayout>
@@ -88,11 +83,12 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycleItems"
             android:layout_width="384dp"
-            android:layout_height="100dp"
+            android:layout_height="150dp"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/gridLayout" />
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/layutTop"
