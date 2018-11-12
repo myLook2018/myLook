@@ -68,10 +68,6 @@
             android:theme="@style/Base.Theme.AppCompat"/>
         <activity android:name=".profile.EditInfoActivity"/>
         <activity android:name=".profile.MyAccountActivity"/>
-        <activity android:name=".premiumUser.PremiumRequestActivity"
-            android:parentActivityName=".profile.ProfileActivity"
-            android:grantUriPermissions="true"/>
-        <activity android:name=".premiumUser.PremiumUserProfile"/>
         <activity android:name=".closet.ClosetActivity"/>
         <activity android:name=".closet.OutfitActivity"
             android:parentActivityName=".closet.ClosetActivity"/>

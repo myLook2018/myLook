@@ -21,16 +21,16 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
+import com.mylook.mylook.closet.ClosetActivity;
 import com.mylook.mylook.login.LoginActivity;
-import com.mylook.mylook.premiumUser.PremiumRequestActivity;
-import com.mylook.mylook.premiumUser.PremiumUserProfile;
 import com.mylook.mylook.utils.BottomNavigationViewHelper;
 
 public class ProfileActivity extends AppCompatActivity {
 
     private static final int ACTIVITY_NUM = 4;
     private LinearLayout layoutAccount;
-    private LinearLayout layoutPremiumRequest;
+    private LinearLayout layoutCloset;
+    private LinearLayout layoutSettings;
     private LinearLayout layoutHelp;
     private LinearLayout layoutExit;
     private TextView txtName;
@@ -39,20 +39,27 @@ public class ProfileActivity extends AppCompatActivity {
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     private Context mContext = ProfileActivity.this;
-    private String clientId;
-    private boolean isPremiumUser;
-    private LinearLayout layoutDifussionGroup;
-    private String userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        setUserProfile();
+        initElements();
         setOnClickListener();
 
         setupBottomNavigationView();
+    }
+
+    private void initElements() {
+        layoutAccount = findViewById(R.id.layoutAccount);
+        layoutCloset = findViewById(R.id.layoutCloset);
+        layoutSettings = findViewById(R.id.layoutSettings);
+        layoutHelp = findViewById(R.id.layoutHelp);
+        layoutExit = findViewById(R.id.layoutExit);
+        txtEmail = findViewById(R.id.txtEmail);
+        txtName = findViewById(R.id.txtName);
+        setUserProfile();
     }
 
     private void setOnClickListener() {
@@ -63,23 +70,17 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        layoutPremiumRequest.setOnClickListener(new View.OnClickListener() {
+        layoutCloset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), PremiumRequestActivity.class);
-                intent.putExtra("clientId",clientId);
-                intent.putExtra("userName",userName);
+                Intent intent = new Intent(getApplicationContext(), ClosetActivity.class);
                 startActivity(intent);
-
             }
         });
-        layoutDifussionGroup.setOnClickListener(new View.OnClickListener() {
+        layoutSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), PremiumUserProfile.class);
-                intent.putExtra("clientId",clientId);
-                startActivity(intent);
+
             }
         });
         layoutHelp.setOnClickListener(new View.OnClickListener() {
@@ -127,36 +128,20 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void setUserProfile() {
-        layoutAccount = findViewById(R.id.layoutAccount);
-        layoutHelp = findViewById(R.id.layoutHelp);
-        layoutExit = findViewById(R.id.layoutExit);
-        txtEmail = findViewById(R.id.txtEmail);
-        txtName = findViewById(R.id.txtName);
-        layoutPremiumRequest = findViewById(R.id.layoutPremiumRequest);
-        layoutDifussionGroup=findViewById(R.id.layoutDifussionGroup);
+        getUserName();
+        txtEmail.setText(user.getEmail().equals("") ? "" : user.getEmail());
+    }
+
+    private void getUserName(){
+        final String [] userName = new String[1];
         dB.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                userName =  task.getResult().getDocuments().get(0).get("name").toString() + " " + task.getResult().getDocuments().get(0).get("surname").toString();
-                isPremiumUser=(boolean)task.getResult().getDocuments().get(0).get("isPremium");
-                txtName.setText(userName);
-                clientId=task.getResult().getDocuments().get(0).getId();
-
-
-                if(isPremiumUser){
-                    layoutDifussionGroup.setVisibility(View.VISIBLE);
-                }else
-                {
-                    layoutPremiumRequest.setVisibility(View.VISIBLE);
-                }
-                txtEmail.setText(user.getEmail().equals("") ? "" : user.getEmail());
+               userName[0] =  task.getResult().getDocuments().get(0).get("name").toString() + " " + task.getResult().getDocuments().get(0).get("surname").toString();
+                txtName.setText(userName[0]);
             }
         });
-
-
     }
-
-
 
 
     /**

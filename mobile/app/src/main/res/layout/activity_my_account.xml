@@ -20,9 +20,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="51dp"
-            android:background="@color/white"
+            android:layout_marginStart="25dp"
             android:orientation="vertical"
+            android:paddingTop="51dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -32,7 +32,6 @@
                 android:id="@+id/layoutInfoAccount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:clickable="true"
                 android:orientation="horizontal">
 
@@ -53,15 +52,13 @@
                     android:layout_weight="1"
                     android:padding="10dp"
                     android:text="Info de Cuenta"
-                    android:textColor="@color/black"
-                    android:textSize="17sp" />
+                    android:textSize="24sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/layouAdress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:clickable="true"
                 android:orientation="horizontal">
 
@@ -80,8 +77,7 @@
                     android:layout_weight="1"
                     android:padding="10dp"
                     android:text="Dirección"
-                    android:textColor="@color/black"
-                    android:textSize="17sp" />
+                    android:textSize="24sp" />
 
             </LinearLayout>
 
@@ -89,7 +85,6 @@
                 android:id="@+id/layoutNotifications"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:clickable="true"
                 android:orientation="horizontal">
 
@@ -108,8 +103,7 @@
                     android:layout_weight="1"
                     android:padding="10dp"
                     android:text="Notificaciones"
-                    android:textColor="@color/black"
-                    android:textSize="17sp" />
+                    android:textSize="24sp" />
             </LinearLayout>
 
         </LinearLayout>
