@@ -64,12 +64,14 @@ import { ChartModule } from 'primeng/chart';
 import { DonutchartComponent } from './anylitics/components/donutchart/donutchart.component';
 import { DashboardComponent } from './anylitics/components/dashboard/dashboard.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { AnyliticService } from './anylitics/components/services/anylitics.service';
+import { AnyliticService } from './anylitics/services/anylitics.service';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
 import { MomentModule } from 'ngx-moment';
 import { PolarAreaComponent } from './anylitics/components/polar-area/polar-area.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { TimelineComponent } from './anylitics/components/timeline/timeline.component';
+import { FrontDialogComponent } from './articles/components/dialogs/frontDialog';
 
 @NgModule({
   declarations: [
@@ -93,7 +95,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     DonutchartComponent,
     DashboardComponent,
     PromoteDialogComponent,
-    PolarAreaComponent
+    PolarAreaComponent,
+    TimelineComponent,
+    FrontDialogComponent
   ],
   imports: [
     NgxSpinnerModule,
@@ -140,7 +144,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
   exports: [RouterModule],
   providers: [MatDatepickerModule, RecomendationService, DataService, AuthService, UserService, UserResolver, AuthGuard, StoreService,
     ArticleService, TagsService, AnyliticService, ArticleResolver, StoreResolver],
-  entryComponents: [PromoteDialogComponent, DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent,
+  entryComponents: [FrontDialogComponent, PromoteDialogComponent, DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent,
     DeleteConfirmationDialogComponent, MapsDialogComponent, EditStoreComponent],
   bootstrap: [AppComponent]
 })

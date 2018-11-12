@@ -6,9 +6,10 @@ import { AuthService } from 'src/app/auth/services/auth.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
-import { AnyliticService } from '../services/anylitics.service';
+import { AnyliticService } from '../../services/anylitics.service';
 import { Interaction } from '../../model/interaction';
 import { min } from 'moment';
+import { Visit } from '../../model/visit';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,6 +20,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   readyToRender = false;
   totalInteractions;
   positiveInteractions;
+  sumPositiveInteractions;
   usersReached;
   usersClickedArticle;
   articlesSavedToCloset;
@@ -26,11 +28,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
   popularityOfTags;
   matrix;
   popularityXtag;
+  bestTag;
+  InteractionsXday;
+  daysOfTheWeek = [];
+  interactionsByDay = [];
   options: FormGroup;
   FirebaseUser = new StoreModel();
   userStore = new StoreModel();
   _subscription: Subscription;
   interactions: Interaction[];
+  visits: Visit[];
 
   constructor(
     fb: FormBuilder,
@@ -60,12 +67,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.userStore = userA[0];
       if (this.userStore.profilePh === '') { this.userStore.profilePh = this.FirebaseUser.profilePh; }
       this.anyliticService.getInteractions(this.userStore.storeName).then((res) => this.interactions = res).then(() => {
-        console.log(this.interactions);
-        this.getAnylitics();
-        setTimeout(() => {
-          this.spinner.hide();
-          this.readyToRender = true;
-        }, 2000);
+        this.anyliticService.getVisits(this.userStore.storeName).then((res) => this.visits = res).then( () => {
+          this.getAnylitics();
+          setTimeout(() => {
+            this.spinner.hide();
+            this.readyToRender = true;
+          }, 2000);
+        } );
       });
       /* this.anyliticService.getAllInteractions(this.userStore.storeName).then((interactionsFb) => {
          console.log(interactionsFb);
@@ -101,6 +109,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.getUsersClickedArticle();
     this.getArticlesSavedToCloset();
     this.getPopularsTags();
+    this.getBestTag();
+    this.getInteractionsByDay();
+    this.sumPositiveInteractions = this.positiveInteractions + this.articlesSavedToCloset + this.usersClickedArticle;
   }
 
   getTotalInteractions() {
@@ -142,7 +153,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     let index;
     this.interactions.forEach((interaction) => {
       if ((interaction.liked === true || interaction.savedToCloset === true || interaction.clickOnArticle === true)
-       && interaction.tags !== null) {
+        && interaction.tags !== null) {
         interaction.tags.map((tag) => {
           if (!this.popularTags.includes(tag)) {
             this.popularTags.push(tag);
@@ -165,4 +176,62 @@ export class DashboardComponent implements OnInit, OnDestroy {
     console.log(this.popularityXtag);
   }
 
+  getBestTag() {
+    let maxValue = -1;
+    let indexOfMaxValue = -1;
+    for (let i = 0; i < this.popularityOfTags.length; i++) {
+      if (this.popularityXtag[i].count > maxValue) {
+        indexOfMaxValue = i;
+        maxValue = this.popularityXtag[i].count;
+      }
+    }
+    this.bestTag = this.popularityXtag[indexOfMaxValue].tag;
+  }
+
+  getInteractionsByDay() {
+    this.InteractionsXday = [];
+    this.daysOfTheWeek = [];
+    this.interactionsByDay = [];
+    let index;
+    const today = new Date();
+    // const days = [ `${Date()}`, `${today.getDay}`, `${new Date().getDay}` ] ;
+    // console.log(`days ` + days);
+    console.log(`today ` + today);
+    console.log(`today.getDay() ` + today.getDay());
+    console.log(`today.getDate() ` + today.getDate());
+    this.interactions.forEach((interaction) => {
+      if (interaction.interactionTime !== undefined) {
+        const dateOfInteraction: Date = new Date(interaction.interactionTime.toDate());
+        if (!this.daysOfTheWeek.includes(`${dateOfInteraction.getDate()}/${dateOfInteraction.getMonth()}`)) {
+          this.daysOfTheWeek.push(`${dateOfInteraction.getDate()}/${dateOfInteraction.getMonth()}`);
+          this.interactionsByDay.push(0);
+        }
+        index = this.daysOfTheWeek.indexOf(`${dateOfInteraction.getDate()}/${dateOfInteraction.getMonth()}`);
+        this.interactionsByDay[index]++;
+      }
+    });
+
+    this.matrix = {};
+    for (let i = 0; i < this.daysOfTheWeek.length; i++) {
+      this.matrix = {
+        day: this.daysOfTheWeek[i],
+        count: this.interactionsByDay[i]
+      };
+      this.InteractionsXday.push(this.matrix);
+    }
+
+    console.log(this.InteractionsXday);
+  }
+
+  goToProfile() {
+    console.log(`/store/${this.userStore.storeName}`);
+    this.router.navigate([`/store/${this.userStore.storeName}`]);
+    console.log(this.userStore.profilePh);
+  }
+
+  goToInventory() {
+    this.router.navigate([`/home`]);
+  }
 }
+
+

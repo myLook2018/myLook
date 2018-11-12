@@ -1,6 +1,6 @@
 export class Interaction {
   id?: string;
-  articleId?:string;
+  articleId?: string;
   clickOnArticle?: boolean;
   liked?: boolean;
   savedToCloset?: boolean;
@@ -8,4 +8,5 @@ export class Interaction {
   tags?: string[];
   userId?: string;
   valid?: boolean;
+  interactionTime: any;
   }

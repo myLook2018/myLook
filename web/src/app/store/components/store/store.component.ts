@@ -14,6 +14,7 @@ import { StoreModel } from '../../../auth/models/store.model';
 import { AuthService } from '../../../auth/services/auth.service';
 import { Location } from '@angular/common';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { ArticleService } from 'src/app/articles/services/article.service';
 // import { ObservableMedia } from '@angular/flex-layout';
 
 @Component({
@@ -30,6 +31,7 @@ export class StoreComponent implements OnInit, OnDestroy {
   user = new StoreModel();
   _subscription2: Subscription;
   constructor(
+    public articleService: ArticleService,
     private route: ActivatedRoute,
     public dialog: MatDialog,
     public userService: UserService,
@@ -44,25 +46,30 @@ export class StoreComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.spinner.show();
     this.route.data.subscribe(routeData => {
+      console.log(`trayendo recomendaciones`);
       const data = routeData['data'];
       if (data) {
         this.FirebaseUser = data;
       }
     });
-    this._subscription2 = this.userService.getUserInfo(this.FirebaseUser.firebaseUserId).subscribe(userA => {
-      this.userStore = userA[0];
-      if (this.userStore.profilePh === undefined) {this.userStore.profilePh = this.FirebaseUser.profilePh; }
-      this.route.data.subscribe(routeData => {
-        const articles = routeData['articles'];
-        if (articles) {
-          this.articles = articles;
+    console.log(1);
+    this._subscription2 = this.userService.getUserInfo(this.FirebaseUser.firebaseUserId)
+      .subscribe(userA => {
+        console.log(2);
+        this.userStore = userA[0];
+        if (this.userStore.profilePh === undefined) {
+          console.log(3);
+          this.userStore.profilePh = this.FirebaseUser.profilePh;
         }
+        console.log(4);
+        this.articleService.getArticlesCopado(this.userStore.storeName).then((articles) => {
+          console.log(articles);
+          this.articles = articles;
         setTimeout(() => {
           this.spinner.hide();
         }, 2000);
       });
-      this.getUserInfo();
-      console.log(4);
+      console.log(5);
     });
   }
 
@@ -107,18 +114,6 @@ export class StoreComponent implements OnInit, OnDestroy {
     });
   }
 
-  getUserInfo() {
-    this.userService.getCurrentUser().then(
-      res => {
-        this.user.profilePh = res.photoURL;
-        this.user.storeName = res.displayName;
-        this.user.provider = res.providerData[0].providerId;
-        return;
-      }, err => {
-        this.router.navigate(['/login']);
-      }
-    );
-  }
 
   logout() {
     this.authService.doLogout().then(

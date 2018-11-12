@@ -115,7 +115,9 @@
           </mat-card-header>
           <img mat-card-image [src]="selectedRequest.requestPhoto" alt="No se adjuntó foto en la solicitud.">
           <mat-card-content style="max-height: calc(30vh); overflow-y: auto;">
-            <p>{{selectedRequest.description}}</p>
+            <p> <b>Categoría:</b> {{selectedRequest.category}}.</p>
+            <p><b>Datos sobre el talle:</b> {{selectedRequest.size}}.</p>
+            <p>{{selectedRequest.description}}.</p>
           </mat-card-content>
         </mat-card>
       </div>
@@ -154,12 +156,12 @@
 
           <ng-container matColumnDef="PrendasCatalogo">
             <mat-header-cell *matHeaderCellDef> Prendas para sugerir </mat-header-cell>
-            <mat-cell *matCellDef="let element"><img height="150" width="150" src={{element.picture}}></mat-cell>
+            <mat-cell *matCellDef="let element; let i = index"><img height="150" width="150" src={{element.picture}}></mat-cell>
           </ng-container>
 
           <mat-header-row *matHeaderRowDef="displayedColumnsArticles"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: displayedColumnsArticles;" [ngClass]="{'highlight': row.id === selectedArticleRowIndex}"
-            (click)="showInformationArticle(row)"></mat-row>
+          <mat-row *matRowDef="let row; columns: displayedColumnsArticles;" [ngClass]="{'highlight': row.articleId === selectedArticleRowIndex}"
+            (click)="showInformationArticle(row, i)"></mat-row>
         </mat-table>
       </div>
 

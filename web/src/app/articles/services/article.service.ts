@@ -8,6 +8,7 @@ import { Article } from '../models/article';
 import { map, filter } from 'rxjs/operators';
 import * as firebase from 'firebase';
 import { StoreFront } from '../models/storeFront';
+import { reject } from 'q';
 
 @Injectable()
 export class ArticleService {
@@ -44,6 +45,7 @@ export class ArticleService {
 
   getArticlesCopado(storeName) {
     this.articlesCopado = [];
+    // tslint:disable-next-line:no-shadowed-variable
     return new Promise<any>((resolve, reject) => {
       console.log(`estamos preguntando por ` + storeName);
       const res = this.db.collection(this.collectionPath).where('storeName', '==', storeName)
@@ -70,6 +72,14 @@ export class ArticleService {
 
   deleteArticle(article: Article) {
     return this.fst.collection(this.collectionPath).doc(`${article.articleId}`).delete();
+  }
+
+  refreshVidrieraAttribute(articleUID, newValue: boolean) {
+    return new Promise<any> ((resolve) => {
+      this.fst.collection(this.collectionPath).doc(articleUID).update({
+        estaEnVidriera: newValue
+      }).then(() => resolve(console.log(articleUID + `actualizado a ` + newValue)));
+    }).catch(error => reject(error));
   }
 
   refreshArticle(article: Article) {
@@ -117,17 +127,17 @@ export class ArticleService {
     const sf = this.getStoreFront(storeName).then(res => {
       if (res !== undefined) {
         console.log(`en el if`);
-        this.addSubCollection( res, articles, storeFrontNumber);
+        this.addSubCollection(res, articles, storeFrontNumber);
       } else {
         console.log(`en el else`);
         this.createStoreFront(storeName).then(() => {
-        // this.addStoreFront(storeFirebaseUID, article, storeFrontNumber);
+          // this.addStoreFront(storeFirebaseUID, article, storeFrontNumber);
         });
       }
     });
   }
 
-  addSubCollection( doc, articles, frontNumber) {
+  addSubCollection(doc, articles, frontNumber) {
     this.fst.collection(this.storeFrontPath).doc(`${doc.id}`).collection(`storeFronts`).add({
       storeFrontNumber: frontNumber,
       articles: articles.map(x => x)
@@ -136,6 +146,7 @@ export class ArticleService {
 
   getStoreFront(storeName) {
     let lala;
+    // tslint:disable-next-line:no-shadowed-variable
     return new Promise<StoreFront>((resolve, reject) => {
       this.db.collection(this.storeFrontPath).where('storeName', '==', storeName)
         .get().then((querySnapshot) => {
@@ -152,13 +163,13 @@ export class ArticleService {
           console.log('Error getting storeFront: ', error);
           reject(error);
         });
-        console.log(`lala` + lala);
-      });
+      console.log(`lala` + lala);
+    });
   }
 
   createStoreFront(storeName) {
     console.log(`creando`);
-    return new Promise<any>((resolve, reject) => {
+    return new Promise<any>((resolve) => {
       const res = this.fst.collection(this.storeFrontPath).add({
         storeName: storeName,
       });
