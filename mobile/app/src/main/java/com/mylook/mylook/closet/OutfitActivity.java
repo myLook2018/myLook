@@ -219,6 +219,7 @@ public class OutfitActivity extends AppCompatActivity {
     private void sendOutfit() {
         final Outfit nuevo = createOutfit();
         if(outfitId == null) {
+            mProgressBar.setVisibility(View.VISIBLE);
             dB.collection("closets")
                     .whereEqualTo("userID", user.getUid())
                     .get()
@@ -231,6 +232,7 @@ public class OutfitActivity extends AppCompatActivity {
                                 dB.collection("closets").document(id).collection("outfits").add(nuevo).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentReference> task) {
+                                        mProgressBar.setVisibility(View.INVISIBLE);
                                         Toast.makeText(OutfitActivity.this, "Se ha creado tu conjunto", Toast.LENGTH_SHORT).show();
                                         finish();
                                     }

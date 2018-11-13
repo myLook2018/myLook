@@ -44,7 +44,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:padding="10dp"
-                    android:text="Añade una foto de perfil"
+                    android:text="Añade una foto para la publicación"
                     android:textColor="@color/black"
                     android:textSize="17sp" />
 
@@ -54,8 +54,8 @@
                     android:layout_height="300dp"
                     android:layout_gravity="center_vertical|center"
                     android:layout_weight="1"
-                    android:tint="@color/primary_light"
-                    app:srcCompat="@drawable/logo_transparente_50" />
+                    android:background="@drawable/logo_transparente_50"
+                    android:backgroundTint="@color/primary_light" />
 
             </LinearLayout>
 
