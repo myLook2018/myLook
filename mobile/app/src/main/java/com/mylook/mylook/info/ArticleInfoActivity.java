@@ -163,7 +163,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
                                                 displayMessage("Se añadió a tu ropero");
                                             }else
                                             {
-                                                displayMessage("Ya es está en tu ropero");
+                                                displayMessage("Ya está en tu ropero");
                                             }
                                         }
                                     });

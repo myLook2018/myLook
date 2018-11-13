@@ -176,7 +176,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 ArrayList<String> categories = (ArrayList<String>) task.getResult().getDocuments().get(0).get("categories");
-                spinner.setAdapter(new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_selectable_list_item, categories));
+                spinner.setAdapter(new ArrayAdapter<String>(RecommendActivityAddDesc.this, android.R.layout.simple_selectable_list_item, categories));
             }
         });
     }

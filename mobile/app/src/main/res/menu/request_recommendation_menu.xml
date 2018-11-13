@@ -11,18 +11,18 @@
         android:iconTint="@color/white"
         />
 
-    <item android:id="@+id/share_req"
-        android:icon="@drawable/ic_share"
-        android:title="@string/share_req"
-        app:showAsAction="never"
-        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"/>
+    <!--<item android:id="@+id/share_req"-->
+        <!--android:icon="@drawable/ic_share"-->
+        <!--android:title="@string/share_req"-->
+        <!--app:showAsAction="never"-->
+        <!--app:actionProviderClass="android.support.v7.widget.ShareActionProvider"/>-->
 
-    <item android:id="@+id/delete_req"
-        android:title="@string/delete_req"
-        app:showAsAction="never"/>
+    <!--<item android:id="@+id/delete_req"-->
+        <!--android:title="@string/delete_req"-->
+        <!--app:showAsAction="never"/>-->
 
-    <item android:id="@+id/help"
-        android:icon="@drawable/ic_help"
-        android:title="@string/help"
-        app:showAsAction=""/>
+    <!--<item android:id="@+id/help"-->
+        <!--android:icon="@drawable/ic_help"-->
+        <!--android:title="@string/help"-->
+        <!--app:showAsAction=""/>-->
 </menu>

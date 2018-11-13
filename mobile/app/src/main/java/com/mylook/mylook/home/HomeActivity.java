@@ -29,13 +29,16 @@ import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Subscription;
 import com.mylook.mylook.login.LoginActivity;
+import com.mylook.mylook.room.LocalInteraction;
 import com.mylook.mylook.utils.BottomNavigationViewHelper;
 import com.mylook.mylook.utils.CardsHomeFeedAdapter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 
 public class HomeActivity extends AppCompatActivity {
@@ -49,9 +52,13 @@ public class HomeActivity extends AppCompatActivity {
     private List<Article> articleList;
     private ArrayList<Subscription> subscriptionList;
 
+    private List<LocalInteraction> mLocalInteractions;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    private int currentIndex = 0;
+    private int totalArticles = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +78,6 @@ public class HomeActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
 
-        //read firestore
         if (mAuth.getCurrentUser() != null) {
             readSubscriptions();
             updateInstallationToken();
@@ -145,13 +151,17 @@ public class HomeActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful()) {
-                                        for (QueryDocumentSnapshot documentSnapshot:task.getResult()){
-                                            Log.e("ROPERO", documentSnapshot.getId());
-                                            Article art=documentSnapshot.toObject(Article.class);
-                                            art.setArticleId(documentSnapshot.getId());
-                                            articleList.add(art);
+                                        if (createArticleList(task.getResult())) {
+                                            adapter.notifyDataSetChanged();
+
+                                            Log.e("On complete", "Tamaño adapter "+adapter.getItemCount());
                                         }
-                                        adapter.notifyDataSetChanged();
+//                                        for (QueryDocumentSnapshot documentSnapshot:task.getResult()){
+//                                            Article art=documentSnapshot.toObject(Article.class);
+//                                            art.setArticleId(documentSnapshot.getId());
+//                                            articleList.add(art);
+//                                        }
+
                                     } else {
                                         Log.d("Firestore task", "onComplete: " + task.getException());
                                     }
@@ -163,6 +173,113 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
     }
+
+    private boolean createArticleList(QuerySnapshot result) {
+        List<Article> promo1 = new ArrayList<>();
+        List<Article> promo2 = new ArrayList<>();
+        List<Article> promo3 = new ArrayList<>();
+
+        for (QueryDocumentSnapshot document : result) {
+                Article art = document.toObject(Article.class);
+                art.setArticleId(document.getId());
+                Log.e("Promotion Level", "N° "+art.getPromotionLevel());
+                int pl = art.getPromotionLevel();
+                switch (pl) {
+                    case 1:
+                        Log.d("ADDING", "PROMO1");
+                        promo1.add(art);
+                        break;
+                    case 2:
+                        Log.d("ADDING", "PROMO2");
+                        promo2.add(art);
+                        break;
+                    case 3:
+                        Log.d("ADDING", "PROMO3");
+                        promo3.add(art);
+                        break;
+                }
+                totalArticles++;
+
+        }
+        if (totalArticles == 0) {
+            return false;
+        }
+        if (!promo3.isEmpty()) {
+            Collections.shuffle(promo3);
+        }
+        if (!promo2.isEmpty()) {
+            Collections.shuffle(promo2);
+        }
+        if (!promo1.isEmpty()) {
+            Collections.shuffle(promo1);
+        }
+        Random r = new Random();
+        int v;
+        while (true) {
+            if (!promo3.isEmpty()) {
+                if (!promo2.isEmpty()) {
+                    if (!promo1.isEmpty()) {
+                        Log.e("Shuffle", "Los tres != vacio");
+                        v = r.nextInt(100);
+                        if (v > 54) {
+                            articleList.add(promo3.remove(0));
+                        } else if (v > 21) {
+                            articleList.add(promo2.remove(0));
+                        } else {
+                            articleList.add(promo1.remove(0));
+                        }
+                    } else {
+                        Log.e("Shuffle", "3 y 2 != vacio");
+                        v = r.nextInt(100);
+                        if (v > 35) {
+                            articleList.add(promo3.remove(0));
+                        } else {
+                            articleList.add(promo2.remove(0));
+                        }
+                    }
+                } else {
+                    if (!promo1.isEmpty()) {
+                        Log.e("Shuffle", "3 y 1 != vacio");
+                        v = r.nextInt(100);
+                        if (v > 32) {
+                            articleList.add(promo3.remove(0));
+                        } else {
+                            articleList.add(promo1.remove(0));
+                        }
+                    } else {
+                        Log.e("Shuffle", "Tres != vacio");
+                        articleList.add(promo3.remove(0));
+                    }
+                }
+            } else {
+                if (!promo2.isEmpty()) {
+                    if (!promo1.isEmpty()) {
+                        Log.e("Shuffle", "2 y 1 != vacio");
+                        v = r.nextInt(100);
+                        if (v > 39) {
+                            articleList.add(promo2.remove(0));
+                        } else {
+                            articleList.add(promo1.remove(0));
+                        }
+                    } else {
+                        Log.e("Shuffle", "2 != vacio");
+                        articleList.add(promo2.remove(0));
+                    }
+                } else {
+                    if (!promo1.isEmpty()) {
+                        Log.e("Shuffle", "1 != vacio");
+                        articleList.add(promo1.remove(0));
+                    } else {
+                        Log.e("Shuffle", "Los tres vacios");
+                        break;
+                    }
+                }
+            }
+        }
+        Log.e("HOme", "Retorno true el getArticleLIst");
+        return true;
+    }
+
 
     /**
      * BottomNavigationView setup
