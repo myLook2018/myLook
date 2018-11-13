@@ -49,8 +49,8 @@ import { SuccesfulDialogComponent } from './dialog/succesful-dialog/succesful-di
 import { DeleteConfirmationDialogComponent } from './articles/components/dialogs/deleteConfirmationDialog';
 import { MatAutocompleteModule } from '@angular/material';
 import { StoreComponent } from './store/components/store/store.component';
-import { StoreResolver } from './store/components/store/store.resolver';
-import { ArticleResolver } from './store/components/store/store.resolver';
+// import { StoreResolver } from './store/components/store/store.resolver';
+// import { ArticleResolver } from './store/components/store/store.resolver';
 import { EditStoreComponent } from './store/components/dialogs/editStore';
 import { AgmCoreModule } from '@agm/core';
 import { MapsComponent } from './maps/maps.component';
@@ -72,6 +72,8 @@ import { PolarAreaComponent } from './anylitics/components/polar-area/polar-area
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { TimelineComponent } from './anylitics/components/timeline/timeline.component';
 import { FrontDialogComponent } from './articles/components/dialogs/frontDialog';
+import {RatingModule} from 'primeng/rating';
+import { NewStoreService } from './store/service/store.service';
 
 @NgModule({
   declarations: [
@@ -137,13 +139,16 @@ import { FrontDialogComponent } from './articles/components/dialogs/frontDialog'
     MatSliderModule,
     MomentModule,
     MatCheckboxModule,
+    RatingModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyC7gRAUi_0C-w5gqsWIVp0IKyEZT-3UiUA'
     })
   ],
   exports: [RouterModule],
   providers: [MatDatepickerModule, RecomendationService, DataService, AuthService, UserService, UserResolver, AuthGuard, StoreService,
-    ArticleService, TagsService, AnyliticService, ArticleResolver, StoreResolver],
+    ArticleService, TagsService, AnyliticService,
+    // ArticleResolver, StoreResolver,
+    NewStoreService],
   entryComponents: [FrontDialogComponent, PromoteDialogComponent, DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent,
     DeleteConfirmationDialogComponent, MapsDialogComponent, EditStoreComponent],
   bootstrap: [AppComponent]

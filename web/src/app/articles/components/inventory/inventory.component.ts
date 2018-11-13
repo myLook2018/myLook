@@ -264,7 +264,12 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   goToProfile() {
     console.log(`/store/${this.userStore.storeName}`);
-    this.router.navigate([`/store/${this.userStore.storeName}`]);
+    this.router.navigate([`/home`]);
+    console.log(this.userStore.profilePh);
+  }
+
+  goToInventory() {
+    console.log(`already in inventory`);
   }
 
   goToRecomendations() {
@@ -272,7 +277,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
   }
 
   goToAnalytics() {
-    this.router.navigate([`/estadisticas`]);
+    this.router.navigate([`/analytics`]);
   }
 
   cancelSetting() {

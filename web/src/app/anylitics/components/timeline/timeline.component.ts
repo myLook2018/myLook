@@ -35,7 +35,7 @@ export class TimelineComponent implements OnInit {
       labels: this.days,
       datasets: [
           {
-              label: 'Desde que se registró en la aplicación.',
+              label: 'Número de interacciones en el día',
              // backgroundColor: '#42A5F5',
               borderColor: '#1E88E5',
               data: this.countInteractionsByDay

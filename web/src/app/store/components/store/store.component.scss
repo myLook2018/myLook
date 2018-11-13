@@ -279,7 +279,8 @@
 .profileDats{
    // background-color: green;
     height: 30vh;
-    min-height: 250px;
+    min-height: 292px;
+    min-width: 1000px;
 }
 
 .profileImg{
@@ -322,7 +323,19 @@
 
 .description{
     width: 350px;
-    height: 100px;
+    height: 150px;
     overflow: auto;
     margin-left: 40px;
+}
+
+.socialNetworks{
+    display: flex;
+    margin-left: 40px;
+    margin-top: 20px;
+}
+
+.mediaLink{
+    text-decoration: none;
+    color: #6a99ff;
+    font-size: 20px;
 }

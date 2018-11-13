@@ -1,47 +1,47 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AngularFireStorage, AngularFireUploadTask } from 'angularfire2/storage';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { StoreService } from '../../../auth/services/store.service';
-import { Store } from '../../model/store.model';
 import { Router } from '@angular/router';
+import { StoreModel } from 'src/app/auth/models/store.model';
 
 @Component({
     selector: 'app-editstore',
     templateUrl: 'editStore.html'
 })
 export class EditStoreComponent {
+    onAdd = new EventEmitter();
     storeForm: FormGroup;
-    store: Store;
-
     constructor(
         private fb: FormBuilder,
         private router: Router,
         // private storage: AngularFireStorage,
         public dialogRef: MatDialogRef<EditStoreComponent>,
         private service: StoreService,
-        @Inject(MAT_DIALOG_DATA) store: any
-
+        @Inject(MAT_DIALOG_DATA) public store: StoreModel
     ) {
-
-        this.store = store.data;
         this.createForm();
     }
 
     createForm() {
         this.storeForm = this.fb.group({
             // completar los datos de la tienda
-            name: [this.store.storeName, Validators.required],
-            phone: [this.store.storePhone, Validators.nullValidator],
-            mail: [this.store.storeMail, Validators.required],
-            desc: [this.store.storeDescription, Validators.nullValidator],
-            facebook: [this.store.facebookLink, Validators.nullValidator],
-            instagram: [this.store.instagramLink, Validators.nullValidator],
-            twitter: [this.store.twitterLink, Validators.nullValidator],
-            address: [this.store.storeAddress, Validators.required],
-            addressNumber: [this.store.storeAddressNumber, Validators.required],
+            storeName: [this.store.storeName, Validators.required],
+            storeMail: [this.store.storeMail, Validators.required],
+            ownerName: [this.store.ownerName, Validators.required],
+            profilePh: [this.store.profilePh, Validators.required],
+            coverPh: [this.store.coverPh, Validators.required],
+            storePhone: [this.store.storePhone, Validators.nullValidator],
+            storeCity: [this.store.storeCity, Validators.required],
+            storeProvince: [this.store.storeProvince, Validators.required],
+            storeAddress: [this.store.storeAddress, Validators.required],
+            storeAddressNumber: [this.store.storeAddressNumber, Validators.required],
             storeFloor: [this.store.storeFloor, Validators.nullValidator],
-            storePosition: [[20, 60], Validators.nullValidator]
+            storePosition: [[20, 60], Validators.nullValidator],
+            storeDescription: [this.store.storeDescription, Validators.nullValidator],
+            instagramLink: [this.store.instagramLink, Validators.nullValidator],
+            facebookLink: [this.store.facebookLink, Validators.nullValidator],
+            twitterLink: [this.store.twitterLink, Validators.nullValidator],
         });
     }
 
@@ -49,7 +49,11 @@ export class EditStoreComponent {
         this.dialogRef.close();
     }
 
-    saveChanges(form): void {
+    sendData() {
+        this.onAdd.emit(this.storeForm.value);
+    }
+
+    /*saveChanges(form): void {
         const newInfo: Store = {
             storeName: form.name,
             storeAddress: form.address,
@@ -70,5 +74,5 @@ export class EditStoreComponent {
             this.onNoClick();
             this.router.navigate(['/store/' + this.store.userName]);
         });
-    }
+    }*/
 }

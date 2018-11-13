@@ -1,13 +1,7 @@
 <div class="mat-typography">
   <div style="display:flex">
-      
       <h2 *ngIf="isNew" style="margin: 0; ">Agrega una nueva prenda a tu catálogo</h2>
       <h2 *ngIf="!isNew" style="margin: 0; ">Actualizar prenda</h2>
-      <button [disabled]="isUpLoading" mat-mini-fab style="display: block; margin-left: auto; background-color: #ff9800; "
-        (click)="onNoClick()">
-        <mat-icon>close</mat-icon>
-      </button>
-
   </div>
   <h4 *ngIf="isNew" style="margin: 0;">A continuación ingresa la información de la prenda.</h4>
 </div>

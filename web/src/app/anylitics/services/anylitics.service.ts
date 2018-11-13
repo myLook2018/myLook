@@ -6,6 +6,8 @@ import { Injectable } from '@angular/core';
 import * as firebase from 'firebase';
 import { Interaction } from '../model/interaction';
 import { Visit } from '../model/visit';
+import { Subcription } from '../model/subcription';
+import { AnsweredRecom } from '../model/answeredRecom';
 
 @Injectable()
 export class AnyliticService {
@@ -13,10 +15,14 @@ export class AnyliticService {
   visitsCollection: AngularFirestoreCollection<Visit>;
   interactions: Interaction[] = [];
   visits: Visit[] = [];
+  subscriptions: Subcription[] = [];
+  answeredRecomendations: AnsweredRecom[] = [];
 
   // tslint:disable-next-line:no-inferrable-types
   collectionPath: string = 'interactions';
   visitsPath = 'visits';
+  subPath = 'subscriptions';
+  answeredRecomPath = 'answeredRecommendations';
   db: any;
   require: any;
 
@@ -63,6 +69,48 @@ export class AnyliticService {
         });
       }).then(() => {
           resolve(this.visits);
+        }).catch(function (error) {
+          console.log('Error getting documents: ', error);
+          reject(error);
+        });
+    });
+  }
+
+  getSubscriptions(storeName) {
+    console.log(`geting subscriptions`);
+    this.subscriptions = [];
+    return new Promise<any>((resolve, reject) => {
+      console.log(`estamos preguntando subcripciones de ` + storeName);
+      const res = this.db.collection(this.subPath).where('storeName', '==', storeName)
+      .get().then(queryRes => {
+        queryRes.forEach(doc => {
+          const data = doc.data();
+          data.id = doc.id;
+          this.subscriptions.push(data);
+        });
+      }).then(() => {
+          resolve(this.subscriptions);
+        }).catch(function (error) {
+          console.log('Error getting documents: ', error);
+          reject(error);
+        });
+    });
+  }
+
+  getRecomendationFeedBack(storeName) {
+    console.log(`geting Feedback`);
+    this.answeredRecomendations = [];
+    return new Promise<any>((resolve, reject) => {
+      console.log(`estamos preguntando subcripciones de ` + storeName);
+      const res = this.db.collection(this.answeredRecomPath).where('storeName', '==', storeName)
+      .get().then(queryRes => {
+        queryRes.forEach(doc => {
+          const data = doc.data();
+          data.id = doc.id;
+          this.answeredRecomendations.push(data);
+        });
+      }).then(() => {
+          resolve(this.answeredRecomendations);
         }).catch(function (error) {
           console.log('Error getting documents: ', error);
           reject(error);

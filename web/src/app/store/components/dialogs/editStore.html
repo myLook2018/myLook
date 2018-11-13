@@ -1,57 +1,99 @@
 <div class="mat-typography">
-  <button mat-mini-fab style="display: block; margin-left: auto; background-color: #ff9800;" (click)="onNoClick()">
-    <mat-icon>close</mat-icon>
-  </button>
-  <h3 style="text-align: center">¡ Dale un nuevo look a tu tienda !</h3>
+  <h3 style="text-align: center; margin: 0">¡Actualiza tus Datos!</h3>
+  <h4 style="text-align: center; margin: 0">Es importante, asi tus clientes te encontrarán!</h4>
 </div>
-
-<div>
-  <div [formGroup]="storeForm" style="display: flex;">
-    <div style="height: 455px; position: relative;">
-      <div fxLayout="row" fxLayoutAlign="space-between start">
-        <mat-form-field>
-          <input matInput placeholder="Nombre" formControlName="name">
-        </mat-form-field>
-        <mat-form-field style="width:60%; margin-left: 5%;">
-          <textarea matInput placeholder="Descripción" formControlName="desc"></textarea>
-        </mat-form-field>
-      </div>
-      <mat-divider>
-      </mat-divider>
-      <div style="margin-top: 5%">
-        <div fxflex fxLayout="row" fxLayoutAlign="space-between center">
-          <mat-form-field fxflex fxFlex="70%">
-            <input matInput placeholder="Dirección" formControlName="address">
-          </mat-form-field>
-          <mat-form-field fxflex style="margin-left: 5%">
-            <input matInput placeholder="N°" formControlName="addressNumber">
-          </mat-form-field>
+<div style="display:grid">
+  <div style="display: table-caption; margin-top: 15px;margin-left: auto; margin-right: auto;">
+    <form [formGroup]="storeForm" style="display: grid;">
+      <div class="profileDats" style="
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;"
+        [ngStyle]="{ 'background-image': 'url(' + store.coverPh + ')'}">
+        <button [disabled]="isUpLoading" mat-mini-fab style="margin-left: 475px;
+        margin-top: 120px;
+        position: absolute; background-color: #ff9800; ">
+            <mat-icon>add_photo_alternate</mat-icon>
+          </button>
+        <div class="profile">
+          <img class="profileImg" style="border-radius: 50%;
+              outline: 0;
+              margin: 8px 0 8px 8px;
+              width: 120px; 
+              height: 120px;"
+            src={{store.profilePh}}>
+          <button [disabled]="isUpLoading" mat-mini-fab style="margin-left: -25px;margin-top: 85px;          
+          position: absolute; background-color: #ff9800; ">
+            <mat-icon>edit</mat-icon>
+          </button>
         </div>
-        <mat-form-field style="margin-right: 2%">
-          <input matInput placeholder="Teléfono" formControlName="phone">
-        </mat-form-field>
-        <mat-form-field style="width: 90%">
-          <input matInput placeholder="Mail" formControlName="mail">
-        </mat-form-field>
       </div>
-      <mat-divider>
-      </mat-divider>
-      <div fxflex style="display: block">
-        <mat-form-field style="width: 90%;margin-top: 5%">
-          <input matInput placeholder="Facebook" formControlName="facebook">
-        </mat-form-field>
-        <mat-form-field style="width: 90%">
-          <input matInput placeholder="Instagram" formControlName="instagram">
-        </mat-form-field>
-        <mat-form-field style="width: 90%">
-          <input matInput placeholder="Twitter" formControlName="twitter">
-        </mat-form-field>
-      </div>
-      <div fxflex style="align-self: flex-end;margin-bottom: 5px" fxLayout="row" fxLayoutAlign="end end">
-        <button style="background-color: #9C27B0; color: white" mat-raised-button (click)="saveChanges(storeForm.value)">Guardar</button>
-      </div>
-    </div>
+      <div style="display:flex; margin-top:15px ">
 
+
+        <div #firstColumn style="display: inline-table;margin-left: 10px; width: 240px">
+          <div>
+            <mat-form-field style="width: 95%">
+              <input matInput type="text" placeholder="Nombre de la Tienda" formControlName="storeName" value={{store.storeName}}>
+            </mat-form-field>
+            <mat-form-field style="width: 95%">
+              <input matInput type="text" placeholder="Dirección" formControlName="storeAddress" value={{store.storeAddress}}>
+            </mat-form-field>
+            <mat-form-field style="width: 95%">
+              <input matInput type="text" placeholder="Piso" formControlName="storeFloor" value={{store.storeFloor}}>
+            </mat-form-field>
+            <mat-form-field style="width: 95%">
+              <input matInput type="text" placeholder="Ciudad" formControlName="storeCity" value={{store.storeCity}}>
+            </mat-form-field>
+            <mat-form-field style="width: 95%">
+              <input matInput type="text" placeholder="Nombre de usuario de Facebook" formControlName="facebookLink"
+                value={{store.facebookLink}}>
+            </mat-form-field>
+
+          </div>
+        </div>
+
+        <div #secondColumn style="display: inline-table; width: 240px; height: 240px; position: relative; margin-left: 5px">
+          <div>
+            <mat-form-field style="width: 95%">
+              <input matInput type="text" placeholder="Email" formControlName="storeMail" value={{store.storeMail}}>
+            </mat-form-field>
+
+            <mat-form-field style="width: 95%">
+              <input matInput type="text" placeholder="Número" formControlName="storeAddressNumber" value={{store.storeAddressNumber}}>
+            </mat-form-field>
+
+            <mat-form-field style="width: 95%">
+              <input matInput type="text" placeholder="Teléfono" formControlName="storePhone" value={{store.storePhone}}>
+            </mat-form-field>
+
+            <mat-form-field style="width: 95%">
+              <input matInput type="text" placeholder="Provincia" formControlName="storeProvince" value={{store.storeProvince}}>
+            </mat-form-field>
+
+
+            <mat-form-field style="width: 95%">
+              <input matInput type="text" placeholder="Nombre de usuario de Instagram" formControlName="instagramLink"
+                value={{store.instagramLink}}>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div #thirtColumn style="margin-left: 10px">
+          <form [formGroup]="storeForm" style="display: flex;">
+            <mat-form-field style="width: 97.5%">
+              <textarea matInput placeholder="Descripción" formControlName="storeDescription" type="text" style="padding: 0"
+                value={{store.storeDescription}}></textarea>
+            </mat-form-field>
+          </form>
+        </div>
+      </div>
+    </form>
   </div>
-
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button [mat-dialog-close]="false" cdkFocusInitial (click)="onNoClick()">Cancelar</button>
+  <button mat-raised-button style="background-color: #9C27B0 ; color: #ffffff" [mat-dialog-close]="promotionData"
+    cdkFocusInitial (click)="sendData()">Aceptar</button>
 </div>

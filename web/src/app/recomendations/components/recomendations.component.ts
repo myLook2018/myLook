@@ -153,16 +153,6 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
     });
   }
 
-  goToProfile() {
-    console.log(`/store/${this.userStore.storeName}`);
-    this.router.navigate([`/store/${this.userStore.storeName}`]);
-    console.log(this.userStore.profilePh);
-  }
-
-  goToInventory() {
-    this.router.navigate([`/home`]);
-  }
-
   showInformationRequest(row) {
     this.requestAnswerForm.get('description').setValue('');
     this.isRequestSelected = true;
@@ -284,4 +274,23 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
     );
 
   }
+
+  goToProfile() {
+    console.log(`/home`);
+    this.router.navigate([`/home`]);
+    console.log(this.userStore.profilePh);
+  }
+
+  goToInventory() {
+    this.router.navigate([`/inventory`]);
+  }
+
+  goToRecomendations() {
+    console.log(`already in recomendations`);
+  }
+
+  goToAnalytics() {
+    this.router.navigate([`/analytics`]);
+  }
+
 }
