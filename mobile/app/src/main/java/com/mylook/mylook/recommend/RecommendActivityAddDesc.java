@@ -468,8 +468,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             if (requestCode == REQUEST_CAMERA) {
                 picUri = data.getData();
                 //picUri = (Uri) data.getExtras().get(Intent.EXTRA_STREAM);
-                Log.d("Setee picUri", "onActivityResult: " + picUri);
-                perfromCrop();
+                    perfromCrop();
             } else if (requestCode == SELECT_FILE) {
                 selectImageUri = data.getData();
                 CropImage.activity(selectImageUri)
