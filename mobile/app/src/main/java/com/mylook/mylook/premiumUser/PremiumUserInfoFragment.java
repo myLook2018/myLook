@@ -188,7 +188,7 @@ public class PremiumUserInfoFragment extends Fragment{
         btnSubscribe.setVisibility(View.VISIBLE);
         dB.collection("premiumUsersSubscriptions")
                 .whereEqualTo("userId", user.getUid())
-                .whereEqualTo("clientId", clientId)
+                .whereEqualTo("storeName", clientId)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {

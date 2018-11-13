@@ -20,6 +20,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
+import com.mylook.mylook.entities.PremiumUser;
 import com.mylook.mylook.entities.Store;
 import com.mylook.mylook.utils.CardsHomeFeedAdapter;
 
@@ -62,8 +63,36 @@ public class SearchableActivity extends AppCompatActivity {
             doMySearchTags(query);
             doMySearchTitles(query);
             doMySearchStoreNames(query);
+            doMySearchStorePremium(query);
         }
     }
+
+    private void doMySearchStorePremium(final String query) {
+        db.collection("premiumUsers")
+                //.whereEqualTo("storeName",query)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                                if (documentSnapshot.get("userName").toString().toLowerCase().contains(query.toLowerCase())) {
+                                    PremiumUser premiumUser = documentSnapshot.toObject(PremiumUser.class);
+                                    results.add(premiumUser);
+                                    Log.e("Usuario", premiumUser.getUserName());
+                                }
+                            }
+                            //articleList.addAll(task.getResult().toObjects(Article.class));
+                            Log.e("Usuario", "successful");
+                            adapter.notifyDataSetChanged();
+
+                        } else {
+                            Log.d("Firestore task", "onComplete: " + task.getException());
+                        }
+                    }
+                });
+    }
+
 
     private void doMySearchStoreNames(final String query) {
         //query = Character.toUpperCase(query.charAt(0)) + query.substring(1, query.length());
@@ -150,5 +179,10 @@ public class SearchableActivity extends AppCompatActivity {
 
     private void displayMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
     }
 }

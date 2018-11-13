@@ -79,9 +79,11 @@ public class PublicClosetFragment extends Fragment {
                                                                     @Override
                                                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                                         if(task.isSuccessful()){
+                                                                            if(task.getResult().exists()){
                                                                             Article art=task.getResult().toObject(Article.class);
                                                                             art.setArticleId(task.getResult().getId());
                                                                             favorites.add(art);
+                                                                            }
                                                                         }
 
                                                                     }

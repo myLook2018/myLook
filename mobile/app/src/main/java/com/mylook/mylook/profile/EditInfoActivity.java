@@ -3,14 +3,14 @@ package com.mylook.mylook.profile;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.support.v7.widget.Toolbar;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -102,6 +102,8 @@ public class EditInfoActivity extends AppCompatActivity {
         tb = findViewById(R.id.toolbar);
         tb.setTitle("Editar Información");
         setSupportActionBar(tb);
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
 
     }
 
@@ -111,12 +113,6 @@ public class EditInfoActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 ArrayList<String> categories = (ArrayList<String>) task.getResult().getDocuments().get(0).get("categories");
                 spinner.setAdapter(new ArrayAdapter<String>(EditInfoActivity.this, android.R.layout.simple_selectable_list_item, categories));
-                for (int i = 0; i < spinner.getLineCount(); i++) {
-                    if(spinner.getAdapter().getItem(i).toString().toLowerCase().equals(oldUser.getGender().toLowerCase())){
-                        spinner.setSelection(i);
-                        break;
-                    }
-                }
                 }
         });
     }

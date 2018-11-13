@@ -33,6 +33,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -102,6 +103,7 @@ public class NewPublicationActivity extends AppCompatActivity {
                 sendRequest();
             }
         });
+
     }
 
     private void sendRequest() {
@@ -184,10 +186,19 @@ public class NewPublicationActivity extends AppCompatActivity {
         if (txtStoreName.getText().toString().isEmpty()) {
             displayMessage("Debe añadir una Tienda");
             return;
-        }
-        if (txtArticleCode.getText().toString().isEmpty()) {
-            displayMessage("Debe añadir un código para el artículo");
-            return;
+        }else
+        {
+            Task<QuerySnapshot> task= validateStore(txtStoreName.getText().toString());
+            if(task.isComplete()){
+                if (txtArticleCode.getText().toString().isEmpty()) {
+                    displayMessage("Debe añadir un código para el artículo");
+                    return;
+                }else
+                {
+                    Task<QuerySnapshot> task2=validateCode(txtArticleCode.getText().toString(),txtStoreName.getText().toString());
+                }
+            }
+
         }
 
         if ( selectImageUri == null) {
@@ -212,6 +223,43 @@ public class NewPublicationActivity extends AppCompatActivity {
             });
         }
 
+    }
+    private Task<QuerySnapshot> validateStore(String store){
+        Task <QuerySnapshot> task = dB.collection("stores").whereEqualTo("storeName",store).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            if(task.getResult().getDocuments().isEmpty()){
+                                displayMessage("No existe tienda");
+                            return;
+                            }
+                            else{
+                                return;
+                            }
+                        }
+                    }
+                });
+
+        return task;
+    }
+    private Task<QuerySnapshot> validateCode(String code,String store){
+        Task<QuerySnapshot> task=dB.collection("articles").whereEqualTo("storeName",store).whereEqualTo("code",code).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            if(task.getResult().getDocuments().isEmpty()){
+                                displayMessage("No existe Articulo en esa tienda");
+                                return;
+                            }
+                            else{
+                                return;
+                            }
+                        }
+                    }
+                });
+        return task;
     }
     private boolean writeFirebaseDocument(String uri) {
         if (!enviado) {
@@ -259,6 +307,11 @@ public class NewPublicationActivity extends AppCompatActivity {
         txtArticleCode =findViewById(R.id.txtArticleCode);
         btnSave =findViewById(R.id.btnSave);
         mProgressBar=findViewById(R.id.progressBar);
+    }
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
     }
 
 

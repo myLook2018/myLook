@@ -52,13 +52,13 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
         viewPagerUserPublications = findViewById(R.id.storeViewPager);
         Toolbar tb =  findViewById(R.id.toolbar);
         fab=findViewById(R.id.fab);
-        fab.setVisibility(View.VISIBLE);
         tb.setTitle("Usuario Destacado");
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         Intent intentStore = getIntent();
         clientId = intentStore.getStringExtra("clientId");
+
         isCurrentUser=false;
         db.collection("clients").document(clientId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -66,6 +66,8 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
                 if(task.isSuccessful()){
                     if(task.getResult().get("userId").toString().equals(user.getUid())){
                      isCurrentUser=true;
+                     fab.setVisibility(View.VISIBLE);
+
                     }
                     premiumUserId=task.getResult().get("userId").toString();
                 }

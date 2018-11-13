@@ -27,6 +27,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
+import com.mylook.mylook.entities.PremiumUser;
 import com.mylook.mylook.entities.Subscription;
 import com.mylook.mylook.login.LoginActivity;
 import com.mylook.mylook.utils.BottomNavigationViewHelper;
@@ -46,7 +47,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private CardsHomeFeedAdapter adapter;
-    private List<Article> articleList;
+    private List list;
     private ArrayList<Subscription> subscriptionList;
 
     private FirebaseAuth mAuth;
@@ -63,8 +64,8 @@ public class HomeActivity extends AppCompatActivity {
         Toolbar tb = findViewById(R.id.toolbar);
         setSupportActionBar(tb);
         recyclerView = findViewById(R.id.recycler_view_content);
-        articleList = new ArrayList<>();
-        adapter = new CardsHomeFeedAdapter(this, articleList);
+        list = new ArrayList<>();
+        adapter = new CardsHomeFeedAdapter(this, list);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -149,7 +150,40 @@ public class HomeActivity extends AppCompatActivity {
                                             Log.e("ROPERO", documentSnapshot.getId());
                                             Article art=documentSnapshot.toObject(Article.class);
                                             art.setArticleId(documentSnapshot.getId());
-                                            articleList.add(art);
+                                            list.add(art);
+                                        }
+                                        adapter.notifyDataSetChanged();
+                                    } else {
+                                        Log.d("Firestore task", "onComplete: " + task.getException());
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        });
+        db.collection("premiumUsersSubscriptions")
+                .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    if (!task.getResult().isEmpty()) {
+                        subscriptionList = new ArrayList<Subscription>();
+                        subscriptionList.addAll(task.getResult().toObjects(Subscription.class));
+
+                        for (Subscription sub : subscriptionList) {
+                            db.collection("premiumUsers")
+                                    .whereEqualTo("clientId", sub.getStoreName())
+                                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot documentSnapshot:task.getResult()){
+                                            Log.e("ROPERO", documentSnapshot.getId());
+                                            PremiumUser premiumUser=documentSnapshot.toObject(PremiumUser.class);
+                                            list.add(premiumUser);
                                         }
                                         adapter.notifyDataSetChanged();
                                     } else {

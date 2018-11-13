@@ -1,21 +1,16 @@
 package com.mylook.mylook.entities;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
+import java.io.Serializable;
 import java.util.Date;
 
-public class PremiumPublication implements Parcelable {
+public class PremiumPublication implements Serializable {
     private String articleCode;
     private String clientId;
     private String publicationPhoto;
-    private String storeNme;
+    private String storeName;
     private String userId;
     private Date date;
 
-    public PremiumPublication(Parcel in) {
-
-    }
 
     public Date getDate() {
         return date;
@@ -28,26 +23,15 @@ public class PremiumPublication implements Parcelable {
     public PremiumPublication() {
     }
 
-    public PremiumPublication(String articleCode, String clientId, String publicationPhoto, String storeNme, String userId, Date date) {
+    public PremiumPublication(String articleCode, String clientId, String publicationPhoto, String storeName, String userId, Date date) {
         this.articleCode = articleCode;
         this.clientId = clientId;
         this.publicationPhoto = publicationPhoto;
-        this.storeNme = storeNme;
+        this.storeName = storeName;
         this.userId = userId;
         this.date = date;
     }
 
-    public static final Creator<PremiumPublication> CREATOR = new Creator<PremiumPublication>() {
-        @Override
-        public PremiumPublication createFromParcel(Parcel in) {
-            return new PremiumPublication(in);
-        }
-
-        @Override
-        public PremiumPublication[] newArray(int size) {
-            return new PremiumPublication[size];
-        }
-    };
 
     public String getArticleCode() {
         return articleCode;
@@ -73,12 +57,12 @@ public class PremiumPublication implements Parcelable {
         this.publicationPhoto = publicationPhoto;
     }
 
-    public String getStoreNme() {
-        return storeNme;
+    public String getStoreName() {
+        return storeName;
     }
 
-    public void setStoreNme(String storeNme) {
-        this.storeNme = storeNme;
+    public void setStoreName(String storeName) {
+        this.storeName = storeName;
     }
 
     public String getUserId() {
@@ -89,17 +73,5 @@ public class PremiumPublication implements Parcelable {
         this.userId = userId;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(articleCode);
-        dest.writeString(clientId);
-        dest.writeString(publicationPhoto);
-        dest.writeString(storeNme);
-        dest.writeString(userId);
-    }
 }

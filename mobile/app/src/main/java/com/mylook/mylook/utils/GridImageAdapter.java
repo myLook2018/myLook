@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,6 +85,7 @@ public class GridImageAdapter extends ArrayAdapter{
              holder.image.setOnClickListener(new View.OnClickListener() {
                  @Override
                  public void onClick(View v) {
+                     Log.e("CLICK EN LA FOTO",pub.getPublicationPhoto());
                      Intent intent = new Intent(mContext, PublicationDetail.class);
                      intent.putExtra("publication",pub);
                      mContext.startActivity(intent);

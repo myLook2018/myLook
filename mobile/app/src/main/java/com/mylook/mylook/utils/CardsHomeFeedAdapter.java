@@ -14,8 +14,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
+import com.mylook.mylook.entities.PremiumUser;
 import com.mylook.mylook.entities.Store;
 import com.mylook.mylook.info.ArticleInfoActivity;
+import com.mylook.mylook.premiumUser.PremiumUserProfileActivity;
 import com.mylook.mylook.storeProfile.StoreActivity;
 
 import java.util.List;
@@ -81,7 +83,8 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
                     mContext.startActivity(intent);
                 }
             });
-        }else{
+        }else
+            if(articlesAndStoresList.get(position).getClass()== Store.class){
             final Store store =(Store) articlesAndStoresList.get(position);
             holder.txtTitle.setText(store.getStoreName());
             holder.nameStore.setText("Ver Tienda");
@@ -108,7 +111,35 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
                 }
             });
 
-        }
+        }else{
+                final PremiumUser premiumUser =(PremiumUser) articlesAndStoresList.get(position);
+                holder.txtTitle.setText(premiumUser.getUserName());
+                holder.nameStore.setText("Ver Usuario destacado");
+                // loading article image using Glide library
+                Glide.with(mContext).load(premiumUser.getProfilePhoto()).into(holder.articleImage);
+
+                holder.articleCardView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent= new Intent(mContext, PremiumUserProfileActivity.class);
+                        Log.d("perfil usuario", "onClick: paso por intent la data del card");
+                        intent.putExtra("clientId", premiumUser.getClientId());
+                        mContext.startActivity(intent);
+
+                    }
+                });
+                holder.articleImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent= new Intent(mContext, PremiumUserProfileActivity.class);
+                        Log.d("perfil usuario", "onClick: paso por intent la data del card");
+                        intent.putExtra("clientId", premiumUser.getClientId());
+                        mContext.startActivity(intent);
+
+                    }
+                });
+
+            }
 
     }
 
