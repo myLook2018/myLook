@@ -131,7 +131,7 @@ public class SearchableActivity extends AppCompatActivity {
                             for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                 Article art = documentSnapshot.toObject(Article.class);
                                 for (String tag : art.getTags()) {
-                                    if(tag.contains(query)){
+                                    if(tag.toLowerCase().contains(query.toLowerCase())){
                                         art.setArticleId(documentSnapshot.getId());
                                         if (!results.contains(art))
                                             results.add(art);
