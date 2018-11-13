@@ -163,7 +163,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
                                                 displayMessage("Se añadió a tu ropero");
                                             }else
                                             {
-                                                displayMessage("Ya es favorito");
+                                                displayMessage("Ya es está en tu ropero");
                                             }
                                         }
                                     });
@@ -188,6 +188,8 @@ public class ArticleInfoActivity extends AppCompatActivity {
 
     private void sendNewInteraction(){
         Interaction userInteraction = new Interaction();
+        Log.e("PROMOTION LEVEL",article.getPromotionLevel()+"");
+        userInteraction.setPromotionLevel(article.getPromotionLevel());
         userInteraction.setSavedToCloset(true);
         userInteraction.setLiked(false);
         userInteraction.setClickOnArticle(false);

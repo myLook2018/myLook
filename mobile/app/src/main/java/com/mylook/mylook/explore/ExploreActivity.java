@@ -98,6 +98,7 @@ public class ExploreActivity extends AppCompatActivity {
                 Interaction userInteraction = new Interaction();
                 userInteraction.setSavedToCloset(false);
                 userInteraction.setClickOnArticle(false);
+                userInteraction.setPromotionLevel(mDiscoverableArticles.get(currentIndex).getPromotionLevel());
                 userInteraction.setLiked(direction.toString().equalsIgnoreCase("right"));
                 userInteraction.setArticleId(mDiscoverableArticles.get(currentIndex).getArticleId());
                 userInteraction.setStoreName(mDiscoverableArticles.get(currentIndex).getStoreName());
@@ -133,6 +134,7 @@ public class ExploreActivity extends AppCompatActivity {
             @Override
             public void onCardClicked(int index) {
                 Interaction userInteraction = new Interaction();
+                userInteraction.setPromotionLevel(mDiscoverableArticles.get(currentIndex).getPromotionLevel());
                 userInteraction.setSavedToCloset(false);
                 userInteraction.setLiked(false);
                 userInteraction.setClickOnArticle(true);
