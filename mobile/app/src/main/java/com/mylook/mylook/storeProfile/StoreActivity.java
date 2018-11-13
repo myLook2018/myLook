@@ -21,7 +21,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.SetOptions;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Store;
 import com.mylook.mylook.entities.Visit;
@@ -71,7 +70,8 @@ public class StoreActivity extends AppCompatActivity {
         contactStoreFragment = new StoreContactFragment(StoreActivity.this, nombreTiendaPerfil);
         infoStoreFragment = new StoreInfoFragment(StoreActivity.this, nombreTiendaPerfil);
         reputationFragment=new ReputationFragment(nombreTiendaPerfil);
-        loadVisit();
+        //loadVisit();
+        visit=new Visit(nombreTiendaPerfil,user.getUid());
         setupViewPagerInfo(viewPagerStoreInfo);
 
         db.collection("stores").whereEqualTo("storeName", nombreTiendaPerfil)
@@ -113,7 +113,7 @@ public class StoreActivity extends AppCompatActivity {
                         if(task.isSuccessful()){
                             if(task.getResult().getDocuments().size()==0){
                                 visitId=null;
-                                visit=new Visit(nombreTiendaPerfil,user.getUid(),1);
+                                visit=new Visit(nombreTiendaPerfil,user.getUid());
                                 //db.collection("visits").add(visit.toMap());
 
                             }else{
@@ -121,7 +121,6 @@ public class StoreActivity extends AppCompatActivity {
                                 visit = null;
                                 visitId=null;
                                 visit=task.getResult().getDocuments().get(0).toObject(Visit.class);
-                                visit.toVisit();
                                 visitId=task.getResult().getDocuments().get(0).getId();
                                 }
 
@@ -131,22 +130,12 @@ public class StoreActivity extends AppCompatActivity {
 
     }
     private void saveVisit(){
-        if(visitId!=null){
-            Log.e("VISIT","ID: " +visitId);
-            db.collection("visits").document(visitId).set(visit.toMap(), SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    finish();
-                }
-            });
-        }else{
-            db.collection("visits").add(visit.toMap()).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentReference> task) {
-                    finish();
-                }
-            });
-        }
+        db.collection("visits").add(visit.toMap()).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+        @Override
+        public void onComplete(@NonNull Task<DocumentReference> task) {
+           finish();
+        }});
+
     }
 
     @Override

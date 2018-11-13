@@ -23,7 +23,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.PremiumUser;
-import com.mylook.mylook.storeProfile.ShopwindowFragment;
 import com.mylook.mylook.storeProfile.StoreTabAdapter;
 import com.mylook.mylook.utils.SectionsPagerAdapter;
 
@@ -80,7 +79,7 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), PremiumPublicationActivity.class);
+                Intent intent = new Intent(getApplicationContext(), NewPublicationActivity.class);
                 intent.putExtra("clientId",clientId);
                 startActivity(intent);
             }
@@ -174,7 +173,7 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         StoreTabAdapter adapter = new StoreTabAdapter(getSupportFragmentManager(),3);
         Log.e("VIEW PAGER","CARGAAAAAAAAAA");
-        adapter.addFragment(0,new ShopwindowFragment("Baja cali Cba",null),"Publicaciones");
+        adapter.addFragment(0,new PremiumPublicationsFragment(premiumUserId),"Publicaciones");
         adapter.addFragment(1,new PublicClosetFragment(premiumUserId),"Ropero");
         adapter.addFragment(2,reputationFragment,"Reputación");
         viewPager.setAdapter(adapter);

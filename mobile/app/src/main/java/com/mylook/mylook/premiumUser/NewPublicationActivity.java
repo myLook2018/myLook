@@ -28,6 +28,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.SuccessContinuation;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -43,7 +44,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PremiumPublicationActivity extends AppCompatActivity {
+public class NewPublicationActivity extends AppCompatActivity {
     private final int  SELECT_FILE = 0;
     private TextView txtPublicationPhoto;
     private ImageView imgPublicationPhoto;
@@ -214,14 +215,17 @@ public class PremiumPublicationActivity extends AppCompatActivity {
     }
     private boolean writeFirebaseDocument(String uri) {
         if (!enviado) {
+            Calendar cal = Calendar.getInstance();
+            new Timestamp(cal.getTime());
             mProgressBar.setVisibility(View.VISIBLE);
             btnSave.setEnabled(false);
             final Map<String, Object> premiumPublication = new HashMap<>();
             premiumPublication.put("storeName", txtStoreName.getText().toString());
             premiumPublication.put("publicationPhoto", uri);
-            premiumPublication.put("articleCOde", txtArticleCode.getText().toString());
+            premiumPublication.put("articleCode", txtArticleCode.getText().toString());
             premiumPublication.put("userId",user.getUid());
             premiumPublication.put("clientId",clientId);
+            premiumPublication.put("creationDate",new Timestamp(cal.getTime()));
 
             dB.collection("premiumPublications")
                     .add(premiumPublication).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {

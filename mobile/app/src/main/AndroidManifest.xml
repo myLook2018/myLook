@@ -72,9 +72,11 @@
             android:parentActivityName=".profile.ProfileActivity"
             android:grantUriPermissions="true"/>
         <activity android:name=".premiumUser.PremiumUserProfileActivity"/>
-        <activity android:name=".premiumUser.PremiumPublicationActivity"
+        <activity android:name=".premiumUser.NewPublicationActivity"
             android:parentActivityName=".premiumUser.PremiumUserProfileActivity"
             android:grantUriPermissions="true"/>
+        <activity android:name=".premiumUser.PublicationDetail"
+            android:parentActivityName=".premiumUser.PremiumUserProfileActivity"/>
         <activity android:name=".closet.ClosetActivity"/>
         <activity android:name=".closet.OutfitActivity"
             android:parentActivityName=".closet.ClosetActivity"/>
