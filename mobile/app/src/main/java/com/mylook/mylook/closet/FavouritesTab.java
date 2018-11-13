@@ -52,7 +52,6 @@ public class FavouritesTab extends Fragment {
         super.onCreate(savedInstanceState);
         favorites = new ArrayList<>();
 
-
     }
 
     private void setGridview() {

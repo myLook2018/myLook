@@ -20,7 +20,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.PremiumUser;
-import com.mylook.mylook.storeProfile.CatalogFragment;
 import com.mylook.mylook.storeProfile.ShopwindowFragment;
 import com.mylook.mylook.storeProfile.StoreTabAdapter;
 import com.mylook.mylook.utils.SectionsPagerAdapter;
@@ -37,6 +36,7 @@ public class PremiumUserProfile extends AppCompatActivity {
     private ReputationPremiumFragment reputationFragment;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private boolean isCurrentUser;
+    private String premiumUserId; //el userUID del usuario destacado NO EL ACTUAL
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,6 +61,7 @@ public class PremiumUserProfile extends AppCompatActivity {
                     if(task.getResult().get("userId").toString().equals(user.getUid())){
                      isCurrentUser=true;
                     }
+                    premiumUserId=task.getResult().get("userId").toString();
                 }
                 infoFragment = new PremiumUserInfoFragment(PremiumUserProfile.this, clientId,isCurrentUser);
                 setupViewPagerInfo(viewPagerUserInfo);
@@ -159,7 +160,7 @@ public class PremiumUserProfile extends AppCompatActivity {
         StoreTabAdapter adapter = new StoreTabAdapter(getSupportFragmentManager(),3);
         Log.e("VIEW PAGER","CARGAAAAAAAAAA");
         adapter.addFragment(0,new ShopwindowFragment("Baja cali Cba",null),"Publicaciones");
-        adapter.addFragment(1,new CatalogFragment("Baja cali Cba"),"Ropero");
+        adapter.addFragment(1,new PublicClosetFragment(premiumUserId),"Ropero");
         adapter.addFragment(2,reputationFragment,"Reputación");
         viewPager.setAdapter(adapter);
     }

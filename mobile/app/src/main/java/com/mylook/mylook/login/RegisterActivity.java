@@ -167,6 +167,7 @@ public class RegisterActivity extends AppCompatActivity {
         client.put("birthday",txtBirthdate.getText().toString());
         client.put("gender",spinner.getText().toString());
         client.put("userId",mAuth.getUid());
+        client.put("isPremium",false);
         dB.collection("clients")
                 .add(client).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override

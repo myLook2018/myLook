@@ -9,4 +9,7 @@
     android:numColumns="3"
     android:padding="5dp"
     android:stretchMode="columnWidth"
-    android:verticalSpacing="5dp" />
+    android:verticalSpacing="5dp">
+
+
+</in.srain.cube.views.GridViewWithHeaderAndFooter>
