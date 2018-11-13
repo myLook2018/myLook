@@ -1,7 +1,6 @@
 package com.mylook.mylook.entities;
 
 import com.google.firebase.Timestamp;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -15,19 +14,21 @@ public class Interaction {
     private String storeName;
     private String userId;
     private Timestamp interactionTime;
+    private int promotionLevel;
 
     public Interaction(){
         Calendar cal = Calendar.getInstance();
         this.interactionTime = new Timestamp(cal.getTime());
     }
 
-    public Interaction(boolean savedToCloset, boolean liked, String articleId, ArrayList<String> tags, String storeName, String userId) {
+    public Interaction(int promotionLevel,boolean savedToCloset, boolean liked, String articleId, ArrayList<String> tags, String storeName, String userId) {
         this.savedToCloset = savedToCloset;
         this.liked = liked;
         this.articleId = articleId;
         this.tags = tags;
         this.storeName = storeName;
         this.userId = userId;
+        this.promotionLevel=promotionLevel;
     }
 
     public boolean isSavedToCloset() {
@@ -92,5 +93,13 @@ public class Interaction {
 
     public void setInteractionTime(Timestamp interactionTime) {
         this.interactionTime = interactionTime;
+    }
+
+    public void setPromotionLevel(int promotionLevel) {
+        this.promotionLevel = promotionLevel;
+    }
+
+    public int getPromotionLevel() {
+        return promotionLevel;
     }
 }

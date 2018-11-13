@@ -8,7 +8,7 @@
     android:layout_weight="1">
 
     <ImageView
-        android:id="@+id/store_profile_photo"
+        android:id="@+id/premium_profile_photo"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginBottom="8dp"
@@ -34,7 +34,7 @@
         android:isScrollContainer="true"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/store_profile_photo"
+        app:layout_constraintStart_toEndOf="@+id/premium_profile_photo"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
