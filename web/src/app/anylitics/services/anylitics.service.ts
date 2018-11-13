@@ -8,6 +8,7 @@ import { Interaction } from '../model/interaction';
 import { Visit } from '../model/visit';
 import { Subcription } from '../model/subcription';
 import { AnsweredRecom } from '../model/answeredRecom';
+import { PromotedArticle } from 'src/app/articles/models/promotedArticle';
 
 @Injectable()
 export class AnyliticService {
@@ -17,17 +18,19 @@ export class AnyliticService {
   visits: Visit[] = [];
   subscriptions: Subcription[] = [];
   answeredRecomendations: AnsweredRecom[] = [];
+  promotions: PromotedArticle[] = [];
 
   // tslint:disable-next-line:no-inferrable-types
   collectionPath: string = 'interactions';
   visitsPath = 'visits';
   subPath = 'subscriptions';
   answeredRecomPath = 'answeredRecommendations';
+  promotionsPath = 'promotions';
   db: any;
   require: any;
 
   constructor(public fst: AngularFirestore) {
-    console.log(`en el collector de interactions`);
+    console.log(`en el collector de analytics`);
     this.interactionCollection = this.fst.collection(this.collectionPath);
     this.visitsCollection = this.fst.collection(this.visitsPath);
     // Required for side-effects
@@ -111,6 +114,27 @@ export class AnyliticService {
         });
       }).then(() => {
           resolve(this.answeredRecomendations);
+        }).catch(function (error) {
+          console.log('Error getting documents: ', error);
+          reject(error);
+        });
+    });
+  }
+
+  getPromotedArticles(storeID) {
+    console.log(`geting promotions`);
+    this.promotions = [];
+    return new Promise<any>((resolve, reject) => {
+      console.log(`estamos preguntando promociones de ` + storeID);
+      const res = this.db.collection(this.promotionsPath).where('storeId', '==', storeID)
+      .get().then(queryRes => {
+        queryRes.forEach(doc => {
+          const data = doc.data();
+          data.id = doc.id;
+          this.promotions.push(data);
+        });
+      }).then(() => {
+          resolve(this.promotions);
         }).catch(function (error) {
           console.log('Error getting documents: ', error);
           reject(error);

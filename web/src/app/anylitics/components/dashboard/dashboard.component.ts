@@ -10,6 +10,7 @@ import { AnyliticService } from '../../services/anylitics.service';
 import { Interaction } from '../../model/interaction';
 import { Visit } from '../../model/visit';
 import { AnsweredRecom } from '../../model/answeredRecom';
+import { PromotedArticle } from 'src/app/articles/models/promotedArticle';
 
 @Component({
   selector: 'app-dashboard',
@@ -43,7 +44,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   subscriptors;
   feedBack: AnsweredRecom[];
   feedBackProm = 0;
-  val1 = 2;
+  promotedArticles: PromotedArticle[];
+  level1Articles = 0;
+  level2Articles = 0;
+  level3Articles = 0;
 
   constructor(
     fb: FormBuilder,
@@ -73,14 +77,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.userStore = userA[0];
       if (this.userStore.profilePh === '') { this.userStore.profilePh = this.FirebaseUser.profilePh; }
       this.anyliticService.getInteractions(this.userStore.storeName).then((res) => this.interactions = res).then(() => {
-        this.anyliticService.getVisits(this.userStore.storeName).then((res) => this.visits = res).then( () => {
+        this.anyliticService.getVisits(this.userStore.storeName).then((res) => this.visits = res).then(() => {
           this.anyliticService.getSubscriptions(this.userStore.storeName).then((res) => this.subscriptions = res).then(() => {
-            this.anyliticService.getRecomendationFeedBack(this.userStore.storeName).then((res) => this.feedBack = res).then( () => {
-              this.getAnylitics();
-              setTimeout(() => {
-                this.spinner.hide();
-                this.readyToRender = true;
-              }, 2000);
+            this.anyliticService.getRecomendationFeedBack(this.userStore.storeName).then((res) => this.feedBack = res).then(() => {
+              this.anyliticService.getPromotedArticles(this.userStore.firebaseUID).then((res) => this.promotedArticles = res).then(() => {
+                console.log(this.promotedArticles);
+                this.getAnylitics();
+                setTimeout(() => {
+                  this.spinner.hide();
+                  this.readyToRender = true;
+                }, 5000);
+              });
             });
           });
         });
@@ -116,6 +123,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.getInteractionsByDay();
     this.getSubcriptors();
     this.getPromOfFeedBack();
+    this.getAmountOfPromotedInteractions();
     this.sumPositiveInteractions = this.positiveInteractions + this.articlesSavedToCloset + this.usersClickedArticle;
   }
 
@@ -127,6 +135,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   getPositiveInteractions() {
     this.positiveInteractions = this.interactions.filter(interaction => interaction.liked === true).length;
     console.log(`positiveInteractions: ` + this.positiveInteractions);
+  }
+
+  divideAll() {
+    this.level1Articles = this.level1Articles / 3;
+    this.level2Articles = this.level2Articles / 1;
+    this.level3Articles = this.level3Articles / 1;
   }
 
   getUsersReached() {
@@ -231,7 +245,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   getPromOfFeedBack() {
     let sum = 0;
-    for (let i = 0; i < this.feedBack.length ; i++) {
+    for (let i = 0; i < this.feedBack.length; i++) {
       sum = sum + +this.feedBack[i].feedBack;
       console.log(`sumatoria parcial ` + sum);
     }
@@ -240,9 +254,60 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getAmountOfPromotedInteractions() {
-    /*for (let i = 0; i < this.interactions.length ; i++) {
-      if ( this.interactions[i] )
-    }*/
+    for (let i = 0; i < this.interactions.length; i++) {
+      switch (this.getLevelOfPromotion(this.interactions[i])) {
+        case 1: {
+           // statements;
+           this.level1Articles++;
+           break;
+        }
+        case 2: {
+           // statements;
+           this.level2Articles++;
+           break;
+        }
+        default: {
+           // statements;
+           this.level3Articles++;
+           break;
+        }
+     }
+    }
+    this.divideAll();
+  }
+
+  getLevelOfPromotion(interaction: Interaction) {
+    for (let i = 0; i < this.promotedArticles.length; i++) {
+      if (interaction.articleId === this.promotedArticles[i].articleId) {
+        const dateOfInteraction: Date = new Date(interaction.interactionTime.toDate());
+        const dateStartOfPromotion: Date = new Date(this.promotedArticles[i].startOfPromotion.toDate());
+        const dateEndPromotion: Date = new Date(this.promotedArticles[i].endOfPromotion.toDate());
+        if ( this.compareDate( dateOfInteraction, dateStartOfPromotion ) === 1 &&
+         this.compareDate( dateOfInteraction, dateEndPromotion ) === -1 ) {
+           return this.promotedArticles[i].promotionLevel;
+         } else {
+           return 1;
+         }
+      }
+    }
+    return 1;
+  }
+
+  compareDate(date1: Date, date2: Date): number {
+    // With Date object we can compare dates them using the >, <, <= or >=.
+    // The ==, !=, ===, and !== operators require to use date.getTime(),
+    // so we need to create a new instance of Date with 'new Date()'
+    const d1 = date1; const d2 = date2;
+
+    // Check if the dates are equal
+    const same = d1.getTime() === d2.getTime();
+    if (same) {return 0 ; }
+
+    // Check if the first is greater than second
+    if (d1.getTime() > d2.getTime()) {return 1; }
+
+    // Check if the first is less than second
+    if (d1.getTime() < d2.getTime()) { return -1; }
   }
 
   goToProfile() {
@@ -260,7 +325,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   goToAnalytics() {
-  console.log(`already in analytics`);
+    console.log(`already in analytics`);
   }
 
 }

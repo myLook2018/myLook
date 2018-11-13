@@ -48,6 +48,12 @@
 
                     <div class="mainContainer" *ngIf="readyToRender">
                         <mat-card class="chartCard mat-elevation-z6">
+                            <app-promotions-bar *ngIf="readyToRender" [level1Articles]="level1Articles" [level2Articles]="level2Articles" [level3Articles]="level3Articles"></app-promotions-bar>
+                        </mat-card>
+                    </div>
+
+                    <div class="mainContainer" *ngIf="readyToRender">
+                        <mat-card class="chartCard mat-elevation-z6">
                             <app-polar-area *ngIf="readyToRender" [popularTags]="popularTags" [popularityOfTags]="popularityOfTags"></app-polar-area>
                         </mat-card>
                     </div>
