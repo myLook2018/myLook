@@ -87,8 +87,9 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycleItems"
             android:layout_width="384dp"
-            android:layout_height="150dp"
-            android:layout_marginBottom="8dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

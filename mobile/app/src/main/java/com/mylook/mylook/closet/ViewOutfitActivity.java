@@ -125,7 +125,7 @@ public class ViewOutfitActivity extends AppCompatActivity {
     private void deleteAlert(){
         final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(ViewOutfitActivity.this, R.style.AlertDialogTheme);
 
-        final android.app.AlertDialog alert = dialog.setTitle("Cerrar sesión")
+        final android.app.AlertDialog alert = dialog.setTitle("Eliminar conjunto")
                 .setMessage("¿Estás seguro que querés eliminar este conjunto?")
                 .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                     @Override

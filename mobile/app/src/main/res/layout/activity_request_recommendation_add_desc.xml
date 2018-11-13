@@ -159,6 +159,7 @@
                     android:layout_marginBottom="8dp"
                     android:hint="Categorías"
                     android:spinnerMode="dropdown"
+                    android:textColor="@color/common_google_signin_btn_text_light_disabled"
                     android:textSize="17sp"
                     android:dropDownHeight="200dp"
                     app:layout_constraintBottom_toBottomOf="parent"

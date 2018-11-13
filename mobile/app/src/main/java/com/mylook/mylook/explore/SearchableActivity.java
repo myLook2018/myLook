@@ -45,7 +45,7 @@ public class SearchableActivity extends AppCompatActivity {
         ab.setDisplayHomeAsUpEnabled(true);
         recyclerView = findViewById(R.id.recycler_view_content);
 
-        results= new ArrayList();
+        results = new ArrayList();
         adapter = new CardsHomeFeedAdapter(this, results);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(mLayoutManager);
@@ -65,20 +65,24 @@ public class SearchableActivity extends AppCompatActivity {
         }
     }
 
-    private void doMySearchStoreNames(String query) {
-        query = Character.toUpperCase(query.charAt(0)) + query.substring(1,query.length());
-        db.collection("stores").whereEqualTo("storeName",query).get()
+    private void doMySearchStoreNames(final String query) {
+        //query = Character.toUpperCase(query.charAt(0)) + query.substring(1, query.length());
+        db.collection("stores")
+                //.whereEqualTo("storeName",query)
+                .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot documentSnapshot:task.getResult()){
-                                Store store=documentSnapshot.toObject(Store.class);
-                                results.add(store);
-                                Log.e("Tienda",store.getStoreName());
+                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                                if (documentSnapshot.get("storeName").toString().toLowerCase().contains(query.toLowerCase())) {
+                                    Store store = documentSnapshot.toObject(Store.class);
+                                    results.add(store);
+                                    Log.e("Tienda", store.getStoreName());
+                                }
                             }
                             //articleList.addAll(task.getResult().toObjects(Article.class));
-                            Log.e("Tienda","successful");
+                            Log.e("Tienda", "successful");
                             adapter.notifyDataSetChanged();
 
                         } else {
@@ -88,18 +92,22 @@ public class SearchableActivity extends AppCompatActivity {
                 });
     }
 
-    private void doMySearchTitles(String query) {
-        query = Character.toUpperCase(query.charAt(0)) + query.substring(1,query.length());
-        db.collection("articles").whereGreaterThanOrEqualTo("title",query).get()
+    private void doMySearchTitles(final String query) {
+        //query = Character.toUpperCase(query.charAt(0)) + query.substring(1, query.length());
+        db.collection("articles")
+                //.whereGreaterThanOrEqualTo("title", query)
+                .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot documentSnapshot:task.getResult()){
-                                Article art=documentSnapshot.toObject(Article.class);
-                                art.setArticleId(documentSnapshot.getId());
-                                if(!results.contains(art))
-                                    results.add(art);
+                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                                if(documentSnapshot.get("title").toString().toLowerCase().contains(query.toLowerCase())) {
+                                    Article art = documentSnapshot.toObject(Article.class);
+                                    art.setArticleId(documentSnapshot.getId());
+                                    if (!results.contains(art))
+                                        results.add(art);
+                                }
                             }
                             //articleList.addAll(task.getResult().toObjects(Article.class));
                             adapter.notifyDataSetChanged();
@@ -111,34 +119,25 @@ public class SearchableActivity extends AppCompatActivity {
 
     }
 
-    private void doMySearchTags(String query) {
-        query = Character.toUpperCase(query.charAt(0)) + query.substring(1,query.length());
-        db.collection("articles").whereArrayContains("tags",query).get()
+    private void doMySearchTags(final String query) {
+        //query = Character.toUpperCase(query.charAt(0)) + query.substring(1, query.length());
+        db.collection("articles")
+                //.whereArrayContains("tags", query)
+                .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot documentSnapshot:task.getResult()){
-                                Article art=documentSnapshot.toObject(Article.class);
-                                art.setArticleId(documentSnapshot.getId());
-                                results.add(art);
-                            }
-                            //articleList.addAll(task.getResult().toObjects(Article.class));
-                            adapter.notifyDataSetChanged();
-                        } else {
-                            Log.d("Firestore task", "onComplete: " + task.getException());
-                        }
-                    }
-                });
-        db.collection("articles").whereArrayContains("tags",query).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot documentSnapshot:task.getResult()){
-                                Article art=documentSnapshot.toObject(Article.class);
-                                art.setArticleId(documentSnapshot.getId());
-                                results.add(art);
+                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                                Article art = documentSnapshot.toObject(Article.class);
+                                for (String tag : art.getTags()) {
+                                    if(tag.toLowerCase().contains(query.toLowerCase())){
+                                        art.setArticleId(documentSnapshot.getId());
+                                        if (!results.contains(art))
+                                            results.add(art);
+                                    }
+                                }
+
                             }
                             //articleList.addAll(task.getResult().toObjects(Article.class));
                             adapter.notifyDataSetChanged();
@@ -148,6 +147,7 @@ public class SearchableActivity extends AppCompatActivity {
                     }
                 });
     }
+
     private void displayMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }

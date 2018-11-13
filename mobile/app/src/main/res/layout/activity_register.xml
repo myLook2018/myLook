@@ -135,6 +135,7 @@
                 android:hint="Sexo"
                 android:spinnerMode="dropdown"
                 android:textSize="17sp"
+                android:textColor="@color/common_google_signin_btn_text_light_disabled"
                 app:met_floatingLabel="highlight" />
 
 

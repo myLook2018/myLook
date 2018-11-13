@@ -54,13 +54,8 @@
                     android:layout_height="100dp"
                     android:layout_gravity="center_vertical|center"
                     android:layout_weight="1"
-                    android:tint="@color/primary_light"
-                    app:srcCompat="@drawable/ic_account" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/layoutData"
+                    android:background="@drawable/ic_account"
+                    android:backgroundTint="@color/primary_light" />@+id/layoutData"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
