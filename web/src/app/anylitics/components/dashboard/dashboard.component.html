@@ -11,7 +11,6 @@
                 <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
-                <button mat-menu-item>Configuración</button>
                 <button mat-menu-item (click)="logout()">Salir</button>
             </mat-menu>
             <img class="profilePic" [src]="userStore.profilePh">
@@ -22,8 +21,10 @@
         <mat-sidenav #sidenav mode="side" opened class="example-sidenav" [fixedInViewport]="options.value.fixed"
             [fixedTopGap]="options.value.top" [fixedBottomGap]="options.value.bottom">
             <mat-nav-list>
-                <a mat-list-item (click)="goToProfile()">Visita tu Perfil!</a>
-                <a mat-list-item (click)="goToRecomendations()">Haz una recomendación!</a>
+                <a mat-list-item (click)="goToProfile()">¡Visita tu Perfil!</a>
+                <a mat-list-item (click)="goToInventory()">¡Gestiona tú inventario!</a>
+                <a mat-list-item (click)="goToRecomendations()">¡Haz una recomendación!</a>
+                <a mat-list-item (click)="goToAnalytics()">¡Estadisticas!</a>
             </mat-nav-list>
         </mat-sidenav>
 
@@ -70,20 +71,23 @@
                         <h1>{{visits.length}}</h1>
                     </mat-card>
                     <mat-card class="dats mat-elevation-z6">
-                        <h3>Subscripciones</h3>
-                        <h1>{{totalInteractions}}</h1>
+                        <h3>Suscriptores</h3>
+                        <h1>{{subscriptors}}</h1>
                     </mat-card>
                     <mat-card class="dats mat-elevation-z6">
                         <h3>Etiqueta más popular</h3>
                         <h1>{{bestTag}}</h1>
+                    </mat-card>
+                    <mat-card class="dats mat-elevation-z6">
+                        <h3>Puntaje promedio de Recomendaciones</h3>
+                        <h1>{{feedBackProm}} de 5</h1>
                     </mat-card>
                 </div>
 
                 <div *ngIf="readyToRender" id="timeline" style="display:inline-flex">
                     <div class="mainContainer" *ngIf="readyToRender">
                         <mat-card class="chartCard mat-elevation-z6">
-                            <app-timeline *ngIf="readyToRender" [interactionsByDay]="interactionsByDay"
-                                [daysOfTheWeek]="daysOfTheWeek"></app-timeline>
+                            <app-timeline *ngIf="readyToRender" [interactionsByDay]="interactionsByDay" [daysOfTheWeek]="daysOfTheWeek"></app-timeline>
                         </mat-card>
                     </div>
                 </div>

@@ -11,7 +11,6 @@
                 <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
-                <button mat-menu-item>Configuración</button>
                 <button mat-menu-item (click)="logout()">Salir</button>
             </mat-menu>
             <img class="profilePic" [src]="userStore.profilePh">
@@ -21,9 +20,10 @@
     <mat-sidenav-container style="height: 100%;">
         <mat-sidenav #sidenav [mode]="over">
             <mat-nav-list>
-                <a mat-list-item (click)="goToProfile()">Visita tu Perfil!</a>
-                <a mat-list-item (click)="goToRecomendations()">Haz una recomendación!</a>
-                <a mat-list-item (click)="goToAnalytics()">Estadisticas!</a>
+                <a mat-list-item (click)="goToProfile()">¡Visita tu Perfil!</a>
+                <a mat-list-item (click)="goToInventory()">¡Gestiona tú inventario!</a>
+                <a mat-list-item (click)="goToRecomendations()">¡Haz una recomendación!</a>
+                <a mat-list-item (click)="goToAnalytics()">¡Estadisticas!</a>
                 <a mat-list-item (click)="openFrontDialog()">Selecciona tú vidriera!</a>
             </mat-nav-list>
         </mat-sidenav>
@@ -34,16 +34,19 @@
                 <mat-toolbar-row class="stickyNavbar mat-elevation-z2">
                     <span>Lista de Prendas</span>
                     <div style="margin-left: auto">
-                       <!--
+                        <!--
                            <button id="uploadArticle" mat-flat-button *ngIf="selectionMode" (click)="createSubCollection()">Probando subcoleccion</button>
-                        --> 
+                        -->
                     </div>
-                    
+
                     <div style="margin-left: auto">
-                        <button style="margin-right:5px" id="uploadArticle" mat-flat-button *ngIf="selectionMode" (click)="cancelSetting()">Cancelar</button>
+                        <button style="margin-right:5px" id="uploadArticle" mat-flat-button *ngIf="selectionMode"
+                            (click)="cancelSetting()">Cancelar</button>
                         <button id="uploadArticle" mat-flat-button *ngIf="selectionMode" (click)="setVidriera()">¡Aceptar!</button>
-                        <button style="margin-right:5px" id="uploadArticle" mat-flat-button *ngIf="!selectionMode" (click)="changeMode()">¡Elije tú vidriera!</button>
-                        <button id="uploadArticle" mat-flat-button [disabled]="selectionMode" *ngIf="!selectionMode" (click)="openArticleDialog()">Subir Prenda</button>
+                        <button style="margin-right:5px" id="uploadArticle" mat-flat-button *ngIf="!selectionMode"
+                            (click)="changeMode()">¡Elije tú vidriera!</button>
+                        <button id="uploadArticle" mat-flat-button [disabled]="selectionMode" *ngIf="!selectionMode"
+                            (click)="openArticleDialog()">Subir Prenda</button>
                     </div>
                 </mat-toolbar-row>
             </mat-toolbar>
@@ -70,9 +73,9 @@
 
                     <!-- code Column -->
                     <ng-container matColumnDef="code">
-                            <mat-header-cell *matHeaderCellDef> Código </mat-header-cell>
-                            <mat-cell *matCellDef="let element"> {{element.code}} </mat-cell>
-                        </ng-container>
+                        <mat-header-cell *matHeaderCellDef> Código </mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{element.code}} </mat-cell>
+                    </ng-container>
 
                     <!-- cost Column -->
                     <ng-container matColumnDef="cost">
@@ -126,9 +129,9 @@
                                 <mat-icon>edit</mat-icon>
                             </button>
                             <button *ngIf="!selectionMode" mat-icon-button class="actionIcon" (click)="openPromoteDialog(element)">
-                                <mat-icon>favorite</mat-icon>
+                                <mat-icon>trending_up</mat-icon>
                             </button>
-                            <mat-checkbox *ngIf="selectionMode" (change)="addIdToSelecteds(i)" ></mat-checkbox>
+                            <mat-checkbox *ngIf="selectionMode" (change)="addIdToSelecteds(i)"></mat-checkbox>
 
                         </mat-cell>
                     </ng-container>

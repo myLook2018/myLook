@@ -8,8 +8,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
 import { AnyliticService } from '../../services/anylitics.service';
 import { Interaction } from '../../model/interaction';
-import { min } from 'moment';
 import { Visit } from '../../model/visit';
+import { AnsweredRecom } from '../../model/answeredRecom';
 
 @Component({
   selector: 'app-dashboard',
@@ -32,12 +32,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
   InteractionsXday;
   daysOfTheWeek = [];
   interactionsByDay = [];
+  amountOfPromotedInteractions = 0;
   options: FormGroup;
   FirebaseUser = new StoreModel();
   userStore = new StoreModel();
   _subscription: Subscription;
   interactions: Interaction[];
   visits: Visit[];
+  subscriptions: Subscription[];
+  subscriptors;
+  feedBack: AnsweredRecom[];
+  feedBackProm = 0;
+  val1 = 2;
 
   constructor(
     fb: FormBuilder,
@@ -68,20 +74,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
       if (this.userStore.profilePh === '') { this.userStore.profilePh = this.FirebaseUser.profilePh; }
       this.anyliticService.getInteractions(this.userStore.storeName).then((res) => this.interactions = res).then(() => {
         this.anyliticService.getVisits(this.userStore.storeName).then((res) => this.visits = res).then( () => {
-          this.getAnylitics();
-          setTimeout(() => {
-            this.spinner.hide();
-            this.readyToRender = true;
-          }, 2000);
-        } );
+          this.anyliticService.getSubscriptions(this.userStore.storeName).then((res) => this.subscriptions = res).then(() => {
+            this.anyliticService.getRecomendationFeedBack(this.userStore.storeName).then((res) => this.feedBack = res).then( () => {
+              this.getAnylitics();
+              setTimeout(() => {
+                this.spinner.hide();
+                this.readyToRender = true;
+              }, 2000);
+            });
+          });
+        });
       });
-      /* this.anyliticService.getAllInteractions(this.userStore.storeName).then((interactionsFb) => {
-         console.log(interactionsFb);
-         this.interactions = interactionsFb; }).then(() => {
-           setTimeout(() => {
-             this.spinner.hide();
-         }, 2000);
-         });*/
     });
   }
 
@@ -111,6 +114,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.getPopularsTags();
     this.getBestTag();
     this.getInteractionsByDay();
+    this.getSubcriptors();
+    this.getPromOfFeedBack();
     this.sumPositiveInteractions = this.positiveInteractions + this.articlesSavedToCloset + this.usersClickedArticle;
   }
 
@@ -144,6 +149,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   getArticlesSavedToCloset() {
     this.articlesSavedToCloset = this.interactions.filter(interaction => interaction.savedToCloset === true).length;
     console.log(`savedToCloset: ` + this.articlesSavedToCloset);
+  }
+
+  getSubcriptors() {
+    console.log(`subsss` + this.subscriptions);
+    this.subscriptors = this.subscriptions.length;
   }
 
   getPopularsTags() {
@@ -188,25 +198,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.bestTag = this.popularityXtag[indexOfMaxValue].tag;
   }
 
+
   getInteractionsByDay() {
     this.InteractionsXday = [];
     this.daysOfTheWeek = [];
     this.interactionsByDay = [];
     let index;
     const today = new Date();
-    // const days = [ `${Date()}`, `${today.getDay}`, `${new Date().getDay}` ] ;
-    // console.log(`days ` + days);
-    console.log(`today ` + today);
-    console.log(`today.getDay() ` + today.getDay());
-    console.log(`today.getDate() ` + today.getDate());
     this.interactions.forEach((interaction) => {
       if (interaction.interactionTime !== undefined) {
         const dateOfInteraction: Date = new Date(interaction.interactionTime.toDate());
-        if (!this.daysOfTheWeek.includes(`${dateOfInteraction.getDate()}/${dateOfInteraction.getMonth()}`)) {
-          this.daysOfTheWeek.push(`${dateOfInteraction.getDate()}/${dateOfInteraction.getMonth()}`);
+        if (!this.daysOfTheWeek.includes(`${dateOfInteraction.getDate()}/${dateOfInteraction.getMonth() + 1}`)) {
+          this.daysOfTheWeek.push(`${dateOfInteraction.getDate()}/${dateOfInteraction.getMonth() + 1}`);
           this.interactionsByDay.push(0);
         }
-        index = this.daysOfTheWeek.indexOf(`${dateOfInteraction.getDate()}/${dateOfInteraction.getMonth()}`);
+        index = this.daysOfTheWeek.indexOf(`${dateOfInteraction.getDate()}/${dateOfInteraction.getMonth() + 1}`);
         this.interactionsByDay[index]++;
       }
     });
@@ -223,15 +229,40 @@ export class DashboardComponent implements OnInit, OnDestroy {
     console.log(this.InteractionsXday);
   }
 
+  getPromOfFeedBack() {
+    let sum = 0;
+    for (let i = 0; i < this.feedBack.length ; i++) {
+      sum = sum + +this.feedBack[i].feedBack;
+      console.log(`sumatoria parcial ` + sum);
+    }
+    this.feedBackProm = (sum / this.feedBack.length);
+    console.log(`feedBackProm ` + this.feedBackProm);
+  }
+
+  getAmountOfPromotedInteractions() {
+    /*for (let i = 0; i < this.interactions.length ; i++) {
+      if ( this.interactions[i] )
+    }*/
+  }
+
   goToProfile() {
     console.log(`/store/${this.userStore.storeName}`);
-    this.router.navigate([`/store/${this.userStore.storeName}`]);
+    this.router.navigate([`/home`]);
     console.log(this.userStore.profilePh);
   }
 
   goToInventory() {
-    this.router.navigate([`/home`]);
+    this.router.navigate([`/inventory`]);
   }
+
+  goToRecomendations() {
+    this.router.navigate([`/recomendations`]);
+  }
+
+  goToAnalytics() {
+  console.log(`already in analytics`);
+  }
+
 }
 
 

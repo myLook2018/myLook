@@ -65,6 +65,28 @@ export class ArticleService {
     });
   }
 
+  getFrontArticlesCopado(storeName) {
+    this.articlesCopado = [];
+    // tslint:disable-next-line:no-shadowed-variable
+    return new Promise<any>((resolve, reject) => {
+      console.log(`estamos preguntando por ` + storeName);
+      const res = this.db.collection(this.collectionPath).where('storeName', '==', storeName).where('estaEnVidriera', '==', true)
+        .get().then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            data.articleId = doc.id;
+            this.articlesCopado.push(data);
+          });
+        }).then(() => {
+          resolve(this.articlesCopado);
+        })
+        .catch(function (error) {
+          console.log('Error getting documents: ', error);
+          reject(error);
+        });
+    });
+  }
+
   addArticle(article: Article) {
     console.log(article);
     return this.articleCollection.add(article);

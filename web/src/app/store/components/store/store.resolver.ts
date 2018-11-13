@@ -1,10 +1,11 @@
-import { Resolve, Router, ActivatedRouteSnapshot } from '@angular/router';
+/*import { Resolve, Router, ActivatedRouteSnapshot } from '@angular/router';
 import { Injectable } from '../../../../../node_modules/@angular/core';
 import { StoreService } from '../../../auth/services/store.service';
 
 @Injectable()
 export class StoreResolver implements Resolve<any> {
-
+facebookImg = '/assets/facebookLogo.png';
+instagramImg = '/assets/instagramLogo.png';
     constructor(private storeService: StoreService, private router: Router) {
 
     }
@@ -38,3 +39,4 @@ export class ArticleResolver implements Resolve<any> {
 
 
 }
+*/

@@ -15,6 +15,7 @@ import { AuthService } from '../../../auth/services/auth.service';
 import { Location } from '@angular/common';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ArticleService } from 'src/app/articles/services/article.service';
+import { NewStoreService } from '../../service/store.service';
 // import { ObservableMedia } from '@angular/flex-layout';
 
 @Component({
@@ -31,6 +32,7 @@ export class StoreComponent implements OnInit, OnDestroy {
   user = new StoreModel();
   _subscription2: Subscription;
   constructor(
+    public newStoreService: NewStoreService,
     public articleService: ArticleService,
     private route: ActivatedRoute,
     public dialog: MatDialog,
@@ -55,14 +57,14 @@ export class StoreComponent implements OnInit, OnDestroy {
     console.log(1);
     this._subscription2 = this.userService.getUserInfo(this.FirebaseUser.firebaseUserId)
       .subscribe(userA => {
-        console.log(2);
         this.userStore = userA[0];
+        console.log(this.userStore);
         if (this.userStore.profilePh === undefined) {
           console.log(3);
           this.userStore.profilePh = this.FirebaseUser.profilePh;
         }
         console.log(4);
-        this.articleService.getArticlesCopado(this.userStore.storeName).then((articles) => {
+        this.articleService.getFrontArticlesCopado(this.userStore.storeName).then((articles) => {
           console.log(articles);
           this.articles = articles;
         setTimeout(() => {
@@ -104,13 +106,30 @@ export class StoreComponent implements OnInit, OnDestroy {
     });
   }
 
-  editStoreInfo(): void {
+ /* editStoreInfo(): void {
     const dialogRef = this.dialog.open(EditStoreComponent, {
       height: '650px',
+      width: '750px',
       data: { data: this.userStore }
     });
 
     dialogRef.afterClosed().subscribe(result => {
+    });
+  }
+*/
+  editStoreInfo(): void {
+    const editRef = this.dialog.open(EditStoreComponent, {
+      width: '650px',
+      height: '750px',
+      data: this.userStore
+    });
+    const sub = editRef.componentInstance.onAdd.subscribe((res) => {
+      if (res !== undefined) {
+        this.sendStoreUpdate(res);
+      }
+    });
+    editRef.afterClosed().subscribe(result => {
+      sub.unsubscribe();
     });
   }
 
@@ -126,12 +145,24 @@ export class StoreComponent implements OnInit, OnDestroy {
     );
   }
 
+  sendStoreUpdate(newDats) {
+    this.newStoreService.refreshStore(this.userStore.firebaseUID, newDats );
+  }
+
+  goToProfile() {
+    console.log(`already in profile`);
+  }
+
   goToInventory() {
-    this.router.navigate([`/home`]);
+    this.router.navigate([`/inventory`]);
   }
 
   goToRecomendations() {
     this.router.navigate([`/recomendations`]);
+  }
+
+  goToAnalytics() {
+    this.router.navigate([`/analytics`]);
   }
 
 
