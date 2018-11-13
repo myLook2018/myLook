@@ -1,5 +1,6 @@
 package com.mylook.mylook.entities;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Store {

@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -23,6 +25,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -40,6 +43,7 @@ import com.google.firebase.storage.UploadTask;
 import com.mylook.mylook.R;
 import com.theartofdev.edmodo.cropper.CropImage;
 
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -122,14 +126,60 @@ public class NewPublicationActivity extends AppCompatActivity {
             }
         }
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if (resultCode == RESULT_OK) {
-                selectImageUri = result.getUri();
-                imgPublicationPhoto.setImageURI(selectImageUri);
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Exception error = result.getError();
+            checkWrite(resultCode,data);
+        }
+    }
+    private void checkWrite(int resultCode, Intent data){
+        int permissionCheck = ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+            cropActivity(resultCode, data);
+        } else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                cropActivity(resultCode, data);
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                cropActivity(resultCode, data);
             }
         }
+
+    }
+
+    private void cropActivity(int resultCode, Intent data){
+        CropImage.ActivityResult result = CropImage.getActivityResult(data);
+        selectImageUri = result.getUri();
+        if (resultCode == RESULT_OK) {
+            int permissionCheck = ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.READ_EXTERNAL_STORAGE);
+
+            if (permissionCheck == PackageManager.PERMISSION_GRANTED)
+                setImage(selectImageUri);
+            else {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    setImage(selectImageUri);
+                } else {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                    setImage(selectImageUri);
+                }
+            }
+        } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+            Exception error = result.getError();
+        }
+    }
+    private void setImage(Uri uri) {
+        try{
+            final InputStream imageStream = getContentResolver().openInputStream(uri);
+
+            final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+            imgPublicationPhoto.setImageBitmap(null);
+            Glide.with(this).asBitmap().load(selectedImage).into(imgPublicationPhoto);
+        }catch (Exception e){
+            Log.e("Set image", e.getMessage());
+        }
+//        selectImageUri = uri;
+//        imgProfilePhoto.setImageURI(selectImageUri);
     }
     private String createPhotoName(String userName) {
         Calendar cal = Calendar.getInstance();

@@ -5,14 +5,16 @@
     android:id="@+id/relativeLayout3"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/greyBackground"
     tools:context=".closet.CategoryTab">
 
     <GridView
         android:id="@+id/grid_colecciones"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginBottom="53dp"
         android:layout_marginTop="100dp"
+        android:layout_marginBottom="53dp"
+        android:background="@color/greyBackground"
         android:foregroundGravity="center"
         android:gravity="center"
         android:numColumns="2"

@@ -113,6 +113,7 @@ public class EditInfoActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 ArrayList<String> categories = (ArrayList<String>) task.getResult().getDocuments().get(0).get("categories");
                 spinner.setAdapter(new ArrayAdapter<String>(EditInfoActivity.this, android.R.layout.simple_selectable_list_item, categories));
+
                 }
         });
     }

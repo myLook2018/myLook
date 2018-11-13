@@ -24,7 +24,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@id/layout_bottom"
-            android:layout_below="@id/layout_top">
+            android:layout_below="@id/layout_top"
+            android:background="@color/greyBackground">
 
             <include layout="@layout/complete_info_article" />
 

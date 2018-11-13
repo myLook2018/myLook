@@ -130,10 +130,10 @@ public class RequestRecommendActivity extends AppCompatActivity {
         if(!isClosed) {
             getMenuInflater().inflate(R.menu.request_recommendation_menu, menu);
             // Locate MenuItem with ShareActionProvider
-            MenuItem item = menu.findItem(R.id.share_req);
+//            MenuItem item = menu.findItem(R.id.share_req);
 
             // Fetch and store ShareActionProvider
-            mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+//            mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
         } else {
 //            menu.getItem(0).setVisible(false);
 //            menu.getItem(1).setVisible(false);
@@ -153,16 +153,16 @@ public class RequestRecommendActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id == R.id.share_req){
-            Intent sendIntent = new Intent();
-            sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
-            sendIntent.setType("text/plain");
-            setShareIntent(sendIntent);
-        }
-        if(id == R.id.delete_req){
-            // do something
-        }
+//        if(id == R.id.share_req){
+//            Intent sendIntent = new Intent();
+//            sendIntent.setAction(Intent.ACTION_SEND);
+//            sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
+//            sendIntent.setType("text/plain");
+//            setShareIntent(sendIntent);
+//        }
+//        if(id == R.id.delete_req){
+//            // do something
+//        }
         if(id == R.id.close_req){
             final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(this, R.style.AlertDialogTheme);
             final android.app.AlertDialog alert = dialog.setTitle("Cerrar pedido")
