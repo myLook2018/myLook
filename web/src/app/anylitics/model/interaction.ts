@@ -9,4 +9,5 @@ export class Interaction {
   userId?: string;
   valid?: boolean;
   interactionTime: any;
+  interactionLevel: any;
   }
