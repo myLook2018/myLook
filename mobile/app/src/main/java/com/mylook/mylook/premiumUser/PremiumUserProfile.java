@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
@@ -22,8 +23,6 @@ import com.mylook.mylook.entities.PremiumUser;
 import com.mylook.mylook.storeProfile.CatalogFragment;
 import com.mylook.mylook.storeProfile.ReputationFragment;
 import com.mylook.mylook.storeProfile.ShopwindowFragment;
-import com.mylook.mylook.storeProfile.StoreContactFragment;
-import com.mylook.mylook.storeProfile.StoreInfoFragment;
 import com.mylook.mylook.storeProfile.StoreTabAdapter;
 import com.mylook.mylook.utils.SectionsPagerAdapter;
 
@@ -35,10 +34,10 @@ public class PremiumUserProfile extends AppCompatActivity {
     private ViewPager viewPagerUserInfo;
     private ViewPager viewPagerUserPublications;
     private String clientId;
-    private StoreContactFragment contactStoreFragment;
-    private StoreInfoFragment infoStoreFragment;
+    private PremiumUserInfoFragment infoFragment;
     private ReputationFragment reputationFragment;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private boolean isCurrentUser;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,11 +54,24 @@ public class PremiumUserProfile extends AppCompatActivity {
         ab.setDisplayHomeAsUpEnabled(true);
         Intent intentStore = getIntent();
         clientId = intentStore.getStringExtra("clientId");
-        contactStoreFragment = new StoreContactFragment(PremiumUserProfile.this, clientId);
-        infoStoreFragment = new StoreInfoFragment(PremiumUserProfile.this, clientId);
-        reputationFragment=new ReputationFragment(clientId);
-        setupViewPagerInfo(viewPagerUserInfo);
+        isCurrentUser=false;
+        db.collection("clients").document(clientId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    if(task.getResult().get("userId").toString().equals(user.getUid())){
+                     isCurrentUser=true;
+                    }
+                }
+                infoFragment = new PremiumUserInfoFragment(PremiumUserProfile.this, clientId,isCurrentUser);
+                setupViewPagerInfo(viewPagerUserInfo);
+                setContentInfo();
 
+            }});
+        reputationFragment=new ReputationFragment(clientId);
+
+    }
+    private void setContentInfo(){
         db.collection("premiumUsers").whereEqualTo("clientId",clientId)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -67,15 +79,12 @@ public class PremiumUserProfile extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     // Log.d("info de firebase", "onComplete: " + task.getResult().toObjects(Store.class));
                     PremiumUser user = task.getResult().getDocuments().get(0).toObject(PremiumUser.class);
-                    contactStoreFragment.setStoreLocation(user.getLocalization());
-                    contactStoreFragment.setStorePhone(user.getContactMail());
-                    contactStoreFragment.setOnClickFacebook(user.getLinkFacebook());
-                    contactStoreFragment.setOnClickInstagram(user.getLinkInstagram());
-                    //contactStoreFragment.setOnClickTwitter(storeAux.getTwitterLink());
-                    infoStoreFragment.setStoreName(user.getUserName());
-                    //infoStoreFragment.setTxtDescription(storeAux.getStoreDescription());
-                    infoStoreFragment.setStorePhoto(user.getProfilePhoto());
-                    //coverPh=storeAux.getCoverPh();
+                    infoFragment.setTxtLocalization(user.getLocalization());
+                    infoFragment.setOnClickFacebook(user.getLinkFacebook());
+                    infoFragment.setOnClickInstagram(user.getLinkInstagram());
+                    infoFragment.setPremiumName(user.getUserName());
+                    infoFragment.setProfilePhoto(user.getProfilePhoto());
+                    infoFragment.setTxtEmail(user.getContactMail());
                     reputationFragment.setRegisterDate(user.getPremiumDate());
                     setupViewPager(viewPagerUserPublications);
                     tab.setupWithViewPager(viewPagerUserPublications);
@@ -85,10 +94,7 @@ public class PremiumUserProfile extends AppCompatActivity {
             }
         });
 
-
-
     }
-
    /* private void loadVisit() {
         db.collection("visits").whereEqualTo("storeName", clientId).whereEqualTo("userId",user.getUid()).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -160,8 +166,7 @@ public class PremiumUserProfile extends AppCompatActivity {
     }
     private void setupViewPagerInfo(ViewPager viewPager){
         SectionsPagerAdapter adapter=new SectionsPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(infoStoreFragment);
-        adapter.addFragment(contactStoreFragment);
+        adapter.addFragment(infoFragment);
         viewPagerUserInfo.setAdapter(adapter);
     }
     @Override

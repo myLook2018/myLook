@@ -1,17 +1,20 @@
-package com.mylook.mylook.storeProfile;
+package com.mylook.mylook.premiumUser;
 
 import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,60 +31,101 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Subscription;
 
-@SuppressLint("ValidFragment")
-public class StoreInfoFragment extends Fragment {
-
-    private  FirebaseUser user;
+public class PremiumUserInfoFragment extends Fragment{
+    private  boolean isCurrentUser;
+    private FirebaseUser user;
     private FirebaseFirestore dB;
-    private ImageView storePhoto;
+    private ImageView profilePhoto;
     private Button btnSubscribe,btnMoreInfo;
-    private TextView storeName;
-    private TextView txtDescription;
-    private String storeNameString;
+    private TextView premiumName;
+    private TextView txtEmail;
     private Context context;
+    private String clientId;
     private boolean mSubscribed;
     private String documentId="";
+    private TextView txtLocalization;
+    private TextView txtFacebook,txtInstagram;
+    private LinearLayout lnlface,lnlInsta;
 
 
-    public StoreInfoFragment(Context context,String storeName) {
+    @SuppressLint("ValidFragment")
+    public PremiumUserInfoFragment(Context context, String clientId, boolean isCurrentUser) {
         dB = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
-        storeNameString=storeName;
         this.context=context;
-        checkFollow();
+        this.clientId=clientId;
+        this.isCurrentUser=isCurrentUser;
 
     }
 
-    public StoreInfoFragment() {
+    public PremiumUserInfoFragment() {
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_info_store, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_info_premium, container, false);
         initElements(rootView);
-
-        setOnClickSubscribe();
-        btnMoreInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                StoreActivity.moreInfo();
-            }
-        });
-
+        if(!isCurrentUser){
+            checkFollow();
+            setOnClickSubscribe();
+            Log.e("ISCURRENTUSER",String.valueOf(isCurrentUser));
+        }
         return rootView;
     }
 
-    public void setStorePhoto(String storePhoto) {
-        Glide.with(context).load(storePhoto).into(this.storePhoto);
+    public void setOnClickFacebook(String txtFacebook) {
+        if(txtFacebook!=""){
+            final String finalTxtFacebook = "https://www.facebook.com/"+txtFacebook;
+            this.txtFacebook.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(Intent.ACTION_VIEW, Uri.parse(finalTxtFacebook));
+                    intent.setPackage("com.facebook.android");
+                    try{
+                        startActivity(intent);
+                    }catch (ActivityNotFoundException e){
+                        startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(finalTxtFacebook)));
+                    }
+                }
+            });
+            lnlface.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void setOnClickInstagram(String txtInstagram) {
+        if(txtInstagram!="") {
+            final String finalTxtInstagram = "http://instagram.com/"+txtInstagram;
+            this.txtInstagram.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(Intent.ACTION_VIEW, Uri.parse(finalTxtInstagram));
+                    intent.setPackage("com.instagram.android");
+                    try{
+                        startActivity(intent);
+                    }catch (ActivityNotFoundException e){
+                        startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(finalTxtInstagram)));
+                    }
+                }
+            });
+            lnlInsta.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void setTxtLocalization(String txtLocalization) {
+        this.txtLocalization.setText(txtLocalization);
+    }
+
+    public void setProfilePhoto(String profilePhoto) {
+        Glide.with(context).load(profilePhoto).into(this.profilePhoto);
     }
 
 
-    public void setStoreName(String storeName) {
-        this.storeName.setText(storeName);
+    public void setPremiumName(String storeName) {
+        this.premiumName.setText(storeName);
     }
 
-    public void setTxtDescription(String txtDescription) {
-        this.txtDescription.setText(txtDescription);
+    public void setTxtEmail(String txtEmail) {
+        this.txtEmail.setText(txtEmail);
     }
     public void setOnClickSubscribe(){
         btnSubscribe.setOnClickListener(new View.OnClickListener() {
@@ -90,15 +134,15 @@ public class StoreInfoFragment extends Fragment {
                 btnSubscribe.setEnabled(false);
                 if (!mSubscribed) {
 
-                    Subscription newSubscription = new Subscription(storeNameString, user.getUid());
+                    Subscription newSubscription = new Subscription(clientId, user.getUid());
 
-                    dB.collection("subscriptions").add(newSubscription).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    dB.collection("premiumUsersSubscriptions").add(newSubscription).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
                         public void onSuccess(DocumentReference documentReference) {
                             Log.d("Firestore task", "DocumentSnapshot written with ID: " + documentReference.getId());
                             documentId = documentReference.getId();
                             setupButtonSubscribe(true);
-                            displayMessage("Ahora estas suscripto a "+storeNameString);
+                            displayMessage("Ahora estas suscripto a "+premiumName.getText().toString());
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -109,7 +153,7 @@ public class StoreInfoFragment extends Fragment {
                     });
 
                 } else {
-                    dB.collection("subscriptions").document(documentId).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    dB.collection("premiumUsersSubscriptions").document(documentId).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
@@ -130,7 +174,7 @@ public class StoreInfoFragment extends Fragment {
 
         if (subscribed) {
             btnSubscribe.setText("Desuscribirse");
-            btnSubscribe.setBackgroundColor(getResources().getColor(R.color.primary_dark));
+            btnSubscribe.setBackgroundColor( getResources().getColor(R.color.primary_dark));
             mSubscribed = true;
         } else {
             btnSubscribe.setText("Suscribirse");
@@ -141,10 +185,10 @@ public class StoreInfoFragment extends Fragment {
         btnSubscribe.setEnabled(true);
     }
     public void checkFollow() {
-
-        dB.collection("subscriptions")
+        btnSubscribe.setVisibility(View.VISIBLE);
+        dB.collection("premiumUsersSubscriptions")
                 .whereEqualTo("userId", user.getUid())
-                .whereEqualTo("storeName", storeNameString)
+                .whereEqualTo("clientId", clientId)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -160,12 +204,16 @@ public class StoreInfoFragment extends Fragment {
         });
     }
     public void initElements(View rootView){
-        storePhoto = (ImageView) rootView.findViewById(R.id.premium_profile_photo);
+        profilePhoto = rootView.findViewById(R.id.premium_profile_photo);
         btnSubscribe =rootView.findViewById(R.id.btn_subscribe);
-        storeName = (TextView) rootView.findViewById(R.id.profile_store_name);
-        txtDescription=rootView.findViewById(R.id.txtDescription);
-        txtDescription.setMovementMethod(new ScrollingMovementMethod());
-        btnMoreInfo=rootView.findViewById(R.id.btnMasInfo);
+        premiumName =rootView.findViewById(R.id.profile_premium_name);
+        txtEmail=rootView.findViewById(R.id.txtEmail);
+        txtLocalization=rootView.findViewById(R.id.txtLocalization);
+        txtInstagram=rootView.findViewById(R.id.txtInstagram);
+        txtFacebook=rootView.findViewById(R.id.txtFacebook);
+        lnlface=rootView.findViewById(R.id.lnlFace);
+        lnlInsta=rootView.findViewById(R.id.lnlInta);
+
     }
 
     private void displayMessage(String message) {

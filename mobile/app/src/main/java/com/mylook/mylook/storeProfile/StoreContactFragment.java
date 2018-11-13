@@ -67,9 +67,8 @@ public class StoreContactFragment extends Fragment {
 
     public void setOnClickFacebook(String txtFacebook) {
         if(txtFacebook!=""){
-            if (!txtFacebook.startsWith("http://") && !txtFacebook.startsWith("https://"))
-                txtFacebook = "http://" + txtFacebook;
-            final String finalTxtFacebook = txtFacebook;
+
+            final String finalTxtFacebook = "https://www.facebook.com/"+txtFacebook;
             this.txtFacebook.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -88,9 +87,7 @@ public class StoreContactFragment extends Fragment {
 
     public void setOnClickTwitter( String txtTwitter) {
         if(txtTwitter!=""){
-            if (!txtTwitter.startsWith("http://") && !txtTwitter.startsWith("https://"))
-                txtTwitter = "http://" + txtTwitter;
-            final String finalTxtTwitter = txtTwitter;
+            final String finalTxtTwitter = "https://twitter.com/"+txtTwitter;
             this.txtTwitter.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -110,9 +107,7 @@ public class StoreContactFragment extends Fragment {
 
     public void setOnClickInstagram(String txtInstagram) {
         if(txtInstagram!="") {
-            if (!txtInstagram.startsWith("http://") && !txtInstagram.startsWith("https://"))
-                txtInstagram = "http://" + txtInstagram;
-            final String finalTxtInstagram = txtInstagram;
+            final String finalTxtInstagram = "https://www.instagram.com/"+txtInstagram;
             this.txtInstagram.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
