@@ -21,7 +21,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.PremiumUser;
 import com.mylook.mylook.storeProfile.CatalogFragment;
-import com.mylook.mylook.storeProfile.ReputationFragment;
 import com.mylook.mylook.storeProfile.ShopwindowFragment;
 import com.mylook.mylook.storeProfile.StoreTabAdapter;
 import com.mylook.mylook.utils.SectionsPagerAdapter;
@@ -35,7 +34,7 @@ public class PremiumUserProfile extends AppCompatActivity {
     private ViewPager viewPagerUserPublications;
     private String clientId;
     private PremiumUserInfoFragment infoFragment;
-    private ReputationFragment reputationFragment;
+    private ReputationPremiumFragment reputationFragment;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private boolean isCurrentUser;
 
@@ -68,7 +67,7 @@ public class PremiumUserProfile extends AppCompatActivity {
                 setContentInfo();
 
             }});
-        reputationFragment=new ReputationFragment(clientId);
+        reputationFragment=new ReputationPremiumFragment(clientId);
 
     }
     private void setContentInfo(){

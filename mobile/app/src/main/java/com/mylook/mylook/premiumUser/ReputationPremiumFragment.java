@@ -1,10 +1,9 @@
-package com.mylook.mylook.storeProfile;
+package com.mylook.mylook.premiumUser;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,7 @@ import java.util.Date;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 @SuppressLint("ValidFragment")
-public class ReputationFragment extends Fragment {
+public class ReputationPremiumFragment extends Fragment {
 
     private TextView lblActiveStore;
     private TextView lblDate;
@@ -32,20 +31,18 @@ public class ReputationFragment extends Fragment {
     private TextView lblCantRecommendations;
     private TextView lblRecommendationsDescr;
     private  FirebaseFirestore dB;
-    private String storeName;
+    private String clientId;
     private float ratingSum=0;
     private int recommendCount=0;
     private String registerDate;
-    private CardView cardRecommendations;
+    private TextView lblMylookUser;
 
-    public ReputationFragment() {
+    public ReputationPremiumFragment() {
     }
 
     @SuppressLint("ValidFragment")
-    public ReputationFragment(String name) {
-
+    public ReputationPremiumFragment(String clientId) {
         dB=FirebaseFirestore.getInstance();
-        this.storeName=name;
 
     }
 
@@ -54,20 +51,21 @@ public class ReputationFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_store_reputation, container, false);
         initElements(rootView);
-        countRecommendations();
+        //countRecommendations();
         countSubscribers();
         lblDate.setText((CharSequence)  registerDate);
         return rootView;
     }
     public void initElements(View rootView){
-        cardRecommendations=rootView.findViewById(R.id.cardRecommendations);
-        cardRecommendations.setVisibility(View.VISIBLE);
+        lblMylookUser=rootView.findViewById(R.id.lblMylookUser);
+        lblMylookUser.setText("Es Usuario Destacado desde");
         lblActiveStore=rootView.findViewById(R.id.lblActiveStore);
+        lblActiveStore.setText("Es un Usuario Activo!");
         lblDate=rootView.findViewById(R.id.lblDate);
         lblCant=rootView.findViewById(R.id.lblCant);
-        ratingBar=rootView.findViewById(R.id.ratingBar);
-        lblCantRecommendations=rootView.findViewById(R.id.lblCantRecommendations);
-        lblRecommendationsDescr=rootView.findViewById(R.id.lblRecomendationsDescr);
+        //ratingBar=rootView.findViewById(R.id.ratingBar);
+        //lblCantRecommendations=rootView.findViewById(R.id.lblCantRecommendations);
+        //lblRecommendationsDescr=rootView.findViewById(R.id.lblRecomendationsDescr);
     }
 
     public void setRegisterDate(Date date) {
@@ -78,7 +76,7 @@ public class ReputationFragment extends Fragment {
     }
 
     public void countRecommendations(){
-        dB.collection("answeredRecommendations").whereEqualTo("storeName",storeName)
+        dB.collection("answeredRecommendations").whereEqualTo("clientId", clientId)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -107,7 +105,7 @@ public class ReputationFragment extends Fragment {
     }
 
     public void countSubscribers() {
-        dB.collection("subscriptions").whereEqualTo("storeName",storeName).get()
+        dB.collection("premiumUsersSubscriptions").whereEqualTo("clientId", clientId).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
