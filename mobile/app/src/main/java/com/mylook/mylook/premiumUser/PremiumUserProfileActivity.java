@@ -1,15 +1,18 @@
 package com.mylook.mylook.premiumUser;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -24,7 +27,7 @@ import com.mylook.mylook.storeProfile.ShopwindowFragment;
 import com.mylook.mylook.storeProfile.StoreTabAdapter;
 import com.mylook.mylook.utils.SectionsPagerAdapter;
 
-public class PremiumUserProfile extends AppCompatActivity {
+public class PremiumUserProfileActivity extends AppCompatActivity {
 
 
     private FirebaseUser user;
@@ -36,8 +39,10 @@ public class PremiumUserProfile extends AppCompatActivity {
     private ReputationPremiumFragment reputationFragment;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private boolean isCurrentUser;
+    private FloatingActionButton fab;
     private String premiumUserId; //el userUID del usuario destacado NO EL ACTUAL
 
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +52,8 @@ public class PremiumUserProfile extends AppCompatActivity {
         viewPagerUserInfo = findViewById(R.id.storeInfoViewPager);
         viewPagerUserPublications = findViewById(R.id.storeViewPager);
         Toolbar tb =  findViewById(R.id.toolbar);
+        fab=findViewById(R.id.fab);
+        fab.setVisibility(View.VISIBLE);
         tb.setTitle("Usuario Destacado");
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
@@ -63,13 +70,21 @@ public class PremiumUserProfile extends AppCompatActivity {
                     }
                     premiumUserId=task.getResult().get("userId").toString();
                 }
-                infoFragment = new PremiumUserInfoFragment(PremiumUserProfile.this, clientId,isCurrentUser);
+                infoFragment = new PremiumUserInfoFragment(PremiumUserProfileActivity.this, clientId,isCurrentUser);
                 setupViewPagerInfo(viewPagerUserInfo);
                 setContentInfo();
 
             }});
         reputationFragment=new ReputationPremiumFragment(clientId);
 
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), PremiumPublicationActivity.class);
+                intent.putExtra("clientId",clientId);
+                startActivity(intent);
+            }
+        });
     }
     private void setContentInfo(){
         db.collection("premiumUsers").whereEqualTo("clientId",clientId)
@@ -163,6 +178,33 @@ public class PremiumUserProfile extends AppCompatActivity {
         adapter.addFragment(1,new PublicClosetFragment(premiumUserId),"Ropero");
         adapter.addFragment(2,reputationFragment,"Reputación");
         viewPager.setAdapter(adapter);
+
+
+        viewPagerUserPublications.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @SuppressLint("RestrictedApi")
+            @Override
+            public void onPageSelected(int i) {
+                switch (i){
+                    case 0:
+                        fab.setVisibility(View.VISIBLE);
+                        break;
+                    default:
+                        fab.setVisibility(View.GONE);
+                        break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
+
     }
     private void setupViewPagerInfo(ViewPager viewPager){
         SectionsPagerAdapter adapter=new SectionsPagerAdapter(getSupportFragmentManager());

@@ -23,7 +23,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.login.LoginActivity;
 import com.mylook.mylook.premiumUser.PremiumRequestActivity;
-import com.mylook.mylook.premiumUser.PremiumUserProfile;
+import com.mylook.mylook.premiumUser.PremiumUserProfileActivity;
 import com.mylook.mylook.utils.BottomNavigationViewHelper;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -77,7 +77,7 @@ public class ProfileActivity extends AppCompatActivity {
         layoutDifussionGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), PremiumUserProfile.class);
+                Intent intent = new Intent(getApplicationContext(), PremiumUserProfileActivity.class);
                 intent.putExtra("clientId",clientId);
                 startActivity(intent);
             }

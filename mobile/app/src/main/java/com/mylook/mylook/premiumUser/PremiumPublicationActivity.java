@@ -28,12 +28,10 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.SuccessContinuation;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -45,14 +43,12 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PremiumRequestActivity extends AppCompatActivity {
-
+public class PremiumPublicationActivity extends AppCompatActivity {
     private final int  SELECT_FILE = 0;
-    private TextView txtProfilePhoto;
-    private ImageView imgProfilePhoto;
-    private AutoCompleteTextView txtEmail, txtLocalization;
-    private AutoCompleteTextView txtIg,txtFacebook;
-    private Button btnRequest;
+    private TextView txtPublicationPhoto;
+    private ImageView imgPublicationPhoto;
+    private AutoCompleteTextView txtStoreName, txtArticleCode;
+    private Button btnSave;
     private Uri selectImageUri = null;
     private StorageReference storageRef;
     private FirebaseUser user;
@@ -60,18 +56,16 @@ public class PremiumRequestActivity extends AppCompatActivity {
     private Uri downloadUrl;
     private ProgressBar mProgressBar;
     private boolean enviado = false;
-    private Timestamp premiumDate;
-    private String clientId;
     private FirebaseFirestore dB;
-    private String userName;
+    private String clientId;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_request_premium_account);
+        setContentView(R.layout.activity_premium_publication);
         Toolbar tb = findViewById(R.id.toolbar);
-        tb.setTitle("Cuenta Destacada");
+        tb.setTitle("Tu publicación");
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
@@ -80,14 +74,12 @@ public class PremiumRequestActivity extends AppCompatActivity {
         storageRef = FirebaseStorage.getInstance().getReference();
         dB=FirebaseFirestore.getInstance();
         clientId=getIntent().getStringExtra("clientId");
-        userName=getIntent().getStringExtra("userName");
-
         initElements();
         setOnclicks();
     }
 
     private void setOnclicks() {
-        txtProfilePhoto.setOnClickListener(new View.OnClickListener() {
+        txtPublicationPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -95,7 +87,7 @@ public class PremiumRequestActivity extends AppCompatActivity {
                 startActivityForResult(intent, SELECT_FILE);
             }
         });
-        imgProfilePhoto.setOnClickListener(new View.OnClickListener() {
+        imgPublicationPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -103,7 +95,7 @@ public class PremiumRequestActivity extends AppCompatActivity {
                 startActivityForResult(intent, SELECT_FILE);
             }
         });
-        btnRequest.setOnClickListener(new View.OnClickListener() {
+        btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendRequest();
@@ -130,7 +122,7 @@ public class PremiumRequestActivity extends AppCompatActivity {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 selectImageUri = result.getUri();
-                imgProfilePhoto.setImageURI(selectImageUri);
+                imgPublicationPhoto.setImageURI(selectImageUri);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }
@@ -146,7 +138,7 @@ public class PremiumRequestActivity extends AppCompatActivity {
     private UploadTask saveImage() {
 
         int permissionCheck = ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.READ_EXTERNAL_STORAGE);
-        final StorageReference storageReference = storageRef.child("profilePremium/" + this.createPhotoName(user.getDisplayName()) + ".jpg");
+        final StorageReference storageReference = storageRef.child("premiumPublications/" + this.createPhotoName(user.getDisplayName()) + ".jpg");
         final UploadTask uploadTask;
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             permissionGranted = false;
@@ -160,22 +152,22 @@ public class PremiumRequestActivity extends AppCompatActivity {
             }
         }
         if (permissionGranted) {
-                uploadTask = storageReference.putFile(selectImageUri);
-                uploadTask.onSuccessTask(new SuccessContinuation<UploadTask.TaskSnapshot, Object>() {
-                    @NonNull
-                    @Override
-                    public Task<Object> then(@Nullable final UploadTask.TaskSnapshot taskSnapshot) {
-                        uploadTask.getSnapshot().getStorage().getDownloadUrl().onSuccessTask(new SuccessContinuation<Uri, Object>() {
-                            @NonNull
-                            @Override
-                            public Task<Object> then(@Nullable Uri uri) {
-                                downloadUrl = uri;
-                                return (Task) uploadTask;
-                            }
-                        });
-                        return (Task) uploadTask;
-                    }
-                });
+            uploadTask = storageReference.putFile(selectImageUri);
+            uploadTask.onSuccessTask(new SuccessContinuation<UploadTask.TaskSnapshot, Object>() {
+                @NonNull
+                @Override
+                public Task<Object> then(@Nullable final UploadTask.TaskSnapshot taskSnapshot) {
+                    uploadTask.getSnapshot().getStorage().getDownloadUrl().onSuccessTask(new SuccessContinuation<Uri, Object>() {
+                        @NonNull
+                        @Override
+                        public Task<Object> then(@Nullable Uri uri) {
+                            downloadUrl = uri;
+                            return (Task) uploadTask;
+                        }
+                    });
+                    return (Task) uploadTask;
+                }
+            });
 
         } else {
             displayMessage("The app needs permission to use your media files");
@@ -188,25 +180,21 @@ public class PremiumRequestActivity extends AppCompatActivity {
     }
     private void sendToFirebase() {
         Calendar cal = Calendar.getInstance();
-        if (txtEmail.getText().toString().isEmpty()) {
-            displayMessage("Debe añadir un Mail de contacto!");
+        if (txtStoreName.getText().toString().isEmpty()) {
+            displayMessage("Debe añadir una Tienda");
             return;
         }
-        if (txtLocalization.getText().toString().isEmpty()) {
-            displayMessage("Debe añadir una Localidad!");
-            return;
-        }
-        if (txtIg.getText().toString().isEmpty()) {
-            displayMessage("Debe añadir tu Instagram");
+        if (txtArticleCode.getText().toString().isEmpty()) {
+            displayMessage("Debe añadir un código para el artículo");
             return;
         }
 
         if ( selectImageUri == null) {
-            displayMessage("Debe añadir una foto de perfil!");
+            displayMessage("Debe añadir una foto a la publicación");
             return;
         } else {
             mProgressBar.setVisibility(View.VISIBLE);
-            btnRequest.setEnabled(false);
+            btnSave.setEnabled(false);
             final UploadTask uptask = saveImage();
             uptask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -227,68 +215,47 @@ public class PremiumRequestActivity extends AppCompatActivity {
     private boolean writeFirebaseDocument(String uri) {
         if (!enviado) {
             mProgressBar.setVisibility(View.VISIBLE);
-            btnRequest.setEnabled(false);
-            setCurrentDate();
-                final Map<String, Object> premiumUser = new HashMap<>();
-                premiumUser.put("userId", user.getUid());
-                premiumUser.put("profilePhoto", uri);
-                premiumUser.put("localization", txtLocalization.getText().toString());
-                premiumUser.put("premiumDate", premiumDate);
-                premiumUser.put("contactMail", txtEmail.getText().toString());
-                premiumUser.put("linkInstagram", txtIg.getText().toString());
-                premiumUser.put("linkFacebook",txtFacebook.getText().toString() );
-                premiumUser.put("clientId",clientId);
-                premiumUser.put("userName",userName);
+            btnSave.setEnabled(false);
+            final Map<String, Object> premiumPublication = new HashMap<>();
+            premiumPublication.put("storeName", txtStoreName.getText().toString());
+            premiumPublication.put("publicationPhoto", uri);
+            premiumPublication.put("articleCOde", txtArticleCode.getText().toString());
+            premiumPublication.put("userId",user.getUid());
+            premiumPublication.put("clientId",clientId);
 
-                dB.collection("premiumUsers")
-                        .add(premiumUser).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Map<String,Object> client=new HashMap<>();
-                        client.put("isPremium",true);
-                        dB.collection("clients").document(clientId).set(client, SetOptions.mergeFields("isPremium")).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                enviado = true;
-                                mProgressBar.setVisibility(View.GONE);
-                                displayMessage("Ya eres un usuario destacado");
-                                finish();
-                            }
-                        });
+            dB.collection("premiumPublications")
+                    .add(premiumPublication).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                @Override
+                public void onSuccess(DocumentReference documentReference) {
+                    displayMessage("Tu publicación fue guardada");
+                    finish();
 
-
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        mProgressBar.setVisibility(View.GONE);
-                        btnRequest.setEnabled(true);
-                        displayMessage("Ha ocurrido un problema con tu solicitud");
-                    }
-                });
-            } else {
-                mProgressBar.setVisibility(View.GONE);
-                btnRequest.setEnabled(true);
-                Log.e("WRITE FIREBASE","no se por que entra aca, ahrrrre");
-            }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    mProgressBar.setVisibility(View.GONE);
+                    btnSave.setEnabled(true);
+                    displayMessage("Ha ocurrido un problema con tu publicación");
+                }
+            });
+        } else {
+            mProgressBar.setVisibility(View.GONE);
+            btnSave.setEnabled(true);
+            Log.e("WRITE FIREBASE","no se por que entra aca, ahrrrre");
+        }
         return enviado;
-    }
-
-    private void setCurrentDate() {
-        Calendar cal = Calendar.getInstance();
-        this.premiumDate = new Timestamp(cal.getTime());
     }
 
 
     private void initElements() {
-
-        txtProfilePhoto=findViewById(R.id.txtProfilePhoto);
-        imgProfilePhoto=findViewById(R.id.imgProfilePhoto);
-        txtEmail=findViewById(R.id.txtEmail);
-        txtLocalization=findViewById(R.id.txtLocalization);
-        txtIg=findViewById(R.id.txtIg);
-        txtFacebook=findViewById(R.id.txtFacebook);
-        btnRequest=findViewById(R.id.btnRequest);
+        txtPublicationPhoto=findViewById(R.id.txtPublicationPhoto);
+        imgPublicationPhoto =findViewById(R.id.imgPublication);
+        txtStoreName =findViewById(R.id.txtStoreName);
+        txtArticleCode =findViewById(R.id.txtArticleCode);
+        btnSave =findViewById(R.id.btnSave);
         mProgressBar=findViewById(R.id.progressBar);
     }
+
+
 }
