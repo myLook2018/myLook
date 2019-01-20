@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "259536885025",
+    "firebase_url": "https://mylook-develop.firebaseio.com",
+    "project_id": "mylook-develop",
+    "storage_bucket": "mylook-develop.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:259536885025:android:3102c3d45963582b",
+        "android_client_info": {
+          "package_name": "com.mylook.mylook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "259536885025-36tu70dq0440p597q2l3gmsldbqoivh0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mylook.mylook",
+            "certificate_hash": "285ddd09aa7a8987ef8f0695a1ac9cb0857df477"
+          }
+        },
+        {
+          "client_id": "259536885025-rdsfl93bdlttlkgevjomg8u066drlja6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mylook.mylook",
+            "certificate_hash": "802aeb4f7e132d96d01e2cdf2aa592abd5db62dc"
+          }
+        },
+        {
+          "client_id": "259536885025-gelnlk1fmtg8rss0cam6koe3l4bne7h6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvrOENxsHqun5QIcd7bwL8eklMg4XRShY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "259536885025-gelnlk1fmtg8rss0cam6koe3l4bne7h6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

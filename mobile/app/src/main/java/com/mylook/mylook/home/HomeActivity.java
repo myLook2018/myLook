@@ -30,6 +30,7 @@ import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.PremiumUser;
 import com.mylook.mylook.entities.Subscription;
 import com.mylook.mylook.login.LoginActivity;
+import com.mylook.mylook.login.RegisterActivity;
 import com.mylook.mylook.room.LocalInteraction;
 import com.mylook.mylook.utils.BottomNavigationViewHelper;
 import com.mylook.mylook.utils.CardsHomeFeedAdapter;
@@ -117,7 +118,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void updateInstallationToken() {
-        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener( this,  new OnSuccessListener<InstanceIdResult>() {
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this, new OnSuccessListener<InstanceIdResult>() {
             @Override
             public void onSuccess(InstanceIdResult instanceIdResult) {
                 final String mToken = instanceIdResult.getToken();
@@ -126,8 +127,13 @@ public class HomeActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         Map<String, Object> update = new HashMap<>();
-                        update.put("installToken",mToken);
-                        db.collection("clients").document(task.getResult().getDocuments().get(0).getId()).set(update, SetOptions.merge());
+                        update.put("installToken", mToken);
+                        if (task.getResult().getDocuments().size() > 0) {
+                            db.collection("clients").document(task.getResult().getDocuments().get(0).getId()).set(update, SetOptions.merge());
+                        } else {
+
+                            finish();
+                        }
                     }
                 });
             }
@@ -152,15 +158,15 @@ public class HomeActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful()) {
-                                       // for (QueryDocumentSnapshot documentSnapshot:task.getResult()){
-                                       //     Log.e("ROPERO", documentSnapshot.getId());
+                                        // for (QueryDocumentSnapshot documentSnapshot:task.getResult()){
+                                        //     Log.e("ROPERO", documentSnapshot.getId());
                                         //     Article art=documentSnapshot.toObject(Article.class);
                                         //    art.setArticleId(documentSnapshot.getId());
-                                       //     list.add(art);
+                                        //     list.add(art);
                                         //}
-                                       if(createArticleList(task.getResult())){
-                                           adapter.notifyDataSetChanged();
-                                       }
+                                        if (createArticleList(task.getResult())) {
+                                            adapter.notifyDataSetChanged();
+                                        }
                                     } else {
                                         Log.d("Firestore task", "onComplete: " + task.getException());
                                     }
@@ -188,13 +194,13 @@ public class HomeActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful()) {
-                                        for (QueryDocumentSnapshot documentSnapshot:task.getResult()){
+                                        for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                             Log.e("ROPERO", documentSnapshot.getId());
-                                            PremiumUser premiumUser=documentSnapshot.toObject(PremiumUser.class);
+                                            PremiumUser premiumUser = documentSnapshot.toObject(PremiumUser.class);
                                             list.add(premiumUser);
                                         }
                                         adapter.notifyDataSetChanged();
-                                        Log.e("On complete", "Tamaño adapter "+adapter.getItemCount());
+                                        Log.e("On complete", "Tamaño adapter " + adapter.getItemCount());
 
                                     } else {
                                         Log.d("Firestore task", "onComplete: " + task.getException());
@@ -214,25 +220,25 @@ public class HomeActivity extends AppCompatActivity {
         List<Article> promo3 = new ArrayList<>();
 
         for (QueryDocumentSnapshot document : result) {
-                Article art = document.toObject(Article.class);
-                art.setArticleId(document.getId());
-                Log.e("Promotion Level", "N° "+art.getPromotionLevel());
-                int pl = art.getPromotionLevel();
-                switch (pl) {
-                    case 1:
-                        Log.d("ADDING", "PROMO1");
-                        promo1.add(art);
-                        break;
-                    case 2:
-                        Log.d("ADDING", "PROMO2");
-                        promo2.add(art);
-                        break;
-                    case 3:
-                        Log.d("ADDING", "PROMO3");
-                        promo3.add(art);
-                        break;
-                }
-                totalArticles++;
+            Article art = document.toObject(Article.class);
+            art.setArticleId(document.getId());
+            Log.e("Promotion Level", "N° " + art.getPromotionLevel());
+            int pl = art.getPromotionLevel();
+            switch (pl) {
+                case 1:
+                    Log.d("ADDING", "PROMO1");
+                    promo1.add(art);
+                    break;
+                case 2:
+                    Log.d("ADDING", "PROMO2");
+                    promo2.add(art);
+                    break;
+                case 3:
+                    Log.d("ADDING", "PROMO3");
+                    promo3.add(art);
+                    break;
+            }
+            totalArticles++;
 
         }
         if (totalArticles == 0) {
@@ -319,7 +325,7 @@ public class HomeActivity extends AppCompatActivity {
      * BottomNavigationView setup
      */
     private void setupBottomNavigationView() {
-        BottomNavigationView bottomNavigationView =  findViewById(R.id.bottomNavViewBar);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavViewBar);
         BottomNavigationViewHelper.enableNavigation(mContext, bottomNavigationView);
         Menu menu = bottomNavigationView.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);

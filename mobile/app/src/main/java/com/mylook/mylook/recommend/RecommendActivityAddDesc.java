@@ -96,25 +96,13 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        dB = FirebaseFirestore.getInstance();
-        storageRef = FirebaseStorage.getInstance().getReference();
-        setContentView(R.layout.activity_request_recommendation_add_desc);
         Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
+        setContentView(R.layout.activity_request_recommendation_add_desc);
+        initElements();
         tb.setTitle("Nueva Solicitud");
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
-        mProgressBar = findViewById(R.id.progressBar);
-        btnSend = findViewById(R.id.btnSend);
-        imgRecommend = (ImageView) findViewById(R.id.imgRecommend);
-        txtDescription = (TextInputEditText) findViewById(R.id.txtDescription);
-        editDate = (EditText) findViewById(R.id.editDate);
-        title = (EditText) findViewById(R.id.txtTitle);
-        fabMenu = (FloatingActionMenu) findViewById(R.id.fabMenu);
-        fabPhoto = (FloatingActionButton) findViewById(R.id.photoFloating);
-        fabGallery = (FloatingActionButton) findViewById(R.id.galleryFloating);
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         setCurrentLocation();
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,30 +110,8 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 sendToFirebase();
             }
         });
-        spinner = findViewById(R.id.category);
         setCategoryRequest();
-        txtSize = findViewById(R.id.size_input);
-
-        final Calendar myCalendar = Calendar.getInstance();
-        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth) {
-                // TODO Auto-generated method stub
-                myCalendar.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
-                limitDate = new Date();
-                limitDate.setTime(myCalendar.getTimeInMillis());
-                editDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-            }
-        };
-
-        editDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new DatePickerDialog(RecommendActivityAddDesc.this, date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-            }
-        });
+        initCalendar();
 
         fabPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,6 +135,48 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void initCalendar(){
+
+        final Calendar myCalendar = Calendar.getInstance();
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+                myCalendar.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
+                limitDate = new Date();
+                limitDate.setTime(myCalendar.getTimeInMillis());
+                editDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+            }
+        };
+
+        editDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new DatePickerDialog(RecommendActivityAddDesc.this, date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+    }
+
+    private void initElements(){
+        spinner = findViewById(R.id.category);
+        txtSize = findViewById(R.id.size_input);
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        dB = FirebaseFirestore.getInstance();
+        storageRef = FirebaseStorage.getInstance().getReference();
+        mProgressBar = findViewById(R.id.progressBar);
+        btnSend = findViewById(R.id.btnSend);
+        imgRecommend = (ImageView) findViewById(R.id.imgRecommend);
+        txtDescription = (TextInputEditText) findViewById(R.id.txtDescription);
+        editDate = (EditText) findViewById(R.id.editDate);
+        title = (EditText) findViewById(R.id.txtTitle);
+        fabMenu = (FloatingActionMenu) findViewById(R.id.fabMenu);
+        fabPhoto = (FloatingActionButton) findViewById(R.id.photoFloating);
+        fabGallery = (FloatingActionButton) findViewById(R.id.galleryFloating);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
     }
 
     private void setCategoryRequest() {

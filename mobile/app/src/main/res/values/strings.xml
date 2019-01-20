@@ -52,5 +52,10 @@
     <string name="new_outfit">Nuevo Conjunto</string>
     <string name="edit_outfit">Editar</string>
     <string name="delete_outfit">Eliminar</string>
+
+    <!-- Related to facebook-->
+    <string name="facebook_app_id">2265525280404446</string>
+    <string name="fb_login_protocol_scheme">fb2265525280404446</string>
+
 </resources>
 
