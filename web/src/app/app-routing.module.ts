@@ -14,9 +14,10 @@ import { ErrorComponent } from './error/error.component';
 import { RecomendationsComponent } from './recomendations/components/recomendations.component';
 import { DonutchartComponent } from './anylitics/components/donutchart/donutchart.component';
 import { DashboardComponent } from './anylitics/components/dashboard/dashboard.component';
+import { HomePageComponent } from './home-page/home-page.component';
 
 export const rootRouterConfig: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', component: HomePageComponent},
   { path: 'inventory', component: InventoryComponent, resolve: { data: UserResolver }},
   { path: 'analytics', component: DashboardComponent, resolve: { data: UserResolver }},
   { path: 'login', component: LoginComponent, canActivate: [AuthGuard] },

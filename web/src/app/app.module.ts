@@ -75,6 +75,7 @@ import { FrontDialogComponent } from './articles/components/dialogs/frontDialog'
 import {RatingModule} from 'primeng/rating';
 import { NewStoreService } from './store/service/store.service';
 import { PromotionsBarComponent } from './anylitics/components/promotions-bar/promotions-bar.component';
+import { HomePageComponent } from './home-page/home-page.component';
 
 @NgModule({
   declarations: [
@@ -101,7 +102,8 @@ import { PromotionsBarComponent } from './anylitics/components/promotions-bar/pr
     PolarAreaComponent,
     TimelineComponent,
     FrontDialogComponent,
-    PromotionsBarComponent
+    PromotionsBarComponent,
+    HomePageComponent
   ],
   imports: [
     NgxSpinnerModule,
