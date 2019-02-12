@@ -27,8 +27,12 @@
             android:layout_below="@id/layout_top"
             android:background="@color/greyBackground">
 
-            <include layout="@layout/content_home" />
+            <FrameLayout
+                android:id="@+id/fragment_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
+            </FrameLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -37,7 +41,9 @@
             android:id="@+id/layout_bottom"
             android:layout_alignParentBottom="true">
 
-            <include layout="@layout/layout_bottom_navigation_view" />
+            <include
+                android:id="@+id/navigation"
+                layout="@layout/layout_bottom_navigation_view" />
         </LinearLayout>
 
     </RelativeLayout>

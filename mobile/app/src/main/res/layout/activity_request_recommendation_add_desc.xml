@@ -37,7 +37,8 @@
             android:layout_height="51dp">
 
             <include
-                layout="@layout/layout_top_toolbar"
+                android:id="@+id/recommend_toolbar"
+                layout="@layout/layout_top_toolbar_recommendation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -68,28 +69,15 @@
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/linearLayout6"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="432dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:orientation="vertical"
                 android:paddingTop="51dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
-
-                <EditText
-                    android:id="@+id/txtTitle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:capitalize="sentences"
-                    android:ems="10"
-                    android:hint="Título"
-                    android:inputType="textPersonName"
-                    app:layout_constraintBottom_toTopOf="@+id/txtDescription"
-                    app:layout_constraintEnd_toStartOf="@+id/imgRecommend"
-                    app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
                     android:id="@+id/imgRecommend"
@@ -157,11 +145,11 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginBottom="8dp"
+                    android:dropDownHeight="200dp"
                     android:hint="Categorías"
                     android:spinnerMode="dropdown"
                     android:textColor="@color/common_google_signin_btn_text_light_disabled"
                     android:textSize="17sp"
-                    android:dropDownHeight="200dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/size_input"
                     app:layout_constraintStart_toStartOf="parent"

@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.ViewTarget;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,6 +36,7 @@ import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Closet;
 import com.mylook.mylook.entities.Favorite;
 import com.mylook.mylook.entities.Outfit;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -77,7 +79,6 @@ public class OutfitActivity extends AppCompatActivity {
         mProgressBar = findViewById(R.id.mProgressBar);
         mProgressBar.setVisibility(View.VISIBLE);
         initElements();
-
         if(outfitId !=  null){
             getOutfit();
 
@@ -113,7 +114,9 @@ public class OutfitActivity extends AppCompatActivity {
                 case DragEvent.ACTION_DROP:
                     if(outfitItems == null)
                         outfitItems = new HashMap<>();
-                    ImageView nuevaPrenda = new ImageView(getApplicationContext());
+                    mProgressBar.setVisibility(View.VISIBLE);
+                    mProgressBar.setZ(20);
+                    ImageView nuevaPrenda = new ImageView(v.getContext());
                     String positionData = event.getClipData().getItemAt(0).getText().toString();
                     int position = Integer.parseInt(positionData);
                     String uri = favoritos.get(position).getDownloadUri();
@@ -122,10 +125,12 @@ public class OutfitActivity extends AppCompatActivity {
                     nuevaPrenda.setMaxHeight(150);
                     nuevaPrenda.setMaxWidth(150);
                     ((ImageView) v).setImageDrawable(null);
-                    Glide.with(getApplicationContext()).asBitmap().load(uri).into((ImageView) v);
+
+                    Picasso.get().load(uri).into((ImageView) v);
                     nuevaPrenda.setZ(5);
                     v.setTag(String.valueOf(position));
                     outfitItems.put(String.valueOf(getResources().getResourceName(v.getId())), articleId);
+                    mProgressBar.setVisibility(View.INVISIBLE);
                     if (!isFromOutfit) {
                         favoritosModificados.remove(position);
                         loadRecycleViewer();
@@ -170,7 +175,7 @@ public class OutfitActivity extends AppCompatActivity {
         setSupportActionBar(tb);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         collectionName = getIntent().getExtras().get("name").toString();
-        category = getIntent().getExtras().get("category").toString();
+       category = getIntent().getExtras().get("category").toString();
         try {
             outfitId = getIntent().getExtras().get("id").toString();
         } catch (Exception e){

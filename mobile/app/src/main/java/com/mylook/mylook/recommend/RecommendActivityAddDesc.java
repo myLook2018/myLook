@@ -96,13 +96,15 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
         setContentView(R.layout.activity_request_recommendation_add_desc);
+
+
         initElements();
-        tb.setTitle("Nueva Solicitud");
+        Toolbar tb = findViewById(R.id.recomend_toolbar);
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
+        this.setTitle("Nueva Solicitud");
         setCurrentLocation();
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override

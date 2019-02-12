@@ -4,14 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -29,7 +32,6 @@ import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.room.AppDatabase;
 import com.mylook.mylook.room.LocalInteraction;
 import com.mylook.mylook.room.LocalInteractionDAO;
-import com.mylook.mylook.utils.BottomNavigationViewHelper;
 import com.mylook.mylook.utils.CardsExploreAdapter;
 import com.yuyakaido.android.cardstackview.CardStackView;
 import com.yuyakaido.android.cardstackview.SwipeDirection;
@@ -41,11 +43,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-public class ExploreActivity extends AppCompatActivity {
+public class ExploreFragment extends Fragment {
 
-    private static final int ACTIVITY_NUM = 1;
-
-    private Context mContext = ExploreActivity.this;
+    private Context mContext;
     private List<Article> mDiscoverableArticles;
     private CardStackView mCardStack;
     private CardsExploreAdapter mCardAdapter;
@@ -63,27 +63,33 @@ public class ExploreActivity extends AppCompatActivity {
     private int currentIndex = 0;
     private int totalArticles = 0;
 
+    public ExploreFragment() {
+
+    }
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_explore, null);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_explore);
 
-        mCardStack = findViewById(R.id.container);
+        mCardStack = view.findViewById(R.id.container);
         mCardStack.setVisibility(View.GONE);
-        mProgressBar = findViewById(R.id.explore_progress_bar);
+        mProgressBar = view.findViewById(R.id.explore_progress_bar);
         mProgressBar.setVisibility(View.VISIBLE);
-        mMessage = findViewById(R.id.explore_message);
+        mMessage = view.findViewById(R.id.explore_message);
         mMessage.setVisibility(View.GONE);
-
+        mContext = getContext();
         dbSQL = AppDatabase.getDatabase(mContext);
         localDAO = dbSQL.getLocalInteractionDAO();
         mLocalInteractions = localDAO.getAllByUser(user.getUid());
-
-        setupBottomNavigationView();
         getDiscoverableArticles();
-        Toolbar tb = findViewById(R.id.toolbar);
-        tb.setTitle("Explorar");
-        setSupportActionBar(tb);
+
 
 
         interactions = new ArrayList<>();
@@ -155,17 +161,6 @@ public class ExploreActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * BottomNavigationView setup
-     */
-    private void setupBottomNavigationView() {
-        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavViewBar);
-        BottomNavigationViewHelper.enableNavigation(mContext, bottomNavigationView);
-        Menu menu = bottomNavigationView.getMenu();
-        MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
-        menuItem.setChecked(true);
-    }
-
     private void getDiscoverableArticles() {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -14);
@@ -182,7 +177,7 @@ public class ExploreActivity extends AppCompatActivity {
                             }
                             else {
                                 if (createArticleList(task.getResult())) {
-                                    mCardAdapter = new CardsExploreAdapter(getApplicationContext(), R.layout.article_card);
+                                    mCardAdapter = new CardsExploreAdapter(mContext, R.layout.article_card);
                                     mCardAdapter.addAll(mDiscoverableArticles);
                                     mCardStack.setAdapter(mCardAdapter);
                                     mProgressBar.setVisibility(View.GONE);
@@ -314,12 +309,12 @@ public class ExploreActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         uploadInteractions();
         super.onStop();
     }
@@ -332,9 +327,13 @@ public class ExploreActivity extends AppCompatActivity {
         interactions.clear();
     }
 
-    public boolean onCreateOptionsMenu(Menu menu){
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.search_menu, menu);
+        inflater.inflate(R.menu.search_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.search_menu, menu);
         //SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         MenuItem item=menu.findItem(R.id.btnSearch);
         SearchView searchView=(SearchView) item.getActionView();
@@ -345,23 +344,26 @@ public class ExploreActivity extends AppCompatActivity {
                 Intent intent = new Intent(mContext, SearchableActivity.class);
                 intent.putExtra("query",s);
                 startActivity(intent);
-                finish();
                 return true;            }
 
             @Override
             public boolean onQueryTextChange(String s) {
                 Log.d("CHANGE", "onQueryTextChange: newText->" + s);
-               return false;
+                return false;
             }
         });
         Log.e("OPTIONSMENU", "onCreateOptionsMenu: mSearchmenuItem->" + item.getActionView());
-        return true;
+
     }
+
+
 
     public boolean onSearchRequested(){
         Bundle appData = new Bundle();
-        startSearch(null, false, appData, false);
+        this.getActivity().startSearch(null, false, appData, false);
         return true;
 
     }
+
+
 }

@@ -44,6 +44,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.home.HomeActivity;
+import com.mylook.mylook.home.MainActivity;
 
 
 /**
@@ -236,9 +237,10 @@ public class LoginActivity extends AppCompatActivity {
                                     finish();
                                 } else {
                                     if (user.isEmailVerified()) {
-                                        Intent intent = new Intent(mContext, HomeActivity.class);
+                                        Intent intent = new Intent(mContext, MainActivity.class);
                                         Toast.makeText(mContext, "Bienvenido a myLook!",
                                                 Toast.LENGTH_SHORT).show();
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startActivity(intent);
                                         finish();
                                     } else {
@@ -307,18 +309,22 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.e("Login - Mylook","On activity result");
         super.onActivityResult(requestCode, resultCode, data);
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            Log.e("Login - Mylook","Data "+data.toString());
             try {
+                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+                Log.e("Login - Mylook","Get Signed ACcount"+ task.getResult().toString());
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
-                Log.w("TAG", "Google sign in failed", e);
+                Log.e("TAG", "Google sign in failed - " + e.getMessage());
+                mProgressBar.setVisibility(View.GONE);
                 // ...
             }
         }
