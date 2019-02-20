@@ -27,10 +27,11 @@
         android:largeHeap="true">
         <activity android:name=".login.LoginActivity">
         </activity>
-        <!--<activity android:name=".home.HomeActivity">-->
+        <!--<activity android:name=".home.HomeActivity" android:launchMode="singleInstance">-->
             <!--<intent-filter>-->
                 <!--<action android:name="android.intent.action.MAIN" />-->
                 <!--<category android:name="android.intent.category.LAUNCHER" />-->
+
             <!--</intent-filter>-->
         <!--</activity>-->
         <activity android:name=".home.MainActivity">
@@ -61,10 +62,12 @@
 
         </activity>
 
-        <activity android:name=".profile.ProfileActivity" />
-        <activity android:name=".recommend.RecommendationsActivity" android:grantUriPermissions="true">
+        <activity android:name=".profile.ProfileActivity" android:launchMode="singleInstance"/>
+        <activity android:name=".recommend.RecommendationsActivity"
+            android:grantUriPermissions="true"
+            android:launchMode="singleInstance">
         </activity>
-        <activity android:name=".login.RegisterActivity" />
+        <activity android:name=".login.RegisterActivity" android:launchMode="singleInstance"/>
         <activity android:name=".recommend.RecommendActivityAddDesc"
             android:parentActivityName=".recommend.RecommendationsActivity"
             android:grantUriPermissions="true">
@@ -84,9 +87,10 @@
             android:grantUriPermissions="true"/>
         <activity android:name=".premiumUser.PublicationDetail"
             android:parentActivityName=".premiumUser.PremiumUserProfileActivity"/>
-        <activity android:name=".closet.ClosetActivity"/>
+        <activity android:name=".closet.ClosetActivity" android:launchMode="singleInstance"/>
         <activity android:name=".closet.OutfitActivity"
-            android:parentActivityName=".closet.ClosetActivity"/>
+            android:parentActivityName=".closet.ClosetActivity"
+            android:launchMode="singleInstance"/>
         <activity android:name=".closet.ViewOutfitActivity"/>
 
         <meta-data android:name="com.facebook.sdk.ApplicationId"

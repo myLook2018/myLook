@@ -70,7 +70,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:tint="@color/primary_light"
-                app:srcCompat="@drawable/ic_account" />
+                app:srcCompat="@drawable/ic_profile" />
 
             <TextView
                 android:id="@+id/txtAccount"
@@ -80,7 +80,7 @@
                 android:layout_weight="1"
                 android:padding="10dp"
                 android:text="Mi cuenta"
-                android:textAlignment="start"
+                android:textAlignment="gravity"
                 android:textColor="@color/black"
                 android:textSize="17sp" />
         </LinearLayout>

@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -52,11 +53,12 @@ public class HomeFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private ProgressBar mProgressBar;
 
     private int currentIndex = 0;
     private int totalArticles = 0;
     private Context mContext;
-
+    final static String TAG = "Home Fragment";
 
     public HomeFragment() {
 
@@ -72,7 +74,10 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mContext = getContext();
         recyclerView = view.findViewById(R.id.recycler_view_content);
+        mProgressBar = view.findViewById(R.id.home_progress_bar);
+        mProgressBar.setVisibility(View.VISIBLE);
         list = new ArrayList<>();
         adapter = new CardsHomeFeedAdapter(mContext, list);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(mContext, 2);
@@ -81,16 +86,21 @@ public class HomeFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         mContext = getContext();
         setupFirebaseAuth();
+        mAuth = FirebaseAuth.getInstance();
+        Log.e(TAG, "User"+mAuth.getCurrentUser().getDisplayName());
+        if (mAuth.getCurrentUser() != null) {
+            readSubscriptions();
+            updateInstallationToken();
+
+        }
+
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
-        if (mAuth.getCurrentUser() != null) {
-            readSubscriptions();
-            updateInstallationToken();
-        }
+
+
     }
 
 
@@ -108,6 +118,11 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        //readSubscriptions();
+    }
 
     private void checkCurrentUser(FirebaseUser user) {
         if (user == null) {
@@ -153,6 +168,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void readSubscriptions() {
+        Log.e(TAG,"Begin Read suscriptions");
         db.collection("subscriptions")
                 .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -170,15 +186,17 @@ public class HomeFragment extends Fragment {
                                 @Override
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful()) {
-                                        // for (QueryDocumentSnapshot documentSnapshot:task.getResult()){
-                                        //     Log.e("ROPERO", documentSnapshot.getId());
-                                        //     Article art=documentSnapshot.toObject(Article.class);
-                                        //    art.setArticleId(documentSnapshot.getId());
-                                        //     list.add(art);
-                                        //}
+                                         for (QueryDocumentSnapshot documentSnapshot:task.getResult()){
+                                             Log.e("ROPERO", documentSnapshot.getId());
+                                             Article art=documentSnapshot.toObject(Article.class);
+                                            art.setArticleId(documentSnapshot.getId());
+                                             list.add(art);
+                                        }
                                         if (createArticleList(task.getResult())) {
+
                                             adapter.notifyDataSetChanged();
                                         }
+                                        mProgressBar.setVisibility(View.GONE);
                                     } else {
                                         Log.d("Firestore task", "onComplete: " + task.getException());
                                     }
