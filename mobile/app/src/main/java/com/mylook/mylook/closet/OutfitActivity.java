@@ -276,7 +276,6 @@ public class OutfitActivity extends AppCompatActivity {
         nuevo.setName(collectionName);
         nuevo.setCategory(category);
         nuevo.setItems(outfitItems);
-
         return nuevo;
     }
 

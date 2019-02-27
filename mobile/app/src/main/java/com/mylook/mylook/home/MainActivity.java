@@ -56,8 +56,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     private boolean loadFragment(Fragment fragment) {
-        //switching fragment
-
         if (fragment != null) {
             getSupportFragmentManager()
                     .beginTransaction()

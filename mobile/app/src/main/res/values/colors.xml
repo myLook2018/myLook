@@ -10,7 +10,7 @@
     <color name="divider">#bdbdbd</color>
     <color name="link_blue">#0000EE</color>
     <color name="grey">#A0A0A0</color>
-    <color name="greyBackground">#eaeaea</color>
+    <color name="greyBackground">#eaeaea</color> <!-- Usar este para fondos-->
     <color name="white">#fff</color>
     <color name="purple">#9C27B0</color>
     <color name="black">#000</color>
