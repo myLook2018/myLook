@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,13 +37,22 @@ public class ProfileFragment extends Fragment {
     }
 
     private LinearLayout layoutAccount;
-    private LinearLayout layoutPremiumRequest;
     private LinearLayout layoutHelp;
     private LinearLayout layoutExit;
     private TextView txtName;
     private TextView txtEmail;
     private FirebaseFirestore dB = FirebaseFirestore.getInstance();
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private ImageView imageGroup ;
+    private ImageView imageDestacado;
+    private TextView txtGroup ;
+    private TextView txtDestacado;
+    private ImageView imageAccount;
+    private TextView txtAccount ;
+    private ImageView imageHelp;
+    private TextView txtHelp ;
+    private ImageView imageExit;
+    private TextView txtExit ;
 
     private Context mContext;
     private String clientId;
@@ -74,7 +84,8 @@ public class ProfileFragment extends Fragment {
 
 
     private void setOnClickListener() {
-        layoutAccount.setOnClickListener(new View.OnClickListener() {
+
+        txtAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), MyAccountActivity.class);
@@ -82,7 +93,16 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        layoutPremiumRequest.setOnClickListener(new View.OnClickListener() {
+        imageAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), MyAccountActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
+        imageDestacado.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), PremiumRequestActivity.class);
@@ -92,7 +112,19 @@ public class ProfileFragment extends Fragment {
 
             }
         });
-        layoutDifussionGroup.setOnClickListener(new View.OnClickListener() {
+        txtDestacado.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), PremiumRequestActivity.class);
+                intent.putExtra("clientId",clientId);
+                intent.putExtra("userName",userName);
+                startActivity(intent);
+
+            }
+        });
+
+
+        imageGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), PremiumUserProfileActivity.class);
@@ -100,13 +132,30 @@ public class ProfileFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        layoutHelp.setOnClickListener(new View.OnClickListener() {
+        txtGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), PremiumUserProfileActivity.class);
+                intent.putExtra("clientId",clientId);
+                startActivity(intent);
+            }
+        });
+
+
+        imageHelp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
             }
         });
-        layoutExit.setOnClickListener(new View.OnClickListener() {
+        txtHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        txtExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
@@ -145,17 +194,64 @@ public class ProfileFragment extends Fragment {
                 alert.show();
             }
         });
+
+        imageExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
+
+                final android.app.AlertDialog alert = dialog.setTitle("Cerrar sesión")
+                        .setMessage("¿Estás seguro que querés cerrar sesión?")
+                        .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                                FirebaseAuth.getInstance().signOut();
+                                FacebookSdk.sdkInitialize(getContext());
+                                LoginManager.getInstance().logOut();
+                                Toast.makeText(getContext(), "Cerraste sesión :(", Toast.LENGTH_LONG).show();
+                                Intent intent = new Intent(mContext, LoginActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                                getActivity().finish();
+
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+
+                            }
+
+
+                        }).create();
+                alert.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialog) {
+                        alert.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.purple));
+                        alert.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.purple));
+                    }
+                });
+                alert.show();
+            }
+        });
+
     }
 
     private void setUserProfile(View view) {
         mContext= getContext();
-        layoutAccount = view.findViewById(R.id.layoutAccount);
-        layoutHelp = view.findViewById(R.id.layoutHelp);
-        layoutExit = view.findViewById(R.id.layoutExit);
         txtEmail = view.findViewById(R.id.txtEmail);
         txtName = view.findViewById(R.id.txtName);
-        layoutPremiumRequest = view.findViewById(R.id.layoutPremiumRequest);
-        layoutDifussionGroup=view.findViewById(R.id.layoutDifussionGroup);
+        imageGroup =view.findViewById(R.id.image_group);
+        imageDestacado =view.findViewById(R.id.image_destacado);
+        txtGroup = view.findViewById(R.id.txtDifussionGroup);
+        txtDestacado= view.findViewById(R.id.txtSettings);
+        imageAccount = view.findViewById(R.id.image_account);
+        txtAccount = view.findViewById(R.id.txtAccount);
+        imageHelp = view.findViewById(R.id.image_help);
+        txtHelp = view.findViewById(R.id.txtHelp);
+        imageExit = view.findViewById(R.id.image_exit);
+        txtExit = view.findViewById(R.id.txtExit);
+
         dB.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -166,10 +262,14 @@ public class ProfileFragment extends Fragment {
 
 
                 if(isPremiumUser){
-                    layoutDifussionGroup.setVisibility(View.VISIBLE);
+                    imageGroup.setVisibility(View.VISIBLE);
+                    txtGroup.setVisibility(View.VISIBLE);
+                    //layoutDifussionGroup.setVisibility(View.VISIBLE);
                 }else
                 {
-                    layoutPremiumRequest.setVisibility(View.VISIBLE);
+                    imageDestacado.setVisibility(View.VISIBLE);
+                    txtDestacado.setVisibility(View.VISIBLE);
+                    //layoutPremiumRequest.setVisibility(View.VISIBLE);
                 }
                 txtEmail.setText(user.getEmail().equals("") ? "" : user.getEmail());
             }
