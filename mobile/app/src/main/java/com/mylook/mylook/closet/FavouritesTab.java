@@ -54,13 +54,14 @@ public class FavouritesTab extends Fragment {
 
     }
 
-    private void setGridview() {
-        int widthGrid = getResources().getDisplayMetrics().widthPixels;
-        int imageWidth = widthGrid / 3;
-        gridview.setColumnWidth(imageWidth);
-        gridview.setHorizontalSpacing(8);
-        gridview.setNumColumns(3);
+    @Override
+    public void onResume() {
+        super.onResume();
         getCloset();
+        setClickListener();
+    }
+
+    private void setClickListener(){
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
@@ -86,6 +87,16 @@ public class FavouritesTab extends Fragment {
                         });
             }
         });
+    }
+
+    private void setGridview() {
+        int widthGrid = getResources().getDisplayMetrics().widthPixels;
+        int imageWidth = widthGrid / 3;
+        gridview.setColumnWidth(imageWidth);
+        gridview.setHorizontalSpacing(8);
+        gridview.setNumColumns(3);
+        getCloset();
+        setClickListener();
     }
 
     private void getCloset() {

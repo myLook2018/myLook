@@ -58,6 +58,13 @@ public class CategoryTab extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mProgressBar.setVisibility(View.VISIBLE);
+        getOutfits();
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         outfits = new ArrayList<>();
         super.onCreate(savedInstanceState);
