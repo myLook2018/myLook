@@ -1,5 +1,6 @@
 package com.mylook.mylook.profile;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,6 +27,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
+import com.mylook.mylook.dialogs.DialogManager;
 import com.mylook.mylook.login.LoginActivity;
 import com.mylook.mylook.premiumUser.PremiumRequestActivity;
 import com.mylook.mylook.premiumUser.PremiumUserProfileActivity;
@@ -158,82 +160,22 @@ public class ProfileFragment extends Fragment {
         txtExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
+                DialogManager dm = DialogManager.getInstance();
 
-                final android.app.AlertDialog alert = dialog.setTitle("Cerrar sesión")
-                        .setMessage("¿Estás seguro que querés cerrar sesión?")
-                        .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                                FirebaseAuth.getInstance().signOut();
-                                FacebookSdk.sdkInitialize(getContext());
-                                LoginManager.getInstance().logOut();
-                                Toast.makeText(getContext(), "Cerraste sesión :(", Toast.LENGTH_LONG).show();
-                                Intent intent = new Intent(mContext, LoginActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(intent);
-                                getActivity().finish();
-
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-
-                            }
-
-
-                        }).create();
-                alert.setOnShowListener(new DialogInterface.OnShowListener() {
-                    @Override
-                    public void onShow(DialogInterface dialog) {
-                        alert.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.purple));
-                        alert.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.purple));
-                    }
-                });
-                alert.show();
+                dm.createLogoutDialog(mContext,"Cerrar Sesion", "¿Estas seguro que quieres cerrar sesion?", "Si" ).show();
             }
         });
 
         imageExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
+                DialogManager dm = DialogManager.getInstance();
 
-                final android.app.AlertDialog alert = dialog.setTitle("Cerrar sesión")
-                        .setMessage("¿Estás seguro que querés cerrar sesión?")
-                        .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                                FirebaseAuth.getInstance().signOut();
-                                FacebookSdk.sdkInitialize(getContext());
-                                LoginManager.getInstance().logOut();
-                                Toast.makeText(getContext(), "Cerraste sesión :(", Toast.LENGTH_LONG).show();
-                                Intent intent = new Intent(mContext, LoginActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(intent);
-                                getActivity().finish();
-
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-
-                            }
-
-
-                        }).create();
-                alert.setOnShowListener(new DialogInterface.OnShowListener() {
-                    @Override
-                    public void onShow(DialogInterface dialog) {
-                        alert.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.purple));
-                        alert.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.purple));
-                    }
-                });
-                alert.show();
+                dm.createLogoutDialog(mContext,"Cerrar Sesion", "¿Estas seguro que quieres cerrar sesion?", "Si" ).show();
             }
         });
+
+
 
     }
 

@@ -43,7 +43,6 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
-import com.mylook.mylook.home.HomeActivity;
 import com.mylook.mylook.home.MainActivity;
 
 
