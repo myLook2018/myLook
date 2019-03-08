@@ -9,6 +9,7 @@ export class TimelineComponent implements OnInit {
   @Input() interactionsByDay: any;
   @Input() daysOfTheWeek: any;
 
+  selectData:any;
   countInteractionsByDay = [];
   days = [];
   data: any;

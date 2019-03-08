@@ -58,8 +58,8 @@ import { MapsDialogComponent } from './dialog/maps-dialog/maps-dialog.component'
 import { ErrorComponent } from './error/error.component';
 import { MatListModule } from '@angular/material/list';
 import { RecomendationsComponent } from './recomendations/components/recomendations.component';
-import { ImageCropperModule } from 'ngx-image-cropper';
-import { ImageCropperComponent, CropperSettings } from 'ngx-img-cropper';
+import { ImageCropperModule } from 'ngx-img-cropper/index';
+import { CropperSettings } from 'ngx-img-cropper/index';
 import { ChartModule } from 'primeng/chart';
 import { DonutchartComponent } from './anylitics/components/donutchart/donutchart.component';
 import { DashboardComponent } from './anylitics/components/dashboard/dashboard.component';
@@ -72,10 +72,11 @@ import { PolarAreaComponent } from './anylitics/components/polar-area/polar-area
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { TimelineComponent } from './anylitics/components/timeline/timeline.component';
 import { FrontDialogComponent } from './articles/components/dialogs/frontDialog';
-import {RatingModule} from 'primeng/rating';
+import { RatingModule } from 'primeng/rating';
 import { NewStoreService } from './store/service/store.service';
 import { PromotionsBarComponent } from './anylitics/components/promotions-bar/promotions-bar.component';
 import { HomePageComponent } from './home-page/home-page.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -95,7 +96,6 @@ import { HomePageComponent } from './home-page/home-page.component';
     MapsComponent,
     ErrorComponent,
     RecomendationsComponent,
-    ImageCropperComponent,
     DonutchartComponent,
     DashboardComponent,
     PromoteDialogComponent,
@@ -103,7 +103,7 @@ import { HomePageComponent } from './home-page/home-page.component';
     TimelineComponent,
     FrontDialogComponent,
     PromotionsBarComponent,
-    HomePageComponent
+    HomePageComponent,
   ],
   imports: [
     NgxSpinnerModule,
@@ -131,6 +131,7 @@ import { HomePageComponent } from './home-page/home-page.component';
     MatSortModule,
     MatChipsModule,
     MatAutocompleteModule,
+    MatTooltipModule,
     AgmCoreModule,
     MatSidenavModule,
     MatListModule,
@@ -150,7 +151,7 @@ import { HomePageComponent } from './home-page/home-page.component';
   ],
   exports: [RouterModule],
   providers: [MatDatepickerModule, RecomendationService, DataService, AuthService, UserService, UserResolver, AuthGuard, StoreService,
-    ArticleService, TagsService, AnyliticService,
+    ArticleService, TagsService, AnyliticService, MatTooltipModule,
     // ArticleResolver, StoreResolver,
     NewStoreService],
   entryComponents: [FrontDialogComponent, PromoteDialogComponent, DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent,

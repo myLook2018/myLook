@@ -15,6 +15,10 @@ import { ViewChild } from '@angular/core';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
+  step1: any;
+  step2: any;
+  step3: any;
+
   title = 'My first AGM project';
   lat = 51.678418;
   lng = 7.809007;

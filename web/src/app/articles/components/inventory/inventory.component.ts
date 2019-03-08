@@ -22,6 +22,7 @@ import { FrontDialogComponent } from '../dialogs/frontDialog';
 })
 export class InventoryComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
+  over: any;
   options: FormGroup;
   storeFront: FormGroup;
   articlesToGenerateFront: Article[] = [];

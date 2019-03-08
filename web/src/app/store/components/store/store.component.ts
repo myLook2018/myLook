@@ -24,6 +24,7 @@ import { NewStoreService } from '../../service/store.service';
   styleUrls: ['./store.component.scss']
 })
 export class StoreComponent implements OnInit, OnDestroy {
+  over: any;
   storeName: string;
   storeService: StoreService;
   FirebaseUser = new StoreModel();

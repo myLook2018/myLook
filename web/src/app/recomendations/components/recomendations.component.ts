@@ -24,6 +24,8 @@ import { RecomendationAnswer } from '../model/recomendationAnswer.model';
   styleUrls: ['./recomendations.component.scss']
 })
 export class RecomendationsComponent implements OnInit, OnDestroy {
+  over: any;
+  logout:any;
   selectedCatego = undefined;
   selectedSex = undefined;
   newRecos: RecomendationRequest[] = [];

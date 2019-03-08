@@ -6,7 +6,7 @@ import {
 } from 'angularfire2/storage';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatChipInputEvent, MatAutocompleteSelectedEvent } from '@angular/material';
 import { Observable, Subscription, empty } from 'rxjs';
-import { UploadTaskSnapshot } from 'angularfire2/storage/interfaces';
+import { UploadTaskSnapshot } from '@angular/fire/storage/interfaces';
 import { Validators, FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { ArticleService } from '../../services/article.service';
 import { MatSnackBar } from '@angular/material';
@@ -16,7 +16,7 @@ import { TagsService } from '../../services/tags.service';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Tags } from '../../models/tags';
 import { DataService } from '../../../service/dataService';
-import { ImageCropperComponent, CropperSettings } from 'ngx-img-cropper';
+import { ImageCropperComponent, CropperSettings } from 'ngx-img-cropper/index';
 
 @Component({
   selector: 'app-article-dialog',

@@ -6,6 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
   templateUrl: 'promoteDialog.html',
 })
 export class PromoteDialogComponent {
+  maxDate:any;
   onAdd = new EventEmitter();
   dailyCost;
   promotionCost;
