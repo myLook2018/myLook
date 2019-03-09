@@ -61,7 +61,7 @@ public class EditInfoActivity extends AppCompatActivity {
         // setupBottomNavigationView();
     }
 
-    private void initCalendar(){
+    private void initCalendar() {
 
         final Calendar myCalendar = Calendar.getInstance();
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
@@ -120,8 +120,12 @@ public class EditInfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 DialogManager dm = DialogManager.getInstance();
-
-                dm.createChangePasswordDialog(mContext,"Cambiar Contraseña", "¿Estas seguro que quieres cambiar tu contraseña?", "Si" ).show();
+                dm.createChangePasswordDialog(
+                        EditInfoActivity.this,
+                        "Cambiar Contraseña",
+                        "¿Estas seguro que quieres cambiar tu contraseña?",
+                        "Si",
+                        "No").show();
 
             }
         });
@@ -159,7 +163,7 @@ public class EditInfoActivity extends AppCompatActivity {
                 ArrayList<String> categories = (ArrayList<String>) task.getResult().getDocuments().get(0).get("categories");
                 spinner.setAdapter(new ArrayAdapter<String>(EditInfoActivity.this, android.R.layout.simple_selectable_list_item, categories));
 
-                }
+            }
         });
     }
 

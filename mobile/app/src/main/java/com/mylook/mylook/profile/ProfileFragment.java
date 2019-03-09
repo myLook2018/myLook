@@ -34,7 +34,7 @@ import com.mylook.mylook.premiumUser.PremiumUserProfileActivity;
 
 public class ProfileFragment extends Fragment {
 
-    public ProfileFragment(){
+    public ProfileFragment() {
 
     }
 
@@ -45,16 +45,16 @@ public class ProfileFragment extends Fragment {
     private TextView txtEmail;
     private FirebaseFirestore dB = FirebaseFirestore.getInstance();
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    private ImageView imageGroup ;
+    private ImageView imageGroup;
     private ImageView imageDestacado;
-    private TextView txtGroup ;
+    private TextView txtGroup;
     private TextView txtDestacado;
     private ImageView imageAccount;
-    private TextView txtAccount ;
+    private TextView txtAccount;
     private ImageView imageHelp;
-    private TextView txtHelp ;
+    private TextView txtHelp;
     private ImageView imageExit;
-    private TextView txtExit ;
+    private TextView txtExit;
 
     private Context mContext;
     private String clientId;
@@ -108,8 +108,8 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), PremiumRequestActivity.class);
-                intent.putExtra("clientId",clientId);
-                intent.putExtra("userName",userName);
+                intent.putExtra("clientId", clientId);
+                intent.putExtra("userName", userName);
                 startActivity(intent);
 
             }
@@ -118,8 +118,8 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), PremiumRequestActivity.class);
-                intent.putExtra("clientId",clientId);
-                intent.putExtra("userName",userName);
+                intent.putExtra("clientId", clientId);
+                intent.putExtra("userName", userName);
                 startActivity(intent);
 
             }
@@ -130,7 +130,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), PremiumUserProfileActivity.class);
-                intent.putExtra("clientId",clientId);
+                intent.putExtra("clientId", clientId);
                 startActivity(intent);
             }
         });
@@ -138,7 +138,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), PremiumUserProfileActivity.class);
-                intent.putExtra("clientId",clientId);
+                intent.putExtra("clientId", clientId);
                 startActivity(intent);
             }
         });
@@ -162,7 +162,11 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
                 DialogManager dm = DialogManager.getInstance();
 
-                dm.createLogoutDialog(mContext,"Cerrar Sesion", "¿Estas seguro que quieres cerrar sesion?", "Si" ).show();
+                dm.createLogoutDialog(mContext,
+                        "Cerrar Sesion",
+                        "¿Estas seguro que quieres cerrar sesion?",
+                        "Si",
+                        "No").show();
             }
         });
 
@@ -171,22 +175,26 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
                 DialogManager dm = DialogManager.getInstance();
 
-                dm.createLogoutDialog(mContext,"Cerrar Sesion", "¿Estas seguro que quieres cerrar sesion?", "Si" ).show();
+                dm.createLogoutDialog(
+                        mContext,
+                        "Cerrar Sesion",
+                        "¿Estas seguro que quieres cerrar sesion?",
+                        "Si",
+                        "No").show();
             }
         });
-
 
 
     }
 
     private void setUserProfile(View view) {
-        mContext= getContext();
+        mContext = getContext();
         txtEmail = view.findViewById(R.id.txtEmail);
         txtName = view.findViewById(R.id.txtName);
-        imageGroup =view.findViewById(R.id.image_group);
-        imageDestacado =view.findViewById(R.id.image_destacado);
+        imageGroup = view.findViewById(R.id.image_group);
+        imageDestacado = view.findViewById(R.id.image_destacado);
         txtGroup = view.findViewById(R.id.txtDifussionGroup);
-        txtDestacado= view.findViewById(R.id.txtSettings);
+        txtDestacado = view.findViewById(R.id.txtSettings);
         imageAccount = view.findViewById(R.id.image_account);
         txtAccount = view.findViewById(R.id.txtAccount);
         imageHelp = view.findViewById(R.id.image_help);
@@ -197,18 +205,17 @@ public class ProfileFragment extends Fragment {
         dB.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                userName =  task.getResult().getDocuments().get(0).get("name").toString() + " " + task.getResult().getDocuments().get(0).get("surname").toString();
-                isPremiumUser=(boolean)task.getResult().getDocuments().get(0).get("isPremium");
+                userName = task.getResult().getDocuments().get(0).get("name").toString() + " " + task.getResult().getDocuments().get(0).get("surname").toString();
+                isPremiumUser = (boolean) task.getResult().getDocuments().get(0).get("isPremium");
                 txtName.setText(userName);
-                clientId=task.getResult().getDocuments().get(0).getId();
+                clientId = task.getResult().getDocuments().get(0).getId();
 
 
-                if(isPremiumUser){
+                if (isPremiumUser) {
                     imageGroup.setVisibility(View.VISIBLE);
                     txtGroup.setVisibility(View.VISIBLE);
                     //layoutDifussionGroup.setVisibility(View.VISIBLE);
-                }else
-                {
+                } else {
                     imageDestacado.setVisibility(View.VISIBLE);
                     txtDestacado.setVisibility(View.VISIBLE);
                     //layoutPremiumRequest.setVisibility(View.VISIBLE);

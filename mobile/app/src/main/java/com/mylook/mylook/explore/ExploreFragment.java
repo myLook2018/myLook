@@ -166,7 +166,10 @@ public class ExploreFragment extends Fragment {
         cal.add(Calendar.DATE, -14);
         Date dateBefore2Weeks = cal.getTime();
 
-        db.collection("articles").whereGreaterThan("creationDate", dateBefore2Weeks).get()
+        db.collection("articles")
+                //.whereGreaterThan("creationDate", dateBefore2Weeks) Le saque el filtro para que aparecieran
+
+                .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {

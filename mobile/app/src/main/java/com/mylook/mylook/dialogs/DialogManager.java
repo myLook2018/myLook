@@ -15,8 +15,13 @@ import com.mylook.mylook.profile.NewPasswordActivity;
 public class DialogManager {
     private static DialogManager ourInstance = null;
 
+    /**
+     * Singleton instance of the DialogManager
+     *
+     * @return DialogManager
+     */
     public static DialogManager getInstance() {
-        if(ourInstance == null){
+        if (ourInstance == null) {
             ourInstance = new DialogManager();
         }
         return ourInstance;
@@ -26,12 +31,20 @@ public class DialogManager {
 
     }
 
-    public android.app.AlertDialog createLogoutDialog(final Context context, String title, String message, String possitiveButton){
+    /**
+     * @param context        Instance of an Activity
+     * @param title          Title shown in the dialog
+     * @param message        Message shown in the dialog
+     * @param positiveButton Text in the positive button
+     * @param negativeButton Text shown in the negative button
+     * @return AlertDialog dialog
+     */
+    public android.app.AlertDialog createLogoutDialog(final Context context, String title, String message, String positiveButton, String negativeButton) {
         final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(context, R.style.AlertDialogTheme);
 
         final android.app.AlertDialog alert = dialog.setTitle(title)
                 .setMessage(message)
-                .setPositiveButton(possitiveButton, new DialogInterface.OnClickListener() {
+                .setPositiveButton(positiveButton, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                         FirebaseAuth.getInstance().signOut();
@@ -44,7 +57,7 @@ public class DialogManager {
 
                     }
                 })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                .setNegativeButton(negativeButton, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface paramDialogInterface, int paramInt) {
 
@@ -61,24 +74,30 @@ public class DialogManager {
         });
         return alert;
     }
-    public android.app.AlertDialog createChangePasswordDialog(final Context context, String title, String message, String possitiveButton){
+
+    /**
+     * @param context        Instance of an Activity
+     * @param title          Title shown in the dialog
+     * @param message        Message shown in the dialog
+     * @param positiveButton Text in the positive button
+     * @param negativeButton Text shown in the negative button
+     * @return AlertDialog dialog
+     */
+    public android.app.AlertDialog createChangePasswordDialog(final Context context, String title, String message, String positiveButton, String negativeButton) {
         final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(context, R.style.AlertDialogTheme);
 
         final android.app.AlertDialog alert = dialog.setTitle(title)
                 .setMessage(message)
-                .setPositiveButton(possitiveButton, new DialogInterface.OnClickListener() {
+                .setPositiveButton(positiveButton, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        FirebaseAuth.getInstance().signOut();
-                        FacebookSdk.sdkInitialize(context);
-                        LoginManager.getInstance().logOut();
                         Intent intent = new Intent(context, NewPasswordActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         context.startActivity(intent);
 
                     }
                 })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                .setNegativeButton(negativeButton, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface paramDialogInterface, int paramInt) {
 

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -48,13 +49,14 @@ public class RegisterActivity extends AppCompatActivity {
     private Context mContext;
     private ProgressBar mProgressBar;
     private EditText txtEmail, txtPasswd1, txtPasswd2, txtDNI, txtName, txtSurname, txtBirthdate;
-    private LinearLayout mLayout;
+    private ConstraintLayout mLayout;
     private Toolbar tb;
     private MaterialBetterSpinner spinner;
     private Button btnRegister;
     private FirebaseUser user;
     private FirebaseFirestore dB;
-    private String provider;
+    private String provider = null;
+    private boolean validMail = true;
 
 
     @SuppressLint("WrongViewCast")
@@ -67,7 +69,7 @@ public class RegisterActivity extends AppCompatActivity {
         tb = (Toolbar) findViewById(R.id.toolbar);
         tb.setTitle("Registro");
         setSupportActionBar(tb);
-        //setupFirebaseAuth();
+        setupFirebaseAuth();
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,9 +78,41 @@ public class RegisterActivity extends AppCompatActivity {
         });
         getExtras();
         initCalendar();
-        if(!isStringNull(provider))
+        txtEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus){
+                    checkExistingEmail(txtEmail.getText().toString());
+                } else {
+                    txtEmail.setTextColor(getResources().getColor(R.color.black));
+                    validMail = true;
+                }
+            }
+        });
+        if(provider!=null)
             disableFields();
 
+    }
+
+    private void checkExistingEmail(String email){
+        btnRegister.setEnabled(false);
+        dB.collection("clients").whereEqualTo("email", email)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    Log.e("Task Result", task.getResult().getDocuments().toString());
+                    if(task.getResult().getDocuments().size()>0){
+                        validMail = false;
+                        txtEmail.setTextColor(getResources().getColor(R.color.red));
+                        Toast.makeText(RegisterActivity.this, "El mail ya está en uso", Toast.LENGTH_LONG ).show();
+                    } else{
+                        btnRegister.setEnabled(true);
+                    }
+                    mProgressBar.setVisibility(View.GONE);
+
+            }
+        });
     }
 
     private void disableFields(){
@@ -95,6 +129,10 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean validateFields() {
         if (isStringNull(txtEmail.getText().toString())) { //TODO faltaria agregar validacion de mail existente
             displayMessage("El campo Email es obligatorio");
+            return false;
+        }
+        if(!validMail){
+            displayMessage("El Mail seleccionado ya está en uso");
             return false;
         }
         if (isStringNull(txtPasswd1.getText().toString())&&isStringNull(provider)) {
@@ -157,7 +195,7 @@ public class RegisterActivity extends AppCompatActivity {
         if (validateFields()) {
             mProgressBar.setVisibility(View.VISIBLE);
             mLayout.setVisibility(View.GONE);
-            if (isStringNull(provider)) {
+            if (provider==null) {
                 String email = txtEmail.getText().toString();
                 String passwd = txtPasswd1.getText().toString();
                 mAuth.createUserWithEmailAndPassword(email, passwd)
@@ -168,7 +206,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     Log.d("REGISTER", "Esta pro guardar datos");
 
                                     boolean saved = saveClient();
-                                    //setupFirebaseAuth();
+                                    setupFirebaseAuth();
                                 } else {
                                     Log.w("REGISTER", "createUserWithEmail:Failure", task.getException());
                                     Toast.makeText(RegisterActivity.this, "Algo salio mal",
@@ -220,7 +258,7 @@ public class RegisterActivity extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.d("SAVE_Client", "No se guarda cliente ", e.getCause());
+                Log.e("SAVE_Client", "No se guarda cliente ", e.getCause());
 
                 saved[0] = false;
                 Toast.makeText(RegisterActivity.this, "Algo salio mal",
@@ -272,18 +310,18 @@ public class RegisterActivity extends AppCompatActivity {
         dB = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        btnRegister = (Button) findViewById(R.id.btnRegister);
-        mProgressBar = (ProgressBar) findViewById(R.id.register_progressbar);
-        txtEmail = (EditText) findViewById(R.id.txtEmail);
-        txtPasswd1 = (EditText) findViewById(R.id.txtPasswd);
-        txtPasswd2 = (EditText) findViewById(R.id.txtPasswd2);
-        txtDNI = (EditText) findViewById(R.id.txtDNI);
-        txtName = (EditText) findViewById(R.id.txtName);
-        txtSurname = (EditText) findViewById(R.id.txtSurname);
-        txtBirthdate = (EditText) findViewById(R.id.txtBirthdate);
-        mLayout = (LinearLayout) findViewById(R.id.register_form);
+        btnRegister = findViewById(R.id.btnRegister);
+        mProgressBar =findViewById(R.id.register_progressbar);
+        txtEmail = findViewById(R.id.txtEmail);
+        txtPasswd1 = findViewById(R.id.txtPasswd);
+        txtPasswd2 = findViewById(R.id.txtPasswd2);
+        txtDNI = findViewById(R.id.txtDNI);
+        txtName = findViewById(R.id.txtName);
+        txtSurname = findViewById(R.id.txtSurname);
+        txtBirthdate = findViewById(R.id.txtBirthdate);
+        mLayout = findViewById(R.id.register_form);
         mContext = RegisterActivity.this;
-        spinner = (MaterialBetterSpinner) findViewById(R.id.spinner);
+        spinner = findViewById(R.id.spinner);
         setCategoryRequest();
     }
 
@@ -335,7 +373,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     "Verifica tu mail y luego inicia sesion ",
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            Log.d("EMAIL_VERIFICATION", "NO se verifico mail", task.getException());
+                            Log.d("EMAIL_VERIFICATION", "No se verifico mail", task.getException());
                             Log.e("SendEmailVerification", "sendEmailVerification", task.getException());
                             Toast.makeText(RegisterActivity.this,
                                     "Failed to send verification email.",

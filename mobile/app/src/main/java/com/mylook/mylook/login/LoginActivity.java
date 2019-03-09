@@ -217,9 +217,8 @@ public class LoginActivity extends AppCompatActivity {
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                user = firebaseAuth.getCurrentUser();
+                user = mAuth.getCurrentUser(); //firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    Log.e("User auth Hanged", "Name: "+user.getDisplayName());
                     db.collection("clients").whereEqualTo("email", user.getEmail())
                             .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
