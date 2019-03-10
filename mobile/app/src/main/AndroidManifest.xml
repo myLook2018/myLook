@@ -69,6 +69,7 @@
         </activity>
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat"/>
+        <activity android:name=".profile.NewPasswordActivity"/>
         <activity android:name=".profile.EditInfoActivity"/>
         <activity android:name=".profile.MyAccountActivity"/>
         <activity android:name=".premiumUser.PremiumRequestActivity"

@@ -83,7 +83,12 @@ public class DialogManager {
      * @param negativeButton Text shown in the negative button
      * @return AlertDialog dialog
      */
-    public android.app.AlertDialog createChangePasswordDialog(final Context context, String title, String message, String positiveButton, String negativeButton) {
+    public android.app.AlertDialog createChangePasswordDialog(
+            final Context context,
+            String title,
+            String message,
+            String positiveButton,
+            String negativeButton) {
         final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(context, R.style.AlertDialogTheme);
 
         final android.app.AlertDialog alert = dialog.setTitle(title)
@@ -104,6 +109,34 @@ public class DialogManager {
                     }
 
 
+                }).create();
+        alert.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                alert.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getResources().getColor(R.color.purple));
+                alert.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(context.getResources().getColor(R.color.purple));
+            }
+        });
+        return alert;
+    }
+
+    public android.app.AlertDialog succesfulChangedPassword(
+            final Context context,
+            String title,
+            String message,
+            String positiveButton) {
+        final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(context, R.style.AlertDialogTheme);
+
+        final android.app.AlertDialog alert = dialog.setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(positiveButton, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                        FirebaseAuth.getInstance().signOut();
+                        Intent intent = new Intent(context, LoginActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        context.startActivity(intent);
+                    }
                 }).create();
         alert.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
