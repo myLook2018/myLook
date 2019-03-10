@@ -68,7 +68,6 @@ public class EditInfoActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear,
                                   int dayOfMonth) {
-                // TODO Auto-generated method stub
                 myCalendar.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
                 txtBirthdate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
             }

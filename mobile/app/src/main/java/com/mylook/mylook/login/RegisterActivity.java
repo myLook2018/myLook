@@ -55,6 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
     private Button btnRegister;
     private FirebaseUser user;
     private FirebaseFirestore dB;
+    final Calendar myCalendar = Calendar.getInstance();
     private String provider = null;
     private boolean validMail = true;
 
@@ -127,7 +128,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private boolean validateFields() {
-        if (isStringNull(txtEmail.getText().toString())) { //TODO faltaria agregar validacion de mail existente
+        if (isStringNull(txtEmail.getText().toString())) {
             displayMessage("El campo Email es obligatorio");
             return false;
         }
@@ -163,6 +164,13 @@ public class RegisterActivity extends AppCompatActivity {
         }
         if (isStringNull(txtBirthdate.getText().toString())) {
             displayMessage("Debes ingresar una Fecha de Nacimiento");
+            return false;
+        }
+
+        Calendar today = Calendar.getInstance();
+        int diff = today.get(Calendar.YEAR) - myCalendar.get(Calendar.YEAR);
+        if(diff<14){
+            displayMessage("Debes tener al menos 14 años");
             return false;
         }
        /* if(spinner.getSelectedItemPosition()==0){
@@ -337,12 +345,10 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void initCalendar(){
 
-        final Calendar myCalendar = Calendar.getInstance();
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear,
                                   int dayOfMonth) {
-                // TODO Auto-generated method stub
                 myCalendar.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
                 txtBirthdate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
             }

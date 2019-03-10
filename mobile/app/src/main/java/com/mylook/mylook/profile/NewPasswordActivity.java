@@ -73,48 +73,51 @@ public class NewPasswordActivity extends AppCompatActivity {
         oldPassword.clearFocus();
         newPassword.clearFocus();
         newPasswordVerif.clearFocus();
-        Log.e("Verify passwords", " " + newPassword.getText().toString().equals(newPasswordVerif.getText().toString()));
-        if (newPassword.getText().toString().equals(newPasswordVerif.getText().toString())) {
-            AuthCredential credential = EmailAuthProvider
-                    .getCredential(user.getEmail(), oldPassword.getText().toString());
-            Log.e("Credential", credential.toString());
-            user.reauthenticate(credential).addOnSuccessListener(new OnSuccessListener<Void>() {
-
-                @Override
-                public void onSuccess(Void aVoid) {
-                    user.updatePassword(newPassword.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                DialogManager.getInstance().succesfulChangedPassword(NewPasswordActivity.this,
-                                        "Cambiar Contraseña",
-                                        "La contraseña se cambió correctamente, debe volver a iniciar sesión para aplicar el cambio",
-                                        "Aceptar").show();
-                                Log.e("New Password", "Password updated");
-                            } else {
-                                Log.e("New Password", "Error password not updated");
-                            }
-                        }
-                    });
-                }
-
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(NewPasswordActivity.this, "La contraseña actual es incorrecta", Toast.LENGTH_SHORT).show();
-                    oldPassInput.setErrorEnabled(true);
-
-                    oldPassInput.setErrorTextColor(getResources().getColorStateList(R.color.red));
-                    oldPassInput.setError("Contraseña incorrecta");
-                }
-            });
+        if (newPassword.getText().length() < 6 || newPasswordVerif.getText().length() < 6) {
+            Toast.makeText(NewPasswordActivity.this, "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT);
         } else {
-            Log.e("New Password", "COntraseñas no coinciden");
-            newPassInput.setError("Contraseñas diferentes");
-            newPassInput.setErrorTextColor(getResources().getColorStateList(R.color.red));
-            newPassVerifInput.setErrorTextColor(getResources().getColorStateList(R.color.red));
-            newPassInput.setErrorEnabled(true);
-            newPassVerifInput.setErrorEnabled(true);
+            if (newPassword.getText().toString().equals(newPasswordVerif.getText().toString())) {
+                AuthCredential credential = EmailAuthProvider
+                        .getCredential(user.getEmail(), oldPassword.getText().toString());
+                Log.e("Credential", credential.toString());
+                user.reauthenticate(credential).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        user.updatePassword(newPassword.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    DialogManager.getInstance().succesfulChangedPassword(NewPasswordActivity.this,
+                                            "Cambiar Contraseña",
+                                            "La contraseña se cambió correctamente, debe volver a iniciar sesión para aplicar el cambio",
+                                            "Aceptar").show();
+                                    Log.e("New Password", "Password updated");
+                                } else {
+                                    Log.e("New Password", "Error password not updated");
+                                }
+                            }
+                        });
+                    }
+
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(NewPasswordActivity.this, "La contraseña actual es incorrecta", Toast.LENGTH_SHORT).show();
+                        oldPassInput.setErrorEnabled(true);
+
+                        oldPassInput.setErrorTextColor(getResources().getColorStateList(R.color.red));
+                        oldPassInput.setError("Contraseña incorrecta");
+                    }
+                });
+            } else {
+                Log.e("New Password", "COntraseñas no coinciden");
+                newPassInput.setError("Contraseñas diferentes");
+                newPassInput.setErrorTextColor(getResources().getColorStateList(R.color.red));
+                newPassVerifInput.setErrorTextColor(getResources().getColorStateList(R.color.red));
+                newPassInput.setErrorEnabled(true);
+                newPassVerifInput.setErrorEnabled(true);
+            }
         }
     }
 }

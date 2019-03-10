@@ -33,6 +33,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -71,9 +72,10 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     private ImageView imgRecommend = null;
     private TextInputEditText txtDescription;
     private Date limitDate;
-    private EditText editDate, title;
+    private EditText editDate;
     private FirebaseFirestore dB;
     private StorageReference storageRef;
+    private TextView title;
     private Uri selectImageUri = null;
     private Bitmap bitmap = null;
     private Uri picUri;
@@ -146,7 +148,6 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear,
                                   int dayOfMonth) {
-                // TODO Auto-generated method stub
                 myCalendar.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
                 limitDate = new Date();
                 limitDate.setTime(myCalendar.getTimeInMillis());
@@ -174,7 +175,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         imgRecommend = (ImageView) findViewById(R.id.imgRecommend);
         txtDescription = (TextInputEditText) findViewById(R.id.txtDescription);
         editDate = (EditText) findViewById(R.id.editDate);
-        title = (EditText) findViewById(R.id.txtTitle);
+        title = findViewById(R.id.txtTitle);
         fabMenu = (FloatingActionMenu) findViewById(R.id.fabMenu);
         fabPhoto = (FloatingActionButton) findViewById(R.id.photoFloating);
         fabGallery = (FloatingActionButton) findViewById(R.id.galleryFloating);

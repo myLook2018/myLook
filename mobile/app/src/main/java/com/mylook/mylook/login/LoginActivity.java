@@ -170,7 +170,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean validateFields() {
         if (isStringNull(mEmail.getText().toString())) {
-            //TODO faltaria agregar validacion de mail existente
             if(!isLoggedIn())
                 displayMessage("El campo Email es obligatorio");
             return false;
