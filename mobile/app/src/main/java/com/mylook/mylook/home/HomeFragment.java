@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -41,7 +42,9 @@ import com.mylook.mylook.room.LocalInteraction;
 import com.mylook.mylook.utils.CardsHomeFeedAdapter;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -178,7 +181,10 @@ public class HomeFragment extends Fragment {
     }
 
     private void readSubscriptions() {
-        Log.e(TAG, "Begin Read suscriptions");
+        //Devuelve los ultimos meses, TODO Cambiar esto para probar en serio
+        final Calendar myCalendar = Calendar.getInstance();
+        myCalendar.set(Calendar.MONTH, myCalendar.get(Calendar.MONTH)-7);
+
         db.collection("subscriptions")
                 .whereEqualTo("userId", user.getUid())
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -188,21 +194,23 @@ public class HomeFragment extends Fragment {
                     if (!task.getResult().isEmpty()) {
                         subscriptionList = new ArrayList<Subscription>();
                         subscriptionList.addAll(task.getResult().toObjects(Subscription.class));
-                        Log.e(TAG, "getSubscriptions");
                         for (Subscription sub : subscriptionList) {
                             db.collection("articles")
                                     .whereEqualTo("storeName", sub.getStoreName())
+
                                     .orderBy("creationDate", Query.Direction.DESCENDING)
+                                    .whereGreaterThan("creationDate", myCalendar.getTime())
+
                                     .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful()) {
-                                        Log.e(TAG,"Documents Size: "+ task.getResult().getDocuments().size());
                                         for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                             Article art = documentSnapshot.toObject(Article.class);
                                             art.setArticleId(documentSnapshot.getId());
                                             //list.add(art); // Si se usa esta lista están ordenados por fecha
                                         }
+
                                         if (createArticleList(task.getResult())) { //Con esta por la probabilidad de las promos, pero no por fecha
                                             for (Object art: list) {
                                                 Log.e(TAG, ((Article) art).getArticleId() + " - "+((Article) art).getCreationDate() +" - Promo: "+((Article) art).getPromotionLevel());
@@ -225,6 +233,7 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+
         db.collection("premiumUsersSubscriptions")
                 .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -262,45 +271,38 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private boolean createArticleList(QuerySnapshot result) {
-        List<Article> promo1 = new ArrayList<>();
-        List<Article> promo2 = new ArrayList<>();
-        List<Article> promo3 = new ArrayList<>();
 
-        for (QueryDocumentSnapshot document : result) {
-            Article art = document.toObject(Article.class);
-            art.setArticleId(document.getId());
-            Log.e(TAG, "N° " + art.getPromotionLevel());
-            int pl = art.getPromotionLevel();
-            switch (pl) {
-                case 1:
-                    Log.d("ADDING", "PROMO1");
-                    promo1.add(art);
-                    break;
-                case 2:
-                    Log.d("ADDING", "PROMO2");
-                    promo2.add(art);
-                    break;
-                case 3:
-                    Log.d("ADDING", "PROMO3");
-                    promo3.add(art);
-                    break;
-            }
-            totalArticles++;
-
-        }
-        if (totalArticles == 0) {
-            return false;
-        }
+    private void orderByDateAndPromo(List<Article> promo1,List<Article> promo2,List<Article> promo3 ){
         if (!promo3.isEmpty()) {
-            Collections.shuffle(promo3);
+            Collections.sort(promo3, new Comparator<Article>() {
+                @Override
+                public int compare(Article o1, Article o2) {
+                    return o2.getCreationDate().compareTo(o1.getCreationDate());
+                }
+            });
+            list.addAll(promo3);
         }
         if (!promo2.isEmpty()) {
-            Collections.shuffle(promo2);
+            Collections.sort(promo2, new Comparator<Article>() {
+                @Override
+                public int compare(Article o1, Article o2) {
+                    return o2.getCreationDate().compareTo(o1.getCreationDate());
+                }
+            });
+            list.addAll(promo2);
         }
         if (!promo1.isEmpty()) {
-            Collections.shuffle(promo1);
+            Collections.sort(promo1, new Comparator<Article>() {
+                @Override
+                public int compare(Article o1, Article o2) {
+                    return o2.getCreationDate().compareTo(o1.getCreationDate());
+                }
+            });
+            list.addAll(promo1);
         }
+    }
+
+    private void orderByPromoProb(List<Article> promo1,List<Article> promo2,List<Article> promo3 ){
         Random r = new Random();
         int v;
         while (true) {
@@ -309,9 +311,9 @@ public class HomeFragment extends Fragment {
                     if (!promo1.isEmpty()) {
                         Log.e("Shuffle", "Los tres != vacio");
                         v = r.nextInt(100);
-                        if (v > 54) {
+                        if (v > 35) {
                             list.add(promo3.remove(0));
-                        } else if (v > 21) {
+                        } else if (v > 15) {
                             list.add(promo2.remove(0));
                         } else {
                             list.add(promo1.remove(0));
@@ -319,7 +321,7 @@ public class HomeFragment extends Fragment {
                     } else {
                         Log.e("Shuffle", "3 y 2 != vacio");
                         v = r.nextInt(100);
-                        if (v > 35) {
+                        if (v > 20) {
                             list.add(promo3.remove(0));
                         } else {
                             list.add(promo2.remove(0));
@@ -329,7 +331,7 @@ public class HomeFragment extends Fragment {
                     if (!promo1.isEmpty()) {
                         Log.e("Shuffle", "3 y 1 != vacio");
                         v = r.nextInt(100);
-                        if (v > 32) {
+                        if (v > 20) {
                             list.add(promo3.remove(0));
                         } else {
                             list.add(promo1.remove(0));
@@ -364,7 +366,36 @@ public class HomeFragment extends Fragment {
                 }
             }
         }
-        Log.e("HOme", "Retorno true el getArticleLIst");
+    }
+
+    private boolean createArticleList(QuerySnapshot result) {
+        List<Article> promo1 = new ArrayList<>();
+        List<Article> promo2 = new ArrayList<>();
+        List<Article> promo3 = new ArrayList<>();
+
+        for (QueryDocumentSnapshot document : result) {
+            Article art = document.toObject(Article.class);
+            art.setArticleId(document.getId());
+            int pl = art.getPromotionLevel();
+            switch (pl) {
+                case 1:
+                    promo1.add(art);
+                    break;
+                case 2:
+                    promo2.add(art);
+                    break;
+                case 3:
+                    promo3.add(art);
+                    break;
+            }
+            totalArticles++;
+
+        }
+        if (totalArticles == 0) {
+            return false;
+        }
+        orderByDateAndPromo(promo1, promo2, promo3);
+        //orderByPromoProb(promo1, promo2, promo3);
         return true;
     }
 
