@@ -26,6 +26,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -96,7 +97,7 @@ public class HomeFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
 
         if (user != null) {
-            Log.e(TAG, "User"+user.getDisplayName());
+            Log.e(TAG, "User" + user.getDisplayName());
             readSubscriptions();
             updateInstallationToken();
 
@@ -166,10 +167,6 @@ public class HomeFragment extends Fragment {
                         update.put("installToken", mToken);
                         if (task.getResult().getDocuments().size() > 0) {
                             db.collection("clients").document(task.getResult().getDocuments().get(0).getId()).set(update, SetOptions.merge());
-                            if(totalArticles == 0){
-                                emptyArticles.setVisibility(View.VISIBLE);
-                                starImage.setVisibility(View.VISIBLE);
-                            }
                             mProgressBar.setVisibility(View.GONE);
                         } else {
 
@@ -181,7 +178,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void readSubscriptions() {
-        Log.e(TAG,"Begin Read suscriptions");
+        Log.e(TAG, "Begin Read suscriptions");
         db.collection("subscriptions")
                 .whereEqualTo("userId", user.getUid())
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -195,19 +192,25 @@ public class HomeFragment extends Fragment {
                         for (Subscription sub : subscriptionList) {
                             db.collection("articles")
                                     .whereEqualTo("storeName", sub.getStoreName())
+                                    .orderBy("creationDate", Query.Direction.DESCENDING)
                                     .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful()) {
-                                         for (QueryDocumentSnapshot documentSnapshot:task.getResult()){
-                                             Log.e("ROPERO", documentSnapshot.getId());
-                                             Article art=documentSnapshot.toObject(Article.class);
+                                        Log.e(TAG,"Documents Size: "+ task.getResult().getDocuments().size());
+                                        for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                                            Article art = documentSnapshot.toObject(Article.class);
                                             art.setArticleId(documentSnapshot.getId());
-                                             list.add(art);
+                                            //list.add(art); // Si se usa esta lista están ordenados por fecha
                                         }
-                                        if (createArticleList(task.getResult())) {
+                                        if (createArticleList(task.getResult())) { //Con esta por la probabilidad de las promos, pero no por fecha
+                                            for (Object art: list) {
+                                                Log.e(TAG, ((Article) art).getArticleId() + " - "+((Article) art).getCreationDate() +" - Promo: "+((Article) art).getPromotionLevel());
+                                            }
+                                            emptyArticles.setVisibility(View.GONE);
+                                            starImage.setVisibility(View.GONE);
                                             adapter.notifyDataSetChanged();
-                                        } else{
+                                        } else {
                                             emptyArticles.setVisibility(View.VISIBLE);
                                             starImage.setVisibility(View.VISIBLE);
                                         }
@@ -267,7 +270,7 @@ public class HomeFragment extends Fragment {
         for (QueryDocumentSnapshot document : result) {
             Article art = document.toObject(Article.class);
             art.setArticleId(document.getId());
-            Log.e("Promotion Level", "N° " + art.getPromotionLevel());
+            Log.e(TAG, "N° " + art.getPromotionLevel());
             int pl = art.getPromotionLevel();
             switch (pl) {
                 case 1:
