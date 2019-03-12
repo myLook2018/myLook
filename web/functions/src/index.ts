@@ -1,8 +1,7 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp(functions.config().firebase)
 // The Cloud Functions for Firebase SDK to create Cloud Functions and setup triggers.
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 /* admin.initializeApp({
@@ -14,9 +13,9 @@ admin.initializeApp(functions.config().firebase);
     databaseURL: "https://mylook-develop.firebaseio.com"
 }); */
 //This functions listens to the node '/Food menu/date/Food' for new insert and sends notification to a client
-exports.sendRequestNotification = functions.database.ref('requestRecommendations/{docId}').onWrite((event) => {
-    var valueObject = event.data.val();
-    console.log("Push notificacion event triggered2");
+exports.sendRequestNotification = functions.database.ref('requestRecommendations/{docId}').onWrite( (event: any) => {
+    var valueObject = event.data.val()
+    console.log("Push notificacion event triggered2")
     //place your client app registration token here, this is created when a user first opens the app and it is stored in the db. 
     //You could also retrieve the token from the db but in this case it is hard coded
     // Instalación Mateo
@@ -25,53 +24,54 @@ exports.sendRequestNotification = functions.database.ref('requestRecommendations
     const payload = {
         notification: {
             title: valueObject.name,
-            body: valueObject.text || valueObject.photoUrl,
+            body: valueObject.text || valueObject.photoUrl, 
             sound: "default"
         }
     };
     const options = {
-        priority: "high",
-        timeToLive: 60 * 60 * 24
-    };
+        priority: "high", 
+        timeToLive: 60*60*24
+    }
     // Send a message to the device corresponding to the provided
     // registration token.
-    return admin.messaging().sendToTopic("pushNotifications", payload, options);
+    return admin.messaging().sendToTopic("pushNotifications", payload, options)
     //return snapshot.ref.parent.child('uppercaseFood').set(uppercase);
 });
-exports.pushNotifications = functions.firestore.document('requestRecommendations/{docId}').onWrite((snap, context) => {
-    console.log("Push notificacion event triggered2");
-    console.log("Event", JSON.stringify(snap));
+
+exports.pushNotifications = functions.firestore.document('requestRecommendations/{docId}').onWrite( (snap: any, context:any) => {
+    console.log("Push notificacion event triggered2")
+    console.log("Event", JSON.stringify(snap))
     const newValue = snap.after.data();
-    // ...or the previous value before this update
-    const previousValue = snap.before.data();
+
+      // ...or the previous value before this update
+      const previousValue = snap.before.data();
     //place your client app registration token here, this is created when a user first opens the app and it is stored in the db. 
     //You could also retrieve the token from the db but in this case it is hard coded
     // Instalación Mateo
     //const registrationToken = "dPcWZwavcxY:APA91bG1UBc75NsgCTGc-Y8nioTmiKn-wJqxpMe3UIT5ZrZHS0LZmYLiMT3WwROvUyI_QeCEgTNCxGWw9-fj2KOGoXELXade-KycQzJidl1ggIrl7yoYnhILZD2GXx-g5ZxxakI4QY0c";
     //This is the payload for notification
-    const title = newValue.title;
-    const newAnswer = newValue.answers.filter((item) => previousValue.answers.indexOf(item) < 0);
-    const desc = newAnswer[newAnswer.length - 1].description;
-    const storeName = newAnswer[newAnswer.length - 1].storeName;
-    console.log("Title ", title);
-    console.log("newAnswer ", JSON.stringify(newAnswer));
-    console.log("desc ", desc);
-    console.log("storeName ", storeName);
+    const title = newValue.title
+    const newAnswer  = newValue.answers.filter((item:any) => previousValue.answers.indexOf(item) < 0);
+    const desc = newAnswer[newAnswer.length -1].description
+    const storeName = newAnswer[newAnswer.length -1].storeName
+    console.log("Title ", title)
+    console.log("newAnswer ", JSON.stringify(newAnswer))
+    console.log("desc ", desc)
+    console.log("storeName ", storeName)
     const payload = {
         notification: {
-            title: "Nueva Recomendación para " + title + " de " + storeName,
-            body: desc,
+            title: "Nueva Recomendación para "+title+" de "+storeName,
+            body: desc, 
             sound: "default"
         }
     };
     const options = {
-        priority: "high",
-        timeToLive: 60 * 60 * 24
-    };
+        priority: "high", 
+        timeToLive: 60*60*24
+    }
     // Send a message to the device corresponding to the provided
     // registration token.
-    return admin.messaging().sendToTopic("pushNotifications", payload, options);
+    return admin.messaging().sendToTopic("pushNotifications", payload, options)
     //return snapshot.ref.parent.child('uppercaseFood').set(uppercase);
 });
-//# sourceMappingURL=index.js.map
 //# sourceMappingURL=index.js.map
