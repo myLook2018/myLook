@@ -1,0 +1,216 @@
+[debug] [2019-03-12T14:03:19.017Z] ----------------------------------------------------------------------
+[debug] [2019-03-12T14:03:19.020Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Mateo\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2019-03-12T14:03:19.020Z] CLI Version:   6.5.0
+[debug] [2019-03-12T14:03:19.020Z] Platform:      win32
+[debug] [2019-03-12T14:03:19.020Z] Node Version:  v10.10.0
+[debug] [2019-03-12T14:03:19.021Z] Time:          Tue Mar 12 2019 11:03:19 GMT-0300 (GMT-03:00)
+[debug] [2019-03-12T14:03:19.022Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-03-12T14:03:19.034Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-03-12T14:03:19.036Z] > authorizing via signed-in user
+[debug] [2019-03-12T14:03:19.036Z] [iam] checking project mylook-develop for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2019-03-12T14:03:19.038Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/mylook-develop:testIamPermissions  
+
+[debug] [2019-03-12T14:03:20.336Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Deploying to 'mylook-develop'...
+[info] 
+[info] i  deploying functions
+[info] Running command: npm --prefix "$RESOURCE_DIR" run build
+[info] +  functions: Finished running predeploy script.
+[debug] [2019-03-12T14:03:30.494Z] > [functions] package.json contents: {
+  "name": "functions",
+  "scripts": {
+    "build": "tsc",
+    "serve": "npm run build && firebase serve --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "firebase-admin": "~7.0.0",
+    "firebase-functions": "^2.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^3.2.2"
+  },
+  "private": true
+}
+[info] i  functions: ensuring necessary APIs are enabled...
+[debug] [2019-03-12T14:03:30.496Z] >>> HTTP REQUEST GET https://servicemanagement.googleapis.com/v1/services/cloudfunctions.googleapis.com/projectSettings/mylook-develop?view=CONSUMER_VIEW  
+ 
+[debug] [2019-03-12T14:03:30.497Z] >>> HTTP REQUEST GET https://servicemanagement.googleapis.com/v1/services/runtimeconfig.googleapis.com/projectSettings/mylook-develop?view=CONSUMER_VIEW  
+ 
+[debug] [2019-03-12T14:03:32.297Z] <<< HTTP RESPONSE 200
+[debug] [2019-03-12T14:03:32.380Z] <<< HTTP RESPONSE 200
+[info] +  functions: all necessary APIs are enabled
+[debug] [2019-03-12T14:03:32.381Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/mylook-develop  
+ 
+[debug] [2019-03-12T14:03:33.594Z] <<< HTTP RESPONSE 200
+[debug] [2019-03-12T14:03:33.595Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/259536885025:getServerAppConfig  
+ 
+[debug] [2019-03-12T14:03:34.058Z] <<< HTTP RESPONSE 200
+[info] i  functions: preparing functions directory for uploading...
+[debug] [2019-03-12T14:03:34.060Z] >>> HTTP REQUEST GET https://runtimeconfig.googleapis.com/v1beta1/projects/mylook-develop/configs  
+ 
+[debug] [2019-03-12T14:03:34.560Z] <<< HTTP RESPONSE 200
+[info] i  functions: packaged functions (32.6 KB) for uploading
+[debug] [2019-03-12T14:03:34.827Z] >>> HTTP REQUEST POST https://cloudfunctions.googleapis.com/v1/projects/mylook-develop/locations/us-central1/functions:generateUploadUrl  
+ 
+[debug] [2019-03-12T14:03:36.256Z] <<< HTTP RESPONSE 200
+[debug] [2019-03-12T14:03:36.258Z] >>> HTTP REQUEST PUT https://storage.googleapis.com/gcf-upload-us-central1-6b2d487a-df3b-4657-ab11-7b53fa82afe1/bf2d6d24-8baa-4b25-b193-7f628fe8ae78.zip?GoogleAccessId=service-259536885025@gcf-admin-robot.iam.gserviceaccount.com&Expires=1552401214&Signature=ED30lXB1w4fjEQ%2FBbvD0avdQTPFKeX8qY9h6q65YcPP2JM2e7FYIVtWVeqUeCKtfuOxxlxffHDbqaWjukP%2FY2fBMBllnpIAD4SuYzkDypGIpdKZimvaDkF5vco6cijrZ1jVQjmGdbG0EJZJv%2F0pInhs%2FPPecFr5NLnipGygNqhO%2BWWZ1DAREV6auWfgGwodElattaltcbkegzEDnaqEE00mrrfHQA7Pl9I9audyEx3mtzQtIm%2FPR5JOICnZeeJyf5AsXC%2FDscNKjOQgHMEGjpIJGfn3AEuvgURv6%2BtAMxgBbm7DchB9Qzb%2F4MmBPaKRHhlOr3xq9cpEPlxedA%2Fz1tg%3D%3D  
+
+[warn] !  functions: Upload Error: Server Error. self signed certificate in certificate chain
+[debug] [2019-03-12T14:03:36.493Z] Error: self signed certificate in certificate chain
+    at TLSSocket.onConnectSecure (_tls_wrap.js:1049:34)
+    at TLSSocket.emit (events.js:182:13)
+    at TLSSocket.EventEmitter.emit (domain.js:442:20)
+    at TLSSocket._finishInit (_tls_wrap.js:631:8)
+[error] 
+[error] Error: Server Error. self signed certificate in certificate chain
+[debug] [2019-03-12T14:04:24.365Z] ----------------------------------------------------------------------
+[debug] [2019-03-12T14:04:24.367Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Mateo\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2019-03-12T14:04:24.368Z] CLI Version:   6.5.0
+[debug] [2019-03-12T14:04:24.368Z] Platform:      win32
+[debug] [2019-03-12T14:04:24.368Z] Node Version:  v10.10.0
+[debug] [2019-03-12T14:04:24.369Z] Time:          Tue Mar 12 2019 11:04:24 GMT-0300 (GMT-03:00)
+[debug] [2019-03-12T14:04:24.369Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-03-12T14:04:24.382Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-03-12T14:04:24.383Z] > authorizing via signed-in user
+[debug] [2019-03-12T14:04:24.383Z] [iam] checking project mylook-develop for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2019-03-12T14:04:24.385Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/mylook-develop:testIamPermissions  
+
+[debug] [2019-03-12T14:04:25.696Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Deploying to 'mylook-develop'...
+[info] 
+[info] i  deploying functions
+[info] Running command: npm --prefix "$RESOURCE_DIR" run build
+[info] +  functions: Finished running predeploy script.
+[debug] [2019-03-12T14:04:36.859Z] > [functions] package.json contents: {
+  "name": "functions",
+  "scripts": {
+    "build": "tsc",
+    "serve": "npm run build && firebase serve --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "firebase-admin": "~7.0.0",
+    "firebase-functions": "^2.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^3.2.2"
+  },
+  "private": true
+}
+[info] i  functions: ensuring necessary APIs are enabled...
+[debug] [2019-03-12T14:04:36.861Z] >>> HTTP REQUEST GET https://servicemanagement.googleapis.com/v1/services/cloudfunctions.googleapis.com/projectSettings/mylook-develop?view=CONSUMER_VIEW  
+ 
+[debug] [2019-03-12T14:04:36.862Z] >>> HTTP REQUEST GET https://servicemanagement.googleapis.com/v1/services/runtimeconfig.googleapis.com/projectSettings/mylook-develop?view=CONSUMER_VIEW  
+ 
+[debug] [2019-03-12T14:04:38.533Z] <<< HTTP RESPONSE 200
+[debug] [2019-03-12T14:04:38.690Z] <<< HTTP RESPONSE 200
+[info] +  functions: all necessary APIs are enabled
+[debug] [2019-03-12T14:04:38.691Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/mylook-develop  
+ 
+[debug] [2019-03-12T14:04:39.912Z] <<< HTTP RESPONSE 200
+[debug] [2019-03-12T14:04:39.913Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/259536885025:getServerAppConfig  
+ 
+[debug] [2019-03-12T14:04:40.270Z] <<< HTTP RESPONSE 200
+[info] i  functions: preparing functions directory for uploading...
+[debug] [2019-03-12T14:04:40.273Z] >>> HTTP REQUEST GET https://runtimeconfig.googleapis.com/v1beta1/projects/mylook-develop/configs  
+ 
+[debug] [2019-03-12T14:04:40.709Z] <<< HTTP RESPONSE 200
+[info] i  functions: packaged functions (32.6 KB) for uploading
+[debug] [2019-03-12T14:04:40.989Z] >>> HTTP REQUEST POST https://cloudfunctions.googleapis.com/v1/projects/mylook-develop/locations/us-central1/functions:generateUploadUrl  
+ 
+[debug] [2019-03-12T14:04:41.522Z] <<< HTTP RESPONSE 200
+[debug] [2019-03-12T14:04:41.523Z] >>> HTTP REQUEST PUT https://storage.googleapis.com/gcf-upload-us-central1-6b2d487a-df3b-4657-ab11-7b53fa82afe1/0dc3ad1b-01b9-4319-bcb9-5eebd2264f5c.zip?GoogleAccessId=service-259536885025@gcf-admin-robot.iam.gserviceaccount.com&Expires=1552401279&Signature=NsUnwhVtWZfiml25VDuFDaREESAoELxhUt5wU8EayFt1jsinPeCNWK3%2FbYs8Tiut176yYTeljXeomYA%2Fn1NaI7jIPdwuBdnGxltRQyA9H2d1Wod5PxzIzlhuJlDDwcs%2FsbUfGCsb%2Fojp5mr%2FkQ1OWPh1qqLwOos1FcYOG87UNoed2fdBPZ8mWFESPeg0NIZlf0%2FNsmhcGYYPEcP4Z8VSRNlqJsHwgg%2Bb8VtYD0stNHKvCvhZ2Dwb130TIEhiJ06VUmNe%2FseF5aqsi9h5ynsE3XkjAOLavPAH%2F7wUANNnCgXOVQflLPu7KOrAtXoFL937WHqvLBPpUdXVs1fb9x1Ugg%3D%3D  
+
+[warn] !  functions: Upload Error: Server Error. self signed certificate in certificate chain
+[debug] [2019-03-12T14:04:41.750Z] Error: self signed certificate in certificate chain
+    at TLSSocket.onConnectSecure (_tls_wrap.js:1049:34)
+    at TLSSocket.emit (events.js:182:13)
+    at TLSSocket.EventEmitter.emit (domain.js:442:20)
+    at TLSSocket._finishInit (_tls_wrap.js:631:8)
+[error] 
+[error] Error: Server Error. self signed certificate in certificate chain
+[debug] [2019-03-12T14:05:10.568Z] ----------------------------------------------------------------------
+[debug] [2019-03-12T14:05:10.575Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Mateo\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2019-03-12T14:05:10.575Z] CLI Version:   6.5.0
+[debug] [2019-03-12T14:05:10.575Z] Platform:      win32
+[debug] [2019-03-12T14:05:10.575Z] Node Version:  v10.10.0
+[debug] [2019-03-12T14:05:10.577Z] Time:          Tue Mar 12 2019 11:05:10 GMT-0300 (GMT-03:00)
+[debug] [2019-03-12T14:05:10.577Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-03-12T14:05:10.591Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-03-12T14:05:10.592Z] > authorizing via signed-in user
+[debug] [2019-03-12T14:05:10.592Z] [iam] checking project mylook-develop for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2019-03-12T14:05:10.595Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/mylook-develop:testIamPermissions  
+
+[debug] [2019-03-12T14:05:11.942Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Deploying to 'mylook-develop'...
+[info] 
+[info] i  deploying functions
+[info] Running command: npm --prefix "$RESOURCE_DIR" run build
+[info] +  functions: Finished running predeploy script.
+[debug] [2019-03-12T14:05:20.593Z] > [functions] package.json contents: {
+  "name": "functions",
+  "scripts": {
+    "build": "tsc",
+    "serve": "npm run build && firebase serve --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "firebase-admin": "~7.0.0",
+    "firebase-functions": "^2.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^3.2.2"
+  },
+  "private": true
+}
+[info] i  functions: ensuring necessary APIs are enabled...
+[debug] [2019-03-12T14:05:20.595Z] >>> HTTP REQUEST GET https://servicemanagement.googleapis.com/v1/services/cloudfunctions.googleapis.com/projectSettings/mylook-develop?view=CONSUMER_VIEW  
+ 
+[debug] [2019-03-12T14:05:20.595Z] >>> HTTP REQUEST GET https://servicemanagement.googleapis.com/v1/services/runtimeconfig.googleapis.com/projectSettings/mylook-develop?view=CONSUMER_VIEW  
+ 
+[debug] [2019-03-12T14:05:22.522Z] <<< HTTP RESPONSE 200
+[info] +  functions: all necessary APIs are enabled
+[debug] [2019-03-12T14:05:22.590Z] <<< HTTP RESPONSE 200
+[debug] [2019-03-12T14:05:22.591Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/mylook-develop  
+ 
+[debug] [2019-03-12T14:05:23.796Z] <<< HTTP RESPONSE 200
+[debug] [2019-03-12T14:05:23.798Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/259536885025:getServerAppConfig  
+ 
+[debug] [2019-03-12T14:05:24.215Z] <<< HTTP RESPONSE 200
+[info] i  functions: preparing functions directory for uploading...
+[debug] [2019-03-12T14:05:24.222Z] >>> HTTP REQUEST GET https://runtimeconfig.googleapis.com/v1beta1/projects/mylook-develop/configs  
+ 
+[debug] [2019-03-12T14:05:24.665Z] <<< HTTP RESPONSE 200
+[info] i  functions: packaged functions (32.6 KB) for uploading
+[debug] [2019-03-12T14:05:24.929Z] >>> HTTP REQUEST POST https://cloudfunctions.googleapis.com/v1/projects/mylook-develop/locations/us-central1/functions:generateUploadUrl  
+ 
+[debug] [2019-03-12T14:05:25.589Z] <<< HTTP RESPONSE 200
+[debug] [2019-03-12T14:05:25.590Z] >>> HTTP REQUEST PUT https://storage.googleapis.com/gcf-upload-us-central1-6b2d487a-df3b-4657-ab11-7b53fa82afe1/be7ac4b1-cc81-4ce4-a7db-2dc8c2274f38.zip?GoogleAccessId=service-259536885025@gcf-admin-robot.iam.gserviceaccount.com&Expires=1552401324&Signature=Q1oncCze6lIznZI4v0av8vhjNl6KbQtDFWDUSb8uCyJ2Apg7nHEhjAWurdDpEDaAmrViqEX69GViobSL7gO2pqpkOnMH%2FsoCxspsKpT%2FI1OZ76K4S0EXMQm76ibFoFB4i20IsRTb1YlD82OpUIRxh2lgn44UbgAYPlVkzcqoF6AJPPoGYS4PvwLcvCcbVwxcPLWuTkkJWby%2FoLTU71DYQTm3P2ek%2FI3E0uXNi%2FGbxA8OhLdWPu9f3SCzPoiQsM0cvoLKm7Fbcy5tMhqTXnVnltGe7iH9vNiyeuJ8xZXVcF1MigOyrlZ9YTUv7FjG1PwRdZMyTkTC8p3PS5AO2PzsVw%3D%3D  
+
+[warn] !  functions: Upload Error: Server Error. self signed certificate in certificate chain
+[debug] [2019-03-12T14:05:25.799Z] Error: self signed certificate in certificate chain
+    at TLSSocket.onConnectSecure (_tls_wrap.js:1049:34)
+    at TLSSocket.emit (events.js:182:13)
+    at TLSSocket.EventEmitter.emit (domain.js:442:20)
+    at TLSSocket._finishInit (_tls_wrap.js:631:8)
+[error] 
+[error] Error: Server Error. self signed certificate in certificate chain
