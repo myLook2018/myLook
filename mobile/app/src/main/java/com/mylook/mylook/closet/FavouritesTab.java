@@ -42,14 +42,38 @@ public class FavouritesTab extends Fragment {
     private ArrayList<Favorite> favorites;
     private Activity act;
     private ProgressBar mProgressBar;
+    private String dbUserId;
 
     public FavouritesTab() {
         // Required empty public constructor
     }
 
+    private void getUserId() {
+        dB.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
+                    dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
+                    getCloset();
+                } else {
+                    dB.collection("clients").whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
+                                getCloset();
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getUserId();
         favorites = new ArrayList<>();
 
     }
@@ -95,13 +119,12 @@ public class FavouritesTab extends Fragment {
         gridview.setColumnWidth(imageWidth);
         gridview.setHorizontalSpacing(8);
         gridview.setNumColumns(3);
-        getCloset();
         setClickListener();
     }
 
     private void getCloset() {
         dB.collection("closets")
-                .whereEqualTo("userID", user.getUid())
+                .whereEqualTo("userID", dbUserId)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -151,7 +174,7 @@ public class FavouritesTab extends Fragment {
         mProgressBar = view.findViewById(R.id.mProgressBar);
         mProgressBar.setVisibility(View.VISIBLE);
         setGridview();
-
+        getUserId();
         super.onViewCreated(view, savedInstanceState);
     }
 

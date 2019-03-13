@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -56,7 +57,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private Context mContext;
     private ProgressBar mProgressBar;
-    private EditText mEmail, mPassword;
+    private EditText mPassword;
+    private AutoCompleteTextView mEmail;
     private TextView mWaiting;
     private LinearLayout mLayout;
     private Button btnLogin;
@@ -76,11 +78,12 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e("Login", "Started on create");
         setContentView(R.layout.activity_login);
         initElements();
         mContext = LoginActivity.this;
         mProgressBar.setVisibility(View.GONE);
-        FirebaseAuth.getInstance().signOut();
+        //FirebaseAuth.getInstance().signOut();
         FacebookSdk.sdkInitialize(getApplicationContext());
         setupFirebaseAuth();
         setupFacebookAuth();
@@ -117,9 +120,14 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         });
-
+        Log.e("Login", "FInish on create");
     }
 
+    @Override
+    protected void onResume() {
+        Log.e("Login", "Resume act");
+        super.onResume();
+    }
 
     private boolean isStringNull(String string) {
         return "".equals(string);
@@ -242,9 +250,9 @@ public class LoginActivity extends AppCompatActivity {
                                         finish();
                                     } else {
                                         displayMessage("Tu email aún no esta verificado");
-                                        Intent intent = new Intent(mContext, LoginActivity.class);
-                                        startActivity(intent);
-                                        finish();
+//                                        Intent intent = new Intent(mContext, LoginActivity.class);
+//                                        startActivity(intent);
+//                                        finish();
 
                                     }
                                 }
@@ -384,7 +392,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void initElements() {
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
-        mEmail = (EditText) findViewById(R.id.input_email);
+        mEmail =  findViewById(R.id.input_email);
         mPassword = (EditText) findViewById(R.id.input_password);
         mLayout = (LinearLayout) findViewById(R.id.login_form);
         btnLogin = (Button) findViewById(R.id.login_button);
@@ -404,9 +412,7 @@ public class LoginActivity extends AppCompatActivity {
         if (intent.hasExtra("confirmation")) {
             if (intent.getBooleanExtra("confirmation", false)) {
                 Snackbar mySnackbar = Snackbar.make(layout, "Te envíamos un mail para confirmar el registro", Snackbar.LENGTH_LONG);
-
                 mySnackbar.setActionTextColor(getResources().getColor(R.color.accent));
-
                 mySnackbar.show();
             }
         }

@@ -55,7 +55,7 @@ public class ProfileFragment extends Fragment {
     private TextView txtHelp;
     private ImageView imageExit;
     private TextView txtExit;
-
+    private String dbUserId;
     private Context mContext;
     private String clientId;
     private boolean isPremiumUser;
@@ -67,6 +67,7 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         setUserProfile(view);
         setOnClickListener();
+        getUserId();
     }
 
 
@@ -84,6 +85,25 @@ public class ProfileFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_profile, null);
     }
 
+    private void getUserId() {
+        dB.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
+                    dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
+                } else {
+                    dB.collection("clients").whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
 
     private void setOnClickListener() {
 
@@ -202,7 +222,7 @@ public class ProfileFragment extends Fragment {
         imageExit = view.findViewById(R.id.image_exit);
         txtExit = view.findViewById(R.id.txtExit);
 
-        dB.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        dB.collection("clients").whereEqualTo("userId", dbUserId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 userName = task.getResult().getDocuments().get(0).get("name").toString() + " " + task.getResult().getDocuments().get(0).get("surname").toString();

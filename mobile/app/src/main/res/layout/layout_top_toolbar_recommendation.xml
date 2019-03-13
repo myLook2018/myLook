@@ -13,7 +13,7 @@
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
             android:elevation="4dp"
-            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+            android:theme="@style/AppTheme.Toolbar"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents.Dark"
             app:title="Nueva Solicitud"
             app:titleTextColor="@color/white">

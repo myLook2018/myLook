@@ -50,6 +50,7 @@ public class CategoryTab extends Fragment {
     private Context context;
     private GridView outfitGrid;
     private Activity act;
+    private String dbUserId;
     private FloatingActionButton addOutfit;
     private ProgressBar mProgressBar;
 
@@ -61,7 +62,6 @@ public class CategoryTab extends Fragment {
     public void onResume() {
         super.onResume();
         mProgressBar.setVisibility(View.VISIBLE);
-        getOutfits();
     }
 
     @Override
@@ -70,10 +70,33 @@ public class CategoryTab extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    private void getUserId() {
+        dB.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
+                    dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
+                    getOutfits();
+                } else {
+                    dB.collection("clients").whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
+                                getOutfits();
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         act = getActivity();
+
         return inflater.inflate(R.layout.tab_categories, container, false);
 
     }
@@ -84,6 +107,7 @@ public class CategoryTab extends Fragment {
         mProgressBar.setVisibility(View.VISIBLE);
         outfitGrid = view.findViewById(R.id.grid_colecciones);
         setGridview();
+        getUserId();
         addOutfit = view.findViewById(R.id.addOutfit);
 
 
@@ -102,7 +126,6 @@ public class CategoryTab extends Fragment {
         outfitGrid.setColumnWidth(imageWidth);
         outfitGrid.setHorizontalSpacing(8);
         outfitGrid.setNumColumns(2);
-        getOutfits();
         outfitGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
@@ -115,7 +138,7 @@ public class CategoryTab extends Fragment {
     private void loadOutfit(AdapterView<?> parent, int position) {
         mProgressBar.setVisibility(View.VISIBLE);
         final String outfitId = ((Outfit) parent.getAdapter().getItem(position)).getOutfitId();
-        dB.collection("closets").whereEqualTo("userID",user.getUid()).get()
+        dB.collection("closets").whereEqualTo("userID",dbUserId).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -154,7 +177,7 @@ public class CategoryTab extends Fragment {
 
     private void getOutfits() {
         dB.collection("closets")
-                .whereEqualTo("userID", user.getUid())
+                .whereEqualTo("userID", dbUserId)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override

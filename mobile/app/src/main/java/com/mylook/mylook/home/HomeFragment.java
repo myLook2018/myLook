@@ -55,7 +55,7 @@ public class HomeFragment extends Fragment {
     private CardsHomeFeedAdapter adapter;
     private List list;
     private ArrayList<Subscription> subscriptionList;
-
+    private String dbUserId;
     private List<LocalInteraction> mLocalInteractions;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -100,10 +100,7 @@ public class HomeFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
 
         if (user != null) {
-            Log.e(TAG, "User" + user.getDisplayName());
-            readSubscriptions();
-            updateInstallationToken();
-
+            getUserId();
         }
 
     }
@@ -111,8 +108,30 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
 
-
+    private void getUserId() {
+        db.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
+                    dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
+                    readSubscriptions();
+                    updateInstallationToken();
+                } else {
+                    db.collection("clients").whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
+                                readSubscriptions();
+                                updateInstallationToken();
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
 
 
@@ -162,7 +181,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onSuccess(InstanceIdResult instanceIdResult) {
                 final String mToken = instanceIdResult.getToken();
-                db.collection("clients").whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                db.collection("clients").whereEqualTo("userId", dbUserId)
                         .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -183,10 +202,10 @@ public class HomeFragment extends Fragment {
     private void readSubscriptions() {
         //Devuelve los ultimos meses, TODO Cambiar esto para probar en serio
         final Calendar myCalendar = Calendar.getInstance();
-        myCalendar.set(Calendar.MONTH, myCalendar.get(Calendar.MONTH)-7);
-
+        myCalendar.set(Calendar.MONTH, myCalendar.get(Calendar.MONTH) - 7);
+        Log.e(TAG, "Begin read Subscriptions- Uid:" + dbUserId);
         db.collection("subscriptions")
-                .whereEqualTo("userId", user.getUid())
+                .whereEqualTo("userId", dbUserId)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -212,8 +231,8 @@ public class HomeFragment extends Fragment {
                                         }
 
                                         if (createArticleList(task.getResult())) { //Con esta por la probabilidad de las promos, pero no por fecha
-                                            for (Object art: list) {
-                                                Log.e(TAG, ((Article) art).getArticleId() + " - "+((Article) art).getCreationDate() +" - Promo: "+((Article) art).getPromotionLevel());
+                                            for (Object art : list) {
+                                                Log.e(TAG, ((Article) art).getArticleId() + " - " + ((Article) art).getCreationDate() + " - Promo: " + ((Article) art).getPromotionLevel());
                                             }
                                             emptyArticles.setVisibility(View.GONE);
                                             starImage.setVisibility(View.GONE);
@@ -229,6 +248,10 @@ public class HomeFragment extends Fragment {
                                 }
                             });
                         }
+                    } else {
+                        emptyArticles.setVisibility(View.VISIBLE);
+                        starImage.setVisibility(View.VISIBLE);
+                        mProgressBar.setVisibility(View.GONE);
                     }
                 }
             }
@@ -272,7 +295,7 @@ public class HomeFragment extends Fragment {
     }
 
 
-    private void orderByDateAndPromo(List<Article> promo1,List<Article> promo2,List<Article> promo3 ){
+    private void orderByDateAndPromo(List<Article> promo1, List<Article> promo2, List<Article> promo3) {
         if (!promo3.isEmpty()) {
             Collections.sort(promo3, new Comparator<Article>() {
                 @Override
@@ -302,7 +325,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void orderByPromoProb(List<Article> promo1,List<Article> promo2,List<Article> promo3 ){
+    private void orderByPromoProb(List<Article> promo1, List<Article> promo2, List<Article> promo3) {
         Random r = new Random();
         int v;
         while (true) {

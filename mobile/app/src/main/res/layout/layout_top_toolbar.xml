@@ -16,7 +16,7 @@
             android:clickable="true"
             android:elevation="4dp"
             android:focusable="true"
-            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+            android:theme="@style/AppTheme.Toolbar"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
             app:titleTextColor="@color/white">
 
