@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.DragEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -47,7 +48,7 @@ public class OutfitActivity extends AppCompatActivity {
     private FirebaseFirestore dB = FirebaseFirestore.getInstance();
     private ArrayList<Favorite> favoritos = new ArrayList<>();
     private ArrayList<Favorite> favoritosModificados = new ArrayList<>();
-    private HashMap<String, String > outfitItems;
+    private HashMap<String, String> outfitItems;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private Closet closet;
     private ImageView bottomCloth, mediumCloth, topCloth, topAccesory, activeView;
@@ -56,7 +57,7 @@ public class OutfitActivity extends AppCompatActivity {
     private String collectionName, category;
     private ImageButton btnSend;
     private ProgressBar mProgressBar;
-    private String outfitId;
+    private String outfitId, dbUserId;
 
 
     @Override
@@ -79,11 +80,7 @@ public class OutfitActivity extends AppCompatActivity {
         mProgressBar = findViewById(R.id.mProgressBar);
         mProgressBar.setVisibility(View.VISIBLE);
         initElements();
-        if(outfitId !=  null){
-            getOutfit();
-
-        }
-        getCloset();
+        getUserId();
         setupDragListener();
 
     }
@@ -112,7 +109,7 @@ public class OutfitActivity extends AppCompatActivity {
                 case DragEvent.ACTION_DRAG_EXITED:
                     break;
                 case DragEvent.ACTION_DROP:
-                    if(outfitItems == null)
+                    if (outfitItems == null)
                         outfitItems = new HashMap<>();
                     mProgressBar.setVisibility(View.VISIBLE);
                     mProgressBar.setZ(20);
@@ -137,7 +134,6 @@ public class OutfitActivity extends AppCompatActivity {
                         isFromOutfit = false;
 
                     } else {
-
                         activeView.setImageDrawable(getDrawable(R.drawable.white_background));
                     }
 
@@ -175,18 +171,57 @@ public class OutfitActivity extends AppCompatActivity {
         setSupportActionBar(tb);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         collectionName = getIntent().getExtras().get("name").toString();
-       category = getIntent().getExtras().get("category").toString();
+        category = getIntent().getExtras().get("category").toString();
         try {
             outfitId = getIntent().getExtras().get("id").toString();
-        } catch (Exception e){
+        } catch (Exception e) {
             Log.e("Outfit", "Its a new outfit");
         }
 
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void getUserId() {
+        dB.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
+                    dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
+                    if (outfitId != null) {
+                        getOutfit();
+                    }
+                    getCloset();
+                } else {
+                    dB.collection("clients").whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
+                                if (outfitId != null) {
+                                    getOutfit();
+                                }
+                                getCloset();
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
     private void getCloset() {
         dB.collection("closets")
-                .whereEqualTo("userID", user.getUid())
+                .whereEqualTo("userID", dbUserId)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -223,10 +258,10 @@ public class OutfitActivity extends AppCompatActivity {
 
     private void sendOutfit() {
         final Outfit nuevo = createOutfit();
-        if(outfitId == null) {
+        if (outfitId == null && nuevo.getItems()!=null) {
             mProgressBar.setVisibility(View.VISIBLE);
             dB.collection("closets")
-                    .whereEqualTo("userID", user.getUid())
+                    .whereEqualTo("userID", dbUserId)
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
@@ -246,16 +281,16 @@ public class OutfitActivity extends AppCompatActivity {
                             }
                         }
                     });
-        } else {
+        } else if(nuevo.getItems()!=null) {
             mProgressBar.setVisibility(View.VISIBLE);
-            dB.collection("closets").whereEqualTo("userID", user.getUid()).get()
+            dB.collection("closets").whereEqualTo("userID", dbUserId).get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if(task.isSuccessful()){
+                            if (task.isSuccessful()) {
                                 String id = task.getResult().getDocuments().get(0).getId();
                                 dB.collection("closets").document(id).collection("outfits").document(outfitId)
-                                        .update("items", outfitItems ).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        .update("items", outfitItems).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         mProgressBar.setVisibility(View.INVISIBLE);
@@ -268,6 +303,8 @@ public class OutfitActivity extends AppCompatActivity {
                             }
                         }
                     });
+        } else {
+            Toast.makeText(OutfitActivity.this, "Debes agrergar por lo menos una prenda", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -279,9 +316,9 @@ public class OutfitActivity extends AppCompatActivity {
         return nuevo;
     }
 
-    private void getOutfit(){
+    private void getOutfit() {
         dB.collection("closets")
-                .whereEqualTo("userID", user.getUid())
+                .whereEqualTo("userID", dbUserId)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -306,8 +343,9 @@ public class OutfitActivity extends AppCompatActivity {
                     }
                 });
     }
+
     @Override
-    public boolean onSupportNavigateUp(){
+    public boolean onSupportNavigateUp() {
         finish();
         return true;
     }
@@ -320,19 +358,19 @@ public class OutfitActivity extends AppCompatActivity {
 
     }
 
-    private void loadImage(final String item,final String picture, String articleId){
+    private void loadImage(final String item, final String picture, String articleId) {
         dB.collection("articles").document(articleId).get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
                             View v = null;
-                            if(item.getClass().equals( Integer.class))
+                            if (item.getClass().equals(Integer.class))
                                 v = findViewById(Integer.parseInt(item));
-                            if(v == null) {
+                            if (v == null) {
                                 v = findViewById(getResources().getIdentifier(item, "id", getApplicationContext().getPackageName()));
                             }
-                            String art = (String)task.getResult().get("picture");
+                            String art = (String) task.getResult().get("picture");
                             Glide.with(OutfitActivity.this).asBitmap().load(art).apply(new RequestOptions()
                                     .diskCacheStrategy(DiskCacheStrategy.DATA))
                                     .into((ImageView) v);
