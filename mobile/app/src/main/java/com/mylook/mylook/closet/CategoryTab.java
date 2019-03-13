@@ -61,7 +61,6 @@ public class CategoryTab extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mProgressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -241,7 +240,7 @@ public class CategoryTab extends Fragment {
                     @Override
                     public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                         String newOutfitName = input.getText().toString();
-                        Intent intent = new Intent(getContext(), OutfitActivity.class);
+                        Intent intent = new Intent(getActivity(), OutfitActivity.class);
                         intent.putExtra("name", newOutfitName);
                         intent.putExtra("category", "normal");
                         startActivity(intent);
