@@ -8,6 +8,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.mylook.mylook.R;
 import com.mylook.mylook.closet.ClosetFragment;
 import com.mylook.mylook.explore.ExploreFragment;
@@ -24,7 +25,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
         loadFragment(new HomeFragment());
-
+        FirebaseMessaging.getInstance().unsubscribeFromTopic("pushNotifications");
     }
 
     @Override
