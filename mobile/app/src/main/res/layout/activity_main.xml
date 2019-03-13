@@ -13,10 +13,9 @@
         android:layout_height="wrap_content"
         android:background="@color/primary"
         android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
+        android:theme="@style/AppTheme.Toolbar"
         app:layout_constraintTop_toTopOf="parent"
         app:title="myLook"
-        app:titleTextColor="@color/browser_actions_bg_grey"
         tools:layout_editor_absoluteX="8dp" />
 
     <android.support.design.widget.BottomNavigationView

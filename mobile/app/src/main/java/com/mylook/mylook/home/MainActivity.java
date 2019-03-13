@@ -16,6 +16,7 @@ import com.mylook.mylook.profile.ProfileFragment;
 import com.mylook.mylook.recommend.RecommendFragment;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+    private Toolbar toolbar;
 
 
     @Override
@@ -24,8 +25,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         setContentView(R.layout.activity_main);
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
+        toolbar =findViewById(R.id.main_toolbar);
+        setSupportActionBar(toolbar);
+
         loadFragment(new HomeFragment());
-        FirebaseMessaging.getInstance().unsubscribeFromTopic("pushNotifications");
     }
 
     @Override
@@ -34,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         switch (item.getItemId()) {
             case R.id.ic_house:
                 ((Toolbar) findViewById(R.id.main_toolbar)).setTitle("myLook");
+
                 fragment = new HomeFragment();
                 break;
             case R.id.ic_explore:

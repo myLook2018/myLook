@@ -2,6 +2,8 @@ package com.mylook.mylook.explore;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,6 +30,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Interaction;
+import com.mylook.mylook.home.MainActivity;
 import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.room.AppDatabase;
 import com.mylook.mylook.room.LocalInteraction;
@@ -43,12 +46,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-public class ExploreFragment extends Fragment {
+public class ExploreFragment extends Fragment  {
 
     private Context mContext;
     private List<Article> mDiscoverableArticles;
     private CardStackView mCardStack;
     private CardsExploreAdapter mCardAdapter;
+
     private ArrayList<Interaction> interactions;
     private List<LocalInteraction> mLocalInteractions;
     private ProgressBar mProgressBar;
@@ -67,10 +71,17 @@ public class ExploreFragment extends Fragment {
 
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         return inflater.inflate(R.layout.fragment_explore, null);
+
     }
 
     @Override
@@ -336,7 +347,6 @@ public class ExploreFragment extends Fragment {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.search_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.search_menu, menu);
         //SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         MenuItem item=menu.findItem(R.id.btnSearch);
         SearchView searchView=(SearchView) item.getActionView();
