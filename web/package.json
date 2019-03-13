@@ -39,6 +39,7 @@
     "primeng": "^7.0.0-beta.1",
     "rxjs": "^6.3.2",
     "rxjs-compat": "^6.3.2",
+    "tsc": "^1.20150623.0",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {
