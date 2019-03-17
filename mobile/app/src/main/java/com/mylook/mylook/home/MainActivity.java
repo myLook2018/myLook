@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         navigation.setOnNavigationItemSelectedListener(this);
         toolbar =findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
-
         loadFragment(new HomeFragment());
     }
 

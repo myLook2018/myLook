@@ -106,32 +106,43 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
     private void getUserId() {
-        db.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
-                    dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
-                    readSubscriptions();
-                    updateInstallationToken();
-                } else {
-                    db.collection("clients").whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
-                                readSubscriptions();
-                                updateInstallationToken();
+            db.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
+                        dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
+                        readSubscriptions();
+                        updateInstallationToken();
+                    } else {
+                        db.collection("clients").whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
+                                    readSubscriptions();
+                                    updateInstallationToken();
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
-            }
-        });
+            });
     }
 
 
@@ -152,7 +163,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //readSubscriptions();
     }
 
     private void checkCurrentUser(FirebaseUser user) {

@@ -1,4 +1,4 @@
-package com.mylook.mylook;
+package com.mylook.mylook.notifications;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
