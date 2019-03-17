@@ -42,13 +42,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             NotificationCompat.Builder notificationBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(this)
-                    .setAutoCancel(true)   //Automatically delete the notification
-                    .setSmallIcon(R.mipmap.ic_launcher) //Notification icon
+                    .setAutoCancel(false)   //Automaticall delete the notification
                     .setContentIntent(pendingIntent)
                     .setContentTitle(notificationTitle)
                     .setContentText(notificationBody)
                     .setSound(defaultSoundUri);
-
 
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
