@@ -56,7 +56,7 @@ exports.newAnswerNotification = functions.firestore.document('requestRecommendat
     const newAnswer = newValue.answers
     const oldAnswer = previousValue.answers
 
-    if (newAnswer.length > oldAnswer.length) {
+    if (newAnswer.length >= oldAnswer.length) {
         const title = newValue.title
         let userId = newValue.userId
         const desc = newAnswer[newAnswer.length - 1].description
@@ -75,7 +75,8 @@ exports.newAnswerNotification = functions.firestore.document('requestRecommendat
         return admin.firestore().collection("clients").get()
             .then((snapshot: any) => {
                 snapshot.forEach((doc: any) => {
-                    if (userId == doc.data().userId) {
+                    console.log('user', 'userId ' + userId + ' - Doc user Id' + doc.data().userId + ' - docId ' + doc.id)
+                    if (userId == doc.data().userId || userId == doc.id) {
                         console.log("Es este Usuario!!! " + userId)
                         const registrationToken = doc.data().installToken
                         return admin.messaging().sendToDevice(registrationToken, payload, options)
