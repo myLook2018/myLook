@@ -177,7 +177,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void updateInstallationToken() {
-        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this.getActivity(), new OnSuccessListener<InstanceIdResult>() {
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(getActivity(), new OnSuccessListener<InstanceIdResult>() {
             @Override
             public void onSuccess(InstanceIdResult instanceIdResult) {
                 final String mToken = instanceIdResult.getToken();

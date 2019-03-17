@@ -65,15 +65,12 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setUserProfile(view);
-        setOnClickListener();
-        getUserId();
+        getUserId(view);
     }
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        getActivity().setTitle("Recomendaciones");
         super.onCreate(savedInstanceState);
     }
 
@@ -85,18 +82,20 @@ public class ProfileFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_profile, null);
     }
 
-    private void getUserId() {
+    private void getUserId(final View view) {
         dB.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
                     dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
+                    setUserProfile(view);
                 } else {
                     dB.collection("clients").whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
                                 dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
+                                setUserProfile(view);
                             }
                         }
                     });
@@ -221,6 +220,7 @@ public class ProfileFragment extends Fragment {
         txtHelp = view.findViewById(R.id.txtHelp);
         imageExit = view.findViewById(R.id.image_exit);
         txtExit = view.findViewById(R.id.txtExit);
+        setOnClickListener();
 
         dB.collection("clients").whereEqualTo("userId", dbUserId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override

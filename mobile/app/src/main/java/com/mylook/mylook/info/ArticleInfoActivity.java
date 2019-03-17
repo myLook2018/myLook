@@ -42,10 +42,10 @@ public class ArticleInfoActivity extends AppCompatActivity {
 
     private String articleId,closetId;
     private ArrayList<String> tags;
-    private String downLoadUri;
+    private String downLoadUri, dbUserId;
     private Article article;
-    private FirebaseUser user;
-    private FirebaseFirestore dB;
+    private FirebaseUser user =FirebaseAuth.getInstance().getCurrentUser();;
+    private FirebaseFirestore dB =FirebaseFirestore.getInstance();
     private TextView txtTitle;
     private TextView txtStoreName;
     private LinearLayout lnlSizes;
@@ -58,9 +58,34 @@ public class ArticleInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_more_info_article_collapsing);
         getArticleFromIntent();
-        downLoadUri=article.getPicture();
-        initElements();
-        setDetail();
+        getUserId();
+    }
+
+
+    private void getUserId() {
+        dB.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
+                    dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
+                    downLoadUri=article.getPicture();
+                    initElements();
+                    setDetail();
+                } else {
+                    dB.collection("clients").whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
+                                downLoadUri=article.getPicture();
+                                initElements();
+                                setDetail();
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
 
     private void setDetail() {
@@ -96,8 +121,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
     }
 
     private void initElements() {
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        dB = FirebaseFirestore.getInstance();
         backArrow = findViewById(R.id.backArrow);
         btnCloset=findViewById(R.id.btnCloset);
         articleImage=findViewById(R.id.article_image);
@@ -144,7 +167,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
         favorites.put("collecion", null);
 
         dB.collection("closets")
-                .whereEqualTo("userID",user.getUid())
+                .whereEqualTo("userID",dbUserId)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override

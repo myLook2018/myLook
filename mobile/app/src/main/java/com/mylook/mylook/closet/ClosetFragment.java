@@ -48,6 +48,7 @@ public class ClosetFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         getActivity().setTitle("Recomendaciones");
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
     }
 

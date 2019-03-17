@@ -29,7 +29,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <include
-                android:id="@+id/include2"
+                android:id="@+id/outfit_toolbar"
                 layout="@layout/layout_top_toolbar"
                 android:layout_width="0dp"
                 android:layout_height="48dp" />

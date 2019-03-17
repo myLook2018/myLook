@@ -131,12 +131,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/editDate" />
 
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/textInputLayout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
 
-                </android.support.design.widget.TextInputLayout>
 
                 <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
                     android:id="@+id/category"
@@ -156,6 +151,21 @@
                     app:layout_constraintTop_toBottomOf="@+id/size_input"
                     app:met_floatingLabel="highlight" />
 
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintEnd_toStartOf="@+id/imgRecommend"
+                    app:layout_constraintStart_toStartOf="@+id/txtDescription"
+                    app:layout_constraintTop_toTopOf="@+id/imgRecommend">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/txtTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Agregá un título" />
+                </android.support.design.widget.TextInputLayout>
+
             </android.support.constraint.ConstraintLayout>
 
             <com.github.clans.fab.FloatingActionMenu
@@ -165,7 +175,6 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:menu_animationDelayPerItem="55"
-                app:menu_backgroundColor="@color/fui_transparent"
                 app:menu_buttonSpacing="0dp"
                 app:menu_colorNormal="@color/accent"
                 app:menu_colorPressed="@color/accent"
@@ -188,30 +197,29 @@
                 app:menu_labels_textColor="@color/black"
                 app:menu_labels_textSize="15sp"
                 app:menu_openDirection="up"
-                app:menu_shadowColor="#66aff198"
                 app:menu_shadowRadius="4dp"
                 app:menu_shadowXOffset="1dp"
                 app:menu_shadowYOffset="4dp"
-                app:menu_showShadow="true">
+                app:menu_showShadow="true"
+                >
 
                 <com.github.clans.fab.FloatingActionButton
                     android:id="@+id/photoFloating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/outline_photo_camera_24_white"
-                    android:tint="@color/accent"
+                    android:src="@drawable/ic_camera"
                     app:fab_label="Cámara"
-                    app:fab_size="mini"
-                    app:rippleColor="@color/accent" />
+                    app:fab_size="normal"
+                    app:fab_colorNormal="@color/accent"/>
 
                 <com.github.clans.fab.FloatingActionButton
                     android:id="@+id/galleryFloating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/outline_photo_24_white"
-                    android:tint="@color/accent"
+                    android:src="@drawable/ic_gallery"
                     app:fab_label="Galería"
-                    app:fab_size="mini" />
+                    app:fab_size="normal"
+                    app:fab_colorNormal="@color/accent"/>
             </com.github.clans.fab.FloatingActionMenu>
 
         </android.support.constraint.ConstraintLayout>

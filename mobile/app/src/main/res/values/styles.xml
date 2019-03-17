@@ -33,6 +33,10 @@
         <item name="android:textColorSecondary">@color/white</item>
     </style>
 
-
+    <style name="Widget.Design.FloatingActionButton.myLook" parent="Widget.Design.FloatingActionButton">
+        <item name="backgroundTint">@color/accent</item>
+        <item name="android:tint">@color/white</item>
+        <item name="android:foregroundTint">@color/white</item>
+    </style>
 
 </resources>
