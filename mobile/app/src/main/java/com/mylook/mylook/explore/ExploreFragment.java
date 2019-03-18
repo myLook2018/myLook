@@ -46,7 +46,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-public class ExploreFragment extends Fragment  {
+public class ExploreFragment extends Fragment {
 
     private Context mContext;
     private List<Article> mDiscoverableArticles;
@@ -66,10 +66,21 @@ public class ExploreFragment extends Fragment  {
 
     private int currentIndex = 0;
     private int totalArticles = 0;
+    public final static String TAG = "ExploreFragment";
 
     public ExploreFragment() {
 
     }
+
+    private static ExploreFragment homeInstance = null;
+
+    public static ExploreFragment getInstance() {
+        if (homeInstance == null) {
+            homeInstance = new ExploreFragment();
+        }
+        return homeInstance;
+    }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,8 +110,11 @@ public class ExploreFragment extends Fragment  {
         dbSQL = AppDatabase.getDatabase(mContext);
         localDAO = dbSQL.getLocalInteractionDAO();
         mLocalInteractions = localDAO.getAllByUser(user.getUid());
-        getDiscoverableArticles();
 
+        mCardAdapter = new CardsExploreAdapter(mContext, R.layout.article_card);
+        mCardStack.setAdapter(mCardAdapter);
+        if (mDiscoverableArticles == null)
+            getDiscoverableArticles();
 
 
         interactions = new ArrayList<>();
@@ -188,12 +202,9 @@ public class ExploreFragment extends Fragment  {
                             if (task.getResult().isEmpty()) {
                                 mProgressBar.setVisibility(View.GONE);
                                 mMessage.setVisibility(View.VISIBLE);
-                            }
-                            else {
+                            } else {
                                 if (createArticleList(task.getResult())) {
-                                    mCardAdapter = new CardsExploreAdapter(mContext, R.layout.article_card);
                                     mCardAdapter.addAll(mDiscoverableArticles);
-                                    mCardStack.setAdapter(mCardAdapter);
                                     mProgressBar.setVisibility(View.GONE);
                                     mMessage.setVisibility(View.GONE);
                                     mCardStack.setVisibility(View.VISIBLE);
@@ -348,16 +359,17 @@ public class ExploreFragment extends Fragment  {
         inflater.inflate(R.menu.search_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
         //SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        MenuItem item=menu.findItem(R.id.btnSearch);
-        SearchView searchView=(SearchView) item.getActionView();
+        MenuItem item = menu.findItem(R.id.btnSearch);
+        SearchView searchView = (SearchView) item.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                Log.d("SUBMIT", "onQueryTextSubmit: query->"+s);
+                Log.d("SUBMIT", "onQueryTextSubmit: query->" + s);
                 Intent intent = new Intent(mContext, SearchableActivity.class);
-                intent.putExtra("query",s);
+                intent.putExtra("query", s);
                 startActivity(intent);
-                return true;            }
+                return true;
+            }
 
             @Override
             public boolean onQueryTextChange(String s) {
@@ -370,8 +382,7 @@ public class ExploreFragment extends Fragment  {
     }
 
 
-
-    public boolean onSearchRequested(){
+    public boolean onSearchRequested() {
         Bundle appData = new Bundle();
         this.getActivity().startSearch(null, false, appData, false);
         return true;

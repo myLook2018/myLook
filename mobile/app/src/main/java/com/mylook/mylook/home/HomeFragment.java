@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -67,10 +68,19 @@ public class HomeFragment extends Fragment {
     private int currentIndex = 0;
     private int totalArticles = 0;
     private Context mContext;
-    final static String TAG = "Home Fragment";
+    final static String TAG = "HomeFragment";
+    private static HomeFragment homeInstance = null;
+    private boolean isCreated = false;
 
     public HomeFragment() {
 
+    }
+
+    public static HomeFragment getInstance() {
+        if (homeInstance == null) {
+            homeInstance = new HomeFragment();
+        }
+        return homeInstance;
     }
 
     @Override
@@ -83,13 +93,15 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         mContext = getContext();
         recyclerView = view.findViewById(R.id.recycler_view_content);
         mProgressBar = view.findViewById(R.id.home_progress_bar);
         starImage = view.findViewById(R.id.empty_star);
         emptyArticles = view.findViewById(R.id.emptyText);
         mProgressBar.setVisibility(View.VISIBLE);
-        list = new ArrayList<>();
+        if (list == null)
+            list = new ArrayList<>();
         adapter = new CardsHomeFeedAdapter(mContext, list);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(mContext, 2);
         recyclerView.setLayoutManager(mLayoutManager);
@@ -105,44 +117,37 @@ public class HomeFragment extends Fragment {
 
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (list != null)
+            Log.e(TAG, list.toString());
+
     }
 
     private void getUserId() {
-            db.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
-                        dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
-                        readSubscriptions();
-                        updateInstallationToken();
-                    } else {
-                        db.collection("clients").whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
-                                    readSubscriptions();
-                                    updateInstallationToken();
-                                }
+        db.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
+                    dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
+                    readSubscriptions();
+                    updateInstallationToken();
+                } else {
+                    db.collection("clients").whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
+                                readSubscriptions();
+                                updateInstallationToken();
                             }
-                        });
-                    }
+                        }
+                    });
                 }
-            });
+            }
+        });
     }
 
 
@@ -155,9 +160,16 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getFragmentManager().saveFragmentInstanceState(HomeFragment.this);
     }
 
     @Override
@@ -213,95 +225,98 @@ public class HomeFragment extends Fragment {
         //Devuelve los ultimos meses, TODO Cambiar esto para probar en serio
         final Calendar myCalendar = Calendar.getInstance();
         myCalendar.set(Calendar.MONTH, myCalendar.get(Calendar.MONTH) - 7);
+        Log.e(TAG, list.toString());
         Log.e(TAG, "Begin read Subscriptions- Uid:" + dbUserId);
-        db.collection("subscriptions")
-                .whereEqualTo("userId", dbUserId)
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    if (!task.getResult().isEmpty()) {
-                        subscriptionList = new ArrayList<Subscription>();
-                        subscriptionList.addAll(task.getResult().toObjects(Subscription.class));
-                        for (Subscription sub : subscriptionList) {
-                            db.collection("articles")
-                                    .whereEqualTo("storeName", sub.getStoreName())
+        if (list.size() == 0) {
+            db.collection("subscriptions")
+                    .whereEqualTo("userId", dbUserId)
+                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        if (!task.getResult().isEmpty()) {
+                            subscriptionList = new ArrayList<Subscription>();
+                            subscriptionList.addAll(task.getResult().toObjects(Subscription.class));
+                            for (Subscription sub : subscriptionList) {
+                                db.collection("articles")
+                                        .whereEqualTo("storeName", sub.getStoreName())
 
-                                    .orderBy("creationDate", Query.Direction.DESCENDING)
-                                    .whereGreaterThan("creationDate", myCalendar.getTime())
+                                        .orderBy("creationDate", Query.Direction.DESCENDING)
+                                        .whereGreaterThan("creationDate", myCalendar.getTime())
 
-                                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                                            Article art = documentSnapshot.toObject(Article.class);
-                                            art.setArticleId(documentSnapshot.getId());
-                                            //list.add(art); // Si se usa esta lista están ordenados por fecha
-                                        }
-
-                                        if (createArticleList(task.getResult())) { //Con esta por la probabilidad de las promos, pero no por fecha
-                                            for (Object art : list) {
-                                                Log.e(TAG, ((Article) art).getArticleId() + " - " + ((Article) art).getCreationDate() + " - Promo: " + ((Article) art).getPromotionLevel());
+                                        .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                                                Article art = documentSnapshot.toObject(Article.class);
+                                                art.setArticleId(documentSnapshot.getId());
+                                                //list.add(art); // Si se usa esta lista están ordenados por fecha
                                             }
-                                            emptyArticles.setVisibility(View.GONE);
-                                            starImage.setVisibility(View.GONE);
-                                            adapter.notifyDataSetChanged();
+
+                                            if (createArticleList(task.getResult())) { //Con esta por la probabilidad de las promos, pero no por fecha
+                                                for (Object art : list) {
+                                                    Log.e(TAG, ((Article) art).getArticleId() + " - " + ((Article) art).getCreationDate() + " - Promo: " + ((Article) art).getPromotionLevel());
+                                                }
+                                                emptyArticles.setVisibility(View.GONE);
+                                                starImage.setVisibility(View.GONE);
+                                                adapter.notifyDataSetChanged();
+                                            } else {
+                                                emptyArticles.setVisibility(View.VISIBLE);
+                                                starImage.setVisibility(View.VISIBLE);
+                                            }
+                                            mProgressBar.setVisibility(View.GONE);
                                         } else {
-                                            emptyArticles.setVisibility(View.VISIBLE);
-                                            starImage.setVisibility(View.VISIBLE);
+                                            Log.e("Firestore task", "onComplete: " + task.getException());
                                         }
-                                        mProgressBar.setVisibility(View.GONE);
-                                    } else {
-                                        Log.e("Firestore task", "onComplete: " + task.getException());
                                     }
-                                }
-                            });
-                        }
-                    } else {
-                        emptyArticles.setVisibility(View.VISIBLE);
-                        starImage.setVisibility(View.VISIBLE);
-                        mProgressBar.setVisibility(View.GONE);
-                    }
-                }
-            }
-        });
-
-        db.collection("premiumUsersSubscriptions")
-                .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    if (!task.getResult().isEmpty()) {
-                        subscriptionList = new ArrayList<Subscription>();
-                        subscriptionList.addAll(task.getResult().toObjects(Subscription.class));
-
-                        for (Subscription sub : subscriptionList) {
-                            db.collection("premiumUsers")
-                                    .whereEqualTo("clientId", sub.getStoreName())
-                                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                                            Log.e("ROPERO", documentSnapshot.getId());
-                                            PremiumUser premiumUser = documentSnapshot.toObject(PremiumUser.class);
-                                            list.add(premiumUser);
-                                        }
-                                        adapter.notifyDataSetChanged();
-                                        Log.e("On complete", "Tamaño adapter " + adapter.getItemCount());
-
-                                    } else {
-                                        Log.d("Firestore task", "onComplete: " + task.getException());
-                                    }
-                                }
-                            });
+                                });
+                            }
+                        } else {
+                            emptyArticles.setVisibility(View.VISIBLE);
+                            starImage.setVisibility(View.VISIBLE);
+                            mProgressBar.setVisibility(View.GONE);
                         }
                     }
                 }
-            }
-        });
+            });
+
+            db.collection("premiumUsersSubscriptions")
+                    .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        if (!task.getResult().isEmpty()) {
+                            subscriptionList = new ArrayList<Subscription>();
+                            subscriptionList.addAll(task.getResult().toObjects(Subscription.class));
+
+                            for (Subscription sub : subscriptionList) {
+                                db.collection("premiumUsers")
+                                        .whereEqualTo("clientId", sub.getStoreName())
+                                        .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                                                Log.e("ROPERO", documentSnapshot.getId());
+                                                PremiumUser premiumUser = documentSnapshot.toObject(PremiumUser.class);
+                                                list.add(premiumUser);
+                                            }
+                                            adapter.notifyDataSetChanged();
+                                            Log.e("On complete", "Tamaño adapter " + adapter.getItemCount());
+
+                                        } else {
+                                            Log.d("Firestore task", "onComplete: " + task.getException());
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }
+            });
+        }
     }
 
 

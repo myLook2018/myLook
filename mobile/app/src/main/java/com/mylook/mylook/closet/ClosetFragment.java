@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
+import com.mylook.mylook.entities.Closet;
 import com.mylook.mylook.entities.Favorite;
 import com.mylook.mylook.recommend.RecommendActivityAddDesc;
 
@@ -26,15 +27,24 @@ import java.util.ArrayList;
 
 public class ClosetFragment extends Fragment {
 
-    private MenuItem filterMenuItem;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private ArrayList<Favorite> favorites;
     private FavouritesTab newFabTab;
-    private BottomNavigationView bottomNavigationView;
+    private CategoryTab categoryTab;
+    public final static String TAG = "ClosetFragment";
+    private static ClosetFragment homeInstance = null;
+    private ClosetTabAdapter adapter;
+    private boolean loaded = false;
+
+    public static ClosetFragment getInstance() {
+        if (homeInstance == null) {
+            homeInstance = new ClosetFragment();
+        }
+        return homeInstance;
+    }
 
 
-    public ClosetFragment(){
+    public ClosetFragment() {
 
     }
 
@@ -84,7 +94,7 @@ public class ClosetFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private void createHelpDialog(){
+    private void createHelpDialog() {
         final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(getContext(), R.style.AlertDialogTheme);
         final android.app.AlertDialog alert = dialog.setTitle("Ayuda")
                 .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
@@ -106,13 +116,14 @@ public class ClosetFragment extends Fragment {
     }
 
 
-
     private void setupViewPager(ViewPager viewPager) {
-        ClosetTabAdapter adapter = new ClosetTabAdapter(getChildFragmentManager(), 2);
-        newFabTab = new FavouritesTab();
+        adapter = new ClosetTabAdapter(getChildFragmentManager(), 2);
+        newFabTab = FavouritesTab.getInstance();
         adapter.addFragment(newFabTab, "Tus prendas");
-        adapter.addFragment(new CategoryTab(), "Conjuntos");
+        categoryTab = CategoryTab.getInstance();
+        adapter.addFragment(categoryTab, "Conjuntos");
         viewPager.setAdapter(adapter);
+        loaded = true;
     }
 
 

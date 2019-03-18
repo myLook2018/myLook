@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,9 +39,6 @@ public class ProfileFragment extends Fragment {
 
     }
 
-    private LinearLayout layoutAccount;
-    private LinearLayout layoutHelp;
-    private LinearLayout layoutExit;
     private TextView txtName;
     private TextView txtEmail;
     private FirebaseFirestore dB = FirebaseFirestore.getInstance();
@@ -59,13 +57,59 @@ public class ProfileFragment extends Fragment {
     private Context mContext;
     private String clientId;
     private boolean isPremiumUser;
-    private LinearLayout layoutDifussionGroup;
     private String userName;
+    private boolean loaded = false;
+    public final static String TAG = "ProfileFragment";
+
+    private static ProfileFragment homeInstance = null;
+
+    public static ProfileFragment getInstance() {
+        if (homeInstance == null) {
+            homeInstance = new ProfileFragment();
+        }
+        return homeInstance;
+    }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Log.e(TAG, "On view Created - is Loaded? "+loaded);
         super.onViewCreated(view, savedInstanceState);
-        getUserId(view);
+        if (!loaded) {
+            initElements(view);
+            setOnClickListener();
+            getUserId();
+        } else {
+            initElements(view);
+            setOnClickListener();
+            txtName.setText(userName);
+            txtName.setVisibility(View.VISIBLE);
+            txtEmail.setText(user.getEmail().equals("") ? "" : user.getEmail());
+            txtEmail.setVisibility(View.VISIBLE);
+            if (isPremiumUser) {
+                imageGroup.setVisibility(View.VISIBLE);
+                txtGroup.setVisibility(View.VISIBLE);
+            } else {
+                imageDestacado.setVisibility(View.VISIBLE);
+                txtDestacado.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    private void initElements(View view) {
+        mContext = getContext();
+        txtEmail = view.findViewById(R.id.txtEmail);
+        txtName = view.findViewById(R.id.txtName);
+        imageGroup = view.findViewById(R.id.image_group);
+        imageDestacado = view.findViewById(R.id.image_destacado);
+        txtGroup = view.findViewById(R.id.txtDifussionGroup);
+        txtDestacado = view.findViewById(R.id.txtSettings);
+        imageAccount = view.findViewById(R.id.image_account);
+        txtAccount = view.findViewById(R.id.txtAccount);
+        imageHelp = view.findViewById(R.id.image_help);
+        txtHelp = view.findViewById(R.id.txtHelp);
+        imageExit = view.findViewById(R.id.image_exit);
+        txtExit = view.findViewById(R.id.txtExit);
     }
 
 
@@ -82,20 +126,20 @@ public class ProfileFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_profile, null);
     }
 
-    private void getUserId(final View view) {
+    private void getUserId() {
         dB.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
                     dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
-                    setUserProfile(view);
+                    setUserProfile();
                 } else {
                     dB.collection("clients").whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
                                 dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
-                                setUserProfile(view);
+                                setUserProfile();
                             }
                         }
                     });
@@ -206,30 +250,16 @@ public class ProfileFragment extends Fragment {
 
     }
 
-    private void setUserProfile(View view) {
-        mContext = getContext();
-        txtEmail = view.findViewById(R.id.txtEmail);
-        txtName = view.findViewById(R.id.txtName);
-        imageGroup = view.findViewById(R.id.image_group);
-        imageDestacado = view.findViewById(R.id.image_destacado);
-        txtGroup = view.findViewById(R.id.txtDifussionGroup);
-        txtDestacado = view.findViewById(R.id.txtSettings);
-        imageAccount = view.findViewById(R.id.image_account);
-        txtAccount = view.findViewById(R.id.txtAccount);
-        imageHelp = view.findViewById(R.id.image_help);
-        txtHelp = view.findViewById(R.id.txtHelp);
-        imageExit = view.findViewById(R.id.image_exit);
-        txtExit = view.findViewById(R.id.txtExit);
-        setOnClickListener();
-
+    private void setUserProfile() {
         dB.collection("clients").whereEqualTo("userId", dbUserId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 userName = task.getResult().getDocuments().get(0).get("name").toString() + " " + task.getResult().getDocuments().get(0).get("surname").toString();
                 isPremiumUser = (boolean) task.getResult().getDocuments().get(0).get("isPremium");
+                loaded = true;
                 txtName.setText(userName);
                 clientId = task.getResult().getDocuments().get(0).getId();
-
+                txtEmail.setText(user.getEmail().equals("") ? "" : user.getEmail());
 
                 if (isPremiumUser) {
                     imageGroup.setVisibility(View.VISIBLE);
@@ -240,7 +270,6 @@ public class ProfileFragment extends Fragment {
                     txtDestacado.setVisibility(View.VISIBLE);
                     //layoutPremiumRequest.setVisibility(View.VISIBLE);
                 }
-                txtEmail.setText(user.getEmail().equals("") ? "" : user.getEmail());
             }
         });
 

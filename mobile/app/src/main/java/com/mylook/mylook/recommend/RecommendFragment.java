@@ -11,10 +11,12 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,6 +33,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.RequestRecommendation;
+import com.mylook.mylook.home.HomeFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,10 +46,14 @@ public class RecommendFragment extends Fragment {
     private FirebaseFirestore dB;
     private List<RequestRecommendation> requestRecommendationsList;
     private FirebaseUser user;
+    public final static String TAG = "RecommendFragment";
+    private static RecommendFragment homeInstance = null;
+    RequestRecyclerViewAdapter adapter;
 
     // private ProgressBar progres
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Log.e(TAG, "OnViewCreated- savedInstance" + savedInstanceState);
         super.onViewCreated(view, savedInstanceState);
         mContext = view.getContext();
         this.dB = FirebaseFirestore.getInstance();
@@ -61,19 +68,35 @@ public class RecommendFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        if(requestRecommendationsList==null)
+            requestRecommendationsList = new ArrayList<RequestRecommendation>();
+        adapter = new RequestRecyclerViewAdapter(mContext, requestRecommendationsList);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    public static RecommendFragment getInstance() {
+        if (homeInstance == null) {
+            homeInstance = new RecommendFragment();
+        }
+        return homeInstance;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        getActivity().setTitle("Recomendaciones");
+        Log.e(TAG, "OnCreate - savedInstance" + savedInstanceState);
         super.onCreate(savedInstanceState);
     }
-
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.e(TAG, "OnCreateView- savedInstance" + savedInstanceState);
 
         return inflater.inflate(R.layout.fragment_recommend, null);
     }
@@ -86,8 +109,10 @@ public class RecommendFragment extends Fragment {
 
     @Override
     public void onResume() {
+        Log.e(TAG, "On Resume");
         super.onResume();
-        initRecyclerView();
+        if (requestRecommendationsList == null || requestRecommendationsList.size() == 0)
+            initRecyclerView();
     }
 
     public void getRequestRecommendations() {
@@ -99,15 +124,13 @@ public class RecommendFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            requestRecommendationsList = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 RequestRecommendation requestRecommendation = document.toObject(RequestRecommendation.class);
                                 requestRecommendation.setDocumentId(document.getId());
                                 requestRecommendationsList.add(requestRecommendation);
                             }
-                            RequestRecyclerViewAdapter adapter = new RequestRecyclerViewAdapter(mContext, requestRecommendationsList);
-                            recyclerView.setAdapter(adapter);
-                            recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+                            adapter.notifyDataSetChanged();
+
                         }
                         //progressBar.setVisibility(View.GONE);
                     }

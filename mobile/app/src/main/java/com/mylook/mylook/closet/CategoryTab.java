@@ -38,6 +38,7 @@ import com.mylook.mylook.entities.Closet;
 import com.mylook.mylook.entities.Favorite;
 import com.mylook.mylook.entities.Outfit;
 import com.mylook.mylook.info.ArticleInfoActivity;
+import com.mylook.mylook.utils.OutfitAdapter;
 
 import java.util.ArrayList;
 
@@ -53,9 +54,18 @@ public class CategoryTab extends Fragment {
     private String dbUserId;
     private FloatingActionButton addOutfit;
     private ProgressBar mProgressBar;
+    private static CategoryTab instance = null;
+    private boolean loaded = false;
+    private OutfitAdapter adapter;
 
     public CategoryTab() {
         // Required empty public constructor
+    }
+
+    public static CategoryTab getInstance() {
+        if (instance == null)
+            instance = new CategoryTab();
+        return instance;
     }
 
     @Override
@@ -105,9 +115,14 @@ public class CategoryTab extends Fragment {
         mProgressBar = view.findViewById(R.id.mProgressBar);
         mProgressBar.setVisibility(View.VISIBLE);
         outfitGrid = view.findViewById(R.id.grid_colecciones);
-        setGridview();
-        getUserId();
         addOutfit = view.findViewById(R.id.addOutfit);
+        if (!loaded) {
+            outfits = new ArrayList<>();
+            adapter = new com.mylook.mylook.utils.OutfitAdapter(act, outfits);
+            outfitGrid.setAdapter(adapter);
+            setGridview();
+            getUserId();
+        }
 
 
         addOutfit.setOnClickListener(new View.OnClickListener() {
@@ -137,19 +152,19 @@ public class CategoryTab extends Fragment {
     private void loadOutfit(AdapterView<?> parent, int position) {
         mProgressBar.setVisibility(View.VISIBLE);
         final String outfitId = ((Outfit) parent.getAdapter().getItem(position)).getOutfitId();
-        dB.collection("closets").whereEqualTo("userID",dbUserId).get()
+        dB.collection("closets").whereEqualTo("userID", dbUserId).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             final String id = task.getResult().getDocuments().get(0).getId();
                             dB.collection("closets").document(id).collection("outfits")
                                     .document(outfitId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                     Outfit outfit = task.getResult().toObject(Outfit.class);
-                                    Intent intent = new Intent(getContext(),ViewOutfitActivity.class);
-                                    intent.putExtra("items",outfit.getItems());
+                                    Intent intent = new Intent(getContext(), ViewOutfitActivity.class);
+                                    intent.putExtra("items", outfit.getItems());
                                     intent.putExtra("name", outfit.getName());
                                     intent.putExtra("category", outfit.getCategory());
                                     intent.putExtra("id", task.getResult().getId());
@@ -191,13 +206,11 @@ public class CategoryTab extends Fragment {
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                 if (task.isSuccessful()) {
                                                     ArrayList<String> arrayList = new ArrayList<>();
-                                                    outfits = new ArrayList<>();
                                                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                                         Outfit outfit = documentSnapshot.toObject(Outfit.class);
                                                         outfit.setOutfitId(documentSnapshot.getId());
                                                         outfits.add(outfit);
                                                     }
-                                                    outfitGrid.setAdapter(new com.mylook.mylook.utils.OutfitAdapter(act, outfits));
                                                     mProgressBar.setVisibility(View.INVISIBLE);
                                                     return;
                                                 } else
@@ -219,7 +232,6 @@ public class CategoryTab extends Fragment {
         final EditText input = new EditText(getContext());
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         input.setHint((CharSequence) "Nombre");
-
 
 
         LinearLayout linearLayout = new LinearLayout(getContext());

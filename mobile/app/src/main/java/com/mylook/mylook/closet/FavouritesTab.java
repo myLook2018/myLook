@@ -43,9 +43,18 @@ public class FavouritesTab extends Fragment {
     private Activity act;
     private ProgressBar mProgressBar;
     private String dbUserId;
+    private static FavouritesTab instance = null;
+    private boolean loaded = false;
 
     public FavouritesTab() {
         // Required empty public constructor
+    }
+
+    public static FavouritesTab getInstance() {
+        if (instance == null) {
+            instance = new FavouritesTab();
+        }
+        return instance;
     }
 
     private void getUserId() {
@@ -73,19 +82,18 @@ public class FavouritesTab extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getUserId();
-        favorites = new ArrayList<>();
+
 
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getCloset();
-        setClickListener();
+        //getCloset();
+        //setClickListener();
     }
 
-    private void setClickListener(){
+    private void setClickListener() {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
@@ -139,13 +147,11 @@ public class FavouritesTab extends Fragment {
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                 if (task.isSuccessful()) {
                                                     ArrayList<String> arrayList = new ArrayList<>();
-                                                    favorites = new ArrayList<>();
                                                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                                         Favorite fav = documentSnapshot.toObject(Favorite.class);
                                                         favorites.add(fav);
                                                         arrayList.add(fav.getDownloadUri());
                                                     }
-                                                    gridview.setAdapter(new com.mylook.mylook.utils.ImageAdapter(act, favorites));
                                                     mProgressBar.setVisibility(View.INVISIBLE);
                                                     return;
                                                 } else
@@ -173,20 +179,15 @@ public class FavouritesTab extends Fragment {
         gridview = view.findViewById(R.id.grid_favoritos);
         mProgressBar = view.findViewById(R.id.mProgressBar);
         mProgressBar.setVisibility(View.VISIBLE);
-        setGridview();
-        getUserId();
+        if (!loaded) {
+            setGridview();
+            getUserId();
+            favorites = new ArrayList<>();
+            gridview.setAdapter(new com.mylook.mylook.utils.ImageAdapter(act, favorites));
+
+        }
         super.onViewCreated(view, savedInstanceState);
     }
-
-
-    public ArrayList<Favorite> getFavorites() {
-        return favorites;
-    }
-
-    public void setFavorites(ArrayList<Favorite> favorites) {
-        this.favorites = favorites;
-    }
-
 
 
 }
