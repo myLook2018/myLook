@@ -10,7 +10,6 @@ import { ArticleService } from '../../services/article.service';
 import { DeleteConfirmationDialogComponent } from '../dialogs/deleteConfirmationDialog';
 import { UserService } from '../../../auth/services/user.service';
 import { StoreModel } from '../../../auth/models/store.model';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
 import { PromoteDialogComponent } from '../dialogs/promoteDialog';
 import { FrontDialogComponent } from '../dialogs/frontDialog';
@@ -29,7 +28,6 @@ export class InventoryComponent implements OnInit, OnDestroy {
   FirebaseUser = new StoreModel();
   userStore = new StoreModel();
   articles: Article[];
-  _subscription2: Subscription;
   selectionMode = false;
   selectedIndexes = [];
 
@@ -43,7 +41,6 @@ export class InventoryComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private location: Location,
-    private spinner: NgxSpinnerService,
   ) {
     this.createForm();
     this.options = fb.group({
@@ -72,16 +69,13 @@ export class InventoryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.spinner.show();
+    console.log("-+-+-+-+-+-Inicializando Inventario-+-+-+-+-+-");
     this.route.data.subscribe(routeData => {
       const data = routeData['data'];
       if (data) {
-        this.FirebaseUser = data;
+        this.userStore = data;
       }
     });
-    this._subscription2 = this.userService.getUserInfo(this.FirebaseUser.firebaseUserId).subscribe(userA => {
-      this.userStore = userA[0];
-      if (this.userStore.profilePh === '') { this.userStore.profilePh = this.FirebaseUser.profilePh; }
       /*this._subscription = this.articleService.getArticles(this.userStore.storeName).subscribe(articlesFirebase => {
         this.articles = articlesFirebase;
         this.dataSource = new MatTableDataSource(this.articles);
@@ -91,18 +85,11 @@ export class InventoryComponent implements OnInit, OnDestroy {
         console.log(articles);
         this.articles = articles;
         this.dataSource = new MatTableDataSource(this.articles);
-      }).then(() => {
-        setTimeout(() => {
-          this.spinner.hide();
-        }, 2000);
       });
     }
-    );
-  }
 
   ngOnDestroy(): void {
     console.log('destruyendo subscripciones');
-    this._subscription2.unsubscribe();
   }
 
   createForm() {

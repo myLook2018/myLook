@@ -1,0 +1,90 @@
+.content {
+	max-width: 1366px;
+	position: relative;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.mat-drawer-content{
+	min-height: calc(100vh - 48px);
+	max-height: calc(100vh - 48px);
+	overflow: hidden;
+}
+
+#logo {
+	width: 92px;
+	height: 36px;
+	padding-left: 10px;
+}
+
+.navbar {
+	max-width: 1920px;
+    height: 48px;
+	z-index: 10;
+	background: white;
+	padding: 0;
+}
+
+.right-icon {
+	padding: 0 14px;
+}
+
+.spacer {
+	flex: 1 1 auto;
+}
+
+.actionIcon {
+	color: #9c27b0;
+	z-index: 9;
+}
+
+.stickyNavbar {
+	background-color: #e1bee7;
+	height: 56px;
+}
+
+.profilePic {
+	border-radius: 50%;
+	height: 32px;
+	outline: 0;
+	vertical-align: top;
+	width: 32px;
+	margin: 8px 0 8px 8px;
+	margin-right: 12px;
+
+}
+
+.mat-toolbar-multiple-rows {
+	min-height: 0;
+}
+
+.mat-drawer.mat-drawer-side {
+    -webkit-animation: fadein 1s; /* Safari, Chrome and Opera > 12.1 */
+       -moz-animation: fadein 1s; /* Firefox < 16 */
+        -ms-animation: fadein 1s; /* Internet Explorer */
+         -o-animation: fadein 1s; /* Opera < 12.1 */
+            animation: fadein 1s;
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Firefox < 16 */
+@-moz-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Internet Explorer */
+@-ms-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}

@@ -8,7 +8,6 @@ import { RecomendationRequest } from '../model/recomendationRequest.model';
 import { Article } from '../../articles/models/article';
 import { ArticleService } from '../../articles/services/article.service';
 import { MatTableDataSource, MatSnackBar } from '@angular/material';
-import { NgxSpinnerService } from 'ngx-spinner';
 import {
   FormBuilder,
   FormGroup,
@@ -37,8 +36,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
   sexes = [];
   recomendationsRequests: RecomendationRequest[];
   recomendationsAnswered: RecomendationRequest[] = [];
-  recomendationsToAnswer: RecomendationRequest[] = [];
-  userSubscription: Subscription;
+  recomendationsToAnswer: RecomendationRequest[] = []
   articleSubscription: Subscription;
   recomendationSubscription: Subscription;
   selectedRequest: RecomendationRequest = new RecomendationRequest();
@@ -60,7 +58,6 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
     public recomendationsService: RecomendationService,
     private router: Router,
     private route: ActivatedRoute,
-    private spinner: NgxSpinnerService,
     private fb: FormBuilder
   ) {
     this.createForm();
@@ -75,25 +72,13 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
   displayedColumnsArticles: string[] = ['PrendasCatalogo'];
 
   ngOnInit() {
-    this.spinner.show();
+    console.log("-+-+-+-+-+-Inicializando Recomendaciones-+-+-+-+-+-");
     this.route.data.subscribe(routeData => {
-      console.log(`trayendo recomendaciones`);
       const data = routeData['data'];
       if (data) {
-        this.firebaseUser = data;
+        this.userStore = data;
       }
     });
-    console.log(1);
-    this.userSubscription = this.userService
-      .getUserInfo(this.firebaseUser.firebaseUserId)
-      .subscribe(userA => {
-        console.log(2);
-        this.userStore = userA[0];
-        if (this.userStore.profilePh === undefined) {
-          console.log(3);
-          this.userStore.profilePh = this.firebaseUser.profilePh;
-        }
-        console.log(4);
         this.articleService.getArticlesCopado(this.userStore.storeName).then((articles) => {
           this.dataSourceArticles = [];
           console.log(articles);
@@ -111,31 +96,23 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
           this.recomendationSubscription = this.recomendationsService.getRecomendations()
             .subscribe(recomendations => {
               console.log(recomendations);
-              console.log(6);
+              console.log(1);
               this.recomendationsRequests = recomendations;
               this.determineRequestToAnswer();
               this.dataSourceRequests = new MatTableDataSource(
                 this.recomendationsToAnswer
               );
-              console.log(7);
+              console.log(2);
               this.dataSourceAnswered = new MatTableDataSource(
                 this.recomendationsAnswered
               );
-              console.log(8);
+              console.log(3);
             });
-          setTimeout(() => {
-            console.log(9);
-            /** spinner ends after  seconds */
-            this.spinner.hide();
-            console.log(`este es el row index ` + this.selectedArticleRowIndex);
-          }, 2000);
         });
-      });
   }
 
   ngOnDestroy() {
     console.log('destruyendo subscripciones');
-    this.userSubscription.unsubscribe();
     this.recomendationSubscription.unsubscribe();
   }
 

@@ -1,10 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
 import { StoreModel } from 'src/app/auth/models/store.model';
 import { UserService } from 'src/app/auth/services/user.service';
 import { AuthService } from 'src/app/auth/services/auth.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { AnyliticService } from '../../services/anylitics.service';
 import { Interaction } from '../../model/interaction';
@@ -37,7 +36,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   options: FormGroup;
   FirebaseUser = new StoreModel();
   userStore = new StoreModel();
-  _subscription: Subscription;
   interactions: Interaction[];
   visits: Visit[];
   subscriptions: Subscription[];
@@ -55,8 +53,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     public userService: UserService,
     public authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute,
-    private spinner: NgxSpinnerService, ) {
+    private route: ActivatedRoute) {
     this.options = fb.group({
       bottom: 0,
       fixed: false,
@@ -66,16 +63,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.spinner.show();
+    console.log("-+-+-+-+-+-Inicializando Estadisticas-+-+-+-+-+-");
     this.route.data.subscribe(routeData => {
       const data = routeData['data'];
       if (data) {
-        this.FirebaseUser = data;
+        this.userStore = data;
       }
     });
-    this._subscription = this.userService.getUserInfo(this.FirebaseUser.firebaseUserId).subscribe(userA => {
-      this.userStore = userA[0];
-      if (this.userStore.profilePh === '') { this.userStore.profilePh = this.FirebaseUser.profilePh; }
       this.anyliticService.getInteractions(this.userStore.storeName).then((res) => this.interactions = res).then(() => {
         this.anyliticService.getVisits(this.userStore.storeName).then((res) => this.visits = res).then(() => {
           this.anyliticService.getSubscriptions(this.userStore.storeName).then((res) => this.subscriptions = res).then(() => {
@@ -84,20 +78,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 console.log(this.promotedArticles);
                 this.getAnylitics();
                 setTimeout(() => {
-                  this.spinner.hide();
                   this.readyToRender = true;
-                }, 5000);
+                }, 0);
               });
             });
           });
         });
       });
-    });
   }
 
   ngOnDestroy(): void {
     console.log('destruyendo subscripciones');
-    this._subscription.unsubscribe();
   }
 
   logout() {
@@ -125,6 +116,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.getPromOfFeedBack();
     this.getAmountOfPromotedInteractions();
     this.sumPositiveInteractions = this.positiveInteractions + this.articlesSavedToCloset + this.usersClickedArticle;
+    console.log(2)
   }
 
   getTotalInteractions() {

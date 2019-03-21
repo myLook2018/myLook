@@ -50,16 +50,20 @@ export class UserService {
       // tslint:disable-next-line:no-shadowed-variable
       const user = firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
+          console.log("Se encontro usuario registrado");
           resolve(user);
         } else {
-          reject('No user logged in');
+          console.log("No se encontro usuario registrado");
+          reject(false);
         }
       });
     });
   }
 
   getUserInfo(storeUid) {
+    console.log("en el userInfo con ", storeUid);
     return this.storeA.pipe(map(items => items.filter(item => {
+      console.log("item.firebaseUserId: "+ item.firebaseUserId + "- " + storeUid)
       return item.firebaseUserId === storeUid;
     }
     )));

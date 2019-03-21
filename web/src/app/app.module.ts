@@ -77,6 +77,7 @@ import { NewStoreService } from './store/service/store.service';
 import { PromotionsBarComponent } from './anylitics/components/promotions-bar/promotions-bar.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { OrchestratorComponent } from './orchestrator/orchestrator.component';
 
 @NgModule({
   declarations: [
@@ -104,6 +105,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     FrontDialogComponent,
     PromotionsBarComponent,
     HomePageComponent,
+    OrchestratorComponent,
   ],
   imports: [
     NgxSpinnerModule,
