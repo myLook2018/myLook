@@ -36,8 +36,11 @@ export class LoginComponent implements OnDestroy{
   }
 
   ngOnDestroy(): void {
-    console.log("destruyendo");
-    this._subscription.unsubscribe();
+    if(this._subscription){
+      console.log("destruyendo ***************************************************************", this._subscription);
+      this._subscription.unsubscribe();
+      this._subscription = null;
+    }
    // 
   }
 
@@ -53,7 +56,6 @@ export class LoginComponent implements OnDestroy{
       this._subscription = this.userService.getUserInfo(userUID).subscribe(userA => {
         console.log("que carajo pasa aca ", userA )
         resolve (userA[0].storeName)
-        this._subscription.unsubscribe();
       })
       });
   }
@@ -101,6 +103,7 @@ export class LoginComponent implements OnDestroy{
     this.isLoading = true;
     console.log(this.loginForm.value);
     this.authService.doLogin(this.loginForm).then( res => {
+      console.log(`tamadre`, res);
       this.getUserStore(res.user.uid).then((nombreTienda) => {
         this.isLoading = false;
         this._subscription.unsubscribe();

@@ -9,10 +9,10 @@ import { Router,
   NavigationEnd,
   NavigationError,
   NavigationStart } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { DataService } from '../service/dataService';
+import { AuthGuard } from '../auth/services/auth.guard';
 @Component({
 	selector: 'app-orchestrator',
 	templateUrl: './orchestrator.component.html',
@@ -26,6 +26,7 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
 		public userService: UserService,
 		public authService: AuthService,
 		public dataServide: DataService,
+		public authGuard: AuthGuard,
 		private router: Router,
 		private route: ActivatedRoute,
     private spinner: NgxSpinnerService,
@@ -39,6 +40,7 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
         }
         case event instanceof NavigationEnd:{
 					this.refreshUserInformation();
+					this.authGuard.canActivate();
 					setTimeout(()=> {this.spinner.hide();}, 2000);
 					console.log(this.userStore)
 				}
@@ -65,14 +67,19 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
 	}
 
 	refreshUserInformation() {
-		const dataFromDataService = this.dataServide.getStoreInfo();
-		console.log(dataFromDataService)
-		this.userStore = dataFromDataService;
-			if(dataFromDataService.firebaseUserId) {
-				this.isLogedIn = true;
-				console.log("is loggued in")
-			} else {this.isLogedIn = false;}
-			console.log("Ya validamos -----------------------------------------------------------------------------------------")
+		this.dataServide.getStoreInfo().then((store) => {
+			console.log(store)
+			this.userStore = store;
+				if(store.firebaseUserId) {
+					this.isLogedIn = true;
+					this.authGuard.canActivate();
+					console.log("is loggued in ----------------------------------------------------------------------------------------");
+					console.log("Ya validamos -----------------------------------------------------------------------------------------");
+				} else {
+					this.isLogedIn = false;
+					console.log("Ya validamos -----------------------------------------------------------------------------------------");
+				}
+		});
 	}
 
 	logout() {

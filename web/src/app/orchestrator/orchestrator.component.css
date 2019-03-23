@@ -8,7 +8,8 @@
 .mat-drawer-content{
 	min-height: calc(100vh - 48px);
 	max-height: calc(100vh - 48px);
-	overflow: hidden;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 
 #logo {

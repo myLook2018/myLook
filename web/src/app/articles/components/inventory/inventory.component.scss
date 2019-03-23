@@ -26,6 +26,14 @@ table{
     width: 100%;
 }
 
+.mat-cell[_ngcontent-c10], .mat-footer-cell[_ngcontent-c10] {
+  min-width: 111px;
+  padding-left: 0vw; 
+}
+
+mat-cell:first-of-type, mat-footer-cell:first-of-type, mat-header-cell:first-of-type {
+  padding-left: 0px;
+}
 #uploadArticle{  
   background-color: #9C27B0 ;
   color: #ffffff
@@ -42,6 +50,11 @@ table{
 
 .actionIcon{
   color: #9C27B0;
+  z-index: 9;
+}
+
+.actionIcon-notPromoted {
+  color: rgb(211, 211, 211);
   z-index: 9;
 }
 

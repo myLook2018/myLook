@@ -113,7 +113,9 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     console.log('destruyendo subscripciones');
-    this.recomendationSubscription.unsubscribe();
+    if(this.recomendationSubscription){
+      this.recomendationSubscription.unsubscribe();
+    }
   }
 
   createForm() {

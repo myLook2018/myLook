@@ -20,7 +20,7 @@ import { FrontDialogComponent } from '../dialogs/frontDialog';
   styleUrls: ['./inventory.component.scss']
 })
 export class InventoryComponent implements OnInit, OnDestroy {
-  @ViewChild(MatSort) sort: MatSort;
+  sortOrder = 'asc';
   over: any;
   options: FormGroup;
   storeFront: FormGroup;

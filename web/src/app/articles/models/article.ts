@@ -11,4 +11,5 @@ export class Article {
     provider?: string;
     tags?: string[];
     storeName?: string;
+    promotionLevel?: number;
   }

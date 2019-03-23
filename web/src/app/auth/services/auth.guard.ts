@@ -16,27 +16,30 @@ export class AuthGuard implements CanActivate {
 
   canActivate(): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      const user = this.dataService.getStoreInfo();
-      if(user.firebaseUID !== '' && !this.router.url.toString().includes('Tiendas')) {
-        console.log("*********************************** esta logeado y con url -" , this.router.url)
-        this.router.navigate(['Tiendas', user.storeName]);
-        return resolve(false);
-      } else {
-        if( user.firebaseUID !== '' && this.router.url.toString().includes('Tiendas')){
-          console.log("*********************************** esta logeado y con url +" , this.router.url)
-          return resolve(true);
+      this.dataService.getStoreInfo().then((user)=> {
+        console.log('firebaseUID:', user.firebaseUID);
+        console.log('this.router.url', this.router.url.toString())
+        if(user.firebaseUID !== '' && !this.router.url.toString().includes('Tiendas')) {
+          console.log("*********************************** esta logeado y con url -" , this.router.url)
+          this.router.navigate(['Tiendas', user.storeName]);
+          return resolve(false);
         } else {
-          if( user.firebaseUID === '' && this.router.url.toString().includes('Tiendas')) {
+          if( user.firebaseUID !== '' && this.router.url.toString().includes('Tiendas')){
             console.log("*********************************** esta logeado y con url +" , this.router.url)
-            this.router.navigate(['Inicio']);
-            return resolve(false);
-          } else {
-            console.log("*********************************** no esta logueado y no va a tienda")
             return resolve(true);
+          } else {
+            if( user.firebaseUID === '' && this.router.url.toString().includes('Tiendas')) {
+              console.log("*********************************** esta logeado y con url +" , this.router.url)
+              this.router.navigate(['Inicio']);
+              return resolve(false);
+            } else {
+              console.log("*********************************** no esta logueado y no va a tienda")
+              return resolve(true);
+            }
+            
           }
-
         }
-      }
+      });
     });
   }
 }

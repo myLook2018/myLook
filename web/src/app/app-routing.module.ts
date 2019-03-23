@@ -17,18 +17,18 @@ export const rootRouterConfig: Routes = [
  // { path: '', component: HomePageComponent},
 
   { path: '', pathMatch: 'full' ,redirectTo: '/Inicio'},
-  { path: 'Inicio', component: HomePageComponent, canActivate: [AuthGuard] },
-  { path: '', canActivate: [AuthGuard], runGuardsAndResolvers: 'always', 
+  { path: 'Inicio', component: HomePageComponent},
+  { path: '', runGuardsAndResolvers: 'always', 
     children: [
-      { path: 'Tiendas/:storeName', component: StoreComponent, resolve: { data: UserResolver }, canActivate: [AuthGuard]},
-      { path: 'Tiendas/:storeName/Inventario', component: InventoryComponent, resolve: { data: UserResolver }, canActivate: [AuthGuard]},
-      { path: 'Tiendas/:storeName/Estadisticas', component: DashboardComponent, resolve: { data: UserResolver }, canActivate: [AuthGuard]},
-      { path: 'Tiendas/:storeName/Recomendaciones', component: RecomendationsComponent, resolve: { data: UserResolver }, canActivate: [AuthGuard]},
+      { path: 'Tiendas/:storeName', component: StoreComponent, resolve: { data: UserResolver }},
+      { path: 'Tiendas/:storeName/Inventario', component: InventoryComponent, resolve: { data: UserResolver }},
+      { path: 'Tiendas/:storeName/Estadisticas', component: DashboardComponent, resolve: { data: UserResolver }},
+      { path: 'Tiendas/:storeName/Recomendaciones', component: RecomendationsComponent, resolve: { data: UserResolver }},
     ]},
-  { path: 'Ingresar', component: LoginComponent, canActivate: [AuthGuard]},
-  { path: 'Registrarse', component: SignupComponent, canActivate: [AuthGuard]},
+  { path: 'Ingresar', component: LoginComponent},
+  { path: 'Registrarse', component: SignupComponent},
   { path: 'user', component: UserComponent, resolve: { data: UserResolver }},
-  { path: 'Registrar Tienda', component: RegisterComponent, canActivate: [AuthGuard]},
+  { path: 'Registrar Tienda', component: RegisterComponent},
   
   { path: '**', redirectTo:'/Inicio'},
 ];

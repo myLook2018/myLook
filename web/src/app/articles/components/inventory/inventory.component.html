@@ -19,7 +19,7 @@
                 </mat-toolbar-row>
             </mat-toolbar>
             <div>
-                <mat-table class="table" [dataSource]="dataSource" matSort>
+                <mat-table class="table" matSort [dataSource]="dataSource">
 
                     <!--- Note that these columns can be defined in any order.
             The actual rendered columns are set as a property on the row definition" -->
@@ -35,7 +35,7 @@
 
                     <!-- title Column -->
                     <ng-container matColumnDef="title">
-                        <mat-header-cell *matHeaderCellDef> Titulo </mat-header-cell>
+                        <mat-header-cell *matHeaderCellDef > Titulo </mat-header-cell>
                         <mat-cell *matCellDef="let element"> {{element.title}} </mat-cell>
                     </ng-container>
 
@@ -96,8 +96,8 @@
                             <button *ngIf="!selectionMode" mat-icon-button class="actionIcon" (click)="openArticleDialog(element)">
                                 <mat-icon>edit</mat-icon>
                             </button>
-                            <button *ngIf="!selectionMode" mat-icon-button class="actionIcon" (click)="openPromoteDialog(element)">
-                                <mat-icon>trending_up</mat-icon>
+                            <button *ngIf="!selectionMode" mat-icon-button [ngClass]="(element.promotionLevel==1)?'actionIcon-notPromoted':'actionIcon'" (click)="openPromoteDialog(element)">
+                                <mat-icon>whatshot</mat-icon>
                             </button>
                             <mat-checkbox *ngIf="selectionMode" (change)="addIdToSelecteds(i)"></mat-checkbox>
 

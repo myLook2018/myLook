@@ -78,41 +78,48 @@ export class DataService {
 	public refreshLocalUserInformation() {
 		return new Promise<StoreModel>((resolve) => {
 			console.log(`1)Inicializando refresh information`);
-				this.userService.getCurrentUser().then(
-					(user) => {
-						console.log(`2)obtuvimos un usuario`);
-						this.storeInfo = user;
-						console.log("el usuario ", this.storeInfo)
-						this.getUserStoreInfo(user.uid).then((storeInfo) => {
-							console.log(`3)obtuvimos una tienda a partir del usuario`);
-							if (storeInfo) {
-								console.log(`4)la tienda existe`);
-								this.storeInfo = storeInfo;
-								this.isNewUser = false;
-								resolve(this.storeInfo);
-							}
-							console.log(5);
-						});
-					},
-					(error) => {
-						console.log('No se registro usuario loggeado');
-						resolve(this.storeInfo);
-					}
-				);
+			this.userService.getCurrentUser().then(
+				(user) => {
+					console.log(`2)obtuvimos un usuario`);
+					this.storeInfo = user;
+					console.log('el usuario ', this.storeInfo);
+					this.getUserStoreInfo(user.uid).then((storeInfo) => {
+						console.log(`3)obtuvimos una tienda a partir del usuario`);
+						if (storeInfo) {
+							console.log(`4)la tienda existe`);
+							this.storeInfo = storeInfo;
+							this.isNewUser = false;
+							resolve(this.storeInfo);
+						}
+						console.log(5);
+					});
+				},
+				(error) => {
+					console.log('No se registro usuario loggeado');
+					resolve(this.storeInfo);
+				}
+			);
 		});
 	}
 
 	public getStoreInfo() {
-		if(this.storeInfo.storeName === ''){this.refreshLocalUserInformation().then(
-			(storeInfo) => {this.storeInfo = storeInfo;})}
-		console.log(`PASAMOS EL USUARIO LOCAL`, this.storeInfo)
-		return this.storeInfo;
+		return new Promise<StoreModel>((resolve) => {
+			if (this.storeInfo.storeName === '') {
+				this.refreshLocalUserInformation().then((storeInfo) => {
+					this.storeInfo = storeInfo;
+					resolve(this.storeInfo);
+				});
+			} else {
+				console.log(`PASAMOS EL USUARIO LOCAL`, this.storeInfo);
+				resolve(this.storeInfo);
+			}
+		});
 	}
 
-	public cleanCache(){
+	public cleanCache() {
 		this.storeInfo = new StoreModel();
 		this.isNewUser = true;
-		this._subscription.unsubscribe();
+		if(this._subscription){this._subscription.unsubscribe();}
 		return this.storeInfo;
 	}
 }

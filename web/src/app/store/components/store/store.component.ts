@@ -48,13 +48,15 @@ export class StoreComponent implements OnInit, OnDestroy {
 		console.log('estamos pidiendo la data del store desde store');
  //   setTimeout(() => {
       console.log('estamos pidiendo la data del store desde store despues del delay');
-          this.userStore = this.dataService.getStoreInfo();
-          this.articleService.getFrontArticlesCopado(this.userStore.storeName).then((articles) => {
-            console.log(articles);
-            this.articles = articles;
-            console.log('ESTOY LISTO PARA EMITIR VIEJA, YO EL STORE');
-            this.imReadyToDisplay.emit(true);
-          });
+          this.dataService.getStoreInfo().then((store) => {
+						this.userStore = store
+						this.articleService.getFrontArticlesCopado(this.userStore.storeName).then((articles) => {
+							console.log(articles);
+							this.articles = articles;
+							console.log('ESTOY LISTO PARA EMITIR VIEJA, YO EL STORE');
+							this.imReadyToDisplay.emit(true);
+						});
+					});
         };
       //  }, 2500);
       
@@ -112,7 +114,9 @@ export class StoreComponent implements OnInit, OnDestroy {
 			}
 		});
 		editRef.afterClosed().subscribe((result) => {
-			sub.unsubscribe();
+			if(sub){
+				sub.unsubscribe();
+			}
 		});
 	}
 
