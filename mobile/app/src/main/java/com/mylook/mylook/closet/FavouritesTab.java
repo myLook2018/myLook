@@ -29,6 +29,7 @@ import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Closet;
 import com.mylook.mylook.entities.Favorite;
 import com.mylook.mylook.info.ArticleInfoActivity;
+import com.mylook.mylook.utils.ImageAdapter;
 
 import java.util.ArrayList;
 
@@ -45,6 +46,7 @@ public class FavouritesTab extends Fragment {
     private String dbUserId;
     private static FavouritesTab instance = null;
     private boolean loaded = false;
+    private ImageAdapter adapter;
 
     public FavouritesTab() {
         // Required empty public constructor
@@ -151,6 +153,8 @@ public class FavouritesTab extends Fragment {
                                                         Favorite fav = documentSnapshot.toObject(Favorite.class);
                                                         favorites.add(fav);
                                                         arrayList.add(fav.getDownloadUri());
+                                                        adapter.notifyDataSetChanged();
+                                                        loaded = true;
                                                     }
                                                     mProgressBar.setVisibility(View.INVISIBLE);
                                                     return;
@@ -181,11 +185,15 @@ public class FavouritesTab extends Fragment {
         mProgressBar.setVisibility(View.VISIBLE);
         if (!loaded) {
             setGridview();
-            getUserId();
             favorites = new ArrayList<>();
-            gridview.setAdapter(new com.mylook.mylook.utils.ImageAdapter(act, favorites));
+            adapter = new com.mylook.mylook.utils.ImageAdapter(act, favorites);
+            getUserId();
 
+        } else{
+            adapter.notifyDataSetChanged();
         }
+            gridview.setAdapter(adapter);
+            mProgressBar.setVisibility(View.INVISIBLE);
         super.onViewCreated(view, savedInstanceState);
     }
 

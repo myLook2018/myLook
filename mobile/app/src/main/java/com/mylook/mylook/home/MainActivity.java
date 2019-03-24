@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         setSupportActionBar(toolbar);
         activeFragment = HomeFragment.TAG;
         loadFragment(HomeFragment.getInstance());
-        Log.e("On create del main", "On create del main");
     }
 
     @SuppressLint("NewApi")

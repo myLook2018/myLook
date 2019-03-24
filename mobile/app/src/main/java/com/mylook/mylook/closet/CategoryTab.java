@@ -113,18 +113,19 @@ public class CategoryTab extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         mProgressBar = view.findViewById(R.id.mProgressBar);
-        mProgressBar.setVisibility(View.VISIBLE);
+
         outfitGrid = view.findViewById(R.id.grid_colecciones);
         addOutfit = view.findViewById(R.id.addOutfit);
         if (!loaded) {
+            mProgressBar.setVisibility(View.VISIBLE);
             outfits = new ArrayList<>();
             adapter = new com.mylook.mylook.utils.OutfitAdapter(act, outfits);
-            outfitGrid.setAdapter(adapter);
             setGridview();
             getUserId();
         }
 
 
+        outfitGrid.setAdapter(adapter);
         addOutfit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -144,7 +145,6 @@ public class CategoryTab extends Fragment {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 loadOutfit(parent, position);
-
             }
         });
     }
@@ -210,6 +210,8 @@ public class CategoryTab extends Fragment {
                                                         Outfit outfit = documentSnapshot.toObject(Outfit.class);
                                                         outfit.setOutfitId(documentSnapshot.getId());
                                                         outfits.add(outfit);
+                                                        adapter.notifyDataSetChanged();
+                                                        loaded = true;
                                                     }
                                                     mProgressBar.setVisibility(View.INVISIBLE);
                                                     return;

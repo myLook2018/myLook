@@ -75,7 +75,6 @@ public class ClosetFragment extends Fragment {
         tabLayout = view.findViewById(R.id.tablayout);
         viewPager = view.findViewById(R.id.closetViewPager);
         setupViewPager(viewPager);
-        tabLayout.setupWithViewPager(viewPager);
     }
 
 
@@ -117,13 +116,16 @@ public class ClosetFragment extends Fragment {
 
 
     private void setupViewPager(ViewPager viewPager) {
-        adapter = new ClosetTabAdapter(getChildFragmentManager(), 2);
-        newFabTab = FavouritesTab.getInstance();
-        adapter.addFragment(newFabTab, "Tus prendas");
-        categoryTab = CategoryTab.getInstance();
-        adapter.addFragment(categoryTab, "Conjuntos");
+        if (!loaded) {
+            adapter = new ClosetTabAdapter(getChildFragmentManager(), 2);
+            newFabTab = FavouritesTab.getInstance();
+            adapter.addFragment(newFabTab, "Tus prendas");
+            categoryTab = CategoryTab.getInstance();
+            adapter.addFragment(categoryTab, "Conjuntos");
+        }
+        adapter.notifyDataSetChanged();
         viewPager.setAdapter(adapter);
-        loaded = true;
+        tabLayout.setupWithViewPager(viewPager);
     }
 
 

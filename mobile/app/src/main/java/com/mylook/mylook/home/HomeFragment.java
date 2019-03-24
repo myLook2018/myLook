@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -56,7 +57,7 @@ public class HomeFragment extends Fragment {
     private CardsHomeFeedAdapter adapter;
     private List list;
     private ArrayList<Subscription> subscriptionList;
-    private String dbUserId;
+    private String dbUserId = null;
     private List<LocalInteraction> mLocalInteractions;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -99,20 +100,25 @@ public class HomeFragment extends Fragment {
         mProgressBar = view.findViewById(R.id.home_progress_bar);
         starImage = view.findViewById(R.id.empty_star);
         emptyArticles = view.findViewById(R.id.emptyText);
-        mProgressBar.setVisibility(View.VISIBLE);
-        if (list == null)
+
+        if (list == null) {
             list = new ArrayList<>();
+        }
         adapter = new CardsHomeFeedAdapter(mContext, list);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(mContext, 2);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(adapter);
         mContext = getContext();
         setupFirebaseAuth();
         mAuth = FirebaseAuth.getInstance();
+        recyclerView.setAdapter(adapter);
+
 
         if (user != null) {
+            mProgressBar.setVisibility(View.VISIBLE);
             getUserId();
+        } else{
+            mProgressBar.setVisibility(View.GONE);
         }
 
     }
@@ -127,27 +133,28 @@ public class HomeFragment extends Fragment {
     }
 
     private void getUserId() {
-        db.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
-                    dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
-                    readSubscriptions();
-                    updateInstallationToken();
-                } else {
-                    db.collection("clients").whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
-                                readSubscriptions();
-                                updateInstallationToken();
+        if (dbUserId == null)
+            db.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
+                        dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
+                        readSubscriptions();
+                        updateInstallationToken();
+                    } else {
+                        db.collection("clients").whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
+                                    readSubscriptions();
+                                    updateInstallationToken();
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
-            }
-        });
+            });
     }
 
 
@@ -199,26 +206,28 @@ public class HomeFragment extends Fragment {
     }
 
     private void updateInstallationToken() {
-        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(getActivity(), new OnSuccessListener<InstanceIdResult>() {
-            @Override
-            public void onSuccess(InstanceIdResult instanceIdResult) {
-                final String mToken = instanceIdResult.getToken();
-                db.collection("clients").whereEqualTo("userId", dbUserId)
-                        .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        Map<String, Object> update = new HashMap<>();
-                        update.put("installToken", mToken);
-                        if (task.getResult().getDocuments().size() > 0) {
-                            db.collection("clients").document(task.getResult().getDocuments().get(0).getId()).set(update, SetOptions.merge());
-                            mProgressBar.setVisibility(View.GONE);
-                        } else {
+        FragmentActivity act = getActivity();
+        if (act != null)
+            FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(getActivity(), new OnSuccessListener<InstanceIdResult>() {
+                @Override
+                public void onSuccess(InstanceIdResult instanceIdResult) {
+                    final String mToken = instanceIdResult.getToken();
+                    db.collection("clients").whereEqualTo("userId", dbUserId)
+                            .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            Map<String, Object> update = new HashMap<>();
+                            update.put("installToken", mToken);
+                            if (task.getResult().getDocuments().size() > 0) {
+                                db.collection("clients").document(task.getResult().getDocuments().get(0).getId()).set(update, SetOptions.merge());
+                                mProgressBar.setVisibility(View.GONE);
+                            } else {
 
+                            }
                         }
-                    }
-                });
-            }
-        });
+                    });
+                }
+            });
     }
 
     private void readSubscriptions() {

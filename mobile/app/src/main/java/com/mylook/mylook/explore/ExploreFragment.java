@@ -111,10 +111,14 @@ public class ExploreFragment extends Fragment {
         localDAO = dbSQL.getLocalInteractionDAO();
         mLocalInteractions = localDAO.getAllByUser(user.getUid());
 
-        mCardAdapter = new CardsExploreAdapter(mContext, R.layout.article_card);
-        mCardStack.setAdapter(mCardAdapter);
-        if (mDiscoverableArticles == null)
+        if (mDiscoverableArticles == null) {
+            mCardAdapter = new CardsExploreAdapter(mContext, R.layout.article_card);
             getDiscoverableArticles();
+        } else{
+            mProgressBar.setVisibility(View.GONE);
+            mCardStack.setVisibility(View.VISIBLE);
+        }
+        mCardStack.setAdapter(mCardAdapter);
 
 
         interactions = new ArrayList<>();
