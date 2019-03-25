@@ -27,6 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Subscription;
+import com.mylook.mylook.session.Sesion;
 
 @SuppressLint("ValidFragment")
 public class StoreInfoFragment extends Fragment {
@@ -99,6 +100,8 @@ public class StoreInfoFragment extends Fragment {
                             documentId = documentReference.getId();
                             setupButtonSubscribe(true);
                             displayMessage("Ahora estas suscripto a "+storeNameString);
+                            Sesion.getInstance().updateActivitiesStatus(Sesion.HOME_FRAGMENT);
+
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -117,6 +120,7 @@ public class StoreInfoFragment extends Fragment {
                                 documentId = "";
                                 Log.e("BUTTON",documentId);
                                 displayMessage("Ya no estás suscripto");
+                                Sesion.getInstance().updateActivitiesStatus(Sesion.HOME_FRAGMENT);
                             }
                             btnSubscribe.setEnabled(true);
                         }

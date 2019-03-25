@@ -26,6 +26,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Interaction;
+import com.mylook.mylook.session.Sesion;
 import com.mylook.mylook.storeProfile.StoreActivity;
 
 import java.util.ArrayList;
@@ -184,6 +185,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
                                                 dB.collection("closets").document(closetId).collection("favorites").add(favorites);
                                                 sendNewInteraction();
                                                 displayMessage("Se añadió a tu ropero");
+                                                Sesion.getInstance().updateActivitiesStatus(Sesion.HOME_FRAGMENT, Sesion.CLOSET_FRAGMENT);
                                             }else
                                             {
                                                 displayMessage("Ya está en tu ropero");

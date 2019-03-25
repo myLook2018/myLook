@@ -58,7 +58,7 @@ public class ProfileFragment extends Fragment {
     private String clientId;
     private boolean isPremiumUser;
     private String userName;
-    private boolean loaded = false;
+    private static boolean loaded = false;
     public final static String TAG = "ProfileFragment";
 
     private static ProfileFragment homeInstance = null;
@@ -68,6 +68,12 @@ public class ProfileFragment extends Fragment {
             homeInstance = new ProfileFragment();
         }
         return homeInstance;
+    }
+
+    public static void refreshStatus(){
+        if(homeInstance!=null){
+            loaded = false;
+        }
     }
 
 

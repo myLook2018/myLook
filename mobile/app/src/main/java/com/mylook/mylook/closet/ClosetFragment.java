@@ -29,12 +29,12 @@ public class ClosetFragment extends Fragment {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private FavouritesTab newFabTab;
-    private CategoryTab categoryTab;
+    private static FavouritesTab newFabTab;
+    private static CategoryTab categoryTab;
     public final static String TAG = "ClosetFragment";
     private static ClosetFragment homeInstance = null;
     private ClosetTabAdapter adapter;
-    private boolean loaded = false;
+    private static boolean loaded = false;
 
     public static ClosetFragment getInstance() {
         if (homeInstance == null) {
@@ -126,6 +126,14 @@ public class ClosetFragment extends Fragment {
         adapter.notifyDataSetChanged();
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    public static void refreshStatus(){
+        if(homeInstance!=null){
+            loaded = false;
+            categoryTab.refreshStatus();
+            newFabTab.refreshStatus();
+        }
     }
 
 

@@ -52,6 +52,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mylook.mylook.R;
+import com.mylook.mylook.session.Sesion;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
@@ -307,6 +308,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                         enviado = true;
                         mProgressBar.setVisibility(View.GONE);
                         displayMessage("Tu solicitud de recomendacion ha sido enviada");
+                        Sesion.getInstance().updateActivitiesStatus(Sesion.RECOMEND_FRAGMENT);
                         finish();
 
                     }

@@ -45,7 +45,7 @@ public class FavouritesTab extends Fragment {
     private ProgressBar mProgressBar;
     private String dbUserId;
     private static FavouritesTab instance = null;
-    private boolean loaded = false;
+    private static boolean loaded = false;
     private ImageAdapter adapter;
 
     public FavouritesTab() {
@@ -197,5 +197,10 @@ public class FavouritesTab extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
+    public static void refreshStatus(){
+        if(instance!=null){
+            loaded = false;
+        }
+    }
 
 }

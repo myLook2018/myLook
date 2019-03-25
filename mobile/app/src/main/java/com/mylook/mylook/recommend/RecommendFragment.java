@@ -44,7 +44,7 @@ public class RecommendFragment extends Fragment {
     private Context mContext;
     private RecyclerView recyclerView;
     private FirebaseFirestore dB;
-    private List<RequestRecommendation> requestRecommendationsList;
+    private static List<RequestRecommendation> requestRecommendationsList;
     private FirebaseUser user;
     public final static String TAG = "RecommendFragment";
     private static RecommendFragment homeInstance = null;
@@ -85,6 +85,15 @@ public class RecommendFragment extends Fragment {
             homeInstance = new RecommendFragment();
         }
         return homeInstance;
+    }
+
+    /**
+     * Método para cuando haya habido algun cambio y haya que actualizar los objetos
+     */
+    public static void refreshStatus(){
+        if(homeInstance!=null){
+            requestRecommendationsList = new ArrayList<>();
+        }
     }
 
     @Override

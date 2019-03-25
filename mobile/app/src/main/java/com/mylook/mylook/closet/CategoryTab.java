@@ -55,7 +55,7 @@ public class CategoryTab extends Fragment {
     private FloatingActionButton addOutfit;
     private ProgressBar mProgressBar;
     private static CategoryTab instance = null;
-    private boolean loaded = false;
+    private static boolean loaded = false;
     private OutfitAdapter adapter;
 
     public CategoryTab() {
@@ -66,6 +66,15 @@ public class CategoryTab extends Fragment {
         if (instance == null)
             instance = new CategoryTab();
         return instance;
+    }
+
+    /**
+     * Método para cuando haya habido algun cambio y haya que actualizar los objetos
+     */
+    public static void refreshStatus(){
+        if(instance!=null){
+            loaded = false;
+        }
     }
 
     @Override

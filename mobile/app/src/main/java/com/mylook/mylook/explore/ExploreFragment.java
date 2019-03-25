@@ -49,7 +49,7 @@ import java.util.Random;
 public class ExploreFragment extends Fragment {
 
     private Context mContext;
-    private List<Article> mDiscoverableArticles;
+    private static List<Article> mDiscoverableArticles;
     private CardStackView mCardStack;
     private CardsExploreAdapter mCardAdapter;
 
@@ -67,18 +67,27 @@ public class ExploreFragment extends Fragment {
     private int currentIndex = 0;
     private int totalArticles = 0;
     public final static String TAG = "ExploreFragment";
+    private static ExploreFragment homeInstance = null;
 
     public ExploreFragment() {
 
     }
 
-    private static ExploreFragment homeInstance = null;
 
     public static ExploreFragment getInstance() {
         if (homeInstance == null) {
             homeInstance = new ExploreFragment();
         }
         return homeInstance;
+    }
+
+    /**
+     * Método para cuando haya habido algun cambio y haya que actualizar los objetos
+     */
+    public static void refreshStatus(){
+        if(homeInstance!=null){
+            mDiscoverableArticles = null;
+        }
     }
 
 
@@ -111,7 +120,7 @@ public class ExploreFragment extends Fragment {
         localDAO = dbSQL.getLocalInteractionDAO();
         mLocalInteractions = localDAO.getAllByUser(user.getUid());
 
-        if (mDiscoverableArticles == null) {
+        if (mDiscoverableArticles == null || mDiscoverableArticles.size() == 0) {
             mCardAdapter = new CardsExploreAdapter(mContext, R.layout.article_card);
             getDiscoverableArticles();
         } else{
@@ -354,6 +363,7 @@ public class ExploreFragment extends Fragment {
 
         }
         interactions.clear();
+        mDiscoverableArticles.clear();
     }
 
 

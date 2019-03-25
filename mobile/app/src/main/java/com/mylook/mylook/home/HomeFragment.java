@@ -55,14 +55,14 @@ import java.util.Random;
 public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private CardsHomeFeedAdapter adapter;
-    private List list;
+    private static List list;
     private ArrayList<Subscription> subscriptionList;
     private String dbUserId = null;
     private List<LocalInteraction> mLocalInteractions;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private static FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private ProgressBar mProgressBar;
     private ImageView starImage;
     private TextView emptyArticles;
@@ -121,6 +121,15 @@ public class HomeFragment extends Fragment {
             mProgressBar.setVisibility(View.GONE);
         }
 
+    }
+
+    /**
+     * Método para cuando haya habido algun cambio y haya que actualizar los objetos
+     */
+    public static void refreshStatus(){
+        if(homeInstance!=null){
+            list = null;
+        }
     }
 
 
