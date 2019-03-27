@@ -39,7 +39,6 @@ export class LoginComponent implements OnDestroy{
     if(this._subscription){
       console.log("destruyendo ***************************************************************", this._subscription);
       this._subscription.unsubscribe();
-      this._subscription = null;
     }
    // 
   }
@@ -53,6 +52,7 @@ export class LoginComponent implements OnDestroy{
 
   getUserStore(userUID) {
     return new Promise((resolve) => {
+      console.log("la subs ", this._subscription)
       this._subscription = this.userService.getUserInfo(userUID).subscribe(userA => {
         console.log("que carajo pasa aca ", userA )
         resolve (userA[0].storeName)

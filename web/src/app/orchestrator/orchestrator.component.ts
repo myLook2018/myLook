@@ -39,8 +39,8 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
 					break;
         }
         case event instanceof NavigationEnd:{
-					this.refreshUserInformation();
 					this.authGuard.canActivate();
+					this.refreshUserInformation();
 					setTimeout(()=> {this.spinner.hide();}, 2000);
 					console.log(this.userStore)
 				}

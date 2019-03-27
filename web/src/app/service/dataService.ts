@@ -119,7 +119,7 @@ export class DataService {
 	public cleanCache() {
 		this.storeInfo = new StoreModel();
 		this.isNewUser = true;
-		if(this._subscription){this._subscription.unsubscribe();}
+		this._subscription.unsubscribe();
 		return this.storeInfo;
 	}
 }
