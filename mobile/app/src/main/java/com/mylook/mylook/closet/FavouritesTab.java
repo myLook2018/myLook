@@ -29,6 +29,7 @@ import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Closet;
 import com.mylook.mylook.entities.Favorite;
 import com.mylook.mylook.info.ArticleInfoActivity;
+import com.mylook.mylook.session.Sesion;
 import com.mylook.mylook.utils.ImageAdapter;
 
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class FavouritesTab extends Fragment {
     private ArrayList<Favorite> favorites;
     private Activity act;
     private ProgressBar mProgressBar;
-    private String dbUserId;
+    private String dbUserId = Sesion.getInstance().getSessionUserId();
     private static FavouritesTab instance = null;
     private static boolean loaded = false;
     private ImageAdapter adapter;
@@ -59,27 +60,6 @@ public class FavouritesTab extends Fragment {
         return instance;
     }
 
-    private void getUserId() {
-        dB.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
-                    dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
-                    getCloset();
-                } else {
-                    dB.collection("clients").whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
-                                getCloset();
-                            }
-                        }
-                    });
-                }
-            }
-        });
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,8 +71,6 @@ public class FavouritesTab extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //getCloset();
-        //setClickListener();
     }
 
     private void setClickListener() {
@@ -187,8 +165,7 @@ public class FavouritesTab extends Fragment {
             setGridview();
             favorites = new ArrayList<>();
             adapter = new com.mylook.mylook.utils.ImageAdapter(act, favorites);
-            getUserId();
-
+            getCloset();
         } else{
             adapter.notifyDataSetChanged();
         }

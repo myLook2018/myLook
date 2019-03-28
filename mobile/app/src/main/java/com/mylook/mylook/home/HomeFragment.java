@@ -41,6 +41,7 @@ import com.mylook.mylook.entities.PremiumUser;
 import com.mylook.mylook.entities.Subscription;
 import com.mylook.mylook.login.LoginActivity;
 import com.mylook.mylook.room.LocalInteraction;
+import com.mylook.mylook.session.Sesion;
 import com.mylook.mylook.utils.CardsHomeFeedAdapter;
 
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class HomeFragment extends Fragment {
     private CardsHomeFeedAdapter adapter;
     private static List list;
     private ArrayList<Subscription> subscriptionList;
-    private String dbUserId = null;
+    private String dbUserId = Sesion.getInstance().getSessionUserId();
     private List<LocalInteraction> mLocalInteractions;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -112,12 +113,16 @@ public class HomeFragment extends Fragment {
         setupFirebaseAuth();
         mAuth = FirebaseAuth.getInstance();
         recyclerView.setAdapter(adapter);
+        if (isCreated) {
+            mProgressBar.setVisibility(View.GONE);
+        } else {
 
+        }
 
         if (user != null) {
             mProgressBar.setVisibility(View.VISIBLE);
-            getUserId();
-        } else{
+            loadFragment();
+        } else {
             mProgressBar.setVisibility(View.GONE);
         }
 
@@ -126,8 +131,8 @@ public class HomeFragment extends Fragment {
     /**
      * Método para cuando haya habido algun cambio y haya que actualizar los objetos
      */
-    public static void refreshStatus(){
-        if(homeInstance!=null){
+    public static void refreshStatus() {
+        if (homeInstance != null) {
             list = null;
         }
     }
@@ -136,34 +141,11 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (list != null)
-            Log.e(TAG, list.toString());
-
     }
 
-    private void getUserId() {
-        if (dbUserId == null)
-            db.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
-                        dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
-                        readSubscriptions();
-                        updateInstallationToken();
-                    } else {
-                        db.collection("clients").whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
-                                    readSubscriptions();
-                                    updateInstallationToken();
-                                }
-                            }
-                        });
-                    }
-                }
-            });
+    private void loadFragment() {
+        readSubscriptions();
+        updateInstallationToken();
     }
 
 

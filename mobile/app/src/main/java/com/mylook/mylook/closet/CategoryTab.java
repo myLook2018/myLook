@@ -38,6 +38,7 @@ import com.mylook.mylook.entities.Closet;
 import com.mylook.mylook.entities.Favorite;
 import com.mylook.mylook.entities.Outfit;
 import com.mylook.mylook.info.ArticleInfoActivity;
+import com.mylook.mylook.session.Sesion;
 import com.mylook.mylook.utils.OutfitAdapter;
 
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class CategoryTab extends Fragment {
     private Context context;
     private GridView outfitGrid;
     private Activity act;
-    private String dbUserId;
+    private String dbUserId = Sesion.getInstance().getSessionUserId();
     private FloatingActionButton addOutfit;
     private ProgressBar mProgressBar;
     private static CategoryTab instance = null;
@@ -88,28 +89,6 @@ public class CategoryTab extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
-    private void getUserId() {
-        dB.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
-                    dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
-                    getOutfits();
-                } else {
-                    dB.collection("clients").whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
-                                getOutfits();
-                            }
-                        }
-                    });
-                }
-            }
-        });
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -130,7 +109,7 @@ public class CategoryTab extends Fragment {
             outfits = new ArrayList<>();
             adapter = new com.mylook.mylook.utils.OutfitAdapter(act, outfits);
             setGridview();
-            getUserId();
+            getOutfits();
         }
 
 

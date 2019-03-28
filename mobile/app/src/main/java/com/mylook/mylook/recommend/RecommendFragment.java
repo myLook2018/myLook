@@ -34,6 +34,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.RequestRecommendation;
 import com.mylook.mylook.home.HomeFragment;
+import com.mylook.mylook.session.Sesion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,6 @@ public class RecommendFragment extends Fragment {
     private RecyclerView recyclerView;
     private FirebaseFirestore dB;
     private static List<RequestRecommendation> requestRecommendationsList;
-    private FirebaseUser user;
     public final static String TAG = "RecommendFragment";
     private static RecommendFragment homeInstance = null;
     RequestRecyclerViewAdapter adapter;
@@ -57,7 +57,6 @@ public class RecommendFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mContext = view.getContext();
         this.dB = FirebaseFirestore.getInstance();
-        user = FirebaseAuth.getInstance().getCurrentUser();
         recyclerView = view.findViewById(R.id.recyclerViewRecommend);
         fab = view.findViewById(R.id.fab);
 
@@ -127,7 +126,7 @@ public class RecommendFragment extends Fragment {
     public void getRequestRecommendations() {
         //progressBar.setVisibility(View.VISIBLE);
         dB.collection("requestRecommendations")
-                .whereEqualTo("userId", user.getUid()).orderBy("limitDate").get()
+                .whereEqualTo("userId", Sesion.getInstance().getSessionUserId()).orderBy("limitDate").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override

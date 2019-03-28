@@ -55,8 +55,9 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="imageAsset" value="$USER_HOME$/Downloads/closet (1).svg" />
-                                      <entry key="outputName" value="ic_camera" />
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="imageAsset" value="$USER_HOME$/Downloads/logo_soloMy.png" />
+                                      <entry key="outputName" value="logo_solomy" />
                                       <entry key="theme" value="HOLO_DARK" />
                                       <entry key="themeColor" value="ffffff" />
                                     </map>
@@ -180,8 +181,8 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="$PROJECT_DIR$/../../icon_logo.png" />
-                                      <entry key="outputName" value="ic_icon_logo" />
+                                      <entry key="imageAsset" value="$USER_HOME$/Downloads/logo_soloMy.png" />
+                                      <entry key="outputName" value="logo_solomy" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -191,7 +192,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputIconType" value="NOTIFICATION" />
+                            <entry key="outputIconType" value="ACTIONBAR" />
                           </map>
                         </option>
                       </PersistentState>

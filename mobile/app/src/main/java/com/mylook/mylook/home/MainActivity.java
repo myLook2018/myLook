@@ -12,30 +12,48 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.mylook.mylook.R;
 import com.mylook.mylook.closet.ClosetFragment;
 import com.mylook.mylook.entities.Closet;
 import com.mylook.mylook.explore.ExploreFragment;
 import com.mylook.mylook.profile.ProfileFragment;
 import com.mylook.mylook.recommend.RecommendFragment;
+import com.mylook.mylook.session.Sesion;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
     private Toolbar toolbar;
     private String activeFragment;
     Fragment fragment = null;
+    private Sesion currentSesion;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(this);
-        toolbar =findViewById(R.id.main_toolbar);
-        setSupportActionBar(toolbar);
         activeFragment = HomeFragment.TAG;
-        loadFragment(HomeFragment.getInstance());
+        getSession();
+        currentSesion.initializeElements().addOnCompleteListener(new OnCompleteListener() {
+            @Override
+            public void onComplete(@NonNull Task task) {
+                loadFragment(HomeFragment.getInstance());
+                setContentView(R.layout.activity_main);
+                BottomNavigationView navigation = findViewById(R.id.navigation);
+                navigation.setOnNavigationItemSelectedListener(MainActivity.this);
+                toolbar =findViewById(R.id.main_toolbar);
+                setSupportActionBar(toolbar);
+                setTheme(R.style.AppTheme);
+            }
+        });
+
+
     }
+
+    private void getSession(){
+        currentSesion = Sesion.getInstance();
+    }
+
 
     @SuppressLint("NewApi")
     @Override

@@ -32,6 +32,7 @@ import com.mylook.mylook.dialogs.DialogManager;
 import com.mylook.mylook.login.LoginActivity;
 import com.mylook.mylook.premiumUser.PremiumRequestActivity;
 import com.mylook.mylook.premiumUser.PremiumUserProfileActivity;
+import com.mylook.mylook.session.Sesion;
 
 public class ProfileFragment extends Fragment {
 
@@ -53,7 +54,7 @@ public class ProfileFragment extends Fragment {
     private TextView txtHelp;
     private ImageView imageExit;
     private TextView txtExit;
-    private String dbUserId;
+    private String dbUserId = Sesion.getInstance().getSessionUserId();
     private Context mContext;
     private String clientId;
     private boolean isPremiumUser;
@@ -84,7 +85,7 @@ public class ProfileFragment extends Fragment {
         if (!loaded) {
             initElements(view);
             setOnClickListener();
-            getUserId();
+            setUserProfile();
         } else {
             initElements(view);
             setOnClickListener();
@@ -130,28 +131,6 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         return inflater.inflate(R.layout.fragment_profile, null);
-    }
-
-    private void getUserId() {
-        dB.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
-                    dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
-                    setUserProfile();
-                } else {
-                    dB.collection("clients").whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
-                                setUserProfile();
-                            }
-                        }
-                    });
-                }
-            }
-        });
     }
 
     private void setOnClickListener() {
