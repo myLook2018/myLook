@@ -30,11 +30,10 @@ public class Sesion extends Service {
     public static final int CLOSET_FRAGMENT = 4;
     public static final int PROFILE_FRAGMENT = 5;
     public static final String TAG = "Sesion";
-    public String userId = null;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    public static String userId = null;
+    private static FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public Sesion() {
-        getUserId();
     }
 
     public String getSessionUserId(){
@@ -76,9 +75,12 @@ public class Sesion extends Service {
      */
     public static Sesion getInstance() {
         if (singleton == null) {
-            singleton = new Sesion();
+            Log.e("getInstance", "singleton ==null" );
+            Task task=getUserId();
+            if(task!=null) {
+                singleton = new Sesion();
+            }
         }
-
         return singleton;
     }
 
@@ -86,8 +88,9 @@ public class Sesion extends Service {
         return getUserId();
     }
 
-    private Task getUserId() {
-           return db.collection("clients").whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+    private static Task getUserId() {
+        if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
+            return db.collection("clients").whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
@@ -105,6 +108,10 @@ public class Sesion extends Service {
                     }
                 }
             });
+        }else
+        {
+            return null;
+        }
     }
 
     @Override
