@@ -21,7 +21,7 @@
           <input matInput type="text" placeholder="Proveedor" formControlName="provider" value={{articleData.provider}}>
         </mat-form-field>
         <mat-form-field style="width: 95%">
-          <input matInput type="number" placeholder="Costo" formControlName="cost" value={{articleData.cost}}>
+          <input matInput type="number" placeholder="Precio" formControlName="cost" value={{articleData.cost}}>
         </mat-form-field>
         <mat-form-field style="width: 95%">
           <input matInput type="number" placeholder="Stock inicial" formControlName="initial_stock" value={{articleData.initial_stock}}>
@@ -35,12 +35,22 @@
 
     </div>
 
-    <div #firstColumn style="display: inline-table; width: 240px; height: 355px; position: relative; margin-left: 5px">
+    <div #firstColumn style="display: inline-table; width: 200px; height: 315px; position: relative; margin-left: 5px">
       <div style="padding-top: 13px;">
-        <img-cropper #cropper [image]="data" [settings]="cropperSettings"></img-cropper>
-        <button type="button" mat-raised-button style="display: block; margin-left: auto; margin-right: auto; margin-top: 10px;  background-color: #9C27B0;color: white"
+        <div style="display:flex">
+          <img-cropper #cropper [image]="data" [settings]="cropperSettings"></img-cropper>
+          <input hidden class="file-input" #imgFileInput type="file" (change)="fileChangeListener($event)" >
+        </div>
+            <div class="articlePhotosContainer">
+              <div class="photo" style="border-right: 0px;" (click)="imgFileInput.click()" (click)="setImageID(0)"><img class="miniImage" src="{{data[0].src}}" /></div>
+              <div class="photo" style="border-right: 0px;" (click)="imgFileInput.click()" (click)="setImageID(1)"><img class="miniImage" src="{{data[1].src}}" /></div>
+              <div class="photo" (click)="imgFileInput.click()" (click)="setImageID(2)"><img class="miniImage" src="{{data[2].src}}" /></div>
+            </div>
+        <!--
+
+          <button type="button" mat-raised-button style="display: block; margin-left: auto; margin-right: auto; margin-top: 10px;  background-color: #9C27B0;color: white"
           (click)="imgFileInput.click()">Añade una foto</button>
-        <input hidden class="file-input" #imgFileInput type="file" (change)="fileChangeListener($event)" >
+        -->
       </div>
       <mat-form-field style="margin-top: 22px;width: 95%">
         <mat-chip-list #chipList3>

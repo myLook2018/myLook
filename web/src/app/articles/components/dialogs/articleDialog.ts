@@ -20,7 +20,8 @@ import { ImageCropperComponent, CropperSettings } from 'ngx-img-cropper/index';
 
 @Component({
   selector: 'app-article-dialog',
-  templateUrl: 'articleDialog.html'
+  templateUrl: 'articleDialog.html',
+  styleUrls: [ './articleDialog.scss' ]
 })
 export class ArticleDialogComponent implements OnInit, OnDestroy {
   // taskReference
@@ -51,11 +52,11 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   isUpLoading = false;
   separatorKeysCodes: number[] = [ENTER, COMMA];
   filteredTags: Observable<string[]>;
-  data: any;
+  data: any[] = [];
   tagsCtrl = new FormControl();
   sizesCtrl = new FormControl();
   colorsCtrl = new FormControl();
-
+  actualImageId = 0;
   @ViewChild('cropper', undefined)
   cropper: ImageCropperComponent;
   cropperSettings: CropperSettings;
@@ -76,15 +77,31 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     this.cropperSettings.noFileInput = true;
     this.cropperSettings.croppedWidth =  400;
     this.cropperSettings.croppedHeight =  400;
-    this.cropperSettings.canvasHeight = 240;
-    this.cropperSettings.canvasWidth = 240;
-    this.data = {};
+    this.cropperSettings.canvasHeight = 210;
+    this.cropperSettings.canvasWidth = 210;
 
     this.createForm();
     if (articleData.picture !== undefined) {
-       this.isNew = false;
+      let articlePicture = 
+      this.isNew = false;
+      /**
+       *  Cuando lo tengamos como lista
+       this.data.push({src: articleData.picture[0] ? articleData.picture[0]: '/assets/hanger.png'});
+       this.data.push({src: articleData.picture[1] ? articleData.picture[1]: '/assets/hanger.png'});
+       this.data.push({src: articleData.picture[2] ? articleData.picture[2]: '/assets/hanger.png'});
+       */
+      
+      this.data.push({src: articleData.picture ? articleData.picture: '/assets/hanger.png'});
+      this.data.push({src: '/assets/hanger.png'});
+      this.data.push({src: '/assets/hanger.png'});
+      console.log('la data -> ' , this.data)
     } else {
-      this.data.image = ('/assets/hanger.png');
+      console.log("la data ", this.data);
+      let defaultImg = {src:'/assets/hanger.png'};
+      this.data.push(defaultImg);
+      this.data.push(defaultImg);
+      this.data.push(defaultImg);
+      console.log("la data ", this.data);
     }
   }
 
@@ -141,23 +158,38 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
 
   startUpload() {
     this.isUpLoading = true;
-    const origin: string = this.data.image;
-    const sub: string = origin.substr(23);
-    const imageBlob = this.dataURItoBlob(sub);
-    const imageFile = new File([imageBlob], this.articleForm.controls['title'].value, { type: 'image/jpeg' });
+    let imagesToUpload: File[] = [];
+    this.data.forEach(element => { //delete
+      const sub: string = element.substr(23);
+      const imageBlob = this.dataURItoBlob(sub);
+      const imageFile = new File([imageBlob], this.articleForm.controls['title'].value, { type: 'image/jpeg' });
+      imagesToUpload.push(imageFile);
+    }); //------
     this.articleForm.addControl('promotionLevel', new FormControl(1, Validators.required));
     this.articleForm.addControl('creationDate', new FormControl(new Date(), Validators.required));
     this.articleForm.get('tags').setValue(this.tags.map(x => x));
     this.articleForm.get('sizes').setValue(this.sizes.map(x => x));
     this.articleForm.get('colors').setValue(this.colors.map(x => x));
-    this.dataService.uploadPictureFile(imageFile).then(pictureURL => {
-      this.articleForm.get('picture').setValue(pictureURL);
+    this.uploadPictures(imagesToUpload).then(picturesURL => {
+      this.articleForm.get('picture').setValue(picturesURL.map(x => x));
       this.articleService.addArticle(this.articleForm.value).then(() => {
         this.isUpLoading = false;
         this.openSnackBar('Prenda guardada en MyLook!', 'close');
         this.dialogRef.close();
       });
     });
+  }
+
+  uploadPictures(items: any[]) {
+    return new Promise<any>((resolve) => {
+    let result = [];
+    items.forEach(item => {
+      this.dataService.uploadPictureFile(item).then(result => {
+        result.push(result);
+      });
+    });
+    if(result.length == items.length) {resolve(result)}
+  });
   }
 
   // actualiza la descripcion de una prenda
@@ -268,6 +300,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   }
 
   fileChangeListener($event) {
+    console.log("el event" , event)
     const image: any = new Image();
     const file: File = $event.target.files[0];
     if (file.type.split('/')[1] === 'png') {
@@ -278,11 +311,10 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     myReader.onloadend = function (loadEvent: any) {
       image.src = loadEvent.target.result;
       that.cropper.setImage(image);
-
+      that.data[that.actualImageId] = image;
     };
-
     myReader.readAsDataURL(file);
-  }
+}
 
   dataURItoBlob(dataURI) {
     const byteString = atob(dataURI);
@@ -296,4 +328,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     return blob;
  }
 
+  setImageID(id: number){
+    this.actualImageId = id;
+ }
 }

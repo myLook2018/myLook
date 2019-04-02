@@ -47,7 +47,6 @@ export class StoreComponent implements OnInit, OnDestroy {
 		console.log('-+-+-+-+-+-Inicializando Perfil-+-+-+-+-+-');
 		console.log('estamos pidiendo la data del store desde store');
  //   setTimeout(() => {
-      console.log('estamos pidiendo la data del store desde store despues del delay');
           this.dataService.getStoreInfo().then((store) => {
 						this.userStore = store
 						this.articleService.getFrontArticlesCopado(this.userStore.storeName).then((articles) => {
