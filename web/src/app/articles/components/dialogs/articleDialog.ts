@@ -169,6 +169,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
       code: [this.articleData.code, Validators.nullValidator],
       cost: [this.articleData.cost, Validators.nullValidator],
       picture: ['', Validators.nullValidator],
+      picturesArray: ['', Validators.nullValidator],
       sizes: [this.articleData.sizes.map(x => x), Validators.nullValidator],
       material: [this.articleData.material, Validators.nullValidator],
       colors: [this.articleData.colors.map(x => x), Validators.nullValidator],
@@ -215,7 +216,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     this.articleForm.get('sizes').setValue(this.sizes.map(x => x));
     this.articleForm.get('colors').setValue(this.colors.map(x => x));
     this.uploadPictures(imagesToUpload).then(picturesURL => {
-      this.articleForm.get('picture').setValue(picturesURL.map(x => x));
+      this.articleForm.get('picturesArray').setValue(picturesURL.map(x => x));
       this.articleService.addArticle(this.articleForm.value).then(() => {
         this.isUpLoading = false;
         this.openSnackBar('Prenda guardada en MyLook!', 'close');
