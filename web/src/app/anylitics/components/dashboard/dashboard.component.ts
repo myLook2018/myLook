@@ -75,7 +75,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.anyliticService.getSubscriptions(this.userStore.storeName).then((res) => this.subscriptions = res).then(() => {
             this.anyliticService.getRecomendationFeedBack(this.userStore.storeName).then((res) => this.feedBack = res).then(() => {
               this.anyliticService.getPromotedArticles(this.userStore.firebaseUID).then((res) => this.promotedArticles = res).then(() => {
-                console.log(this.promotedArticles);
+                console.log('promotedArticles', this.promotedArticles);
                 this.getAnylitics();
                 setTimeout(() => {
                   this.readyToRender = true;

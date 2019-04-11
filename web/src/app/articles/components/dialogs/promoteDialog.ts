@@ -19,7 +19,6 @@ export class PromoteDialogComponent {
   promotionData;
 
   promotionsLevels = [
-    { value: 1, viewValue: 'Sin Promoción' },
     { value: 2, viewValue: 'Promoción Básica' },
     { value: 3, viewValue: 'Promoción Premium' }
   ];
@@ -46,11 +45,13 @@ export class PromoteDialogComponent {
 
   sendData() {
     this.promotionData = {
+      startOfPromotion: new Date(),
       duration: this.duration,
       promotionLevel: this.selectedPromotion,
-      payMethod: this.selectedPayMethod,
-      promotionCost: this.promotionCost
+      payMethod: 0,
+      promotionCost: this.promotionCost,
     };
+    console.log('lad data que sale del dialog', this.promotionData);
     this.onAdd.emit(this.promotionData);
   }
 
