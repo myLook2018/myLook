@@ -10,7 +10,7 @@ import {
 @Component({
   selector: 'app-mercadopago',
   templateUrl: './mercadopago.component.html',
-  styleUrls: ['./mercadopago.component.css']
+  styleUrls: ['./mercadopago.component.scss']
 })
 export class MercadopagoComponent implements OnInit {
   form: FormGroup;
@@ -80,7 +80,7 @@ export class MercadopagoComponent implements OnInit {
     }
   }
 
-  elMegaPayDefinitivo(){
+/*  elMegaPayDefinitivo(){
     let doSubmit: any;
     doSubmit.addEvent(document.querySelector('#pay'), 'submit', doPay);
     function doPay(event){
@@ -93,5 +93,5 @@ export class MercadopagoComponent implements OnInit {
             return false;
         }
     };
-  }
+  }*/
 }
