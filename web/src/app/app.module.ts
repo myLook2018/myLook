@@ -78,6 +78,7 @@ import { PromotionsBarComponent } from './anylitics/components/promotions-bar/pr
 import { HomePageComponent } from './home-page/home-page.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { OrchestratorComponent } from './orchestrator/orchestrator.component';
+import { MercadopagoComponent } from './articles/components/inventory/mercadopago/mercadopago.component';
 
 @NgModule({
   declarations: [
@@ -106,6 +107,7 @@ import { OrchestratorComponent } from './orchestrator/orchestrator.component';
     PromotionsBarComponent,
     HomePageComponent,
     OrchestratorComponent,
+    MercadopagoComponent,
   ],
   imports: [
     NgxSpinnerModule,

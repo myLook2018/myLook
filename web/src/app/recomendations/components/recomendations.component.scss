@@ -3,20 +3,20 @@
     height: 36px;
     padding-right: 3px;
   }
-  
-  
+
+
   .navbar{
     height: 48px;
     z-index: 10;
   }
-  
+
   .right-icon {
     padding: 0 14px;
   }
   .spacer {
     flex: 1 1 auto;
   }
-  
+
   .profilePic{
     border-radius: 50%;
     height: 32px;
@@ -26,35 +26,37 @@
     width: 32px;
     margin: 8px 0 8px 8px;
   }
-  
+
   .pageContent{
     max-width: 1707px;
     width: 100%;
-    height: calc(100vh);
+    height: calc(100vh - 49px);
     display: flex;
   }
-  
+
   .mat-toolbar-multiple-rows {
     min-height: 0;
   }
-  
+
   .requestList{
     width: calc(12vw);
     min-width: 200px;
+    max-height: calc(100vh - 48px);
   }
 
   .articleList{
     width: calc(10vw);
     min-width: 200px;
+    max-height: calc(100vh - 48px);
   }
-  
+
   .requestTable {
-    height: calc(60vh - 24px );
+    height: calc(60% - 36px );
     overflow: auto;
   }
 
-  .answeredTable { 
-    height: calc(40vh - 24px );
+  .answeredTable {
+    height: 40%;
     overflow: auto;
   }
 

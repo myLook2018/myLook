@@ -1,13 +1,29 @@
-import { Component, Inject, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import {
-  AngularFireStorage,
+  Component,
+  Inject,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  OnDestroy
+} from '@angular/core';
+import {
   AngularFireUploadTask,
   AngularFireStorageReference
 } from 'angularfire2/storage';
-import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatChipInputEvent, MatAutocompleteSelectedEvent } from '@angular/material';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogRef,
+  MatChipInputEvent,
+  MatAutocompleteSelectedEvent
+} from '@angular/material';
 import { Observable, Subscription, empty } from 'rxjs';
 import { UploadTaskSnapshot } from '@angular/fire/storage/interfaces';
-import { Validators, FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import {
+  Validators,
+  FormBuilder,
+  FormGroup,
+  FormControl
+} from '@angular/forms';
 import { ArticleService } from '../../services/article.service';
 import { MatSnackBar } from '@angular/material';
 import { finalize, startWith, map } from 'rxjs/operators';
@@ -21,7 +37,7 @@ import { ImageCropperComponent, CropperSettings } from 'ngx-img-cropper/index';
 @Component({
   selector: 'app-article-dialog',
   templateUrl: 'articleDialog.html',
-  styleUrls: [ './articleDialog.scss' ]
+  styleUrls: ['./articleDialog.scss']
 })
 export class ArticleDialogComponent implements OnInit, OnDestroy {
   // taskReference
@@ -75,59 +91,76 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   ) {
     this.cropperSettings = new CropperSettings();
     this.cropperSettings.noFileInput = true;
-    this.cropperSettings.croppedWidth =  400;
-    this.cropperSettings.croppedHeight =  400;
+    this.cropperSettings.croppedWidth = 400;
+    this.cropperSettings.croppedHeight = 400;
     this.cropperSettings.canvasHeight = 210;
     this.cropperSettings.canvasWidth = 210;
 
     this.createForm();
     if (articleData.picture !== undefined) {
-      let articlePicture = 
-      this.isNew = false;
+      let articlePicture = (this.isNew = false);
       /**
        *  Cuando lo tengamos como lista
        this.data.push({src: articleData.picture[0] ? articleData.picture[0]: '/assets/hanger.png'});
        this.data.push({src: articleData.picture[1] ? articleData.picture[1]: '/assets/hanger.png'});
        this.data.push({src: articleData.picture[2] ? articleData.picture[2]: '/assets/hanger.png'});
        */
-      
-      this.data.push({src: articleData.picture ? articleData.picture: '/assets/hanger.png'});
-      this.data.push({src: '/assets/hanger.png'});
-      this.data.push({src: '/assets/hanger.png'});
-      console.log('la data -> ' , this.data)
+
+      this.data.push({
+        src: articleData.picture ? articleData.picture : '/assets/hanger.png'
+      });
+      this.data.push({ src: '/assets/hanger.png' });
+      this.data.push({ src: '/assets/hanger.png' });
+      console.log('la data -> ', this.data);
     } else {
-      console.log("la data ", this.data);
-      let defaultImg = {src:'/assets/hanger.png'};
+      console.log('la data ', this.data);
+      let defaultImg = { src: '/assets/hanger.png' };
       this.data.push(defaultImg);
       this.data.push(defaultImg);
       this.data.push(defaultImg);
-      console.log("la data ", this.data);
+      console.log('la data ', this.data);
     }
   }
 
   ngOnInit(): void {
     this._subscription = this.tagsService.getTags().subscribe(tags => {
       this.allTags = tags[0];
-      this.filteredTags = this.tagsCtrl.valueChanges.pipe(startWith(null),
-        map((tag: string | null) => tag ? this._filter(tag) : this.allTags.preset.slice()));
+      this.filteredTags = this.tagsCtrl.valueChanges.pipe(
+        startWith(null),
+        map((tag: string | null) =>
+          tag ? this._filter(tag) : this.allTags.preset.slice()
+        )
+      );
     });
   }
 
   ngOnDestroy(): void {
-    if(this._subscription){
+    if (this._subscription) {
       this._subscription.unsubscribe();
     }
   }
 
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
-    return this.allTags.preset.filter(tags => tags.toString().toLowerCase().indexOf(filterValue) === 0);
+    return this.allTags.preset.filter(
+      tags =>
+        tags
+          .toString()
+          .toLowerCase()
+          .indexOf(filterValue) === 0
+    );
   }
 
   createForm() {
-    if (this.articleData.tags === null) { this.articleData.tags = []; }
-    if (this.articleData.sizes === null) { this.articleData.sizes = []; }
-    if (this.articleData.colors === null) { this.articleData.colors = []; }
+    if (this.articleData.tags === null) {
+      this.articleData.tags = [];
+    }
+    if (this.articleData.sizes === null) {
+      this.articleData.sizes = [];
+    }
+    if (this.articleData.colors === null) {
+      this.articleData.colors = [];
+    }
     this.tags = this.articleData.tags;
     this.sizes = this.articleData.sizes;
     this.articleForm = this.fb.group({
@@ -152,21 +185,32 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
-      duration: 2000,
+      duration: 2000
     });
   }
 
   startUpload() {
     this.isUpLoading = true;
     let imagesToUpload: File[] = [];
-    this.data.forEach(element => { //delete
+    this.data.forEach(element => {
+      //delete
       const sub: string = element.substr(23);
       const imageBlob = this.dataURItoBlob(sub);
-      const imageFile = new File([imageBlob], this.articleForm.controls['title'].value, { type: 'image/jpeg' });
+      const imageFile = new File(
+        [imageBlob],
+        this.articleForm.controls['title'].value,
+        { type: 'image/jpeg' }
+      );
       imagesToUpload.push(imageFile);
     }); //------
-    this.articleForm.addControl('promotionLevel', new FormControl(1, Validators.required));
-    this.articleForm.addControl('creationDate', new FormControl(new Date(), Validators.required));
+    this.articleForm.addControl(
+      'promotionLevel',
+      new FormControl(1, Validators.required)
+    );
+    this.articleForm.addControl(
+      'creationDate',
+      new FormControl(new Date(), Validators.required)
+    );
     this.articleForm.get('tags').setValue(this.tags.map(x => x));
     this.articleForm.get('sizes').setValue(this.sizes.map(x => x));
     this.articleForm.get('colors').setValue(this.colors.map(x => x));
@@ -181,15 +225,17 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   }
 
   uploadPictures(items: any[]) {
-    return new Promise<any>((resolve) => {
-    let result = [];
-    items.forEach(item => {
-      this.dataService.uploadPictureFile(item).then(result => {
-        result.push(result);
+    return new Promise<any>(resolve => {
+      let result = [];
+      items.forEach(item => {
+        this.dataService.uploadPictureFile(item).then(result => {
+          result.push(result);
+        });
       });
+      if (result.length == items.length) {
+        resolve(result);
+      }
     });
-    if(result.length == items.length) {resolve(result)}
-  });
   }
 
   // actualiza la descripcion de una prenda
@@ -209,7 +255,6 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     this.articleService.refreshArticle(articleUpdated);
     console.log(articleUpdated.tags);
     this.openSnackBar('Prenda actualizada en MyLook!', 'close');
-
   }
 
   isActive(snapshot) {
@@ -300,21 +345,21 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   }
 
   fileChangeListener($event) {
-    console.log("el event" , event)
+    console.log('el event', event);
     const image: any = new Image();
     const file: File = $event.target.files[0];
     if (file.type.split('/')[1] === 'png') {
       return this.openSnackBar('Tipo de imagen no soportado!', 'close');
-   }
+    }
     const myReader: FileReader = new FileReader();
     const that = this;
-    myReader.onloadend = function (loadEvent: any) {
+    myReader.onloadend = function(loadEvent: any) {
       image.src = loadEvent.target.result;
       that.cropper.setImage(image);
       that.data[that.actualImageId] = image;
     };
     myReader.readAsDataURL(file);
-}
+  }
 
   dataURItoBlob(dataURI) {
     const byteString = atob(dataURI);
@@ -326,9 +371,9 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     }
     const blob = new Blob([arrayBuffer], { type: 'image/jpeg' });
     return blob;
- }
+  }
 
-  setImageID(id: number){
+  setImageID(id: number) {
     this.actualImageId = id;
- }
+  }
 }

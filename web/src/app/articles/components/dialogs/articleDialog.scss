@@ -56,5 +56,6 @@ progress::-webkit-progress-value {
 	top: 0;
 	bottom: 0;
 	margin: auto;
-	max-width: -moz-available
+  max-width: -moz-available;
+  max-width: -webkit-fill-available;
 }
