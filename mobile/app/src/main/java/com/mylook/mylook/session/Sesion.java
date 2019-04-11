@@ -90,6 +90,7 @@ public class Sesion extends Service {
 
     private static Task getUserId() {
         if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
+            if(FirebaseAuth.getInstance().getCurrentUser().isEmailVerified())
             return db.collection("clients").whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -112,6 +113,7 @@ public class Sesion extends Service {
         {
             return null;
         }
+        return null;
     }
 
     @Override

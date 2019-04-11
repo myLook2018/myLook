@@ -1,5 +1,6 @@
 package com.mylook.mylook.login;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -149,19 +150,20 @@ public class LoginActivity extends AppCompatActivity {
                                 if (task.getException().getMessage().equals("A network error (such as timeout, interrupted connection or unreachable host) has occurred."))
                                     Toast.makeText(mContext, "Revisa tu conexión a internet",
                                             Toast.LENGTH_SHORT).show();
-                                else
+                                else {
                                     Toast.makeText(mContext, "Algo salió mal :(",
                                             Toast.LENGTH_SHORT).show();
-                                Log.e("NO LOGUEA", task.getException().getMessage());
-                                Intent intent = new Intent(mContext, LoginActivity.class);
-                                startActivity(intent);
-                                finish();
+                                    Log.e("[LoginActivity]   ", task.getException().getMessage());
+                                    //Intent intent = new Intent(mContext, LoginActivity.class);
+                                    //startActivity(intent);
+                                    //finish();
+                                }
                             }
                             mProgressBar.setVisibility(View.GONE);
                         }
                     });
-        } else{
-            if(isLoggedIn()){
+        } else {
+            if (isLoggedIn()) {
                 mProgressBar.setVisibility(View.VISIBLE);
                 AccessToken accessToken = AccessToken.getCurrentAccessToken();
                 mAuth.signInWithCredential(FacebookAuthProvider.getCredential(accessToken.getToken()))
@@ -178,12 +180,12 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean validateFields() {
         if (isStringNull(mEmail.getText().toString())) {
-            if(!isLoggedIn())
+            if (!isLoggedIn())
                 displayMessage("El campo Email es obligatorio");
             return false;
         }
         if (isStringNull(mPassword.getText().toString())) {
-            if(!isLoggedIn())
+            if (!isLoggedIn())
                 displayMessage("Debes ingresar una contraseña");
             return false;
         }
@@ -220,7 +222,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setupFirebaseAuth() {
         mAuth = FirebaseAuth.getInstance();
-
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -231,7 +232,7 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
-                                if (task.getResult().getDocuments().size() == 0) {
+                                if (task.getResult().getDocuments().size() == 0) { //esto deberia pasar a la validacion del mail si existe o no
                                     Intent intent = new Intent(mContext, RegisterActivity.class);
                                     CharSequence mail = user.getEmail();
                                     CharSequence name = user.getDisplayName();
@@ -241,7 +242,7 @@ public class LoginActivity extends AppCompatActivity {
                                     startActivity(intent);
                                     finish();
                                 } else {
-                                    if (user.isEmailVerified()) {
+                                    if ( user!=null && user.isEmailVerified()) {
                                         Intent intent = new Intent(mContext, MainActivity.class);
                                         Toast.makeText(mContext, "Bienvenido a myLook!",
                                                 Toast.LENGTH_SHORT).show();
@@ -249,24 +250,26 @@ public class LoginActivity extends AppCompatActivity {
                                         startActivity(intent);
                                         finish();
                                     } else {
+                                        Log.d("[LoginActivity]   ", "eMail no verificado");
                                         displayMessage("Tu email aún no esta verificado");
-//                                        Intent intent = new Intent(mContext, LoginActivity.class);
-//                                        startActivity(intent);
-//                                        finish();
-
+                                        Intent intent = new Intent(mContext, LoginActivity.class);
+                                        FirebaseAuth.getInstance().signOut();
+                                        mContext.
+                                        startActivity(intent);
+                                        finish();
+                                        //onResume();
                                     }
                                 }
-                            } else{
-                                Log.e("Task"," is not succesful");
+                            } else {
+                                Log.e("[LoginActivity]   ", task.getException().getMessage());
                             }
                         }
                     });
-
-                } else {
                 }
             }
         };
     }
+
 
     public boolean isLoggedIn() {
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
@@ -274,7 +277,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setupFacebookAuth() {
-        if(isLoggedIn()){
+        if (isLoggedIn()) {
             mProgressBar.setVisibility(View.VISIBLE);
             AccessToken accessToken = AccessToken.getCurrentAccessToken();
             mAuth.signInWithCredential(FacebookAuthProvider.getCredential(accessToken.getToken()))
@@ -314,15 +317,15 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.e("Login - Mylook","On activity result");
+        Log.e("Login - Mylook", "On activity result");
         super.onActivityResult(requestCode, resultCode, data);
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
-            Log.e("Login - Mylook","Data "+data.toString());
+            Log.e("Login - Mylook", "Data " + data.toString());
             try {
                 Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-                Log.e("Login - Mylook","Get Signed ACcount"+ task.getResult().toString());
+                Log.e("Login - Mylook", "Get Signed ACcount" + task.getResult().toString());
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
@@ -346,7 +349,7 @@ public class LoginActivity extends AppCompatActivity {
                         mProgressBar.setVisibility(View.GONE);
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.e("Facebook", "signInWithCredential:success - User "+mAuth.getCurrentUser().getDisplayName());
+                            Log.e("Facebook", "signInWithCredential:success - User " + mAuth.getCurrentUser().getDisplayName());
                             user = mAuth.getCurrentUser();
                             mProgressBar.setVisibility(View.GONE);
 
@@ -392,7 +395,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void initElements() {
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
-        mEmail =  findViewById(R.id.input_email);
+        mEmail = findViewById(R.id.input_email);
         mPassword = (EditText) findViewById(R.id.input_password);
         mLayout = (LinearLayout) findViewById(R.id.login_form);
         btnLogin = (Button) findViewById(R.id.login_button);
