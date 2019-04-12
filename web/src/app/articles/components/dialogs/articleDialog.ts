@@ -99,18 +99,8 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     this.createForm();
     if (articleData.picture !== undefined) {
       let articlePicture = (this.isNew = false);
-      /**
-       *  Cuando lo tengamos como lista
-       this.data.push({src: articleData.picture[0] ? articleData.picture[0]: '/assets/hanger.png'});
-       this.data.push({src: articleData.picture[1] ? articleData.picture[1]: '/assets/hanger.png'});
-       this.data.push({src: articleData.picture[2] ? articleData.picture[2]: '/assets/hanger.png'});
-       */
 
-      this.data.push({
-        src: articleData.picture ? articleData.picture : '/assets/hanger.png'
-      });
-      this.data.push({ src: '/assets/hanger.png' });
-      this.data.push({ src: '/assets/hanger.png' });
+
       console.log('la data -> ', this.data);
     } else {
       console.log('la data ', this.data);
@@ -192,10 +182,13 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
 
   startUpload() {
     this.isUpLoading = true;
+    console.log(this.data);
     let imagesToUpload: File[] = [];
-    this.data.forEach(element => {
+    this.data.forEach(photo => {
       //delete
-      const sub: string = element.substr(23);
+      console.log('photo ', photo);
+      const sub: string = photo.src.substr(23);
+      console.log('sub ', sub);
       const imageBlob = this.dataURItoBlob(sub);
       const imageFile = new File(
         [imageBlob],
@@ -203,7 +196,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
         { type: 'image/jpeg' }
       );
       imagesToUpload.push(imageFile);
-    }); //------
+    });
     this.articleForm.addControl(
       'promotionLevel',
       new FormControl(1, Validators.required)
@@ -219,6 +212,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
       this.articleForm.get('picturesArray').setValue(picturesURL.map(x => x));
       this.articleService.addArticle(this.articleForm.value).then(() => {
         this.isUpLoading = false;
+        console.log('prenda guardada');
         this.openSnackBar('Prenda guardada en MyLook!', 'close');
         this.dialogRef.close();
       });
@@ -227,15 +221,31 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
 
   uploadPictures(items: any[]) {
     return new Promise<any>(resolve => {
-      let result = [];
-      items.forEach(item => {
-        this.dataService.uploadPictureFile(item).then(result => {
-          result.push(result);
-        });
+      const result = [];
+      // tslint:disable-next-line: quotemark
+      console.log('items ', items);
+
+      this.dataService.uploadPictureFile(items[0]).then(res0 => {
+        console.log('res0 ', res0);
+        result.push(res0);
+        if (items[1] !== '') {
+          this.dataService.uploadPictureFile(items[1]).then(res1 => {
+            console.log('res1', res1);
+            result.push(res1);
+            if (items[2] !== '') {
+              this.dataService.uploadPictureFile(items[2]).then(res2 => {
+                console.log('res2', res2);
+                result.push(res2);
+                resolve(result);
+              });
+            } else {
+              resolve(result);
+            }
+          });
+        } else {
+          resolve(result);
+        }
       });
-      if (result.length == items.length) {
-        resolve(result);
-      }
     });
   }
 
@@ -357,7 +367,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     myReader.onloadend = function(loadEvent: any) {
       image.src = loadEvent.target.result;
       that.cropper.setImage(image);
-      that.data[that.actualImageId] = image;
+      // that.data[that.actualImageId] = image;
     };
     myReader.readAsDataURL(file);
   }

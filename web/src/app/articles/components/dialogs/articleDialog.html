@@ -38,7 +38,9 @@
     <div #firstColumn style="display: inline-table; width: 200px; height: 315px; position: relative; margin-left: 5px">
       <div style="padding-top: 13px;">
         <div style="display:flex">
-          <img-cropper #cropper [image]="data" [settings]="cropperSettings"></img-cropper>
+          <img-cropper *ngIf="actualImageId === 0" #cropper [image]="data[0]" [settings]="cropperSettings"></img-cropper>
+          <img-cropper *ngIf="actualImageId === 1" #cropper [image]="data[1]" [settings]="cropperSettings"></img-cropper>
+          <img-cropper *ngIf="actualImageId === 2" #cropper [image]="data[2]" [settings]="cropperSettings"></img-cropper>
           <input hidden class="file-input" #imgFileInput type="file" (change)="fileChangeListener($event)" >
         </div>
             <div class="articlePhotosContainer">
