@@ -60,9 +60,8 @@ export class DataService {
         .pipe(
           finalize(() => {
             this.ref.getDownloadURL().subscribe(url => {
-              this.downloadURL = url;
-              console.log(this.downloadURL);
-              return resolve(this.downloadURL);
+              console.log(url);
+              return resolve(url);
             });
           })
         )
