@@ -59,3 +59,14 @@ progress::-webkit-progress-value {
   max-width: -moz-available;
   max-width: -webkit-fill-available;
 }
+
+ly-cropping {
+  max-width: 150px;
+  height: 150px;
+}
+
+.resize-image {
+  width: 150px;
+}
+
+

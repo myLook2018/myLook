@@ -186,6 +186,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     }
 
     const dialogRef = this.dialog.open(ArticleDialogComponent, {
+      maxWidth: '850px',
       maxHeight: 'calc(95vh)',
       data: dataToSend
     });

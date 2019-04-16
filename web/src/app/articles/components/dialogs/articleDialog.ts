@@ -1,10 +1,12 @@
+import { BrowserModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import {
   Component,
   Inject,
   OnInit,
   ViewChild,
   ElementRef,
-  OnDestroy
+  OnDestroy,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import {
   AngularFireUploadTask,
@@ -32,14 +34,43 @@ import { TagsService } from '../../services/tags.service';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Tags } from '../../models/tags';
 import { DataService } from '../../../service/dataService';
-import { ImageCropperComponent, CropperSettings } from 'ngx-img-cropper/index';
+import { LyResizingCroppingImages, ImgCropperConfig } from '@alyle/ui/resizing-cropping-images';
+import { LyTheme2 } from '@alyle/ui';
+const styles = {
+  actions: {
+    display: 'flex'
+  },
+  cropping: {
+    maxWidth: '400px',
+    height: '150px'
+  },
+  flex: {
+    flex: 1
+  }
+};
 
 @Component({
   selector: 'app-article-dialog',
   templateUrl: 'articleDialog.html',
-  styleUrls: ['./articleDialog.scss']
+  styleUrls: ['./articleDialog.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ArticleDialogComponent implements OnInit, OnDestroy {
+  // cropper settings
+  classes = this.theme.addStyleSheet(styles);
+  croppedImage?: string[] = ['', '', ''];
+  @ViewChild(LyResizingCroppingImages) img: LyResizingCroppingImages;
+  result: string;
+  myConfig: ImgCropperConfig = {
+    width: 150, // Default `250`
+    height: 150, // Default `200`,
+    output: {
+      width: 500,
+      height: 500
+    }
+  };
+
+  isLoadedImage = [false, false, false];
   // taskReference
   ref: AngularFireStorageReference;
   // Main task
@@ -54,7 +85,6 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   articleForm: FormGroup;
   urls = new Array<String>();
   filesSelected: FileList;
-  croppedImage: any = '';
 
   tags: string[] = [];
   sizes: string[] = [];
@@ -68,19 +98,20 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   isUpLoading = false;
   separatorKeysCodes: number[] = [ENTER, COMMA];
   filteredTags: Observable<string[]>;
-  data: any[] = [];
+
   tagsCtrl = new FormControl();
   sizesCtrl = new FormControl();
   colorsCtrl = new FormControl();
   actualImageId = 0;
   @ViewChild('cropper', undefined)
-  cropper: ImageCropperComponent;
-  cropperSettings: CropperSettings;
+  // cropper: ImageCropperComponent;
+  // cropperSettings: CropperSettings;
   @ViewChild('tagsInput') tagsInput: ElementRef<HTMLInputElement>;
   @ViewChild('sizesInput') sizesInput: ElementRef<HTMLInputElement>;
   @ViewChild('colorsInput') colorsInput: ElementRef<HTMLInputElement>;
 
   constructor(
+    private theme: LyTheme2,
     public tagsService: TagsService,
     public snackBar: MatSnackBar,
     private articleService: ArticleService,
@@ -89,26 +120,17 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<ArticleDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public articleData: Article
   ) {
-    this.cropperSettings = new CropperSettings();
+    /*this.cropperSettings = new CropperSettings();
     this.cropperSettings.noFileInput = true;
     this.cropperSettings.croppedWidth = 400;
     this.cropperSettings.croppedHeight = 400;
     this.cropperSettings.canvasHeight = 210;
     this.cropperSettings.canvasWidth = 210;
-
+*/
     this.createForm();
     if (articleData.picture !== undefined) {
       let articlePicture = (this.isNew = false);
-
-
-      console.log('la data -> ', this.data);
     } else {
-      console.log('la data ', this.data);
-      let defaultImg = { src: '/assets/hanger.png' };
-      this.data.push(defaultImg);
-      this.data.push(defaultImg);
-      this.data.push(defaultImg);
-      console.log('la data ', this.data);
     }
   }
 
@@ -182,12 +204,12 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
 
   startUpload() {
     this.isUpLoading = true;
-    console.log(this.data);
+    console.log('las imagenes ', this.croppedImage);
     let imagesToUpload: File[] = [];
-    this.data.forEach(photo => {
+    this.croppedImage.forEach(photo => {
       //delete
       console.log('photo ', photo);
-      const sub: string = photo.src.substr(23);
+      const sub: string = photo.substr(22);
       console.log('sub ', sub);
       const imageBlob = this.dataURItoBlob(sub);
       const imageFile = new File(
@@ -355,8 +377,9 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     }
   }
 
+  /*
   fileChangeListener($event) {
-    console.log('el event', event);
+     console.log('el event', event);
     const image: any = new Image();
     const file: File = $event.target.files[0];
     if (file.type.split('/')[1] === 'png') {
@@ -371,6 +394,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     };
     myReader.readAsDataURL(file);
   }
+*/
 
   dataURItoBlob(dataURI) {
     const byteString = atob(dataURI);
@@ -386,5 +410,42 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
 
   setImageID(id: number) {
     this.actualImageId = id;
+  }
+
+  oncropped(e, index) {
+    console.log(`cropped `, e);
+    console.log(`cropped index`, index);
+    this.croppedImage[index] = e.dataURL;
+  }
+  onloaded(index) {
+    console.log('img loaded');
+    this.isLoadedImage[index] = true;
+    this.onSelectedImage(index);
+  }
+  onerror() {
+    console.warn('img not loaded');
+  }
+  onSelectedImage(index) {
+    console.log('se esta subiendo al indice ', index);
+    this.actualImageId = index;
+  }
+
+  doClean(index) {
+    console.log('img cleared');
+    this.isLoadedImage[index] = false;
+  }
+
+  cropImages(crop1, crop2, crop3) {
+    const croppers = [crop1, crop2, crop3];
+    for (let index = 0; index < this.isLoadedImage.length; index++) {
+      if(this.isLoadedImage[index]) {
+        try {
+          croppers[index].crop();
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+    this.startUpload();
   }
 }
