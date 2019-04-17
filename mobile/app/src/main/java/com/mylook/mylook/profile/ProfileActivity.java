@@ -14,6 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -99,6 +101,8 @@ public class ProfileActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                                 FirebaseAuth.getInstance().signOut();
+                                FacebookSdk.sdkInitialize(getApplicationContext());
+                                LoginManager.getInstance().logOut();
                                 Toast.makeText(getApplicationContext(), "Cerraste sesión :(", Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(mContext, LoginActivity.class);
                                 startActivity(intent);
@@ -137,7 +141,7 @@ public class ProfileActivity extends AppCompatActivity {
         dB.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                userName =  task.getResult().getDocuments().get(0).get("name").toString() + " " + task.getResult().getDocuments().get(0).get("surname").toString();
+                    userName =  task.getResult().getDocuments().get(0).get("name").toString() + " " + task.getResult().getDocuments().get(0).get("surname").toString();
                 isPremiumUser=(boolean)task.getResult().getDocuments().get(0).get("isPremium");
                 txtName.setText(userName);
                 clientId=task.getResult().getDocuments().get(0).getId();

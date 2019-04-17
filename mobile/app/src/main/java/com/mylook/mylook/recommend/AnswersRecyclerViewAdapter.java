@@ -62,7 +62,7 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
         Glide.with(mContext).asBitmap().load(answer.get("articlePhoto")).into(holder.imgArticle);
         holder.txtStore.setText(answer.get("storeName"));
         holder.txtDescription.setText(answer.get("description"));
-        if(!answer.get("feedBack").equals("")) {
+        if(answer.containsKey("feedback") && !answer.get("feedBack").equals("")) {
             holder.ratingBar.setRating(Float.parseFloat(answer.get("feedBack")));
             holder.ratingBar.setEnabled(false);
         }

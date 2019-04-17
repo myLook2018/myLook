@@ -8,14 +8,15 @@
         android:layout_alignParentTop="true">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/recomend_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
             android:elevation="4dp"
-            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
-            app:titleTextColor="@color/white"
-            app:popupTheme="@style/ThemeOverlay.MaterialComponents.Dark">
+            android:theme="@style/AppTheme.Toolbar"
+            app:popupTheme="@style/ThemeOverlay.MaterialComponents.Dark"
+            app:title="Nueva Solicitud"
+            app:titleTextColor="@color/white">
 
         </android.support.v7.widget.Toolbar>
 

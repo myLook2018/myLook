@@ -54,7 +54,7 @@
                     android:layout_height="100dp"
                     android:layout_gravity="center_vertical|center"
                     android:layout_weight="1"
-                    android:background="@drawable/ic_account"
+                    android:background="@drawable/ic_profile"
                     android:backgroundTint="@color/primary_light" />@+id/layoutData"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -6,7 +6,7 @@
     <item
         android:id="@+id/close_req"
         android:title="@string/close_req"
-        android:icon="@drawable/ic_done"
+        android:icon="@drawable/ic_check"
         app:showAsAction="never"
         android:iconTint="@color/white"
         />

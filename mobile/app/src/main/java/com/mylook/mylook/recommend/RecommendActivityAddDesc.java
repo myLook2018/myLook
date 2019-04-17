@@ -33,6 +33,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -51,6 +52,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mylook.mylook.R;
+import com.mylook.mylook.session.Sesion;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
@@ -71,9 +73,10 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     private ImageView imgRecommend = null;
     private TextInputEditText txtDescription;
     private Date limitDate;
-    private EditText editDate, title;
+    private EditText editDate;
     private FirebaseFirestore dB;
     private StorageReference storageRef;
+    private TextView title;
     private Uri selectImageUri = null;
     private Bitmap bitmap = null;
     private Uri picUri;
@@ -96,25 +99,15 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        dB = FirebaseFirestore.getInstance();
-        storageRef = FirebaseStorage.getInstance().getReference();
         setContentView(R.layout.activity_request_recommendation_add_desc);
-        Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
-        tb.setTitle("Nueva Solicitud");
+
+
+        initElements();
+        Toolbar tb = findViewById(R.id.recomend_toolbar);
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
-        mProgressBar = findViewById(R.id.progressBar);
-        btnSend = findViewById(R.id.btnSend);
-        imgRecommend = (ImageView) findViewById(R.id.imgRecommend);
-        txtDescription = (TextInputEditText) findViewById(R.id.txtDescription);
-        editDate = (EditText) findViewById(R.id.editDate);
-        title = (EditText) findViewById(R.id.txtTitle);
-        fabMenu = (FloatingActionMenu) findViewById(R.id.fabMenu);
-        fabPhoto = (FloatingActionButton) findViewById(R.id.photoFloating);
-        fabGallery = (FloatingActionButton) findViewById(R.id.galleryFloating);
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        this.setTitle("Nueva Solicitud");
         setCurrentLocation();
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,30 +115,8 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 sendToFirebase();
             }
         });
-        spinner = findViewById(R.id.category);
         setCategoryRequest();
-        txtSize = findViewById(R.id.size_input);
-
-        final Calendar myCalendar = Calendar.getInstance();
-        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth) {
-                // TODO Auto-generated method stub
-                myCalendar.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
-                limitDate = new Date();
-                limitDate.setTime(myCalendar.getTimeInMillis());
-                editDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-            }
-        };
-
-        editDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new DatePickerDialog(RecommendActivityAddDesc.this, date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-            }
-        });
+        initCalendar();
 
         fabPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,6 +140,47 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void initCalendar(){
+
+        final Calendar myCalendar = Calendar.getInstance();
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                myCalendar.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
+                limitDate = new Date();
+                limitDate.setTime(myCalendar.getTimeInMillis());
+                editDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+            }
+        };
+
+        editDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new DatePickerDialog(RecommendActivityAddDesc.this, date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+    }
+
+    private void initElements(){
+        spinner = findViewById(R.id.category);
+        txtSize = findViewById(R.id.size_input);
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        dB = FirebaseFirestore.getInstance();
+        storageRef = FirebaseStorage.getInstance().getReference();
+        mProgressBar = findViewById(R.id.progressBar);
+        btnSend = findViewById(R.id.btnSend);
+        imgRecommend = (ImageView) findViewById(R.id.imgRecommend);
+        txtDescription = (TextInputEditText) findViewById(R.id.txtDescription);
+        editDate = (EditText) findViewById(R.id.editDate);
+        title = findViewById(R.id.txtTitle);
+        fabMenu = (FloatingActionMenu) findViewById(R.id.fabMenu);
+        fabPhoto = (FloatingActionButton) findViewById(R.id.photoFloating);
+        fabGallery = (FloatingActionButton) findViewById(R.id.galleryFloating);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
     }
 
     private void setCategoryRequest() {
@@ -296,6 +308,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                         enviado = true;
                         mProgressBar.setVisibility(View.GONE);
                         displayMessage("Tu solicitud de recomendacion ha sido enviada");
+                        Sesion.getInstance().updateActivitiesStatus(Sesion.RECOMEND_FRAGMENT);
                         finish();
 
                     }
