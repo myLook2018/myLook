@@ -4,13 +4,14 @@
     <color name="primary_dark">#512da8</color>
     <color name="primary_light">#D1C4E9</color>
     <color name="accent">#ff9800</color>
+    <color name="colorAccent">#ff9800</color>
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#757575</color>
     <color name="icons">#ffffff</color>
     <color name="divider">#bdbdbd</color>
     <color name="link_blue">#0000EE</color>
     <color name="grey">#A0A0A0</color>
-    <color name="greyBackground">#eaeaea</color>
+    <color name="greyBackground">#eaeaea</color> <!-- Usar este para fondos-->
     <color name="white">#fff</color>
     <color name="purple">#9C27B0</color>
     <color name="black">#000</color>

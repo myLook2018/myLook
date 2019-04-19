@@ -29,6 +29,8 @@ import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Closet;
 import com.mylook.mylook.entities.Favorite;
 import com.mylook.mylook.info.ArticleInfoActivity;
+import com.mylook.mylook.session.Sesion;
+import com.mylook.mylook.utils.ImageAdapter;
 
 import java.util.ArrayList;
 
@@ -42,25 +44,36 @@ public class FavouritesTab extends Fragment {
     private ArrayList<Favorite> favorites;
     private Activity act;
     private ProgressBar mProgressBar;
+    private String dbUserId = Sesion.getInstance().getSessionUserId();
+    private static FavouritesTab instance = null;
+    private static boolean loaded = false;
+    private ImageAdapter adapter;
 
     public FavouritesTab() {
         // Required empty public constructor
     }
 
+    public static FavouritesTab getInstance() {
+        if (instance == null) {
+            instance = new FavouritesTab();
+        }
+        return instance;
+    }
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        favorites = new ArrayList<>();
+
 
     }
 
-    private void setGridview() {
-        int widthGrid = getResources().getDisplayMetrics().widthPixels;
-        int imageWidth = widthGrid / 3;
-        gridview.setColumnWidth(imageWidth);
-        gridview.setHorizontalSpacing(8);
-        gridview.setNumColumns(3);
-        getCloset();
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    private void setClickListener() {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
@@ -88,9 +101,18 @@ public class FavouritesTab extends Fragment {
         });
     }
 
+    private void setGridview() {
+        int widthGrid = getResources().getDisplayMetrics().widthPixels;
+        int imageWidth = widthGrid / 3;
+        gridview.setColumnWidth(imageWidth);
+        gridview.setHorizontalSpacing(8);
+        gridview.setNumColumns(3);
+        setClickListener();
+    }
+
     private void getCloset() {
         dB.collection("closets")
-                .whereEqualTo("userID", user.getUid())
+                .whereEqualTo("userID", dbUserId)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -105,13 +127,13 @@ public class FavouritesTab extends Fragment {
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                 if (task.isSuccessful()) {
                                                     ArrayList<String> arrayList = new ArrayList<>();
-                                                    favorites = new ArrayList<>();
                                                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                                         Favorite fav = documentSnapshot.toObject(Favorite.class);
                                                         favorites.add(fav);
                                                         arrayList.add(fav.getDownloadUri());
+                                                        adapter.notifyDataSetChanged();
+                                                        loaded = true;
                                                     }
-                                                    gridview.setAdapter(new com.mylook.mylook.utils.ImageAdapter(act, favorites));
                                                     mProgressBar.setVisibility(View.INVISIBLE);
                                                     return;
                                                 } else
@@ -139,20 +161,23 @@ public class FavouritesTab extends Fragment {
         gridview = view.findViewById(R.id.grid_favoritos);
         mProgressBar = view.findViewById(R.id.mProgressBar);
         mProgressBar.setVisibility(View.VISIBLE);
-        setGridview();
-
+        if (!loaded) {
+            setGridview();
+            favorites = new ArrayList<>();
+            adapter = new com.mylook.mylook.utils.ImageAdapter(act, favorites);
+            getCloset();
+        } else{
+            adapter.notifyDataSetChanged();
+        }
+            gridview.setAdapter(adapter);
+            mProgressBar.setVisibility(View.INVISIBLE);
         super.onViewCreated(view, savedInstanceState);
     }
 
-
-    public ArrayList<Favorite> getFavorites() {
-        return favorites;
+    public static void refreshStatus(){
+        if(instance!=null){
+            loaded = false;
+        }
     }
-
-    public void setFavorites(ArrayList<Favorite> favorites) {
-        this.favorites = favorites;
-    }
-
-
 
 }
