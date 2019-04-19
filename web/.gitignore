@@ -5,6 +5,9 @@
 /tmp
 /out-tsc
 
+#FirebaseCache
+./firebase
+
 # dependencies
 /node_modules
 /functions/node_modules
