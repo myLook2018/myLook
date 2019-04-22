@@ -7,6 +7,7 @@ import { Article } from '../../models/article';
     templateUrl: 'frontDialog.html',
 })
 export class FrontDialogComponent {
+    promotionData:any;
     onAdd = new EventEmitter();
     articlesToFront = [];
     constructor(

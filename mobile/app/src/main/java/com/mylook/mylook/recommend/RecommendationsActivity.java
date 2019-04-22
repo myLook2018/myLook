@@ -34,7 +34,7 @@ import com.mylook.mylook.utils.BottomNavigationViewHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecommendationsActivity extends AppCompatActivity implements RecommendFragment.OnFragmentInteractionListener {
+public class RecommendationsActivity extends AppCompatActivity{
 
     private static final int ACTIVITY_NUM = 2;
     private FloatingActionButton fab;
@@ -78,10 +78,6 @@ public class RecommendationsActivity extends AppCompatActivity implements Recomm
         menuItem.setChecked(true);
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
     private void initRecyclerView(){
         recyclerView = findViewById(R.id.recyclerViewRecommend);
         getRequestRecommendations();

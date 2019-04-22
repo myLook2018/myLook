@@ -131,16 +131,21 @@ export class ArticleService {
       ;
   }
 
-  promoteArticle(data, article, storeUID) {
+  promoteArticle(data, article: Article, storeUID) {
+    console.log('la data', data);
+    console.log('el article', article);
+    let end = new Date;
+    end.setDate(end.getDate() + data.duration);
     const promotion = {
-      articleId: article.id,
-      endOfPromotion: data.dueDate,
+      articleId: article.articleId,
+      endOfPromotion: end,
       storeId: storeUID,
-      promotionLevel: data.promotionLevel,
       payMethod: data.payMethod,
-      promotionCost: data.promotionCost
+      promotionLevel: data.promotionLevel,
+      promotionCost: data.promotionCost,
+      startOfPromotion: data.startOfPromotion,
     };
-    console.log(promotion);
+    console.log('la promo en el service', promotion);
     this.addPromotionToArticle(promotion);
     return this.promoteCollection.add(promotion);
   }

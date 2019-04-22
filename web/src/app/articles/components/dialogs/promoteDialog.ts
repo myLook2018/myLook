@@ -3,31 +3,41 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
   selector: 'app-promote-dialog',
-  templateUrl: 'promoteDialog.html',
+  templateUrl: 'promoteDialog.html'
 })
 export class PromoteDialogComponent {
+  mercadopago: any;
+  maxDate: any;
   onAdd = new EventEmitter();
   dailyCost;
   promotionCost;
   diferenceInDays;
   minDate = new Date();
-  dueDate;
+  duration;
   selectedPromotion;
   selectedPayMethod: Number;
   promotionData;
 
   promotionsLevels = [
-    { value: 1, viewValue: 'Sin Promoción' },
     { value: 2, viewValue: 'Promoción Básica' },
     { value: 3, viewValue: 'Promoción Premium' }
   ];
 
-  payMethods = [
-    { value: 0, viewValue: 'Gratis!' }
+  durations = [
+    { value: 1, viewValue: '1 día de promoción' },
+    { value: 2, viewValue: '2 dias de promoción' },
+    { value: 3, viewValue: '3 dias de promoción' },
+    { value: 5, viewValue: '5 dias de promoción' },
+    { value: 7, viewValue: '1 semana de promoción' },
+    { value: 14, viewValue: '2 semana de promoción' },
+    { value: 28, viewValue: '1 mes de promoción' }
   ];
+
+  payMethods = [{ value: 0, viewValue: 'Gratis!' }];
   constructor(
     public dialogRef: MatDialogRef<PromoteDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data) { }
+    @Inject(MAT_DIALOG_DATA) public data
+  ) {}
 
   onNoClick(): void {
     this.dialogRef.close();
@@ -35,23 +45,53 @@ export class PromoteDialogComponent {
 
   sendData() {
     this.promotionData = {
-      dueDate: this.dueDate,
+      startOfPromotion: new Date(),
+      duration: this.duration,
       promotionLevel: this.selectedPromotion,
-      payMethod: this.selectedPayMethod,
+      payMethod: 0,
       promotionCost: this.promotionCost,
     };
+    console.log('lad data que sale del dialog', this.promotionData);
     this.onAdd.emit(this.promotionData);
   }
 
   tryCalculateCost() {
+    const finalCost = 10 * this.duration * (this.selectedPromotion - 1);
+
+    switch (this.duration) {
+      case 1: {
+        this.promotionCost = finalCost;
+        break;
+      }
+      case 2: {
+        this.promotionCost = finalCost * 0.95;
+        break;
+      }
+      case 3: {
+        this.promotionCost = finalCost * 0.9;
+        break;
+      }
+      case 5: {
+        this.promotionCost = finalCost * 0.85;
+        break;
+      }
+      case 7: {
+        this.promotionCost = finalCost * 0.80;
+        break;
+      }
+      case 14: {
+        this.promotionCost = finalCost * 0.75;
+        break;
+      }
+      case 14: {
+        this.promotionCost = finalCost * 0.70;
+        break;
+      }
+    }
+
     try {
-      const diff = Math.abs(this.dueDate.getTime() - new Date().getTime());
-      this.diferenceInDays = Math.ceil(diff / (1000 * 3600 * 24));
-      console.log(`diference in days ` + this.diferenceInDays);
-      console.log(`promotion ` + this.selectedPromotion);
-      this.dailyCost  = (this.selectedPromotion - 1 ) * 5;
-      this.promotionCost = this.diferenceInDays * (this.selectedPromotion - 1 ) * 5;
-      console.log(`dailyCost ` + this.dailyCost);
+      console.log(`Promocion por ${this.duration} dias.`);
+      console.log(`Nivel de promocion: ${this.selectedPromotion}.`);
     } catch {
       console.log(`no pude calcular diff`);
     }

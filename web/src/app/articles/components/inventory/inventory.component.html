@@ -1,35 +1,3 @@
-<ngx-spinner bdColor="rgba(255,255,255,1)" size="large" color="#9c27b0" type="ball-grid-pulse"></ngx-spinner>
-<div class="mat-typography" style="position:sticky;top: 0">
-    <mat-toolbar>
-        <mat-toolbar-row class="mat-elevation-z8 navbar">
-            <button mat-icon-button id="toggleButton" (click)="sidenav.toggle()"><i class="material-icons">
-                    menu
-                </i></button>
-            <img id="logo" src="/assets/brandNoBackground.png" />
-            <span class="spacer"></span>
-            <button mat-icon-button [matMenuTriggerFor]="menu">
-                <mat-icon>more_vert</mat-icon>
-            </button>
-            <mat-menu #menu="matMenu">
-                <button mat-menu-item (click)="logout()">Salir</button>
-            </mat-menu>
-            <img class="profilePic" [src]="userStore.profilePh">
-        </mat-toolbar-row>
-    </mat-toolbar>
-
-    <mat-sidenav-container style="height: 100%;">
-        <mat-sidenav #sidenav [mode]="over">
-            <mat-nav-list>
-                <a mat-list-item (click)="goToProfile()">¡Visita tu Perfil!</a>
-                <a mat-list-item (click)="goToInventory()">¡Gestiona tú inventario!</a>
-                <a mat-list-item (click)="goToRecomendations()">¡Haz una recomendación!</a>
-                <a mat-list-item (click)="goToAnalytics()">¡Estadisticas!</a>
-                <a mat-list-item (click)="openFrontDialog()">Selecciona tú vidriera!</a>
-            </mat-nav-list>
-        </mat-sidenav>
-
-        <mat-sidenav-content>
-
             <mat-toolbar>
                 <mat-toolbar-row class="stickyNavbar mat-elevation-z2">
                     <span>Lista de Prendas</span>
@@ -51,7 +19,7 @@
                 </mat-toolbar-row>
             </mat-toolbar>
             <div>
-                <mat-table class="table" [dataSource]="dataSource" matSort>
+                <mat-table class="table" matSort [dataSource]="dataSource">
 
                     <!--- Note that these columns can be defined in any order.
             The actual rendered columns are set as a property on the row definition" -->
@@ -67,7 +35,7 @@
 
                     <!-- title Column -->
                     <ng-container matColumnDef="title">
-                        <mat-header-cell *matHeaderCellDef> Titulo </mat-header-cell>
+                        <mat-header-cell *matHeaderCellDef > Titulo </mat-header-cell>
                         <mat-cell *matCellDef="let element"> {{element.title}} </mat-cell>
                     </ng-container>
 
@@ -120,7 +88,7 @@
                     </ng-container>
 
                     <ng-container matColumnDef="actions">
-                        <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+                        <mat-header-cell *matHeaderCellDef> Acciones </mat-header-cell>
                         <mat-cell *matCellDef="let element; let i = index">
                             <button *ngIf="!selectionMode" mat-icon-button class="actionIcon" (click)="openConfirmationDialog(element)">
                                 <mat-icon>delete</mat-icon>
@@ -128,8 +96,8 @@
                             <button *ngIf="!selectionMode" mat-icon-button class="actionIcon" (click)="openArticleDialog(element)">
                                 <mat-icon>edit</mat-icon>
                             </button>
-                            <button *ngIf="!selectionMode" mat-icon-button class="actionIcon" (click)="openPromoteDialog(element)">
-                                <mat-icon>trending_up</mat-icon>
+                            <button *ngIf="!selectionMode" mat-icon-button [ngClass]="(element.promotionLevel==1)?'actionIcon-notPromoted':'actionIcon'" (click)="openPromoteDialog(element)">
+                                <mat-icon>whatshot</mat-icon>
                             </button>
                             <mat-checkbox *ngIf="selectionMode" (change)="addIdToSelecteds(i)"></mat-checkbox>
 
@@ -140,5 +108,3 @@
                     <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"></mat-row>
                 </mat-table>
             </div>
-        </mat-sidenav-content>
-    </mat-sidenav-container>

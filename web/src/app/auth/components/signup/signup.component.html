@@ -14,22 +14,10 @@
               <strong>Email</strong>
             </mat-error>
           </mat-form-field>
-          <div *ngIf= "!(errorMessage === '')" style="color:red">
-            {{errorMessage}} 
-          </div>
-
-          <!-- <mat-form-field class="inputForm">
-            <label>Contraseña</label>
-            <input matInput type="password" class="form-control" formControlName="password">
-          </mat-form-field> 
-          <label class="error">{{errorMessage}}</label>
-          <label class="success">{{successMessage}}</label>
-          -->
-
           <div style="display: flex; margin-top: 10px;">
             <div>
               Ya tienes cuenta?
-              <a href="/login" style="text-decoration: none;color: #6a99ff;">Ingresa.</a>
+              <a [routerLink]="[ '/Ingresar']"style="text-decoration: none;color: #6a99ff;">Ingresar.</a>
             </div>
             <button mat-button type="submit" (click)="checkEmail()" class="registerButton">Registrar</button>
           </div>

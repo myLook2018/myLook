@@ -25,7 +25,7 @@ export class StoreModel {
     this.storeName = '';
     this.storeMail = '';
     this.ownerName = '';
-    this.profilePh = '';
+    this.profilePh = '/assets/noProfilePic.png';
     this.coverPh = '';
     this.storePhone = '';
     this.facebookLink = '';
@@ -41,4 +41,3 @@ export class StoreModel {
     this.provider = '';
   }
 }
-

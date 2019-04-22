@@ -2,10 +2,11 @@ package com.mylook.mylook.entities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 
-public class Article implements Serializable{
+public class Article implements Serializable, Comparable<Article>, Comparator<Article> {
 
     private String articleId;
     private String title;
@@ -167,5 +168,15 @@ public class Article implements Serializable{
         this.sizes = (ArrayList<String>) map.get("sizes");
         this.tags = (ArrayList<String>) map.get("tags");
         return this;
+    }
+
+    @Override
+    public int compareTo(Article o) {
+        return this.getCreationDate().compareTo(o.creationDate);
+    }
+
+    @Override
+    public int compare(Article o1, Article o2) {
+        return o1.getCreationDate().compareTo(o2.getCreationDate());
     }
 }

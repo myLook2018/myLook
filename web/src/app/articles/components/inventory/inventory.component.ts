@@ -1,20 +1,23 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { Article } from '../../models/article';
-import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { ArticleDialogComponent } from '../dialogs/articleDialog';
-import { MatDialog, MatTableDataSource, MatSort, MatSnackBar } from '@angular/material';
-import { AuthService } from '../../../auth/services/auth.service';
-import { Location } from '@angular/common';
-import { Router, ActivatedRoute } from '@angular/router';
+import {
+  MatDialog,
+  MatTableDataSource,
+  MatSort,
+  MatSnackBar,
+  MatSortable
+} from '@angular/material';
+import { Router } from '@angular/router';
 import { ArticleService } from '../../services/article.service';
 import { DeleteConfirmationDialogComponent } from '../dialogs/deleteConfirmationDialog';
-import { UserService } from '../../../auth/services/user.service';
 import { StoreModel } from '../../../auth/models/store.model';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { Subscription } from 'rxjs';
 import { PromoteDialogComponent } from '../dialogs/promoteDialog';
 import { FrontDialogComponent } from '../dialogs/frontDialog';
+import { DataService } from 'src/app/service/dataService';
 
+declare var Mercadopago: any;
 @Component({
   selector: 'app-inventory',
   templateUrl: './inventory.component.html',
@@ -22,13 +25,14 @@ import { FrontDialogComponent } from '../dialogs/frontDialog';
 })
 export class InventoryComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
+  sortOrder = 'asc';
+  over: any;
   options: FormGroup;
   storeFront: FormGroup;
   articlesToGenerateFront: Article[] = [];
   FirebaseUser = new StoreModel();
   userStore = new StoreModel();
   articles: Article[];
-  _subscription2: Subscription;
   selectionMode = false;
   selectedIndexes = [];
 
@@ -36,13 +40,9 @@ export class InventoryComponent implements OnInit, OnDestroy {
     public snackBar: MatSnackBar,
     public fb: FormBuilder,
     public articleService: ArticleService,
+    public dataService: DataService,
     public dialog: MatDialog,
-    public userService: UserService,
-    public authService: AuthService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private location: Location,
-    private spinner: NgxSpinnerService,
+    private router: Router
   ) {
     this.createForm();
     this.options = fb.group({
@@ -71,37 +71,24 @@ export class InventoryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.spinner.show();
-    this.route.data.subscribe(routeData => {
-      const data = routeData['data'];
-      if (data) {
-        this.FirebaseUser = data;
-      }
+    console.log('-+-+-+-+-+-Inicializando Inventario-+-+-+-+-+-');
+    this.dataService.getStoreInfo().then(store => {
+      this.userStore = store;
+      this.articleService
+        .getArticlesCopado(this.userStore.storeName)
+        .then(articles => {
+          this.dataSource = [];
+          console.log(articles);
+          this.articles = articles;
+          this.dataSource = new MatTableDataSource(this.articles);
+          this.sort.sort(<MatSortable>{ id: 'promotionLevel', start: 'desc' });
+          this.dataSource.sort = this.sort;
+        });
     });
-    this._subscription2 = this.userService.getUserInfo(this.FirebaseUser.firebaseUserId).subscribe(userA => {
-      this.userStore = userA[0];
-      if (this.userStore.profilePh === '') { this.userStore.profilePh = this.FirebaseUser.profilePh; }
-      /*this._subscription = this.articleService.getArticles(this.userStore.storeName).subscribe(articlesFirebase => {
-        this.articles = articlesFirebase;
-        this.dataSource = new MatTableDataSource(this.articles);
-        console.log(this.articles);*/
-      this.articleService.getArticlesCopado(this.userStore.storeName).then((articles) => {
-        this.dataSource = [];
-        console.log(articles);
-        this.articles = articles;
-        this.dataSource = new MatTableDataSource(this.articles);
-      }).then(() => {
-        setTimeout(() => {
-          this.spinner.hide();
-        }, 2000);
-      });
-    }
-    );
   }
 
   ngOnDestroy(): void {
     console.log('destruyendo subscripciones');
-    this._subscription2.unsubscribe();
   }
 
   createForm() {
@@ -123,9 +110,10 @@ export class InventoryComponent implements OnInit, OnDestroy {
       width: '300px',
       data: article
     });
-    const sub = promoteRef.componentInstance.onAdd.subscribe((res) => {
+    const sub = promoteRef.componentInstance.onAdd.subscribe(res => {
       if (res !== undefined) {
         this.promoteArticle(res, article, this.userStore.firebaseUID);
+        this.RedirectToMercadoPago(res);
       }
     });
     promoteRef.afterClosed().subscribe(result => {
@@ -141,10 +129,13 @@ export class InventoryComponent implements OnInit, OnDestroy {
   }
 
   openConfirmationDialog(article): void {
-    const confirmationRef = this.dialog.open(DeleteConfirmationDialogComponent, {
-      width: '300px',
-      data: article.picture
-    });
+    const confirmationRef = this.dialog.open(
+      DeleteConfirmationDialogComponent,
+      {
+        width: '300px',
+        data: article.picture
+      }
+    );
     confirmationRef.afterClosed().subscribe(result => {
       if (result === true) {
         this.deleteArticle(article);
@@ -156,7 +147,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     const frontRef = this.dialog.open(FrontDialogComponent, {
       data: this.articles
     });
-    const sub = frontRef.componentInstance.onAdd.subscribe((res) => {
+    const sub = frontRef.componentInstance.onAdd.subscribe(res => {
       if (res !== undefined) {
         console.log(`devolcimos ` + res);
         this.setVidriera(res);
@@ -195,35 +186,27 @@ export class InventoryComponent implements OnInit, OnDestroy {
     }
 
     const dialogRef = this.dialog.open(ArticleDialogComponent, {
+      maxWidth: '850px',
       maxHeight: 'calc(95vh)',
       data: dataToSend
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-    });
-  }
-
-  logout() {
-    this.authService.doLogout().then(
-      res => {
-        this.router.navigate(['/login']);
-      },
-      error => {
-        console.log('Logout error', error);
-      }
-    );
+    dialogRef.afterClosed().subscribe(result => {});
   }
 
   resetSelectedVidriera() {
-    for (let i = 0; i < this.articles.length ; i++ ) {
+    for (let i = 0; i < this.articles.length; i++) {
       console.log(`sacando de vidriera ` + this.articles[i].title);
-      this.articleService.refreshVidrieraAttribute(this.articles[i].articleId, false);
+      this.articleService.refreshVidrieraAttribute(
+        this.articles[i].articleId,
+        false
+      );
     }
   }
 
   setVidriera(idOfFrontsArticles: string[]) {
     this.resetSelectedVidriera();
-    for (let i = 0; i < idOfFrontsArticles.length ; i++ ) {
+    for (let i = 0; i < idOfFrontsArticles.length; i++) {
       console.log(`ahora ponemos en vidriera a ` + idOfFrontsArticles[i]);
       this.articleService.refreshVidrieraAttribute(idOfFrontsArticles[i], true);
     }
@@ -234,23 +217,27 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
-      duration: 2000,
+      duration: 2000
     });
   }
 
   createSubCollection() {
-    for (let i = 0; i < this.selectedIndexes.length ; i++ ) {
+    for (let i = 0; i < this.selectedIndexes.length; i++) {
       const index = this.selectedIndexes[i];
       this.articlesToGenerateFront.push(this.articles[index]);
     }
-    this.articleService.addStoreFront(this.userStore.storeName, this.articlesToGenerateFront, 1);
+    this.articleService.addStoreFront(
+      this.userStore.storeName,
+      this.articlesToGenerateFront,
+      1
+    );
     this.articlesToGenerateFront = [];
   }
 
   addIdToSelecteds(row, event) {
     const index = this.selectedIndexes.indexOf(row, 0);
     if (index > -1) {
-       this.selectedIndexes.splice(index, 1);
+      this.selectedIndexes.splice(index, 1);
     } else {
       this.selectedIndexes.push(row);
     }
@@ -285,4 +272,12 @@ export class InventoryComponent implements OnInit, OnDestroy {
     this.selectedIndexes = [];
   }
 
+  RedirectToMercadoPago(promData) {
+    switch (promData.promotionCost) {
+      case 10: {
+        window.open('https://www.mercadopago.com/mla/checkout/start?pref_id=181044052-8b71c605-305a-44b5-8328-e07bb750ea94');
+        break;
+      }
+    }
+  }
 }

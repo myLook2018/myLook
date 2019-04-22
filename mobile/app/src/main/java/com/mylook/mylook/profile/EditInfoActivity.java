@@ -1,17 +1,22 @@
 package com.mylook.mylook.profile;
 
+import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,14 +27,18 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.mylook.mylook.R;
+import com.mylook.mylook.dialogs.DialogManager;
 import com.mylook.mylook.entities.User;
+import com.mylook.mylook.login.RegisterActivity;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class EditInfoActivity extends AppCompatActivity {
 
     private EditText txtEmail, txtPasswd1, txtPasswd2, txtDNI, txtName, txtSurname, txtBirthdate;
+    private TextView txtChangePassword;
     private LinearLayout mLayout;
     private MaterialBetterSpinner spinner;
     private Button btnSaveChanges;
@@ -38,6 +47,7 @@ public class EditInfoActivity extends AppCompatActivity {
     private Toolbar tb;
     private User oldUser = null;
     private ProgressBar mProgressBar;
+    private Context mContext;
 
 
     @Override
@@ -45,9 +55,31 @@ public class EditInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         initElements();
+        initCalendar();
         setOnClickListener();
-
+        mContext = getApplicationContext();
         // setupBottomNavigationView();
+    }
+
+    private void initCalendar() {
+
+        final Calendar myCalendar = Calendar.getInstance();
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                myCalendar.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
+                txtBirthdate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+            }
+        };
+
+        txtBirthdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new DatePickerDialog(EditInfoActivity.this, date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
     }
 
     private void setOnClickListener() {
@@ -83,6 +115,20 @@ public class EditInfoActivity extends AppCompatActivity {
             }
         });
 
+        txtChangePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogManager dm = DialogManager.getInstance();
+                dm.createChangePasswordDialog(
+                        EditInfoActivity.this,
+                        "Cambiar Contraseña",
+                        "¿Estas seguro que quieres cambiar tu contraseña?",
+                        "Si",
+                        "No").show();
+
+            }
+        });
+
     }
 
     private void initElements() {
@@ -97,6 +143,8 @@ public class EditInfoActivity extends AppCompatActivity {
         btnSaveChanges.setText("Aplicar");
         spinner = findViewById(R.id.spinner);
         mProgressBar = findViewById(R.id.register_progressbar);
+        txtChangePassword = findViewById(R.id.changePassword);
+        txtChangePassword.setVisibility(View.VISIBLE);
         setData();
         setCategoryRequest();
         tb = findViewById(R.id.toolbar);
@@ -114,7 +162,7 @@ public class EditInfoActivity extends AppCompatActivity {
                 ArrayList<String> categories = (ArrayList<String>) task.getResult().getDocuments().get(0).get("categories");
                 spinner.setAdapter(new ArrayAdapter<String>(EditInfoActivity.this, android.R.layout.simple_selectable_list_item, categories));
 
-                }
+            }
         });
     }
 
@@ -131,6 +179,7 @@ public class EditInfoActivity extends AppCompatActivity {
                     txtName.setText(currentUser.getName());
                     txtSurname.setText(currentUser.getSurname());
                     txtBirthdate.setText(currentUser.getBirthday());
+                    spinner.setText(currentUser.getGender());
                     txtPasswd1.setText("*********");
                     txtPasswd1.setEnabled(false);
                     txtPasswd2.setText("*********");

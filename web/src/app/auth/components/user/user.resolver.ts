@@ -1,31 +1,29 @@
 import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot, Router } from '@angular/router';
-import { UserService } from '../../services/user.service';
+import { DataService } from '../../../service/dataService';
 import { StoreModel } from '../../models/store.model';
 
 @Injectable()
 export class UserResolver implements Resolve<StoreModel> {
-
-  constructor(public userService: UserService, private router: Router) { }
+  user: StoreModel = new StoreModel();
+  constructor(public dataService: DataService, private router: Router) { }
 
   resolve(route: ActivatedRouteSnapshot): Promise<StoreModel> {
-
-    const user = new StoreModel();
-
     return new Promise((resolve, reject) => {
-      this.userService.getCurrentUser()
+      if(this.dataService.isNewUser){
+        console.log(`vamos a pedir EL USUARIO A FIREBASE`)
+        this.dataService.refreshLocalUserInformation()
         .then(res => {
-          user.profilePh = res.photoURL;
-          console.log( `fotooo` +  user.profilePh);
-          user.storeName = res.displayName;
-          user.firebaseUserId = res.uid;
-          user.provider = res.providerData[0].providerId;
-          resolve(user);
+          this.user = res;
+          resolve(this.user);
         }, err => {
           console.log(err);
           this.router.navigate(['/login']);
           return reject(err);
         });
+      } else {
+        console.log(`PASAMOS EL USUARIO LOCAL`)
+        resolve(this.user)}
       });
     }
   }

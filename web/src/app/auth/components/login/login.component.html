@@ -20,15 +20,14 @@
       <input matInput placeholder="Contraseña" type="password" class="form-control" formControlName="password">
     </mat-form-field>
     <label class="error">{{errorMessage}}</label>
-    <label class="success">{{successMessage}}</label>
   </form>
   <form>
     <div>
       <button mat-button [disabled]="isLoading" (click)="tryLogin()" class="acceptButton">Acceder</button>
     </div>
     <div style="display: grid;">
-      <a class="createAcc" style="text-decoration: none;color: #6a99ff;" href="/signup">Crear Cuenta en Mylook</a>
-      <a class="createAcc" style="text-decoration: none;color: #6a99ff;" href="/login">Has olvidado tu Contraseña?</a>
+      <a class="createAcc" style="text-decoration: none;color: #6a99ff;" [routerLink]="[ '/Registrarse']">Crear Cuenta en Mylook</a>
+      <a class="createAcc" style="text-decoration: none;color: #6a99ff;" [routerLink]="[ '/Ingresar']">Has olvidado tu Contraseña?</a>
     </div>
     <span class="spacer"></span>
   </form>

@@ -49,21 +49,22 @@ public class OutfitAdapter extends BaseAdapter {
 
         imageView.setAdjustViewBounds(true);
         int i  = 0;
+
         for (String k : outfits.get(position).getItems().keySet()) {
             String id = outfits.get(position).getItems().get(k);
             if(i == 0){
                 loadImage(imageView,id);
             }
             if(i == 1){
-                imageView = myView.findViewById(R.id.topRightCloth);
+                imageView = myView.findViewById(R.id.bottomRightCloth);
                 loadImage(imageView,id);
             }
             if(i==2){
-                imageView = myView.findViewById(R.id.bottomLeftCloth);
+                imageView = myView.findViewById(R.id.topRightCloth);
                 loadImage(imageView,id);
             }
             if(i==3){
-                imageView = myView.findViewById(R.id.bottomRightCloth);
+                imageView = myView.findViewById(R.id.bottomLeftCloth);
                 loadImage(imageView,id);
                 break;
             }

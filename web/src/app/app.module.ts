@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 
@@ -58,8 +58,8 @@ import { MapsDialogComponent } from './dialog/maps-dialog/maps-dialog.component'
 import { ErrorComponent } from './error/error.component';
 import { MatListModule } from '@angular/material/list';
 import { RecomendationsComponent } from './recomendations/components/recomendations.component';
-import { ImageCropperModule } from 'ngx-image-cropper';
-import { ImageCropperComponent, CropperSettings } from 'ngx-img-cropper';
+import { ImageCropperModule } from 'ngx-img-cropper/index';
+import { CropperSettings } from 'ngx-img-cropper/index';
 import { ChartModule } from 'primeng/chart';
 import { DonutchartComponent } from './anylitics/components/donutchart/donutchart.component';
 import { DashboardComponent } from './anylitics/components/dashboard/dashboard.component';
@@ -72,10 +72,25 @@ import { PolarAreaComponent } from './anylitics/components/polar-area/polar-area
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { TimelineComponent } from './anylitics/components/timeline/timeline.component';
 import { FrontDialogComponent } from './articles/components/dialogs/frontDialog';
-import {RatingModule} from 'primeng/rating';
+import { RatingModule } from 'primeng/rating';
 import { NewStoreService } from './store/service/store.service';
 import { PromotionsBarComponent } from './anylitics/components/promotions-bar/promotions-bar.component';
 import { HomePageComponent } from './home-page/home-page.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { OrchestratorComponent } from './orchestrator/orchestrator.component';
+import { MercadopagoComponent } from './articles/components/inventory/mercadopago/mercadopago.component';
+// import { ResizingCroppingImagesExample03Component } from './resizing-cropping-images-example-03.component';
+import { MinimaLight, MinimaDark } from '@alyle/ui/themes/minima';
+import { LyButtonModule } from '@alyle/ui/button';
+import { LyResizingCroppingImageModule } from '@alyle/ui/resizing-cropping-images';
+import { LyIconModule } from '@alyle/ui/icon';
+
+import {
+  LyHammerGestureConfig,
+  LyThemeModule,
+  LY_THEME
+} from '@alyle/ui';
+import { HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -95,7 +110,6 @@ import { HomePageComponent } from './home-page/home-page.component';
     MapsComponent,
     ErrorComponent,
     RecomendationsComponent,
-    ImageCropperComponent,
     DonutchartComponent,
     DashboardComponent,
     PromoteDialogComponent,
@@ -103,9 +117,12 @@ import { HomePageComponent } from './home-page/home-page.component';
     TimelineComponent,
     FrontDialogComponent,
     PromotionsBarComponent,
-    HomePageComponent
+    HomePageComponent,
+    OrchestratorComponent,
+    MercadopagoComponent,
   ],
   imports: [
+    HttpClientModule,
     NgxSpinnerModule,
     BrowserModule,
     ReactiveFormsModule,
@@ -131,6 +148,7 @@ import { HomePageComponent } from './home-page/home-page.component';
     MatSortModule,
     MatChipsModule,
     MatAutocompleteModule,
+    MatTooltipModule,
     AgmCoreModule,
     MatSidenavModule,
     MatListModule,
@@ -144,13 +162,21 @@ import { HomePageComponent } from './home-page/home-page.component';
     MomentModule,
     MatCheckboxModule,
     RatingModule,
+    LyResizingCroppingImageModule,
+    LyButtonModule,
+    LyIconModule,
+    LyThemeModule.setTheme('minima-light'),
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyC7gRAUi_0C-w5gqsWIVp0IKyEZT-3UiUA'
     })
   ],
   exports: [RouterModule],
-  providers: [MatDatepickerModule, RecomendationService, DataService, AuthService, UserService, UserResolver, AuthGuard, StoreService,
-    ArticleService, TagsService, AnyliticService,
+  providers: [MatDatepickerModule, RecomendationService, DataService, AuthService,
+    UserService, UserResolver, AuthGuard, StoreService,
+    ArticleService, TagsService, AnyliticService, MatTooltipModule,
+    { provide: LY_THEME, useClass: MinimaLight, multi: true }, // name: `minima-light`
+    { provide: LY_THEME, useClass: MinimaDark, multi: true }, // name: `minima-dark`
+    { provide: HAMMER_GESTURE_CONFIG, useClass: LyHammerGestureConfig },
     // ArticleResolver, StoreResolver,
     NewStoreService],
   entryComponents: [FrontDialogComponent, PromoteDialogComponent, DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent,

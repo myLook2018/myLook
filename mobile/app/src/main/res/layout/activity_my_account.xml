@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="51dp"
-            android:background="@color/white"
+            android:background="@color/greyBackground"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -43,7 +43,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:tint="@color/primary_light"
-                    app:srcCompat="@drawable/ic_account" />
+                    app:srcCompat="@drawable/ic_profile" />
 
                 <TextView
                     android:id="@+id/txtInfoAccount"

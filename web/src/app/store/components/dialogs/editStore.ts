@@ -10,6 +10,8 @@ import { StoreModel } from 'src/app/auth/models/store.model';
     templateUrl: 'editStore.html'
 })
 export class EditStoreComponent {
+    isUpLoading:any;
+    promotionData:any;
     onAdd = new EventEmitter();
     storeForm: FormGroup;
     constructor(

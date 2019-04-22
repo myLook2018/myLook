@@ -1,13 +1,31 @@
-import { Component, Inject, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { BrowserModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import {
-  AngularFireStorage,
+  Component,
+  Inject,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  OnDestroy,
+  ChangeDetectionStrategy
+} from '@angular/core';
+import {
   AngularFireUploadTask,
   AngularFireStorageReference
 } from 'angularfire2/storage';
-import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatChipInputEvent, MatAutocompleteSelectedEvent } from '@angular/material';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogRef,
+  MatChipInputEvent,
+  MatAutocompleteSelectedEvent
+} from '@angular/material';
 import { Observable, Subscription, empty } from 'rxjs';
-import { UploadTaskSnapshot } from 'angularfire2/storage/interfaces';
-import { Validators, FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { UploadTaskSnapshot } from '@angular/fire/storage/interfaces';
+import {
+  Validators,
+  FormBuilder,
+  FormGroup,
+  FormControl
+} from '@angular/forms';
 import { ArticleService } from '../../services/article.service';
 import { MatSnackBar } from '@angular/material';
 import { finalize, startWith, map } from 'rxjs/operators';
@@ -16,13 +34,43 @@ import { TagsService } from '../../services/tags.service';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Tags } from '../../models/tags';
 import { DataService } from '../../../service/dataService';
-import { ImageCropperComponent, CropperSettings } from 'ngx-img-cropper';
+import { LyResizingCroppingImages, ImgCropperConfig } from '@alyle/ui/resizing-cropping-images';
+import { LyTheme2 } from '@alyle/ui';
+const styles = {
+  actions: {
+    display: 'flex'
+  },
+  cropping: {
+    maxWidth: '400px',
+    height: '150px'
+  },
+  flex: {
+    flex: 1
+  }
+};
 
 @Component({
   selector: 'app-article-dialog',
-  templateUrl: 'articleDialog.html'
+  templateUrl: 'articleDialog.html',
+  styleUrls: ['./articleDialog.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ArticleDialogComponent implements OnInit, OnDestroy {
+  // cropper settings
+  classes = this.theme.addStyleSheet(styles);
+  croppedImage?: string[] = ['', '', ''];
+  @ViewChild(LyResizingCroppingImages) img: LyResizingCroppingImages;
+  result: string;
+  myConfig: ImgCropperConfig = {
+    width: 150, // Default `250`
+    height: 150, // Default `200`,
+    output: {
+      width: 500,
+      height: 500
+    }
+  };
+
+  isLoadedImage = [false, false, false];
   // taskReference
   ref: AngularFireStorageReference;
   // Main task
@@ -37,7 +85,6 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   articleForm: FormGroup;
   urls = new Array<String>();
   filesSelected: FileList;
-  croppedImage: any = '';
 
   tags: string[] = [];
   sizes: string[] = [];
@@ -51,19 +98,20 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   isUpLoading = false;
   separatorKeysCodes: number[] = [ENTER, COMMA];
   filteredTags: Observable<string[]>;
-  data: any;
+
   tagsCtrl = new FormControl();
   sizesCtrl = new FormControl();
   colorsCtrl = new FormControl();
-
+  actualImageId = 0;
   @ViewChild('cropper', undefined)
-  cropper: ImageCropperComponent;
-  cropperSettings: CropperSettings;
+  // cropper: ImageCropperComponent;
+  // cropperSettings: CropperSettings;
   @ViewChild('tagsInput') tagsInput: ElementRef<HTMLInputElement>;
   @ViewChild('sizesInput') sizesInput: ElementRef<HTMLInputElement>;
   @ViewChild('colorsInput') colorsInput: ElementRef<HTMLInputElement>;
 
   constructor(
+    private theme: LyTheme2,
     public tagsService: TagsService,
     public snackBar: MatSnackBar,
     private articleService: ArticleService,
@@ -72,43 +120,59 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<ArticleDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public articleData: Article
   ) {
-    this.cropperSettings = new CropperSettings();
+    /*this.cropperSettings = new CropperSettings();
     this.cropperSettings.noFileInput = true;
-    this.cropperSettings.croppedWidth =  400;
-    this.cropperSettings.croppedHeight =  400;
-    this.cropperSettings.canvasHeight = 240;
-    this.cropperSettings.canvasWidth = 240;
-    this.data = {};
-
+    this.cropperSettings.croppedWidth = 400;
+    this.cropperSettings.croppedHeight = 400;
+    this.cropperSettings.canvasHeight = 210;
+    this.cropperSettings.canvasWidth = 210;
+*/
     this.createForm();
     if (articleData.picture !== undefined) {
-       this.isNew = false;
+      let articlePicture = (this.isNew = false);
     } else {
-      this.data.image = ('/assets/hanger.png');
     }
   }
 
   ngOnInit(): void {
     this._subscription = this.tagsService.getTags().subscribe(tags => {
       this.allTags = tags[0];
-      this.filteredTags = this.tagsCtrl.valueChanges.pipe(startWith(null),
-        map((tag: string | null) => tag ? this._filter(tag) : this.allTags.preset.slice()));
+      this.filteredTags = this.tagsCtrl.valueChanges.pipe(
+        startWith(null),
+        map((tag: string | null) =>
+          tag ? this._filter(tag) : this.allTags.preset.slice()
+        )
+      );
     });
   }
 
   ngOnDestroy(): void {
-    this._subscription.unsubscribe();
+    if (this._subscription) {
+      this._subscription.unsubscribe();
+    }
   }
 
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
-    return this.allTags.preset.filter(tags => tags.toString().toLowerCase().indexOf(filterValue) === 0);
+    return this.allTags.preset.filter(
+      tags =>
+        tags
+          .toString()
+          .toLowerCase()
+          .indexOf(filterValue) === 0
+    );
   }
 
   createForm() {
-    if (this.articleData.tags === null) { this.articleData.tags = []; }
-    if (this.articleData.sizes === null) { this.articleData.sizes = []; }
-    if (this.articleData.colors === null) { this.articleData.colors = []; }
+    if (this.articleData.tags === null) {
+      this.articleData.tags = [];
+    }
+    if (this.articleData.sizes === null) {
+      this.articleData.sizes = [];
+    }
+    if (this.articleData.colors === null) {
+      this.articleData.colors = [];
+    }
     this.tags = this.articleData.tags;
     this.sizes = this.articleData.sizes;
     this.articleForm = this.fb.group({
@@ -117,6 +181,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
       code: [this.articleData.code, Validators.nullValidator],
       cost: [this.articleData.cost, Validators.nullValidator],
       picture: ['', Validators.nullValidator],
+      picturesArray: ['', Validators.nullValidator],
       sizes: [this.articleData.sizes.map(x => x), Validators.nullValidator],
       material: [this.articleData.material, Validators.nullValidator],
       colors: [this.articleData.colors.map(x => x), Validators.nullValidator],
@@ -133,27 +198,75 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
-      duration: 2000,
+      duration: 2000
     });
   }
 
   startUpload() {
     this.isUpLoading = true;
-    const origin: string = this.data.image;
-    const sub: string = origin.substr(23);
-    const imageBlob = this.dataURItoBlob(sub);
-    const imageFile = new File([imageBlob], this.articleForm.controls['title'].value, { type: 'image/jpeg' });
-    this.articleForm.addControl('promotionLevel', new FormControl(1, Validators.required));
-    this.articleForm.addControl('creationDate', new FormControl(new Date(), Validators.required));
+    console.log('las imagenes ', this.croppedImage);
+    let imagesToUpload: File[] = [];
+    this.croppedImage.forEach(photo => {
+      //delete
+      console.log('photo ', photo);
+      const sub: string = photo.substr(22);
+      console.log('sub ', sub);
+      const imageBlob = this.dataURItoBlob(sub);
+      const imageFile = new File(
+        [imageBlob],
+        this.articleForm.controls['title'].value,
+        { type: 'image/jpeg' }
+      );
+      imagesToUpload.push(imageFile);
+    });
+    this.articleForm.addControl(
+      'promotionLevel',
+      new FormControl(1, Validators.required)
+    );
+    this.articleForm.addControl(
+      'creationDate',
+      new FormControl(new Date(), Validators.required)
+    );
     this.articleForm.get('tags').setValue(this.tags.map(x => x));
     this.articleForm.get('sizes').setValue(this.sizes.map(x => x));
     this.articleForm.get('colors').setValue(this.colors.map(x => x));
-    this.dataService.uploadPictureFile(imageFile).then(pictureURL => {
-      this.articleForm.get('picture').setValue(pictureURL);
+    this.uploadPictures(imagesToUpload).then(picturesURL => {
+      this.articleForm.get('picturesArray').setValue(picturesURL.map(x => x));
       this.articleService.addArticle(this.articleForm.value).then(() => {
         this.isUpLoading = false;
+        console.log('prenda guardada');
         this.openSnackBar('Prenda guardada en MyLook!', 'close');
         this.dialogRef.close();
+      });
+    });
+  }
+
+  uploadPictures(items: any[]) {
+    return new Promise<any>(resolve => {
+      const result = [];
+      // tslint:disable-next-line: quotemark
+      console.log('items ', items);
+
+      this.dataService.uploadPictureFile(items[0]).then(res0 => {
+        console.log('res0 ', res0);
+        result.push(res0);
+        if (items[1] !== '') {
+          this.dataService.uploadPictureFile(items[1]).then(res1 => {
+            console.log('res1', res1);
+            result.push(res1);
+            if (items[2] !== '') {
+              this.dataService.uploadPictureFile(items[2]).then(res2 => {
+                console.log('res2', res2);
+                result.push(res2);
+                resolve(result);
+              });
+            } else {
+              resolve(result);
+            }
+          });
+        } else {
+          resolve(result);
+        }
       });
     });
   }
@@ -175,7 +288,6 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     this.articleService.refreshArticle(articleUpdated);
     console.log(articleUpdated.tags);
     this.openSnackBar('Prenda actualizada en MyLook!', 'close');
-
   }
 
   isActive(snapshot) {
@@ -265,22 +377,24 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     }
   }
 
+  /*
   fileChangeListener($event) {
+     console.log('el event', event);
     const image: any = new Image();
     const file: File = $event.target.files[0];
     if (file.type.split('/')[1] === 'png') {
       return this.openSnackBar('Tipo de imagen no soportado!', 'close');
-   }
+    }
     const myReader: FileReader = new FileReader();
     const that = this;
-    myReader.onloadend = function (loadEvent: any) {
+    myReader.onloadend = function(loadEvent: any) {
       image.src = loadEvent.target.result;
       that.cropper.setImage(image);
-
+      // that.data[that.actualImageId] = image;
     };
-
     myReader.readAsDataURL(file);
   }
+*/
 
   dataURItoBlob(dataURI) {
     const byteString = atob(dataURI);
@@ -292,6 +406,46 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     }
     const blob = new Blob([arrayBuffer], { type: 'image/jpeg' });
     return blob;
- }
+  }
 
+  setImageID(id: number) {
+    this.actualImageId = id;
+  }
+
+  oncropped(e, index) {
+    console.log(`cropped `, e);
+    console.log(`cropped index`, index);
+    this.croppedImage[index] = e.dataURL;
+  }
+  onloaded(index) {
+    console.log('img loaded');
+    this.isLoadedImage[index] = true;
+    this.onSelectedImage(index);
+  }
+  onerror() {
+    console.warn('img not loaded');
+  }
+  onSelectedImage(index) {
+    console.log('se esta subiendo al indice ', index);
+    this.actualImageId = index;
+  }
+
+  doClean(index) {
+    console.log('img cleared');
+    this.isLoadedImage[index] = false;
+  }
+
+  cropImages(crop1, crop2, crop3) {
+    const croppers = [crop1, crop2, crop3];
+    for (let index = 0; index < this.isLoadedImage.length; index++) {
+      if(this.isLoadedImage[index]) {
+        try {
+          croppers[index].crop();
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+    this.startUpload();
+  }
 }

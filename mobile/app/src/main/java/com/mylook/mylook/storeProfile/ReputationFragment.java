@@ -31,10 +31,10 @@ public class ReputationFragment extends Fragment {
     private MaterialRatingBar ratingBar;
     private TextView lblCantRecommendations;
     private TextView lblRecommendationsDescr;
-    private  FirebaseFirestore dB;
+    private FirebaseFirestore dB;
     private String storeName;
-    private float ratingSum=0;
-    private int recommendCount=0;
+    private float ratingSum = 0;
+    private int recommendCount = 0;
     private String registerDate;
     private CardView cardRecommendations;
 
@@ -44,8 +44,8 @@ public class ReputationFragment extends Fragment {
     @SuppressLint("ValidFragment")
     public ReputationFragment(String name) {
 
-        dB=FirebaseFirestore.getInstance();
-        this.storeName=name;
+        dB = FirebaseFirestore.getInstance();
+        this.storeName = name;
 
     }
 
@@ -56,48 +56,51 @@ public class ReputationFragment extends Fragment {
         initElements(rootView);
         countRecommendations();
         countSubscribers();
-        lblDate.setText((CharSequence)  registerDate);
+        lblDate.setText((CharSequence) registerDate);
         return rootView;
     }
-    public void initElements(View rootView){
-        cardRecommendations=rootView.findViewById(R.id.cardRecommendations);
+
+    public void initElements(View rootView) {
+        cardRecommendations = rootView.findViewById(R.id.cardRecommendations);
         cardRecommendations.setVisibility(View.VISIBLE);
-        lblActiveStore=rootView.findViewById(R.id.lblActiveStore);
-        lblDate=rootView.findViewById(R.id.lblDate);
-        lblCant=rootView.findViewById(R.id.lblCant);
-        ratingBar=rootView.findViewById(R.id.ratingBar);
-        lblCantRecommendations=rootView.findViewById(R.id.lblCantRecommendations);
-        lblRecommendationsDescr=rootView.findViewById(R.id.lblRecomendationsDescr);
+        lblActiveStore = rootView.findViewById(R.id.lblActiveStore);
+        lblDate = rootView.findViewById(R.id.lblDate);
+        lblCant = rootView.findViewById(R.id.lblCant);
+        ratingBar = rootView.findViewById(R.id.ratingBar);
+        lblCantRecommendations = rootView.findViewById(R.id.lblCantRecommendations);
+        lblRecommendationsDescr = rootView.findViewById(R.id.lblRecomendationsDescr);
     }
 
     public void setRegisterDate(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(date.getTime());
         int mes = cal.get(Calendar.MONTH) + 1;
-        registerDate= cal.get(Calendar.DAY_OF_MONTH) + "/" + mes + "/" + cal.get(Calendar.YEAR);
+        registerDate = cal.get(Calendar.DAY_OF_MONTH) + "/" + mes + "/" + cal.get(Calendar.YEAR);
     }
 
-    public void countRecommendations(){
-        dB.collection("answeredRecommendations").whereEqualTo("storeName",storeName)
+    public void countRecommendations() {
+        dB.collection("answeredRecommendations").whereEqualTo("storeName", storeName)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                for (DocumentSnapshot documentSnapshot:task.getResult()){
-                    ratingSum+=Float.parseFloat((String)documentSnapshot.get("feedBack"));
-                    recommendCount++;
+                for (DocumentSnapshot documentSnapshot : task.getResult()) {
+                    if (documentSnapshot.contains("feedBack")) {
+                        ratingSum += Float.parseFloat((String) documentSnapshot.get("feedBack"));
+                        recommendCount++;
+                    }
                 }
-                if(ratingSum!=0 && recommendCount!=0){
-                    float prom=ratingSum/recommendCount;
+                if (ratingSum != 0 && recommendCount != 0) {
+                    float prom = ratingSum / recommendCount;
                     ratingBar.setRating(prom);
                     ratingBar.setEnabled(false);
-                    if(recommendCount==1)
+                    if (recommendCount == 1)
                         lblCantRecommendations.setText("Recomendó 1 vez");
                     else
                         lblCantRecommendations.setText(String.format("Recomendó %d veces", recommendCount));
                     lblRecommendationsDescr.setText(typeRecommendation(prom));
-                    recommendCount=0;
-                    ratingSum=0;
-                }else{
+                    recommendCount = 0;
+                    ratingSum = 0;
+                } else {
                     ratingBar.setVisibility(View.INVISIBLE);
                     lblCantRecommendations.setVisibility(View.INVISIBLE);
                     lblRecommendationsDescr.setText("Aún no realizó ninguna recomendación!");
@@ -107,30 +110,30 @@ public class ReputationFragment extends Fragment {
     }
 
     public void countSubscribers() {
-        dB.collection("subscriptions").whereEqualTo("storeName",storeName).get()
+        dB.collection("subscriptions").whereEqualTo("storeName", storeName).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        int cant=task.getResult().getDocuments().size();
-                        if(cant==0)
+                        int cant = task.getResult().getDocuments().size();
+                        if (cant == 0)
                             lblCant.setText("Todavia no tiene suscriptores");
-                        else if(cant==1)
+                        else if (cant == 1)
                             lblCant.setText("1 suscriptor");
-                            else
-                                lblCant.setText(String.format("%d suscriptores!", cant));
+                        else
+                            lblCant.setText(String.format("%d suscriptores!", cant));
                     }
                 });
     }
 
-    public String typeRecommendation(float prom){
-        String description="";
-        if(prom>=0 && prom<=2){
-            description="No da buenas recomendaciones";
-        }else if(prom>2 && prom<=3){
-            description="Sus recomendaciones son regulares";
-                }else if(prom>3 && prom<4.5){
-                description="Sus recomendaciones son muy buenas!";
-                        }else description="Sus recomendaciones son excelentes!";
+    public String typeRecommendation(float prom) {
+        String description = "";
+        if (prom >= 0 && prom <= 2) {
+            description = "No da buenas recomendaciones";
+        } else if (prom > 2 && prom <= 3) {
+            description = "Sus recomendaciones son regulares";
+        } else if (prom > 3 && prom < 4.5) {
+            description = "Sus recomendaciones son muy buenas!";
+        } else description = "Sus recomendaciones son excelentes!";
         return description;
     }
 }

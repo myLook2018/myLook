@@ -14,9 +14,7 @@ export const environment = {
   },
   maps:{
     key: 'AIzaSyA09UF3v-eEMF1nbfjJWO7yKQq4va4__xE'  }
-};
-
-
+  };
 
 /*
  * In development mode, to ignore zone related error stack frames such as
