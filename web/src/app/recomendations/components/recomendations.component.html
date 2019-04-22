@@ -60,7 +60,7 @@
 
 
       <!--Al seleccionar una fila de las opciones, se despliega una carta con la descripcion-->
-      <div *ngIf="selectedRequest.description !== '' ">
+      <div *ngIf="isRequestSelected">
         <mat-card class="requestCard">
           <mat-card-header style="max-height: calc(10vh);">
             <img mat-card-avatar src="/assets/noProfilePic.png">
@@ -77,7 +77,7 @@
       </div>
 
       <!--Carta con nuestra recomendacion-->
-      <div *ngIf="selectedRequest.description !== '' ">
+      <div *ngIf="isRequestSelected">
         <form [formGroup]="requestAnswerForm">
           <mat-card class="answerCard">
             <mat-card-header>

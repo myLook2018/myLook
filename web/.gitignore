@@ -2,14 +2,16 @@
 
 # compiled output
 /dist
-/tmp
-/out-tsc
+
+#FirebaseCache
+./firebase
 
 # dependencies
 /node_modules
 /functions/node_modules
 /package-lock.json
 ./package-lock.json
+package-lock.json
 
 # IDEs and editors
 /.idea
@@ -18,7 +20,6 @@
 .c9/
 *.launch
 .settings/
-*.sublime-workspace
 
 # IDE - VSCode
 .vscode/*
@@ -29,12 +30,7 @@
 
 # misc
 /.sass-cache
-/connect.lock
-/coverage
-/libpeerconnection.log
 npm-debug.log
-yarn-error.log
-testem.log
 /typings
 
 # System Files
