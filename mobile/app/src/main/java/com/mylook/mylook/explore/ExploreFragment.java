@@ -64,8 +64,6 @@ public class ExploreFragment extends Fragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-    private int currentIndex = 0;
-    private int totalArticles = 0;
     public final static String TAG = "ExploreFragment";
     private static ExploreFragment homeInstance = null;
 
@@ -86,7 +84,7 @@ public class ExploreFragment extends Fragment {
      */
     public static void refreshStatus(){
         if(homeInstance!=null){
-            mDiscoverableArticles = null;
+            //mDiscoverableArticles = null;
         }
     }
 
@@ -142,23 +140,23 @@ public class ExploreFragment extends Fragment {
                 Interaction userInteraction = new Interaction();
                 userInteraction.setSavedToCloset(false);
                 userInteraction.setClickOnArticle(false);
-                userInteraction.setPromotionLevel(mDiscoverableArticles.get(currentIndex).getPromotionLevel());
+                userInteraction.setPromotionLevel(mDiscoverableArticles.get(0).getPromotionLevel());
                 userInteraction.setLiked(direction.toString().equalsIgnoreCase("right"));
-                userInteraction.setArticleId(mDiscoverableArticles.get(currentIndex).getArticleId());
-                userInteraction.setStoreName(mDiscoverableArticles.get(currentIndex).getStoreName());
-                userInteraction.setTags(mDiscoverableArticles.get(currentIndex).getTags());
+                userInteraction.setArticleId(mDiscoverableArticles.get(0).getArticleId());
+                userInteraction.setStoreName(mDiscoverableArticles.get(0).getStoreName());
+                userInteraction.setTags(mDiscoverableArticles.get(0).getTags());
                 userInteraction.setUserId(user.getUid());
                 interactions.add(userInteraction);
 
                 LocalInteraction local = new LocalInteraction();
-                local.setUid(mDiscoverableArticles.get(currentIndex).getArticleId());
+                local.setUid(mDiscoverableArticles.get(0).getArticleId());
                 local.setUserId(user.getUid());
                 local.setDate(Calendar.getInstance().getTime());
                 localDAO.insert(local);
 
-                currentIndex++;
-                totalArticles--;
-                if (totalArticles == 0) {
+                mDiscoverableArticles.remove(0);
+                if (mDiscoverableArticles.isEmpty()) {
+                    mDiscoverableArticles = null;
                     mCardStack.setVisibility(View.GONE);
                     mMessage.setText("No quedan artículos para explorar.\n Intentá más tarde.");
                     mMessage.setVisibility(View.VISIBLE);
@@ -178,20 +176,19 @@ public class ExploreFragment extends Fragment {
             @Override
             public void onCardClicked(int index) {
                 Interaction userInteraction = new Interaction();
-                userInteraction.setPromotionLevel(mDiscoverableArticles.get(currentIndex).getPromotionLevel());
-                userInteraction.setSavedToCloset(false);
+                userInteraction.setPromotionLevel(mDiscoverableArticles.get(0).getPromotionLevel());
                 userInteraction.setLiked(false);
                 userInteraction.setClickOnArticle(true);
-                userInteraction.setArticleId(mDiscoverableArticles.get(currentIndex).getArticleId());
-                userInteraction.setStoreName(mDiscoverableArticles.get(currentIndex).getStoreName());
-                userInteraction.setTags(mDiscoverableArticles.get(currentIndex).getTags());
+                userInteraction.setArticleId(mDiscoverableArticles.get(0).getArticleId());
+                userInteraction.setStoreName(mDiscoverableArticles.get(0).getStoreName());
+                userInteraction.setTags(mDiscoverableArticles.get(0).getTags());
                 userInteraction.setUserId(user.getUid());
                 interactions.add(userInteraction);
 
-                Log.d("CardStackView", "onCardClicked: " + index);
+                Log.d("CardStackView", "cardClicked");
                 Intent intent = new Intent(mContext, ArticleInfoActivity.class);
                 Log.d("info del articulo", "onClick: paso por intent la data del articulo");
-                Article art = mDiscoverableArticles.get(index);
+                Article art = mDiscoverableArticles.get(0);
                 intent.putExtra("article", art);
                 intent.putExtra("tags", userInteraction.getTags());
                 mContext.startActivity(intent);
@@ -240,6 +237,7 @@ public class ExploreFragment extends Fragment {
         List<Article> promo1 = new ArrayList<>();
         List<Article> promo2 = new ArrayList<>();
         List<Article> promo3 = new ArrayList<>();
+        int totalArticles = 0;
 
         for (QueryDocumentSnapshot document : result) {
             if (isNew(document.getId())) {
@@ -360,10 +358,8 @@ public class ExploreFragment extends Fragment {
     private void uploadInteractions() {
         for (Interaction interaction : interactions) {
             db.collection("interactions").add(interaction);
-
         }
         interactions.clear();
-        mDiscoverableArticles.clear();
     }
 
 

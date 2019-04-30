@@ -10,16 +10,14 @@
 
     <GridView
         android:id="@+id/grid_favoritos"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
         android:numColumns="3"
+        android:listSelector="@drawable/states_gridview_closet"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
     <ProgressBar
         android:id="@+id/mProgressBar"
         style="?android:attr/progressBarStyle"

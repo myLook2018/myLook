@@ -41,7 +41,6 @@ public class ClosetActivity extends AppCompatActivity {
         setContentView(R.layout.activity_closet_tablayout);
         initElements();
         createTabLayout();
-
     }
 
     @Override
@@ -53,7 +52,7 @@ public class ClosetActivity extends AppCompatActivity {
     }
 
     private void createTabLayout() {
-        tabLayout = (TabLayout) findViewById(R.id.tablayout);
+        tabLayout = findViewById(R.id.tablayout);
         viewPager = findViewById(R.id.closetViewPager);
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);

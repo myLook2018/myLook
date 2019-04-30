@@ -14,22 +14,23 @@ import java.util.ArrayList;
 
 
 public class ImageAdapter extends BaseAdapter {
-    private Context mContext;
 
+    private Context mContext;
     private ArrayList<Favorite> favorites;
 
-    public ImageAdapter(Context c,ArrayList favorites) {
-        mContext = c;
-        this.favorites=favorites;
-        //getCloset();
-
+    public ImageAdapter(Context context, ArrayList favorites) {
+        this.mContext = context;
+        this.favorites = favorites;
     }
+
     public int getCount() {
         return favorites.size();
     }
+
     public Object getItem(int position) {
-        return favorites.get(position).getArticleId();
+        return favorites.get(position);
     }
+
     public long getItemId(int position) {
         return 0;
     }
@@ -37,7 +38,6 @@ public class ImageAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView;
         if (convertView == null) {
-
             // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
             imageView.setPadding(1, 1, 1, 1);
