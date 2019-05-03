@@ -172,11 +172,6 @@ public class CategoryTab extends Fragment {
                 });
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
     private void getOutfits() {
         dB.collection("closets")
                 .whereEqualTo("userID", dbUserId)

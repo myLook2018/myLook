@@ -4,17 +4,15 @@ import android.content.ClipData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.Guideline;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -23,8 +21,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.ViewTarget;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -34,41 +32,34 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
+import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Closet;
 import com.mylook.mylook.entities.Favorite;
 import com.mylook.mylook.entities.Outfit;
-import com.squareup.picasso.Picasso;
+import com.mylook.mylook.info.ArticleInfoActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class OutfitActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
+    private GridView gridView;
     private FirebaseFirestore dB = FirebaseFirestore.getInstance();
-    private ArrayList<Favorite> favoritos = new ArrayList<>();
-    private ArrayList<Favorite> favoritosModificados = new ArrayList<>();
+    private ArrayList<Favorite> favorites = new ArrayList<>();
+    private ArrayList<Favorite> selectedFavorites = new ArrayList<>();
     private HashMap<String, String> outfitItems;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    private Closet closet;
-    private ImageView bottomCloth, mediumCloth, topCloth, topAccesory, activeView;
     private Toolbar tb;
-    private boolean isFromOutfit;
-    private String collectionName, category;
+    private String outfitName, category;
     private ImageButton btnSend;
     private ProgressBar mProgressBar;
     private String outfitId, dbUserId;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_outfit);
-        recyclerView = findViewById(R.id.recycleItems);
-        topCloth = findViewById(R.id.topCloth);
-        bottomCloth = findViewById(R.id.bottomCloth);
-        mediumCloth = findViewById(R.id.mediumCloth);
-        topAccesory = findViewById(R.id.topAccesory);
+        gridView = findViewById(R.id.favorites_grid);
         user = FirebaseAuth.getInstance().getCurrentUser();
         btnSend = findViewById(R.id.btnSendOutfit);
         btnSend.setOnClickListener(new View.OnClickListener() {
@@ -81,77 +72,54 @@ public class OutfitActivity extends AppCompatActivity {
         mProgressBar.setVisibility(View.VISIBLE);
         initElements();
         getUserId();
-        setupDragListener();
-
     }
 
-    private void setupDragListener() {
-        bottomCloth.setOnDragListener(new MyDragListener());
-        bottomCloth.setOnLongClickListener(new MyTouchListener());
-        topCloth.setOnDragListener(new MyDragListener());
-        topCloth.setOnLongClickListener(new MyTouchListener());
-        mediumCloth.setOnDragListener(new MyDragListener());
-        mediumCloth.setOnLongClickListener(new MyTouchListener());
-        topAccesory.setOnDragListener(new MyDragListener());
-        topAccesory.setOnLongClickListener(new MyTouchListener());
-        mProgressBar.setVisibility(View.INVISIBLE);
+    private void setGridView() {
+        int widthGrid = getResources().getDisplayMetrics().widthPixels;
+        int imageWidth = widthGrid / 3;
+        gridView.setColumnWidth(imageWidth);
+        gridView.setHorizontalSpacing(8);
+        gridView.setNumColumns(3);
+        setClickListener();
     }
-
-    private class MyDragListener implements View.OnDragListener {
-
-        @Override
-        public boolean onDrag(View v, DragEvent event) {
-            switch (event.getAction()) {
-                case DragEvent.ACTION_DRAG_STARTED:
-                    break;
-                case DragEvent.ACTION_DRAG_ENTERED:
-                    break;
-                case DragEvent.ACTION_DRAG_EXITED:
-                    break;
-                case DragEvent.ACTION_DROP:
-                    if (outfitItems == null)
-                        outfitItems = new HashMap<>();
-                    mProgressBar.setVisibility(View.VISIBLE);
-                    mProgressBar.setZ(20);
-                    ImageView nuevaPrenda = new ImageView(v.getContext());
-                    String positionData = event.getClipData().getItemAt(0).getText().toString();
-                    int position = Integer.parseInt(positionData);
-                    String uri = favoritos.get(position).getDownloadUri();
-                    String articleId = favoritos.get(position).getArticleId();
-                    nuevaPrenda.setAdjustViewBounds(true);
-                    nuevaPrenda.setMaxHeight(150);
-                    nuevaPrenda.setMaxWidth(150);
-                    ((ImageView) v).setImageDrawable(null);
-
-                    Picasso.get().load(uri).into((ImageView) v);
-                    nuevaPrenda.setZ(5);
-                    v.setTag(String.valueOf(position));
-                    outfitItems.put(String.valueOf(getResources().getResourceName(v.getId())), articleId);
-                    mProgressBar.setVisibility(View.INVISIBLE);
-                    if (!isFromOutfit) {
-                        favoritosModificados.remove(position);
-                        loadRecycleViewer();
-                        isFromOutfit = false;
-
-                    } else {
-                        activeView.setImageDrawable(getDrawable(R.drawable.white_background));
-                    }
-
-                    break;
-                case DragEvent.ACTION_DRAG_ENDED:
-                default:
-                    break;
+    private void setClickListener() {
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                dB.collection("articles").document(((Favorite) parent.getAdapter().getItem(position)).getArticleId()).get()
+                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    Article art = task.getResult().toObject(Article.class);
+                                    art.setArticleId(task.getResult().getId());
+                                    Intent intent = new Intent(OutfitActivity.this, ArticleInfoActivity.class);
+                                    intent.putExtra("article", art);
+                                    OutfitActivity.this.startActivity(intent);
+                                }
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(OutfitActivity.this, "No se han podido cargar tus favoritos", Toast.LENGTH_LONG).show();
+                            }
+                        });
             }
-            return true;
-        }
-    }
-
-    private void loadRecycleViewer() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-        OutfitRecycleViewAdapter adapter = new OutfitRecycleViewAdapter(getApplicationContext(), favoritosModificados);
-        recyclerView.setAdapter(adapter);
-        mProgressBar.setVisibility(View.INVISIBLE);
+        });
+        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            public boolean onItemLongClick(AdapterView<?> parent, View v,
+                                           int position, long id) {
+                if (selectedFavorites == null) {
+                    selectedFavorites = new ArrayList();
+                }
+                Log.d("LONGCLICKED", Boolean.toString(v.isSelected()));
+                selectedFavorites.add((Favorite) parent.getAdapter().getItem(position));
+                Log.d("LONGCLICKED", Boolean.toString(v.isSelected()));
+                Log.d("LONGCLICKED", Integer.toString(selectedFavorites.size()));
+                return v.isSelected();
+            }
+        });
     }
 
     private final class MyTouchListener implements View.OnLongClickListener {
@@ -170,7 +138,7 @@ public class OutfitActivity extends AppCompatActivity {
         tb.setTitle("Tu conjunto");
         setSupportActionBar(tb);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        collectionName = getIntent().getExtras().get("name").toString();
+        outfitName = getIntent().getExtras().get("name").toString();
         category = getIntent().getExtras().get("category").toString();
         try {
             outfitId = getIntent().getExtras().get("id").toString();
@@ -238,11 +206,11 @@ public class OutfitActivity extends AppCompatActivity {
                                                     ArrayList<String> arrayList = new ArrayList<>();
                                                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                                         Favorite fav = documentSnapshot.toObject(Favorite.class);
-                                                        favoritos.add(fav);
+                                                        favorites.add(fav);
                                                         arrayList.add(fav.getDownloadUri());
                                                     }
-                                                    favoritosModificados = favoritos;
-                                                    loadRecycleViewer();
+                                                    selectedFavorites = favorites;
+                                                    setGridView();
                                                     return;
                                                 } else
                                                     Log.e("FAVORITES", "Nuuuuuuuuuuuuuuuuuuuuuu");
@@ -277,7 +245,6 @@ public class OutfitActivity extends AppCompatActivity {
                                         finish();
                                     }
                                 });
-
                             }
                         }
                     });
@@ -310,7 +277,7 @@ public class OutfitActivity extends AppCompatActivity {
 
     private Outfit createOutfit() {
         Outfit nuevo = new Outfit();
-        nuevo.setName(collectionName);
+        nuevo.setName(outfitName);
         nuevo.setCategory(category);
         nuevo.setItems(outfitItems);
         return nuevo;
@@ -353,12 +320,12 @@ public class OutfitActivity extends AppCompatActivity {
     private void loadOutfit() {
         for (final String item : outfitItems.keySet()) {
             String articleId = outfitItems.get(item);
-            loadImage(item, outfitItems.get(item), articleId);
+            loadImage(item, articleId);
         }
 
     }
 
-    private void loadImage(final String item, final String picture, String articleId) {
+    private void loadImage(final String item, String articleId) {
         dB.collection("articles").document(articleId).get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override

@@ -54,16 +54,6 @@ public class FavouritesTab extends Fragment {
         return instance;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
     private void setGridview() {
         int widthGrid = getResources().getDisplayMetrics().widthPixels;
         int imageWidth = widthGrid / 3;
