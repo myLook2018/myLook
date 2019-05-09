@@ -1,50 +1,50 @@
 package com.mylook.mylook.utils;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.mylook.mylook.entities.Favorite;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.mylook.mylook.entities.Article;
 
 import java.util.ArrayList;
 
-
 public class ImageAdapter extends BaseAdapter {
 
-    private Context mContext;
-    private ArrayList<Favorite> favorites;
+    private Context context;
+    private ArrayList<Article> articles;
 
-    public ImageAdapter(Context context, ArrayList favorites) {
-        this.mContext = context;
-        this.favorites = favorites;
+    public ImageAdapter(Context context, ArrayList articles) {
+        this.context = context;
+        this.articles = articles;
     }
 
     public int getCount() {
-        return favorites.size();
+        return articles.size();
     }
 
     public Object getItem(int position) {
-        return favorites.get(position);
+        return articles.get(position);
     }
 
     public long getItemId(int position) {
         return 0;
     }
-    // create a new ImageView for each item referenced by the Adapter
+
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView;
         if (convertView == null) {
-            // if it's not recycled, initialize some attributes
-            imageView = new ImageView(mContext);
-            imageView.setPadding(1, 1, 1, 1);
+            imageView = new ImageView(context);
         } else {
             imageView = (ImageView) convertView;
         }
-        Glide.with(mContext).asBitmap().load(favorites.get(position).getDownloadUri()).into(imageView);
+        Glide.with(context).asBitmap().load(articles.get(position).getPicture())
+                .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA))
+                .into(imageView);
         return imageView;
     }
 }

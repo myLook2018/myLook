@@ -62,7 +62,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
         getUserId();
     }
 
-
     private void getUserId() {
         dB.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -157,9 +156,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
         tags = intent.getStringArrayListExtra("tags");
     }
 
-
-
-
     private void saveOnCloset() {
 
         final Map<String, Object> favorites = new HashMap<>();
@@ -168,7 +164,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
         favorites.put("collecion", null);
 
         dB.collection("closets")
-                .whereEqualTo("userID",dbUserId)
+                .whereEqualTo("userID", dbUserId)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override

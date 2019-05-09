@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/greyBackground"
-    tools:context=".closet.CategoryTab">
+    tools:context=".closet.OutfitsTab">
 
     <GridView
         android:id="@+id/grid_colecciones"

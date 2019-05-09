@@ -5,38 +5,34 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
-import com.mylook.mylook.entities.Favorite;
 import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.session.Sesion;
 import com.mylook.mylook.utils.ImageAdapter;
 
 import java.util.ArrayList;
 
+import static android.app.Activity.RESULT_OK;
 
 public class FavouritesTab extends Fragment {
 
+    private static final int FAVOURITE_INFO = 1;
     private GridView gridview;
     private FirebaseFirestore dB = FirebaseFirestore.getInstance();
-    private ArrayList<Favorite> favorites;
-    private ArrayList<Favorite> selectedFavorites; //para la creacion de conjunto
+    private ArrayList<Article> favorites;
     private ProgressBar mProgressBar;
     private String dbUserId = Sesion.getInstance().getSessionUserId();
     private static FavouritesTab instance = null;
@@ -60,77 +56,44 @@ public class FavouritesTab extends Fragment {
         gridview.setColumnWidth(imageWidth);
         gridview.setHorizontalSpacing(8);
         gridview.setNumColumns(3);
-        setClickListener();
-    }
-
-    private void setClickListener() {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                dB.collection("articles").document(((Favorite) parent.getAdapter().getItem(position)).getArticleId()).get()
-                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    Article art = task.getResult().toObject(Article.class);
-                                    art.setArticleId(task.getResult().getId());
-                                    Intent intent = new Intent(getContext(), ArticleInfoActivity.class);
-                                    intent.putExtra("article", art);
-                                    getContext().startActivity(intent);
-                                }
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(getContext(), "No se han podido cargar tus favoritos", Toast.LENGTH_LONG).show();
-                            }
-                        });
-            }
-        });
-        gridview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            public boolean onItemLongClick(AdapterView<?> parent, View v,
-                                        int position, long id) {
-                if (selectedFavorites == null) {
-                    selectedFavorites = new ArrayList();
-                }
-                Log.d("LONGCLICKED", Boolean.toString(v.isSelected()));
-                selectedFavorites.add((Favorite) parent.getAdapter().getItem(position));
-                Log.d("LONGCLICKED", Boolean.toString(v.isSelected()));
-                Log.d("LONGCLICKED", Integer.toString(selectedFavorites.size()));
-                return v.isSelected();
+                Intent intent = new Intent(getContext(), ArticleInfoActivity.class);
+                intent.putExtra("article", favorites.get(position));
+                intent.putExtra("position", position);
+                startActivityForResult(intent, FAVOURITE_INFO);
             }
         });
     }
 
-    private void getCloset() {
-        //TODO cambiar estructura de firestore para dar soporte a una única consulta
-        dB.collection("closets")
-                .whereEqualTo("userID", dbUserId)
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == FAVOURITE_INFO) {
+            if (resultCode == RESULT_OK) {
+                // TODO agregar funcionalidad a articleinfo o aca -> eliminar de ropero
+                // chequear si esta efectivamente guardado en ropero, sino eliminar de la grilla
+                data.getExtras().getBoolean("removed");
+            }
+        }
+    }
+
+    private void getFavorites() {
+        dB.collection("articles")
+                .whereArrayContains("favorites", dbUserId)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                String id = document.getId();
-                                dB.collection("closets").document(id).collection("favorites").get()
-                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                if (task.isSuccessful()) {
-                                                    for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                                                        Favorite fav = documentSnapshot.toObject(Favorite.class);
-                                                        favorites.add(fav);
-                                                        adapter.notifyDataSetChanged();
-                                                        loaded = true;
-                                                    }
-                                                    mProgressBar.setVisibility(View.INVISIBLE);
-                                                    return;
-                                                }
-                                            }
-                                        });
+                                Article art = document.toObject(Article.class);
+                                art.setArticleId(document.getId());
+                                favorites.add(art);
                             }
+                            adapter.notifyDataSetChanged();
+                            loaded = true;
+                            mProgressBar.setVisibility(View.INVISIBLE);
                         }
                     }
                 });
@@ -151,7 +114,7 @@ public class FavouritesTab extends Fragment {
             setGridview();
             favorites = new ArrayList<>();
             adapter = new ImageAdapter(getActivity(), favorites);
-            getCloset();
+            getFavorites();
         } else {
             adapter.notifyDataSetChanged();
         }

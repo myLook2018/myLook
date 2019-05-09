@@ -1,11 +1,9 @@
 package com.mylook.mylook.closet;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -16,21 +14,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
-import com.mylook.mylook.entities.Closet;
-import com.mylook.mylook.entities.Favorite;
-import com.mylook.mylook.recommend.RecommendActivityAddDesc;
-
-import java.util.ArrayList;
 
 public class ClosetFragment extends Fragment {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private static FavouritesTab newFabTab;
-    private static CategoryTab categoryTab;
+    private static OutfitsTab outfitsTab;
     public final static String TAG = "ClosetFragment";
     private static ClosetFragment homeInstance = null;
     private ClosetTabAdapter adapter;
@@ -120,8 +111,8 @@ public class ClosetFragment extends Fragment {
             adapter = new ClosetTabAdapter(getChildFragmentManager(), 2);
             newFabTab = FavouritesTab.getInstance();
             adapter.addFragment(newFabTab, "Tus prendas");
-            categoryTab = CategoryTab.getInstance();
-            adapter.addFragment(categoryTab, "Conjuntos");
+            outfitsTab = OutfitsTab.getInstance();
+            adapter.addFragment(outfitsTab, "Conjuntos");
         }
         adapter.notifyDataSetChanged();
         viewPager.setAdapter(adapter);
@@ -131,7 +122,7 @@ public class ClosetFragment extends Fragment {
     public static void refreshStatus(){
         if(homeInstance!=null){
             loaded = false;
-            categoryTab.refreshStatus();
+            outfitsTab.refreshStatus();
             newFabTab.refreshStatus();
         }
     }
