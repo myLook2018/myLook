@@ -32,9 +32,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -45,7 +43,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
-import com.mylook.mylook.home.MainActivity;
+import com.mylook.mylook.home.MyLookActivity;
 
 
 /**
@@ -80,6 +78,19 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.e("Login", "Started on create");
+        setupLoginActivity();
+        Log.e("Login", "FInish on create");
+    }
+
+    @Override
+    protected void onResume() {
+        Log.e("Login", "Resume act");
+        super.onResume();
+        setupLoginActivity();
+        Log.e("Login", "FInish on resume");
+    }
+
+    private void setupLoginActivity(){
         setContentView(R.layout.activity_login);
         initElements();
         mContext = LoginActivity.this;
@@ -121,15 +132,7 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         });
-        Log.e("Login", "FInish on create");
     }
-
-    @Override
-    protected void onResume() {
-        Log.e("Login", "Resume act");
-        super.onResume();
-    }
-
     private boolean isStringNull(String string) {
         return "".equals(string);
     }
@@ -154,6 +157,7 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.makeText(mContext, "Algo salió mal :(",
                                             Toast.LENGTH_SHORT).show();
                                     Log.e("[LoginActivity]   ", task.getException().getMessage());
+                                    onResume();
                                     //Intent intent = new Intent(mContext, LoginActivity.class);
                                     //startActivity(intent);
                                     //finish();
@@ -209,11 +213,6 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.addAuthStateListener(mAuthListener);
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-    }
 
     @Override
     protected void onDestroy() {
@@ -243,7 +242,7 @@ public class LoginActivity extends AppCompatActivity {
                                     finish();
                                 } else {
                                     if ( user!=null && user.isEmailVerified()) {
-                                        Intent intent = new Intent(mContext, MainActivity.class);
+                                        Intent intent = new Intent(mContext, MyLookActivity.class);
                                         Toast.makeText(mContext, "Bienvenido a myLook!",
                                                 Toast.LENGTH_SHORT).show();
                                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -252,12 +251,11 @@ public class LoginActivity extends AppCompatActivity {
                                     } else {
                                         Log.d("[LoginActivity]   ", "eMail no verificado");
                                         displayMessage("Tu email aún no esta verificado");
-                                        Intent intent = new Intent(mContext, LoginActivity.class);
+                                        //Intent intent = new Intent(mContext, LoginActivity.class);
                                         FirebaseAuth.getInstance().signOut();
-                                        mContext.
-                                        startActivity(intent);
-                                        finish();
-                                        //onResume();
+                                        //mContext.startActivity(intent);
+                                        //finish();
+                                        onResume();
                                     }
                                 }
                             } else {
@@ -420,5 +418,11 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }
+
 
