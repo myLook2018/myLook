@@ -23,14 +23,6 @@
             app:expandedTitleMarginStart="40dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-            <ImageView
-                android:id="@+id/article_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:background="@color/greyBackground"
-                android:scaleType="fitCenter" />
-
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar_more_info"
                 android:layout_width="match_parent"
@@ -87,7 +79,7 @@
         app:layout_anchorGravity="fill"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <include layout="@layout/article_detail" />
+            <include layout="@layout/article_detail" />
 
     </android.support.v4.widget.NestedScrollView>
 
