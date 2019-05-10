@@ -38,6 +38,8 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -90,12 +92,11 @@ public class LoginActivity extends AppCompatActivity {
         Log.e("Login", "FInish on resume");
     }
 
-    private void setupLoginActivity(){
+    private void setupLoginActivity() {
         setContentView(R.layout.activity_login);
         initElements();
         mContext = LoginActivity.this;
         mProgressBar.setVisibility(View.GONE);
-        //FirebaseAuth.getInstance().signOut();
         FacebookSdk.sdkInitialize(getApplicationContext());
         setupFirebaseAuth();
         setupFacebookAuth();
@@ -133,6 +134,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
     private boolean isStringNull(String string) {
         return "".equals(string);
     }
@@ -147,40 +149,48 @@ public class LoginActivity extends AppCompatActivity {
                     .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-
-                            } else {
-                                if (task.getException().getMessage().equals("A network error (such as timeout, interrupted connection or unreachable host) has occurred."))
-                                    Toast.makeText(mContext, "Revisa tu conexión a internet",
-                                            Toast.LENGTH_SHORT).show();
-                                else {
-                                    Toast.makeText(mContext, "Algo salió mal :(",
-                                            Toast.LENGTH_SHORT).show();
-                                    Log.e("[LoginActivity]   ", task.getException().getMessage());
+                            if (!task.isSuccessful()) {
+                                Exception e = task.getException();
+                                if (e != null) {
+                                    if (task.getException().getMessage().equals("A network error (such as timeout, interrupted connection or unreachable host) has occurred.")) {
+                                        Toast.makeText(mContext, "Revisa tu conexión a internet",
+                                                Toast.LENGTH_SHORT).show();
+                                    } else if (e instanceof FirebaseAuthInvalidCredentialsException) {
+                                        Toast.makeText(mContext, "Contraseña incorrecta",
+                                                Toast.LENGTH_SHORT).show();
+                                    } else if (e instanceof FirebaseAuthInvalidUserException) {
+                                        Toast.makeText(mContext, "El Email no existe",
+                                                Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(mContext, "Algo salió mal :(",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
                                     onResume();
-                                    //Intent intent = new Intent(mContext, LoginActivity.class);
-                                    //startActivity(intent);
-                                    //finish();
                                 }
                             }
                             mProgressBar.setVisibility(View.GONE);
                         }
+
+                    }
+        );
+    } else
+
+    {
+        if (isLoggedIn()) {
+            mProgressBar.setVisibility(View.VISIBLE);
+            AccessToken accessToken = AccessToken.getCurrentAccessToken();
+            mAuth.signInWithCredential(FacebookAuthProvider.getCredential(accessToken.getToken()))
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            user = mAuth.getCurrentUser();
+                            mProgressBar.setVisibility(View.GONE);
+                        }
                     });
-        } else {
-            if (isLoggedIn()) {
-                mProgressBar.setVisibility(View.VISIBLE);
-                AccessToken accessToken = AccessToken.getCurrentAccessToken();
-                mAuth.signInWithCredential(FacebookAuthProvider.getCredential(accessToken.getToken()))
-                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                user = mAuth.getCurrentUser();
-                                mProgressBar.setVisibility(View.GONE);
-                            }
-                        });
-            }
         }
     }
+
+}
 
     private boolean validateFields() {
         if (isStringNull(mEmail.getText().toString())) {
@@ -241,7 +251,7 @@ public class LoginActivity extends AppCompatActivity {
                                     startActivity(intent);
                                     finish();
                                 } else {
-                                    if ( user!=null && user.isEmailVerified()) {
+                                    if (user != null && user.isEmailVerified()) {
                                         Intent intent = new Intent(mContext, MyLookActivity.class);
                                         Toast.makeText(mContext, "Bienvenido a myLook!",
                                                 Toast.LENGTH_SHORT).show();
@@ -251,10 +261,7 @@ public class LoginActivity extends AppCompatActivity {
                                     } else {
                                         Log.d("[LoginActivity]   ", "eMail no verificado");
                                         displayMessage("Tu email aún no esta verificado");
-                                        //Intent intent = new Intent(mContext, LoginActivity.class);
                                         FirebaseAuth.getInstance().signOut();
-                                        //mContext.startActivity(intent);
-                                        //finish();
                                         onResume();
                                     }
                                 }

@@ -21,7 +21,9 @@ public class MainActivity extends AppCompatActivity {
             currentSesion.initializeElements().addOnCompleteListener(new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
-                    startActivity(new Intent(MainActivity.this, MyLookActivity.class));
+                    Intent intent= new Intent(MainActivity.this, MyLookActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
                 }
             });
         }else{
