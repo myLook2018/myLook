@@ -63,6 +63,7 @@ public class OutfitActivity extends AppCompatActivity {
     }
 
     private void setGridView() {
+        Log.d("GRIDVIEW", "setGridView: wtf oe ps agg tmr grid chucha tu mare");
         int imageWidth = getResources().getDisplayMetrics().widthPixels / 2;
         gridView.setColumnWidth(imageWidth);
         gridView.setHorizontalSpacing(8);

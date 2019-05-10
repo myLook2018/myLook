@@ -137,7 +137,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
                 finish();
             }
         });
-
         btnCloset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -152,7 +151,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
         Intent intent = getIntent();
         article= (Article) intent.getSerializableExtra("article");
         Log.e("ROPERO", article.getArticleId());
-        articleId=article.getArticleId();
+        articleId = article.getArticleId();
         tags = intent.getStringArrayListExtra("tags");
     }
 

@@ -54,7 +54,6 @@ public class ExploreActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private TextView mMessage;
 
-    private AppDatabase dbSQL;
     private LocalInteractionDAO localDAO;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -75,7 +74,7 @@ public class ExploreActivity extends AppCompatActivity {
         mMessage = findViewById(R.id.explore_message);
         mMessage.setVisibility(View.GONE);
 
-        dbSQL = AppDatabase.getDatabase(mContext);
+        AppDatabase dbSQL = AppDatabase.getDatabase(mContext);
         localDAO = dbSQL.getLocalInteractionDAO();
         mLocalInteractions = localDAO.getAllByUser(user.getUid());
 
@@ -144,9 +143,7 @@ public class ExploreActivity extends AppCompatActivity {
                 userInteraction.setUserId(user.getUid());
                 interactions.add(userInteraction);
 
-                Log.d("CardStackView", "onCardClicked: " + index);
                 Intent intent = new Intent(mContext, ArticleInfoActivity.class);
-                Log.d("info del articulo", "onClick: paso por intent la data del articulo");
                 Article art = mDiscoverableArticles.get(index);
                 intent.putExtra("article", art);
                 intent.putExtra("tags", userInteraction.getTags());
@@ -155,11 +152,8 @@ public class ExploreActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * BottomNavigationView setup
-     */
     private void setupBottomNavigationView() {
-        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavViewBar);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavViewBar);
         BottomNavigationViewHelper.enableNavigation(mContext, bottomNavigationView);
         Menu menu = bottomNavigationView.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
@@ -170,18 +164,18 @@ public class ExploreActivity extends AppCompatActivity {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -14);
         Date dateBefore2Weeks = cal.getTime();
-
         db.collection("articles").whereGreaterThan("creationDate", dateBefore2Weeks).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            if (task.getResult().isEmpty()) {
+                            if (task.getResult() != null && task.getResult().isEmpty()) {
                                 mProgressBar.setVisibility(View.GONE);
                                 mMessage.setVisibility(View.VISIBLE);
                             }
                             else {
-                                if (createArticleList(task.getResult())) {
+                                createArticleList(task.getResult());
+                                if (totalArticles != 0) {
                                     mCardAdapter = new CardsExploreAdapter(getApplicationContext(), R.layout.article_card);
                                     mCardAdapter.addAll(mDiscoverableArticles);
                                     mCardStack.setAdapter(mCardAdapter);
@@ -202,12 +196,11 @@ public class ExploreActivity extends AppCompatActivity {
                 });
     }
 
-    private boolean createArticleList(QuerySnapshot result) {
+    private void createArticleList(QuerySnapshot result) {
         mDiscoverableArticles = new ArrayList<>();
         List<Article> promo1 = new ArrayList<>();
         List<Article> promo2 = new ArrayList<>();
         List<Article> promo3 = new ArrayList<>();
-
         for (QueryDocumentSnapshot document : result) {
             if (isNew(document.getId())) {
                 Article art = document.toObject(Article.class);
@@ -215,33 +208,22 @@ public class ExploreActivity extends AppCompatActivity {
                 int pl = art.getPromotionLevel();
                 switch (pl) {
                     case 1:
-                        Log.d("ADDING", "PROMO1");
                         promo1.add(art);
                         break;
                     case 2:
-                        Log.d("ADDING", "PROMO2");
                         promo2.add(art);
                         break;
                     case 3:
-                        Log.d("ADDING", "PROMO3");
                         promo3.add(art);
                         break;
                 }
                 totalArticles++;
             }
         }
-        if (totalArticles == 0) {
-            return false;
-        }
-        if (!promo3.isEmpty()) {
-            Collections.shuffle(promo3);
-        }
-        if (!promo2.isEmpty()) {
-            Collections.shuffle(promo2);
-        }
-        if (!promo1.isEmpty()) {
-            Collections.shuffle(promo1);
-        }
+        if (totalArticles == 0) return;
+        if (!promo3.isEmpty()) Collections.shuffle(promo3);
+        if (!promo2.isEmpty()) Collections.shuffle(promo2);
+        if (!promo1.isEmpty()) Collections.shuffle(promo1);
         Random r = new Random();
         int v;
         while (true) {
@@ -249,55 +231,34 @@ public class ExploreActivity extends AppCompatActivity {
                 if (!promo2.isEmpty()) {
                     if (!promo1.isEmpty()) {
                         v = r.nextInt(100);
-                        if (v > 54) {
-                            mDiscoverableArticles.add(promo3.remove(0));
-                        } else if (v > 21) {
-                            mDiscoverableArticles.add(promo2.remove(0));
-                        } else {
-                            mDiscoverableArticles.add(promo1.remove(0));
-                        }
+                        if (v > 54) mDiscoverableArticles.add(promo3.remove(0));
+                        else if (v > 21) mDiscoverableArticles.add(promo2.remove(0));
+                        else mDiscoverableArticles.add(promo1.remove(0));
                     } else {
                         v = r.nextInt(100);
-                        if (v > 35) {
-                            mDiscoverableArticles.add(promo3.remove(0));
-                        } else {
-                            mDiscoverableArticles.add(promo2.remove(0));
-                        }
+                        if (v > 35) mDiscoverableArticles.add(promo3.remove(0));
+                        else mDiscoverableArticles.add(promo2.remove(0));
                     }
                 } else {
                     if (!promo1.isEmpty()) {
                         v = r.nextInt(100);
-                        if (v > 32) {
-                            mDiscoverableArticles.add(promo3.remove(0));
-                        } else {
-                            mDiscoverableArticles.add(promo1.remove(0));
-                        }
-                    } else {
-                        mDiscoverableArticles.add(promo3.remove(0));
-                    }
+                        if (v > 32) mDiscoverableArticles.add(promo3.remove(0));
+                        else mDiscoverableArticles.add(promo1.remove(0));
+                    } else mDiscoverableArticles.add(promo3.remove(0));
                 }
             } else {
                 if (!promo2.isEmpty()) {
                     if (!promo1.isEmpty()) {
                         v = r.nextInt(100);
-                        if (v > 39) {
-                            mDiscoverableArticles.add(promo2.remove(0));
-                        } else {
-                            mDiscoverableArticles.add(promo1.remove(0));
-                        }
-                    } else {
-                        mDiscoverableArticles.add(promo2.remove(0));
-                    }
+                        if (v > 39) mDiscoverableArticles.add(promo2.remove(0));
+                        else mDiscoverableArticles.add(promo1.remove(0));
+                    } else mDiscoverableArticles.add(promo2.remove(0));
                 } else {
-                    if (!promo1.isEmpty()) {
-                        mDiscoverableArticles.add(promo1.remove(0));
-                    } else {
-                        break;
-                    }
+                    if (!promo1.isEmpty()) mDiscoverableArticles.add(promo1.remove(0));
+                    else return;
                 }
             }
         }
-        return true;
     }
 
     private boolean isNew(String id) {
@@ -314,11 +275,6 @@ public class ExploreActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
     protected void onStop() {
         uploadInteractions();
         super.onStop();
@@ -327,15 +283,12 @@ public class ExploreActivity extends AppCompatActivity {
     private void uploadInteractions() {
         for (Interaction interaction : interactions) {
             db.collection("interactions").add(interaction);
-
         }
         interactions.clear();
     }
 
     public boolean onCreateOptionsMenu(Menu menu){
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.search_menu, menu);
-        //SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         MenuItem item=menu.findItem(R.id.btnSearch);
         SearchView searchView=(SearchView) item.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

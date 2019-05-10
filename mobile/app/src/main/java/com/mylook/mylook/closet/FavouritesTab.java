@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +51,7 @@ public class FavouritesTab extends Fragment {
         return instance;
     }
 
-    private void setGridview() {
+    private void setGridView() {
         int widthGrid = getResources().getDisplayMetrics().widthPixels;
         int imageWidth = widthGrid / 3;
         gridview.setColumnWidth(imageWidth);
@@ -69,13 +70,8 @@ public class FavouritesTab extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == FAVOURITE_INFO) {
-            if (resultCode == RESULT_OK) {
-                // TODO agregar funcionalidad a articleinfo o aca -> eliminar de ropero
-                // chequear si esta efectivamente guardado en ropero, sino eliminar de la grilla
-                data.getExtras().getBoolean("removed");
-            }
-        }
+        if (requestCode == FAVOURITE_INFO && resultCode == RESULT_OK
+                && data.getExtras().getBoolean("removed")) getFavorites();
     }
 
     private void getFavorites() {
@@ -92,7 +88,6 @@ public class FavouritesTab extends Fragment {
                                 favorites.add(art);
                             }
                             adapter.notifyDataSetChanged();
-                            loaded = true;
                             mProgressBar.setVisibility(View.INVISIBLE);
                         }
                     }
@@ -107,26 +102,37 @@ public class FavouritesTab extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Log.d("ONVIEWCREATED", "onViewCreated: tmr ps crea la maldita view prro agg");
         gridview = view.findViewById(R.id.grid_favoritos);
         mProgressBar = view.findViewById(R.id.mProgressBar);
         mProgressBar.setVisibility(View.VISIBLE);
-        if (!loaded) {
-            setGridview();
-            favorites = new ArrayList<>();
-            adapter = new ImageAdapter(getActivity(), favorites);
-            getFavorites();
-        } else {
-            adapter.notifyDataSetChanged();
-        }
+        favorites = new ArrayList<>();
+        adapter = new ImageAdapter(getActivity(), favorites);
         gridview.setAdapter(adapter);
+        setGridView();
+        getFavorites();
         mProgressBar.setVisibility(View.INVISIBLE);
         super.onViewCreated(view, savedInstanceState);
     }
 
     public static void refreshStatus() {
+        Log.d("REFRESHSTATUS", "refreshStatus: tmr no te refresques mierda chucha ps agg");
         if (instance != null) {
             loaded = false;
         }
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+
+        super.onSaveInstanceState(outState);
+    }
 }
