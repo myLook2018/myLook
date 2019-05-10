@@ -24,7 +24,13 @@
             placeholder="Titulo"
             formControlName="title"
             value="{{ articleData.title }}"
+            required
+            minlength="2"
+            maxlength="8"
           />
+          <mat-error *ngIf="articleForm.get('title')">
+            Campo obligatorio.
+          </mat-error>
         </mat-form-field>
         <mat-form-field style="width: 95%">
           <input
@@ -33,7 +39,11 @@
             placeholder="Código"
             formControlName="code"
             value="{{ articleData.code }}"
+            required
           />
+          <mat-error *ngIf="articleForm.get('code')">
+            Campo obligatorio.
+          </mat-error>
         </mat-form-field>
         <mat-form-field style="width: 95%">
           <input
@@ -42,7 +52,11 @@
             placeholder="Proveedor"
             formControlName="provider"
             value="{{ articleData.provider }}"
+            required
           />
+          <mat-error *ngIf="articleForm.get('provider')">
+            Campo obligatorio.
+          </mat-error>
         </mat-form-field>
         <mat-form-field style="width: 95%">
           <input
@@ -51,7 +65,11 @@
             placeholder="Precio"
             formControlName="cost"
             value="{{ articleData.cost }}"
+            required
           />
+          <mat-error *ngIf="articleForm.get('cost')">
+            Campo obligatorio.
+          </mat-error>
         </mat-form-field>
         <mat-form-field style="width: 95%">
           <input
@@ -60,7 +78,11 @@
             placeholder="Stock inicial"
             formControlName="initial_stock"
             value="{{ articleData.initial_stock }}"
+            required
           />
+          <mat-error *ngIf="articleForm.get('initial_stock')">
+            Campo obligatorio.
+          </mat-error>
         </mat-form-field>
       </div>
       <div>
@@ -93,14 +115,17 @@
                   <button *ngIf="isLoadedImage" (click)="cropping1.fitToScreen()" ly-button>Fit to screen</button>
                   <button *ngIf="isLoadedImage" (click)="cropping1.setScale(1)" ly-button>1:1</button>
                 -->
-              <button
-                *ngIf="isLoadedImage[0]"
-                (click)="cropping0.clean()"
-                (click)="doClean(0)"
-                ly-button appearance="icon"
-              >
-              <ly-icon>close</ly-icon>
-              </button>
+              <div style="height: 40px">
+                <button
+                  *ngIf="isLoadedImage[0]"
+                  (click)="cropping0.clean()"
+                  (click)="doClean(0)"
+                  ly-button
+                  appearance="icon"
+                >
+                  <ly-icon>close</ly-icon>
+                </button>
+              </div>
 
               <ly-cropping
                 #cropping0
@@ -108,11 +133,15 @@
                 (cropped)="oncropped($event, 0)"
                 (loaded)="onloaded(0)"
                 (error)="onerror()"
+                class="mat-typography"
               >
-                <span>Drag and drop image</span>
+                <i class="material-icons">
+                  add_photo_alternate
+                </i>
+                Añadir Foto
               </ly-cropping>
               <button
-                style = "visibility: hidden"
+                style="visibility: hidden"
                 color="accent"
                 (click)="cropping0.crop()"
                 ly-button
@@ -122,16 +151,19 @@
               </button>
 
               <div lyTheme="minima-light">
-                <button
+                <!--
+
+                  <button
                   ly-button
                   color="accent"
                   (click)="_fileInput0.click()"
                   (click)="onSelectedImage(0)"
                   raised
-                >
+                  >
                   <ly-icon>image</ly-icon>
                   <span>Select File</span>
                 </button>
+              -->
 
                 <!-- Hidden input -->
                 <input
@@ -157,14 +189,17 @@
                     <button *ngIf="isLoadedImage" (click)="cropping2.fitToScreen()" ly-button>Fit to screen</button>
                     <button *ngIf="isLoadedImage" (click)="cropping2.setScale(1)" ly-button>1:1</button>
                   -->
-              <button
-                *ngIf="isLoadedImage[1]"
-                (click)="cropping1.clean()"
-                (click)="doClean(1)"
-                ly-button appearance="icon"
-              >
-              <ly-icon>close</ly-icon>
-              </button>
+              <div style="height: 40px">
+                <button
+                  *ngIf="isLoadedImage[1]"
+                  (click)="cropping1.clean()"
+                  (click)="doClean(1)"
+                  ly-button
+                  appearance="icon"
+                >
+                  <ly-icon>close</ly-icon>
+                </button>
+              </div>
 
               <ly-cropping
                 #cropping1
@@ -172,11 +207,14 @@
                 (cropped)="oncropped($event, 1)"
                 (loaded)="onloaded(1)"
                 (error)="onerror()"
+                class="mat-typography"
               >
-                <span>Drag and drop image</span>
+                <i class="material-icons">
+                  add_photo_alternate </i
+                >Añadir Foto
               </ly-cropping>
               <button
-                style = "visibility: hidden"
+                style="visibility: hidden"
                 color="accent"
                 (click)="cropping1.crop()"
                 ly-button
@@ -186,16 +224,19 @@
               </button>
 
               <div lyTheme="minima-light">
-                <button
+                <!--
+
+                  <button
                   ly-button
                   color="accent"
                   (click)="_fileInput1.click()"
                   (click)="onSelectedImage(1)"
                   raised
-                >
+                  >
                   <ly-icon>image</ly-icon>
                   <span>Select File</span>
                 </button>
+              -->
 
                 <!-- Hidden input -->
                 <input
@@ -221,14 +262,17 @@
                       <button *ngIf="isLoadedImage" (click)="cropping1.fitToScreen()" ly-button>Fit to screen</button>
                       <button *ngIf="isLoadedImage" (click)="cropping1.setScale(1)" ly-button>1:1</button>
                     -->
-              <button
-                *ngIf="isLoadedImage[2]"
-                (click)="cropping2.clean()"
-                (click)="doClean(2)"
-                ly-button appearance="icon"
+              <div style="height: 40px">
+                <button
+                  *ngIf="isLoadedImage[2]"
+                  (click)="cropping2.clean()"
+                  (click)="doClean(2)"
+                  ly-button
+                  appearance="icon"
                 >
-                <ly-icon>close</ly-icon>
+                  <ly-icon>close</ly-icon>
                 </button>
+              </div>
 
               <ly-cropping
                 #cropping2
@@ -236,12 +280,15 @@
                 (cropped)="oncropped($event, 2)"
                 (loaded)="onloaded(2)"
                 (error)="onerror()"
+                class="mat-typography"
               >
-                <span>Drag and drop image</span>
+                <i class="material-icons">
+                  add_photo_alternate </i
+                >Añadir Foto
               </ly-cropping>
 
               <button
-                style = "visibility: hidden"
+                style="visibility: hidden"
                 color="accent"
                 (click)="cropping2.crop()"
                 ly-button
@@ -251,17 +298,20 @@
               </button>
 
               <div lyTheme="minima-light">
-                <button
+                <!--
+
+                  <button
                   ly-button
                   color="accent"
                   (click)="_fileInput2.click()"
                   (click)="onSelectedImage(2)"
                   raised
-                >
+                  >
                   <ly-icon>image</ly-icon>
                   <span>Select File</span>
                 </button>
 
+              -->
                 <!-- Hidden input -->
                 <input
                   #_fileInput2
@@ -293,9 +343,11 @@
           (click)="imgFileInput.click()">Añade una foto</button>
         -->
       </div>
-      <mat-form-field style="width: 480px;
+      <mat-form-field
+        style="width: 480px;
       align-self: flex-end;
-      position: fixed;">
+      position: fixed; margin-top: -62px;"
+      >
         <mat-chip-list #chipList3>
           <mat-chip
             *ngFor="let color of colors"
@@ -306,7 +358,8 @@
             {{ color }}
             <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
           </mat-chip>
-          <input class="inputColores"
+          <input
+            class="inputColores"
             style="width: 100%"
             placeholder="Colores Disponibles"
             #sizesInput
@@ -319,42 +372,45 @@
         </mat-chip-list>
         <!--<input matInput placeholder="Etiquetas" formControlName="tags" value={{articleData.tags}}>-->
       </mat-form-field>
+      <mat-form-field
+        style="width: 480px;
+      align-self: flex-end;
+      position: fixed; margin-top: 3px;"
+      >
+        <mat-chip-list #chipList2>
+          <mat-chip
+            *ngFor="let size of sizes"
+            [selectable]="selectable"
+            [removable]="removable"
+            (removed)="removeSize(size)"
+          >
+            {{ size }}
+            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+          </mat-chip>
+          <input
+            style="width: 100%"
+            placeholder="Talles"
+            #sizesInput
+            [formControl]="sizesCtrl"
+            [matChipInputFor]="chipList2"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            (matChipInputTokenEnd)="addSize($event)"
+            autofocus
+          />
+        </mat-chip-list>
+        <!--<input matInput placeholder="Etiquetas" formControlName="tags" value={{articleData.tags}}>-->
+      </mat-form-field>
     </div>
   </form>
 </div>
 
 <div #thirtColumn style="margin-left: 10px">
-  <form [formGroup]="articleForm" style="display: flex;">
-    <mat-form-field style="width: 97.5%">
-      <mat-chip-list #chipList2>
-        <mat-chip
-          *ngFor="let size of sizes"
-          [selectable]="selectable"
-          [removable]="removable"
-          (removed)="removeSize(size)"
-        >
-          {{ size }}
-          <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-        </mat-chip>
-        <input
-          style="width: 100%"
-          placeholder="Talles"
-          #sizesInput
-          [formControl]="sizesCtrl"
-          [matChipInputFor]="chipList2"
-          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-          (matChipInputTokenEnd)="addSize($event)"
-          autofocus
-        />
-      </mat-chip-list>
-      <!--<input matInput placeholder="Etiquetas" formControlName="tags" value={{articleData.tags}}>-->
-    </mat-form-field>
-  </form>
+  <form [formGroup]="articleForm" style="display: flex;"></form>
 </div>
 
 <div #forthColumn style="margin-left: 10px">
-  <form [formGroup]="articleForm" style="display: flex;">
-    <mat-form-field style="width: 97.5%">
+  <form [formGroup]="articleForm">
+    <mat-form-field style="width: 97.5%" requiered>
       <mat-chip-list #chipList>
         <mat-chip
           *ngFor="let tag of tags"
@@ -378,6 +434,9 @@
           autofocus
         />
       </mat-chip-list>
+          <mat-error *ngIf="articleForm.get('tags')">
+            Campo obligatorio.
+          </mat-error>
       <mat-autocomplete
         #auto="matAutocomplete"
         (optionSelected)="selected($event)"
@@ -388,28 +447,36 @@
       </mat-autocomplete>
       <!--<input matInput placeholder="Etiquetas" formControlName="tags" value={{articleData.tags}}>-->
     </mat-form-field>
+
+    <div mat-dialog-actions align="end">
+      <button
+        *ngIf="!isNew"
+
+        [disabled]="articleForm.invalid"
+        style="background-color: #9C27B0; color: white"
+        type="button"
+        mat-raised-button
+        (click)="refreshArticle($event)"
+        [ngClass]="{buttonDisabled: articleForm.invalid}"
+      >
+        Actualizar Prenda
+      </button>
+      <button
+        *ngIf="isNew"
+        [disabled]="articleForm.invalid"
+        class="activatedButton"
+        type="button"
+
+        [ngClass]="{buttonDisabled: articleForm.invalid}"
+        mat-raised-button
+        (click)="cropImages(cropping0, cropping1, cropping2)"
+      >
+        Agregar Prenda
+      </button>
+    </div>
   </form>
 </div>
 
-<div mat-dialog-actions align="end">
-  <button
-    *ngIf="!isNew"
-    [disabled]="isUpLoading"
-    style="background-color: #9C27B0; color: white"
-    type="button"
-    mat-raised-button
-    (click)="refreshArticle($event)"
-  >
-    Actualizar Prenda
-  </button>
-  <button
-    *ngIf="isNew"
-    [disabled]="isUpLoading"
-    style="background-color: #9C27B0; color: white"
-    type="button"
-    mat-raised-button
-    (click)="cropImages(cropping0, cropping1, cropping2)"
-  >
-    Agregar Prenda
-  </button>
-</div>
+<p-toast position="top-left"></p-toast>
+
+

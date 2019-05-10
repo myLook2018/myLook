@@ -65,8 +65,24 @@ ly-cropping {
   height: 150px;
 }
 
+.y-cropp-content-i7, .y-cropp-content-i7 > input {
+  border-style: solid;
+  border-color: #E1BEE7;
+}
+
 .resize-image {
   width: 150px;
 }
 
+.activatedButton {
+  background-color: #9C27B0; color: white;
+}
 
+.buttonDisabled {
+  background-color: grey; color: white;
+}
+
+::ng-deep .blue-snackbar {
+  background:  #ff0033 !important;
+  color: white !important;
+}
