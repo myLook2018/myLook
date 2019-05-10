@@ -56,7 +56,7 @@ import java.util.Random;
 public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private CardsHomeFeedAdapter adapter;
-    private static List list;
+    private static ArrayList<Article> list;
     private ArrayList<Subscription> subscriptionList;
     private String dbUserId = Sesion.getInstance().getSessionUserId();
     private List<LocalInteraction> mLocalInteractions;
@@ -255,8 +255,8 @@ public class HomeFragment extends Fragment {
                                             }
 
                                             if (createArticleList(task.getResult())) { //Con esta por la probabilidad de las promos, pero no por fecha
-                                                for (Object art : list) {
-                                                    Log.e(TAG, ((Article) art).getArticleId() + " - " + ((Article) art).getCreationDate() + " - Promo: " + ((Article) art).getPromotionLevel());
+                                                for (Article art : list) {
+                                                    Log.e(TAG, (art.getArticleId() + " - " + art.getCreationDate() + " - Promo: " + art.getPromotionLevel()));
                                                 }
                                                 emptyArticles.setVisibility(View.GONE);
                                                 starImage.setVisibility(View.GONE);
@@ -301,7 +301,7 @@ public class HomeFragment extends Fragment {
                                             for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                                 Log.e("ROPERO", documentSnapshot.getId());
                                                 PremiumUser premiumUser = documentSnapshot.toObject(PremiumUser.class);
-                                                list.add(premiumUser);
+                                                //list.add(premiumUser);
                                             }
                                             adapter.notifyDataSetChanged();
                                             Log.e("On complete", "Tamaño adapter " + adapter.getItemCount());

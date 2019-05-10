@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.mylook.mylook.R;
 import com.squareup.picasso.Picasso;
@@ -46,7 +47,7 @@ public class SlidingImageAdapter extends PagerAdapter {
         assert imageLayout != null;
         final ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image_view_slider);
         Glide.with(context).asBitmap().load(arrayImages.get(position)).apply(new RequestOptions()
-        .diskCacheStrategy(DiskCacheStrategy.DATA)).into(imageView);
+        .diskCacheStrategy(DiskCacheStrategy.DATA).placeholder(R.mipmap.ic_mylook)).into(imageView);
         view.addView(imageLayout, 0);
         return imageLayout;
     }

@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -73,6 +75,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
                 if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
                     dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
                     downLoadUri = article.getPicture();
+                    System.out.println("Picture de getUserId: " + downLoadUri);
                     initElements();
                     setDetail();
                 } else {
@@ -134,7 +137,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
         txtCost = findViewById(R.id.txtCost);
         lnlSizes = findViewById(R.id.lnlSizes);
         lnlColors = findViewById(R.id.lnlColors);
-        //Glide.with(mContext).load(downLoadUri).into(articleImage);
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -148,39 +150,59 @@ public class ArticleInfoActivity extends AppCompatActivity {
             }
         });
 
-        articlePager = (ViewPager) findViewById(R.id.view_pager_article);
-        articlePager.setAdapter(new SlidingImageAdapter(mContext, imageArraySlider));
+        if (imageArraySlider==null) {
+            ArrayList<String> arrayAux = new ArrayList<String>();
+           arrayAux.add(0, downLoadUri);
+            articlePager = (ViewPager) findViewById(R.id.view_pager_article);
+            articlePager.setAdapter(new SlidingImageAdapter(mContext, arrayAux));
 
-        CirclePageIndicator indicator = (CirclePageIndicator)
-                findViewById(R.id.circle_page_indicator);
+            CirclePageIndicator indicator = (CirclePageIndicator)
+                    findViewById(R.id.circle_page_indicator);
 
-        indicator.setViewPager(articlePager);
+            indicator.setViewPager(articlePager);
 
-        final float density = getResources().getDisplayMetrics().density;
+            final float density = getResources().getDisplayMetrics().density;
 
-        //Set circle indicator radius
-        indicator.setRadius(5 * density);
-        numPages = imageArraySlider.size();
+            //Set circle indicator radius
+            indicator.setRadius(5 * density);
+            numPages = arrayAux.size();
 
-        // Pager listener over indicator
-        indicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        } else {
+            articlePager = (ViewPager) findViewById(R.id.view_pager_article);
+            articlePager.setAdapter(new SlidingImageAdapter(mContext, imageArraySlider));
 
-            @Override
-            public void onPageSelected(int position) {
-                currentPageSlider = position;
+            CirclePageIndicator indicator = (CirclePageIndicator)
+                    findViewById(R.id.circle_page_indicator);
 
-            }
+            indicator.setViewPager(articlePager);
 
-            @Override
-            public void onPageScrolled(int pos, float arg1, int arg2) {
+            final float density = getResources().getDisplayMetrics().density;
 
-            }
+            //Set circle indicator radius
+            indicator.setRadius(5 * density);
+            numPages = imageArraySlider.size();
 
-            @Override
-            public void onPageScrollStateChanged(int pos) {
+            // Pager listener over indicator
+            indicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
-            }
-        });
+                @Override
+                public void onPageSelected(int position) {
+                    currentPageSlider = position;
+
+                }
+
+                @Override
+                public void onPageScrolled(int pos, float arg1, int arg2) {
+
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int pos) {
+
+                }
+            });
+        }
+
 
     }
 
@@ -190,13 +212,17 @@ public class ArticleInfoActivity extends AppCompatActivity {
         article = (Article) intent.getSerializableExtra("article");
         Log.e("ROPERO", article.getArticleId());
         articleId = article.getArticleId();
+        downLoadUri = article.getPicture();
+        System.out.println("Picture del intent: " + downLoadUri);
         Log.d("pictureArray", "Array: " + article.getPicturesArray());
-        imageArraySlider = new ArrayList<String>();
-        for (String image : article.getPicturesArray()) {
-            imageArraySlider.add(image);
-            Log.d("Add image", "Se añadio la imagen " + image);
+        if (article.getPicturesArray()!=null){
+            imageArraySlider = new ArrayList<String>();
+            for (String image : article.getPicturesArray()) {
+                imageArraySlider.add(image);
+                Log.d("Add image", "Se añadio la imagen " + image);
+            }
+            Log.d("ArrayImagenes", "imageArraySlider tiene size: " + imageArraySlider.size());
         }
-        Log.d("ArrayImagenes", "imageArraySlider tiene size: " + imageArraySlider.size());
         tags = intent.getStringArrayListExtra("tags");
     }
 
