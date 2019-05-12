@@ -86,3 +86,10 @@ ly-cropping {
   background:  #ff0033 !important;
   color: white !important;
 }
+
+// oculta las flechitas de los input=number
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

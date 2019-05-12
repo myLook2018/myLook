@@ -36,7 +36,6 @@ import { Tags } from '../../models/tags';
 import { DataService } from '../../../service/dataService';
 import { LyResizingCroppingImages, ImgCropperConfig } from '@alyle/ui/resizing-cropping-images';
 import { LyTheme2 } from '@alyle/ui';
-import { ToastService } from '../../../service/toastService';
 
 const styles = {
   actions: {
@@ -119,7 +118,6 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     private articleService: ArticleService,
     private dataService: DataService,
     private fb: FormBuilder,
-    public toastService: ToastService,
     public dialogRef: MatDialogRef<ArticleDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public articleData: Article
   ) {
@@ -472,4 +470,3 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     return result;
   }
 }
-
