@@ -21,6 +21,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -280,6 +281,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
 
     private boolean writeFirebaseDocument(String uri) {
         if (!enviado) {
+            Sesion.getInstance().updateActivitiesStatus(Sesion.RECOMEND_FRAGMENT);
             mProgressBar.setVisibility(View.VISIBLE);
             btnSend.setEnabled(false);
             fabMenu.setVisibility(View.INVISIBLE);
@@ -307,8 +309,8 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                     public void onSuccess(DocumentReference documentReference) {
                         enviado = true;
                         mProgressBar.setVisibility(View.GONE);
-                        displayMessage("Tu solicitud de recomendacion ha sido enviada");
-                        Sesion.getInstance().updateActivitiesStatus(Sesion.RECOMEND_FRAGMENT);
+                        displayMessage("Tu solicitud de recomendación ha sido enviada");
+                        setResult(1);
                         finish();
 
                     }

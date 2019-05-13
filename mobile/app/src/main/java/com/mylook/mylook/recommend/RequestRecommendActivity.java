@@ -28,6 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.RequestRecommendation;
+import com.mylook.mylook.session.Sesion;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -105,10 +106,12 @@ public class RequestRecommendActivity extends AppCompatActivity {
                 .into(imgRequestPhoto);
     }
 
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.e(TAG, "Entered On destroy: Request"+requestId);
+        Log.e(TAG, "Entered On destroy: Request "+requestId);
+        Sesion.getInstance().updateActivitiesStatus(Sesion.RECOMEND_FRAGMENT);
         dB.collection("requestRecommendations").document(requestId).update("answers",answers).
                 addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
