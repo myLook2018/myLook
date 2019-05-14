@@ -52,19 +52,19 @@ public class Sesion extends Service {
             Log.e(TAG, "Esta actualizando " + f);
             switch (f) {
                 case HOME_FRAGMENT:
-                    HomeFragment.refreshStatus();
+                    HomeFragment.getInstance().refreshStatus();
                     break;
                 case EXPLORE_FRAGMENT:
-                    ExploreFragment.refreshStatus();
+                    ExploreFragment.getInstance().refreshStatus();
                     break;
                 case RECOMEND_FRAGMENT:
-                    RecommendFragment.refreshStatus();
+                    RecommendFragment.getInstance().refreshStatus();
                     break;
                 case CLOSET_FRAGMENT:
-                    ClosetFragment.refreshStatus();
+                    ClosetFragment.getInstance().refreshStatus();
                     break;
                 case PROFILE_FRAGMENT:
-                    ProfileFragment.refreshStatus();
+                    ProfileFragment.getInstance().refreshStatus();
                     break;
             }
         }
