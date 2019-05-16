@@ -100,7 +100,7 @@ public class ViewOutfitActivity extends AppCompatActivity {
         if (id == R.id.delete_outfit) {
             deleteAlert();
         } else if(id == R.id.edit_outfit){
-            Intent intent = new Intent(getApplicationContext(), OutfitActivity.class);
+            Intent intent = new Intent(getApplicationContext(), CreateOutfitActivity.class);
             intent.putExtra("name",collectionName);
             intent.putExtra("category",category);
             intent.putExtra("id",outfitId);

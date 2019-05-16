@@ -27,7 +27,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Subscription;
-import com.mylook.mylook.session.Sesion;
 
 @SuppressLint("ValidFragment")
 public class StoreInfoFragment extends Fragment {

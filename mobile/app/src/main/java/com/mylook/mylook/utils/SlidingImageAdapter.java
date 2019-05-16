@@ -24,7 +24,6 @@ public class SlidingImageAdapter extends PagerAdapter {
     private LayoutInflater inflater;
     private Context context;
 
-
     public SlidingImageAdapter(Context context, ArrayList<String> arrayImages) {
         this.context = context;
         this.arrayImages = arrayImages;
@@ -44,10 +43,10 @@ public class SlidingImageAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup view, int position) {
         View imageLayout = inflater.inflate(R.layout.slidingimages_layout, view, false);
-        assert imageLayout != null;
-        final ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image_view_slider);
+        final ImageView imageView = imageLayout.findViewById(R.id.image_view_slider);
         Glide.with(context).asBitmap().load(arrayImages.get(position)).apply(new RequestOptions()
-        .diskCacheStrategy(DiskCacheStrategy.DATA).placeholder(R.mipmap.ic_mylook)).into(imageView);
+                .diskCacheStrategy(DiskCacheStrategy.DATA).placeholder(R.mipmap.ic_mylook))
+                .into(imageView);
         view.addView(imageLayout, 0);
         return imageLayout;
     }

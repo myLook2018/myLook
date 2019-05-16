@@ -1,14 +1,14 @@
 package com.mylook.mylook.entities;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 
 public class Outfit {
     private String name;
     private String category;
-    private HashMap<String, String> items;
+    private ArrayList<String> items;
+    private ArrayList<Article> articles;
     private String outfitId;
-
 
     public Outfit() {
     }
@@ -29,11 +29,11 @@ public class Outfit {
         this.category = category;
     }
 
-    public HashMap<String, String> getItems() {
+    public ArrayList<String> getItems() {
         return items;
     }
 
-    public void setItems(HashMap<String, String> items) {
+    public void setItems(ArrayList<String> items) {
         this.items = items;
     }
 
@@ -43,5 +43,13 @@ public class Outfit {
 
     public void setOutfitId(String outfitId) {
         this.outfitId = outfitId;
+    }
+
+    public ArrayList<Article> getArticles() {
+        return articles;
+    }
+
+    public void setArticles(List<Article> articles) {
+        this.articles.addAll(articles);
     }
 }

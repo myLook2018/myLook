@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +29,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Outfit;
-import com.mylook.mylook.session.Sesion;
 import com.mylook.mylook.utils.OutfitAdapter;
 
 import java.util.ArrayList;
@@ -41,29 +39,12 @@ public class OutfitsTab extends Fragment {
     private ArrayList<Outfit> outfits;
     private GridView outfitGrid;
     private String dbUserId = Sesion.getInstance().getSessionUserId();
-    private FloatingActionButton addOutfit;
     private ProgressBar mProgressBar;
-    private static OutfitsTab instance = null;
     private static boolean loaded = false;
     private OutfitAdapter adapter;
 
     public OutfitsTab() {
         // Required empty public constructor
-    }
-
-    public static OutfitsTab getInstance() {
-        if (instance == null)
-            instance = new OutfitsTab();
-        return instance;
-    }
-
-    /**
-     * Método para cuando haya habido algun cambio y haya que actualizar los objetos
-     */
-    public static void refreshStatus(){
-        if(instance!=null){
-            loaded = false;
-        }
     }
 
     @Override
@@ -83,7 +64,7 @@ public class OutfitsTab extends Fragment {
         mProgressBar = view.findViewById(R.id.mProgressBar);
 
         outfitGrid = view.findViewById(R.id.grid_colecciones);
-        addOutfit = view.findViewById(R.id.addOutfit);
+        FloatingActionButton addOutfit = view.findViewById(R.id.addOutfit);
         if (!loaded) {
             mProgressBar.setVisibility(View.VISIBLE);
             outfits = new ArrayList<>();
@@ -184,7 +165,6 @@ public class OutfitsTab extends Fragment {
                 });
     }
 
-
     public void createInputDialog() {
         final AlertDialog.Builder dialog = new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme);
         final EditText input = new EditText(getContext());
@@ -206,7 +186,7 @@ public class OutfitsTab extends Fragment {
                             Toast.makeText(getContext(), "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        Intent intent = new Intent(getActivity(), OutfitActivity.class);
+                        Intent intent = new Intent(getActivity(), CreateOutfitActivity.class);
                         intent.putExtra("name", input.getText().toString());
                         intent.putExtra("category", "normal");
                         intent.putExtra("userID", dbUserId);

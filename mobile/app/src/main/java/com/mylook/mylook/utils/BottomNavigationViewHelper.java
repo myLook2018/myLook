@@ -6,12 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.view.MenuItem;
 
-import com.mylook.mylook.closet.ClosetActivity;
-import com.mylook.mylook.explore.ExploreActivity;
 import com.mylook.mylook.home.MainActivity;
-import com.mylook.mylook.profile.ProfileActivity;
 import com.mylook.mylook.R;
-import com.mylook.mylook.recommend.RecommendationsActivity;
 
 public class BottomNavigationViewHelper {
 

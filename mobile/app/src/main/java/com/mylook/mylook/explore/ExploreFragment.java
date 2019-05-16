@@ -2,14 +2,11 @@ package com.mylook.mylook.explore;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,8 +17,6 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -30,7 +25,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Interaction;
-import com.mylook.mylook.home.MainActivity;
 import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.room.AppDatabase;
 import com.mylook.mylook.room.LocalInteraction;
@@ -42,7 +36,6 @@ import com.yuyakaido.android.cardstackview.SwipeDirection;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -58,36 +51,14 @@ public class ExploreFragment extends Fragment {
     private ProgressBar mProgressBar;
     private TextView mMessage;
 
-    private AppDatabase dbSQL;
     private LocalInteractionDAO localDAO;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-    public final static String TAG = "ExploreFragment";
-    private static ExploreFragment homeInstance = null;
-
     public ExploreFragment() {
 
     }
-
-
-    public static ExploreFragment getInstance() {
-        if (homeInstance == null) {
-            homeInstance = new ExploreFragment();
-        }
-        return homeInstance;
-    }
-
-    /**
-     * Método para cuando haya habido algun cambio y haya que actualizar los objetos
-     */
-    public static void refreshStatus(){
-        if(homeInstance!=null){
-            //mDiscoverableArticles = null;
-        }
-    }
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -114,7 +85,7 @@ public class ExploreFragment extends Fragment {
         mMessage = view.findViewById(R.id.explore_message);
         mMessage.setVisibility(View.GONE);
         mContext = getContext();
-        dbSQL = AppDatabase.getDatabase(mContext);
+        AppDatabase dbSQL = AppDatabase.getDatabase(mContext);
         localDAO = dbSQL.getLocalInteractionDAO();
         mLocalInteractions = localDAO.getAllByUser(user.getUid());
 
@@ -197,37 +168,34 @@ public class ExploreFragment extends Fragment {
     }
 
     private void getDiscoverableArticles() {
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -14);
-        Date dateBefore2Weeks = cal.getTime();
+        //TODO incluir en produccion
+        //Calendar cal = Calendar.getInstance();
+        //cal.add(Calendar.DATE, -14);
+        //Date dateBefore2Weeks = cal.getTime();
 
         db.collection("articles")
                 //.whereGreaterThan("creationDate", dateBefore2Weeks) Le saque el filtro para que aparecieran
-
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            if (task.getResult().isEmpty()) {
-                                mProgressBar.setVisibility(View.GONE);
-                                mMessage.setVisibility(View.VISIBLE);
-                            } else {
-                                if (createArticleList(task.getResult())) {
-                                    mCardAdapter.addAll(mDiscoverableArticles);
-                                    mProgressBar.setVisibility(View.GONE);
-                                    mMessage.setVisibility(View.GONE);
-                                    mCardStack.setVisibility(View.VISIBLE);
-                                } else {
-                                    mProgressBar.setVisibility(View.GONE);
-                                    mMessage.setVisibility(View.VISIBLE);
-                                }
-                            }
-                        } else {
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        if (task.getResult().isEmpty()) {
                             mProgressBar.setVisibility(View.GONE);
                             mMessage.setVisibility(View.VISIBLE);
-                            Log.w("", task.getException());
+                        } else {
+                            if (createArticleList(task.getResult())) {
+                                mCardAdapter.addAll(mDiscoverableArticles);
+                                mProgressBar.setVisibility(View.GONE);
+                                mMessage.setVisibility(View.GONE);
+                                mCardStack.setVisibility(View.VISIBLE);
+                            } else {
+                                mProgressBar.setVisibility(View.GONE);
+                                mMessage.setVisibility(View.VISIBLE);
+                            }
                         }
+                    } else {
+                        mProgressBar.setVisibility(View.GONE);
+                        mMessage.setVisibility(View.VISIBLE);
+                        Log.w("", task.getException());
                     }
                 });
     }
@@ -238,7 +206,6 @@ public class ExploreFragment extends Fragment {
         List<Article> promo2 = new ArrayList<>();
         List<Article> promo3 = new ArrayList<>();
         int totalArticles = 0;
-
         for (QueryDocumentSnapshot document : result) {
             if (isNew(document.getId())) {
                 Article art = document.toObject(Article.class);
@@ -332,21 +299,7 @@ public class ExploreFragment extends Fragment {
     }
 
     private boolean isNew(String id) {
-        Log.d("isNew", "starting " + id);
-        for (LocalInteraction li : mLocalInteractions) {
-            Log.d("isNew", li.getUid());
-            if (li.getUid().equals(id)) {
-                Log.d("isNew", "false");
-                return false;
-            }
-        }
-        Log.d("isNew", "true");
-        return true;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+        return mLocalInteractions.stream().anyMatch(li -> li.getUid().equals(id));
     }
 
     @Override
@@ -365,10 +318,8 @@ public class ExploreFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.search_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
-        //SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         MenuItem item = menu.findItem(R.id.btnSearch);
         SearchView searchView = (SearchView) item.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -390,14 +341,4 @@ public class ExploreFragment extends Fragment {
         Log.e("OPTIONSMENU", "onCreateOptionsMenu: mSearchmenuItem->" + item.getActionView());
 
     }
-
-
-    public boolean onSearchRequested() {
-        Bundle appData = new Bundle();
-        this.getActivity().startSearch(null, false, appData, false);
-        return true;
-
-    }
-
-
 }

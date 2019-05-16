@@ -10,42 +10,37 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Interaction;
-import com.mylook.mylook.session.Sesion;
 import com.mylook.mylook.storeProfile.StoreActivity;
 import com.mylook.mylook.utils.SlidingImageAdapter;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Objects;
 
 public class ArticleInfoActivity extends AppCompatActivity {
 
     private Context mContext = ArticleInfoActivity.this;
-    private ImageView backArrow, articleImage;
     private Article article;
-    private ExpandableListView expandableListView;
     private FloatingActionButton btnCloset;
-    private String articleId, closetId;
+    private String articleId;
     private ArrayList<String> tags;
-    private String downLoadUri, dbUserId;
+    private String downLoadUri;
+    private String dbUserId = Sesion.getInstance().getSessionUserId();
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private FirebaseFirestore dB = FirebaseFirestore.getInstance();
     private TextView txtTitle;
@@ -54,44 +49,75 @@ public class ArticleInfoActivity extends AppCompatActivity {
     private LinearLayout lnlColors;
     private TextView txtMaterial;
     private TextView txtCost;
-    private static ViewPager articlePager;
-    private static int currentPageSlider = 0;
-    private static int numPages = 0;
     private ArrayList<String> imageArraySlider;
+    private boolean inCloset;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_details);
         getArticleFromIntent();
-        getUserId();
+        initElements();
+        setDetail();
+        isArticleInCloset();
     }
 
-    private void getUserId() {
-        dB.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+    private void getArticleFromIntent() {
+        Intent intent = getIntent();
+        article = (Article) intent.getSerializableExtra("article");
+        articleId = article.getArticleId();
+        downLoadUri = article.getPicture();
+        if (article.getPicturesArray() != null) {
+            imageArraySlider = new ArrayList<>();
+            imageArraySlider.addAll(article.getPicturesArray());
+        }
+        tags = intent.getStringArrayListExtra("tags");
+    }
+
+    private void initElements() {
+        ImageView backArrow = findViewById(R.id.backArrow);
+        btnCloset = findViewById(R.id.btnCloset);
+        txtTitle = findViewById(R.id.txtTitle);
+        txtStoreName = findViewById(R.id.txtStoreName);
+        txtMaterial = findViewById(R.id.txtMaterial);
+        txtCost = findViewById(R.id.txtCost);
+        lnlSizes = findViewById(R.id.lnlSizes);
+        lnlColors = findViewById(R.id.lnlColors);
+        backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
-                    dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
-                    downLoadUri = article.getPicture();
-                    System.out.println("Picture de getUserId: " + downLoadUri);
-                    initElements();
-                    setDetail();
-                } else {
-                    dB.collection("clients").whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
-                                downLoadUri = article.getPicture();
-                                initElements();
-                                setDetail();
-                            }
-                        }
-                    });
-                }
+            public void onClick(View view) {
+                finish();
             }
         });
+        btnCloset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("", "pressed: ");
+                if (inCloset) {
+                    removeFromCloset();
+                } else {
+                    saveInCloset();
+                }
+                inCloset = !inCloset;
+            }
+        });
+
+        ViewPager articlePager;
+        if (imageArraySlider == null) {
+            ArrayList<String> arrayAux = new ArrayList<>();
+            arrayAux.add(0, downLoadUri);
+            articlePager = findViewById(R.id.view_pager_article);
+            articlePager.setAdapter(new SlidingImageAdapter(mContext, arrayAux));
+            CirclePageIndicator indicator = findViewById(R.id.circle_page_indicator);
+            indicator.setViewPager(articlePager);
+            indicator.setRadius(5 * getResources().getDisplayMetrics().density);
+        } else {
+            articlePager = findViewById(R.id.view_pager_article);
+            articlePager.setAdapter(new SlidingImageAdapter(mContext, imageArraySlider));
+            CirclePageIndicator indicator = findViewById(R.id.circle_page_indicator);
+            indicator.setViewPager(articlePager);
+            indicator.setRadius(5 * getResources().getDisplayMetrics().density);
+        }
     }
 
     private void setDetail() {
@@ -119,162 +145,79 @@ public class ArticleInfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intentVisitStore = new Intent(mContext, StoreActivity.class);
-                Log.d("Nombre tienda", "onClick: Paso el nombre de la tienda: ");
                 intentVisitStore.putExtra("Tienda", article.getStoreName());
                 mContext.startActivity(intentVisitStore);
             }
         });
     }
 
-    private void initElements() {
-        backArrow = findViewById(R.id.backArrow);
-        btnCloset = findViewById(R.id.btnCloset);
-        articleImage = findViewById(R.id.article_image);
-        txtTitle = findViewById(R.id.txtTitle);
-        txtStoreName = findViewById(R.id.txtStoreName);
-        txtMaterial = findViewById(R.id.txtMaterial);
-        txtCost = findViewById(R.id.txtCost);
-        lnlSizes = findViewById(R.id.lnlSizes);
-        lnlColors = findViewById(R.id.lnlColors);
-        backArrow.setOnClickListener(new View.OnClickListener() {
+    private void isArticleInCloset() {
+        Log.d("", "isArticleInCloset: ");
+        dB.collection("articles").document(articleId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onClick(View view) {
-                finish();
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document == null || !document.exists()) {
+                        btnCloset.setEnabled(false);
+                        return;
+                    }
+                    if (Objects.equals(document.get("favorites"), dbUserId)) {
+                        Log.d("", "onComplete: WTFFFFFFF");
+                        btnCloset.setEnabled(true);
+                        inCloset = true;
+                        return;
+                    }
+                    btnCloset.setEnabled(true);
+                    inCloset = false;
+                } else {
+                    btnCloset.setEnabled(false);
+                }
             }
         });
-        btnCloset.setOnClickListener(new View.OnClickListener() {
+    }
+
+    private void removeFromCloset() {
+        btnCloset.setEnabled(false);
+        dB.collection("articles").document(article.getArticleId())
+                .update("favorites", FieldValue.arrayRemove(dbUserId)).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onClick(View v) {
-                saveOnCloset();
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    sendNewInteraction();
+                    displayMessage("Se eliminó de tu ropero");
+                    Sesion.getInstance().updateActivitiesStatus(Sesion.HOME_FRAGMENT, Sesion.CLOSET_FRAGMENT);
+                } else {
+                    displayMessage("Error al eliminar del ropero");
+                }
+                btnCloset.setEnabled(true);
             }
         });
-
-        if (imageArraySlider==null) {
-            ArrayList<String> arrayAux = new ArrayList<String>();
-           arrayAux.add(0, downLoadUri);
-            articlePager = (ViewPager) findViewById(R.id.view_pager_article);
-            articlePager.setAdapter(new SlidingImageAdapter(mContext, arrayAux));
-
-            CirclePageIndicator indicator = (CirclePageIndicator)
-                    findViewById(R.id.circle_page_indicator);
-
-            indicator.setViewPager(articlePager);
-
-            final float density = getResources().getDisplayMetrics().density;
-
-            //Set circle indicator radius
-            indicator.setRadius(5 * density);
-            numPages = arrayAux.size();
-
-        } else {
-            articlePager = (ViewPager) findViewById(R.id.view_pager_article);
-            articlePager.setAdapter(new SlidingImageAdapter(mContext, imageArraySlider));
-
-            CirclePageIndicator indicator = (CirclePageIndicator)
-                    findViewById(R.id.circle_page_indicator);
-
-            indicator.setViewPager(articlePager);
-
-            final float density = getResources().getDisplayMetrics().density;
-
-            //Set circle indicator radius
-            indicator.setRadius(5 * density);
-            numPages = imageArraySlider.size();
-
-            // Pager listener over indicator
-            indicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
-                @Override
-                public void onPageSelected(int position) {
-                    currentPageSlider = position;
-
-                }
-
-                @Override
-                public void onPageScrolled(int pos, float arg1, int arg2) {
-
-                }
-
-                @Override
-                public void onPageScrollStateChanged(int pos) {
-
-                }
-            });
-        }
-
-
     }
 
-    private void getArticleFromIntent() {
-        //retrieve data from intent
-        Intent intent = getIntent();
-        article = (Article) intent.getSerializableExtra("article");
-        Log.e("ROPERO", article.getArticleId());
-        articleId = article.getArticleId();
-        downLoadUri = article.getPicture();
-        System.out.println("Picture del intent: " + downLoadUri);
-        Log.d("pictureArray", "Array: " + article.getPicturesArray());
-        if (article.getPicturesArray()!=null){
-            imageArraySlider = new ArrayList<String>();
-            for (String image : article.getPicturesArray()) {
-                imageArraySlider.add(image);
-                Log.d("Add image", "Se añadio la imagen " + image);
+    private void saveInCloset() {
+        btnCloset.setEnabled(false);
+        dB.collection("articles").document(article.getArticleId())
+                .update("favorites", FieldValue.arrayUnion(dbUserId)).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    sendNewInteraction();
+                    displayMessage("Se añadió a tu ropero");
+                    Sesion.getInstance().updateActivitiesStatus(Sesion.HOME_FRAGMENT, Sesion.CLOSET_FRAGMENT);
+                } else {
+                    displayMessage("Error al añadir al ropero");
+                }
+                btnCloset.setEnabled(true);
             }
-            Log.d("ArrayImagenes", "imageArraySlider tiene size: " + imageArraySlider.size());
-        }
-        tags = intent.getStringArrayListExtra("tags");
-    }
-
-    private void saveOnCloset() {
-
-        final Map<String, Object> favorites = new HashMap<>();
-        favorites.put("articleId", articleId);
-        favorites.put("downloadUri", downLoadUri);
-        favorites.put("collecion", null);
-
-        dB.collection("closets")
-                .whereEqualTo("userID", dbUserId)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
-                            closetId = task.getResult().getDocuments().get(0).getId();
-                            dB.collection("closets").document(closetId).collection("favorites")
-                                    .whereEqualTo("articleId", articleId).get()
-                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                            if (task.getResult().getDocuments().size() == 0) {
-                                                Log.e("CLOSET", closetId);
-                                                dB.collection("closets").document(closetId).collection("favorites").add(favorites);
-                                                sendNewInteraction();
-                                                displayMessage("Se añadió a tu ropero");
-                                                Sesion.getInstance().updateActivitiesStatus(Sesion.HOME_FRAGMENT, Sesion.CLOSET_FRAGMENT);
-                                            } else {
-                                                displayMessage("Ya está en tu ropero");
-                                            }
-                                        }
-                                    });
-                        } else {
-                            displayMessage("No tienes un ropero asociado");
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        displayMessage("Error al guardar en ropero");
-                    }
-                });
-
-
+        });
     }
 
     private void displayMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
+    // TODO eliminar y contar desde articulos... hace falta refactorizar relacionados
     private void sendNewInteraction() {
         Interaction userInteraction = new Interaction();
         Log.e("PROMOTION LEVEL", article.getPromotionLevel() + "");

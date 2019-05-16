@@ -37,12 +37,6 @@
         </activity>
         <activity android:name=".info.ArticleInfoActivity"></activity>
         <activity android:name=".storeProfile.StoreActivity"></activity>
-        <activity android:name=".explore.ExploreActivity"
-            android:screenOrientation="portrait" >
-            <meta-data android:name="android.app.default_searchable"
-                android:value=".SearchableActivity" />
-
-        </activity>
         <activity android:name=".explore.SearchableActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".explore.ExploreActivity">
@@ -57,11 +51,6 @@
 
         </activity>
 
-        <activity android:name=".profile.ProfileActivity" android:launchMode="singleInstance"/>
-        <activity android:name=".recommend.RecommendationsActivity"
-            android:grantUriPermissions="true"
-            android:launchMode="singleInstance">
-        </activity>
         <activity android:name=".login.RegisterActivity" android:launchMode="singleInstance"/>
         <activity android:name=".recommend.RecommendActivityAddDesc"
             android:parentActivityName=".recommend.RecommendationsActivity"
@@ -83,8 +72,7 @@
             android:grantUriPermissions="true"/>
         <activity android:name=".premiumUser.PublicationDetail"
             android:parentActivityName=".premiumUser.PremiumUserProfileActivity"/>
-        <activity android:name=".closet.ClosetActivity" android:launchMode="singleInstance"/>
-        <activity android:name=".closet.OutfitActivity"
+        <activity android:name=".closet.CreateOutfitActivity"
             android:parentActivityName=".closet.ClosetActivity"
             android:launchMode="singleInstance"/>
         <activity android:name=".closet.ViewOutfitActivity"/>

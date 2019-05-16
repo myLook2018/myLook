@@ -23,7 +23,6 @@ public class Article implements Serializable, Comparable<Article>, Comparator<Ar
     private ArrayList<String> picturesArray;
     private Date creationDate;
     private int promotionLevel;
-    private Boolean estaEnVidriera;
 
     public Article() {
     }
@@ -49,14 +48,6 @@ public class Article implements Serializable, Comparable<Article>, Comparator<Ar
 
     public void setPicturesArray(ArrayList<String> picturesArray) {
         this.picturesArray = picturesArray;
-    }
-
-    public Boolean getEstaEnVidriera() {
-        return estaEnVidriera;
-    }
-
-    public void setEstaEnVidriera(Boolean estaEnVidriera) {
-        this.estaEnVidriera = estaEnVidriera;
     }
 
     public String getArticleId() {

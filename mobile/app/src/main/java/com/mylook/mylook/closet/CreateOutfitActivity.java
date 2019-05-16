@@ -33,16 +33,14 @@ import com.mylook.mylook.info.ArticleInfoActivity;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class OutfitActivity extends AppCompatActivity {
+public class CreateOutfitActivity extends AppCompatActivity {
 
     private GridView gridView;
     private FirebaseFirestore dB = FirebaseFirestore.getInstance();
     private ArrayList<Favorite> favorites = new ArrayList<>();
     private ArrayList<Favorite> checkedFavorites = new ArrayList<>();
     private HashMap<String, String> outfitItems;
-    private Toolbar tb;
-    private String outfitName, outfitCategory, userID;
-    private ImageButton btnSend;
+    private String outfitName, outfitCategory;
     private ProgressBar mProgressBar;
 
     @Override
@@ -50,7 +48,7 @@ public class OutfitActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_outfit);
         gridView = findViewById(R.id.favorites_grid);
-        btnSend = findViewById(R.id.btnSendOutfit);
+        ImageButton btnSend = findViewById(R.id.btnSendOutfit);
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,7 +77,7 @@ public class OutfitActivity extends AppCompatActivity {
     }
 
     private void initElements() {
-        tb = findViewById(R.id.toolbar);
+        Toolbar tb = findViewById(R.id.toolbar);
         tb.setTitle("Tu conjunto");
         setSupportActionBar(tb);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -91,31 +89,23 @@ public class OutfitActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     private void getOutfits() {
         dB.collection("outfits")
-                .whereEqualTo("userID", userID)
+                .whereEqualTo("userID", Sesion.getInstance().getSessionUserId())
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                String outfitId = document.getId();
-                                for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                                }
-                                checkedFavorites = favorites;
-                                setGridView();
-                                return;
-                            }
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        for (DocumentSnapshot document : task.getResult()) {
+                            String outfitId = document.getId();
                         }
+                        setGridView();
                     }
                 });
     }
@@ -125,48 +115,42 @@ public class OutfitActivity extends AppCompatActivity {
         if (outfitName == null && nuevo.getItems() != null) {
             mProgressBar.setVisibility(View.VISIBLE);
             dB.collection("closets")
-                    .whereEqualTo("userID", userID)
+                    .whereEqualTo("userID", Sesion.getSessionUserId())
                     .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                String id = task.getResult().getDocuments().get(0).getId();
-                                dB.collection("closets").document(id).collection("outfits").add(nuevo).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                                        mProgressBar.setVisibility(View.INVISIBLE);
-                                        Toast.makeText(OutfitActivity.this, "Se ha creado tu conjunto", Toast.LENGTH_SHORT).show();
-                                        finish();
-                                    }
-                                });
-                            }
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            String id = task.getResult().getDocuments().get(0).getId();
+                            dB.collection("closets").document(id).collection("outfits").add(nuevo).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentReference> task) {
+                                    mProgressBar.setVisibility(View.INVISIBLE);
+                                    Toast.makeText(CreateOutfitActivity.this, "Se ha creado tu conjunto", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                }
+                            });
                         }
                     });
         } else if (nuevo.getItems() != null) {
             mProgressBar.setVisibility(View.VISIBLE);
-            dB.collection("closets").whereEqualTo("userID", userID).get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                String id = task.getResult().getDocuments().get(0).getId();
-                                dB.collection("closets").document(id).collection("outfits").document(outfitName)
-                                        .update("items", outfitItems).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        mProgressBar.setVisibility(View.INVISIBLE);
-                                        Toast.makeText(getApplicationContext(), "Cambiaste tu conjunto", Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(getApplicationContext(), ClosetActivity.class);
-                                        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                                        startActivityIfNeeded(intent, 0);
-                                    }
-                                });
-                            }
+            dB.collection("closets").whereEqualTo("userID", Sesion.getSessionUserId()).get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            String id = task.getResult().getDocuments().get(0).getId();
+                            dB.collection("closets").document(id).collection("outfits").document(outfitName)
+                                    .update("items", outfitItems).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    mProgressBar.setVisibility(View.INVISIBLE);
+                                    Toast.makeText(getApplicationContext(), "Cambiaste tu conjunto", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(getApplicationContext(), ClosetActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                                    startActivityIfNeeded(intent, 0);
+                                }
+                            });
                         }
                     });
         } else {
-            Toast.makeText(OutfitActivity.this, "Debes agrergar por lo menos una prenda", Toast.LENGTH_SHORT).show();
+            Toast.makeText(CreateOutfitActivity.this, "Debes agrergar por lo menos una prenda", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -180,7 +164,7 @@ public class OutfitActivity extends AppCompatActivity {
 
     private void getOutfit() {
         dB.collection("closets")
-                .whereEqualTo("userID", userID)
+                .whereEqualTo("userID", Sesion.getInstance().getSessionUserId())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -189,13 +173,10 @@ public class OutfitActivity extends AppCompatActivity {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String id = document.getId();
                                 dB.collection("closets").document(id).collection("outfits").document(outfitName).get()
-                                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                Outfit old = task.getResult().toObject(Outfit.class);
-                                                outfitItems = old.getItems();
-                                                loadOutfit();
-                                            }
+                                        .addOnCompleteListener(task1 -> {
+                                            Outfit old = task1.getResult().toObject(Outfit.class);
+                                            outfitItems = old.getItems();
+                                            loadOutfit();
                                         });
                             }
                         } else {
@@ -221,22 +202,19 @@ public class OutfitActivity extends AppCompatActivity {
 
     private void loadImage(final String item, String articleId) {
         dB.collection("articles").document(articleId).get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            View v = null;
-                            if (item.getClass().equals(Integer.class))
-                                v = findViewById(Integer.parseInt(item));
-                            if (v == null) {
-                                v = findViewById(getResources().getIdentifier(item, "id", getApplicationContext().getPackageName()));
-                            }
-                            String art = (String) task.getResult().get("picture");
-                            Glide.with(OutfitActivity.this).asBitmap().load(art).apply(new RequestOptions()
-                                    .diskCacheStrategy(DiskCacheStrategy.DATA))
-                                    .into((ImageView) v);
-
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        View v = null;
+                        if (item.getClass().equals(Integer.class))
+                            v = findViewById(Integer.parseInt(item));
+                        if (v == null) {
+                            v = findViewById(getResources().getIdentifier(item, "id", getApplicationContext().getPackageName()));
                         }
+                        String art = (String) task.getResult().get("picture");
+                        Glide.with(CreateOutfitActivity.this).asBitmap().load(art).apply(new RequestOptions()
+                                .diskCacheStrategy(DiskCacheStrategy.DATA))
+                                .into((ImageView) v);
+
                     }
                 });
     }
