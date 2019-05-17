@@ -53,7 +53,7 @@
 
                   <div style="display: grid; margin-top: 10px;">
                     <mat-form-field>
-                      <input required matInput placeholder="Telefono Personal" formControlName="storePhone" type="number">
+                      <input required matInput placeholder="Telefono Personal" formControlName="storePhone" min='0' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57">
                     </mat-form-field>
                   </div>
                 </div>
@@ -123,11 +123,11 @@
               </mat-form-field>
 
               <mat-form-field id="storeAddressNumber" style="width: 15%">
-                <input required matInput placeholder="N°" formControlName="storeAddressNumber" type="number">
+                <input required matInput placeholder="N°" formControlName="storeAddressNumber" min='0' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57">
               </mat-form-field>
 
               <mat-form-field id="storeFloor" style="width: 10%;">
-                <input matInput placeholder="Piso" formControlName="storeFloor" type="number">
+                <input matInput placeholder="Piso" formControlName="storeFloor" min='0' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57">
               </mat-form-field>
 
               <mat-form-field id="storeFloor" style="width: 10%;">

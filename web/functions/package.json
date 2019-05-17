@@ -10,9 +10,10 @@
   },
   "main": "lib/index.js",
   "dependencies": {
+    "es6-promise-pool": "^2.4.4",
     "firebase-admin": "~7.0.0",
     "firebase-functions": "^2.2.0",
-    "es6-promise-pool": "^2.4.4",
+    "mercadopago": "^1.0.23",
     "secure-compare": "^3.0.1"
   },
   "devDependencies": {
