@@ -124,7 +124,7 @@ export class PromoteDialogComponent {
   }
 
   sendToMP() {
-    console.log('mandando al servicio');
-    this.articleService.addPreferenceMP(this.preferenceMP).then((a) => console.log(a), (b) => {console.log(b); });
+    console.log('mandando al servicio', this.preferenceMP);
+    // this.articleService.addPreferenceMP(this.preferenceMP).then((a) => console.log(a), (b) => {console.log(b); });
   }
 }
