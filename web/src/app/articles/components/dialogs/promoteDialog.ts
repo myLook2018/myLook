@@ -1,12 +1,18 @@
 import { Component, Inject, EventEmitter } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA, MatHorizontalStepper } from '@angular/material';
+import { FormBuilder, Validators, FormGroup } from '@angular/forms';
+import { ArticleService } from './../../services/article.service';
+import { PreferenceMP } from './../../models/preferenceMP';
 
 @Component({
   selector: 'app-promote-dialog',
-  templateUrl: 'promoteDialog.html'
+  templateUrl: 'promoteDialog.html',
+  styleUrls: ['./promoteDialog.scss'],
 })
 export class PromoteDialogComponent {
-  mercadopago: any;
+  step1: any;
+
+  urlMercadoPago = 'la pinche url';
   maxDate: any;
   onAdd = new EventEmitter();
   dailyCost;
@@ -17,6 +23,8 @@ export class PromoteDialogComponent {
   selectedPromotion;
   selectedPayMethod: Number;
   promotionData;
+  firstFormGroup: FormGroup ;
+  preferenceMP: PreferenceMP;
 
   promotionsLevels = [
     { value: 2, viewValue: 'Promoción Básica' },
@@ -36,11 +44,25 @@ export class PromoteDialogComponent {
   payMethods = [{ value: 0, viewValue: 'Gratis!' }];
   constructor(
     public dialogRef: MatDialogRef<PromoteDialogComponent>,
+    private _formBuilder: FormBuilder,
+    private articleService: ArticleService,
     @Inject(MAT_DIALOG_DATA) public data
-  ) {}
+    ) {
+      this.firstFormGroup = this._formBuilder.group({
+        promotionLevelCtrl: ['', Validators.required],
+        durationCtrl: ['', Validators.required]
+        // payMethodCtrl: ['', Validators.required],
+      });
+      this.initializePreference();
+    }
+
 
   onNoClick(): void {
     this.dialogRef.close();
+  }
+
+  initializePreference() {
+    this.preferenceMP = new PreferenceMP();
   }
 
   sendData() {
@@ -95,5 +117,14 @@ export class PromoteDialogComponent {
     } catch {
       console.log(`no pude calcular diff`);
     }
+  }
+
+  trySendDatsToMP(stepper: MatHorizontalStepper) {
+          stepper.next();
+  }
+
+  sendToMP() {
+    console.log('mandando al servicio');
+    this.articleService.addPreferenceMP(this.preferenceMP).then((a) => console.log(a), (b) => {console.log(b); });
   }
 }
