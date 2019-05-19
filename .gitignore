@@ -1,13 +1,9 @@
 mobile/*.iml
+mobile/app/*.iml
 mobile/.gradle
 mobile/local.properties
 
-mobile/.idea/*.ser
-mobile/.idea/libraries
-mobile/.idea/caches
-mobile/.idea/modules.xml
-mobile/.idea/workspace.xml
-mobile/.idea/gradle.xml
+mobile/.idea/
 mobile/.DS_Store
 mobile/build
 mobile/captures

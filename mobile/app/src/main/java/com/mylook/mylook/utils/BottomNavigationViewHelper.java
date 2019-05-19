@@ -8,7 +8,7 @@ import android.view.MenuItem;
 
 import com.mylook.mylook.closet.ClosetActivity;
 import com.mylook.mylook.explore.ExploreActivity;
-import com.mylook.mylook.home.MainActivity;
+import com.mylook.mylook.home.MyLookActivity;
 import com.mylook.mylook.profile.ProfileActivity;
 import com.mylook.mylook.R;
 import com.mylook.mylook.recommend.RecommendationsActivity;
@@ -21,7 +21,7 @@ public class BottomNavigationViewHelper {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.ic_house:
-                        Intent intent1 = new Intent(context, MainActivity.class);
+                        Intent intent1 = new Intent(context, MyLookActivity.class);
                         context.startActivity(intent1);
                         break;
                     case R.id.ic_explore:

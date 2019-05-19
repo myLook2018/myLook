@@ -5,10 +5,19 @@ import {
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Article } from '../models/article';
-import { map, filter } from 'rxjs/operators';
+import { map, filter, catchError } from 'rxjs/operators';
 import * as firebase from 'firebase';
 import { StoreFront } from '../models/storeFront';
 import { reject } from 'q';
+import { HttpClient } from '@angular/common/http';
+import { PreferenceMP } from '../models/preferenceMP';
+import { HttpHeaders } from '@angular/common/http';
+
+const httpOptions = {
+  headers: new HttpHeaders({
+    'Content-Type':  'application/json'
+  })
+};
 
 @Injectable()
 export class ArticleService {
@@ -23,7 +32,7 @@ export class ArticleService {
   db: any;
   require: any;
 
-  constructor(public fst: AngularFirestore) {
+  constructor(public fst: AngularFirestore, private http: HttpClient) {
     console.log(`en el collector`);
     this.articleCollection = this.fst.collection(this.collectionPath);
     this.promoteCollection = this.fst.collection(this.promotePath);
@@ -31,17 +40,19 @@ export class ArticleService {
     this.db = firebase.firestore();
   }
 
-  /*getArticles(storeName) {
-    console.log(`en el get`);
-    return this.articles = this.articleCollection.snapshotChanges().pipe(map(changes => {
-      return changes.map(a => {
-        const data = a.payload.doc.data();
-        data.articleId = a.payload.doc.id;
-        console.log(data);
-        return data;
+  getArticles(storeName) {
+    console.log(`en el get subscriptions`);
+    return this.articles = this.articleCollection.snapshotChanges().pipe(map( changes => {
+      return changes.map( a => {
+        if (a.payload.doc.data().storeName === storeName) {
+          const data = a.payload.doc.data();
+          console.log(data);
+          data.articleId = a.payload.doc.id;
+          return data;
+        }
       });
     }));
-  }*/
+  }
 
   getArticlesCopado(storeName) {
     this.articlesCopado = [];
