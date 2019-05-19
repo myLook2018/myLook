@@ -127,7 +127,19 @@ exports.closeRecommendations = functions.https.onRequest((req: any, res: any) =>
 });
 
 
-
+exports.newMercadoPagoDoc = functions.firestore.document('prueba/{userId}')
+    .onCreate((snap:any, context: any) => {
+    // Get an object representing the document
+    // e.g. {'name': 'Marie', 'age': 66}
+    const preference = snap.data();
+    mercadopago.preferences.create(preference)
+        .then(function (preferenceASW: any) {
+          return 'si, anda la cloud functon y salio todo bien';
+        }).catch(function (error: any) {
+          return 'algo salio mal. Si, no tengo idea que, de nada por lo especifico. Toma este erorr ' + error;
+        });
+    // make the request
+});
 
 /**
  * When requested this Function will delete every user accounts that has been inactive for one year.
@@ -203,9 +215,9 @@ exports.newMercadoPagoDoc = functions.firestore.document('prueba/{userId}')
     const preference = snap.data();
     mercadopago.preferences.create(preference)
         .then(function (preferenceASW: any) {
-          return preferenceASW;
+          return 'si, anda la cloud functon y salio todo bien';
         }).catch(function (error: any) {
-          return error;
+          return 'algo salio mal. Si, no tengo idea que, de nada por lo especifico. Toma este erorr ' + error;
         });
     // make the request
 });

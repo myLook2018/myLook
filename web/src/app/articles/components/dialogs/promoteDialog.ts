@@ -62,7 +62,43 @@ export class PromoteDialogComponent {
   }
 
   initializePreference() {
-    this.preferenceMP = new PreferenceMP();
+    this.preferenceMP =  {
+      'items': [],
+      'payer': {
+          'name': 'Alexis',
+          'surname': 'Donato',
+          'email': 'lala@gmail.com',
+          'phone': {
+              'area_code': '209595',
+              'number': '53213'
+          },
+          'identification': {
+              'type': 'DNI', // Available ID types at https://api.mercadopago.com/v1/identification_types
+              'number': '3213'
+          },
+          'address': {
+              'street_name': 'string',
+              'street_number': 213,
+              'zip_code': 321
+          }
+      },
+      'back_urls': {
+          'success': 'https://www.success.com',
+          'failure': 'http://www.failure.com'
+      },
+      'auto_return': 'approved',
+      'payment_methods': {
+          'installments': 12,
+          'default_payment_method_id': null,
+          'default_installments': null
+      },
+      'notification_url': 'https://www.your-site.com/ipn',
+      'external_reference': 'string',
+      'expires': true,
+      'expiration_date_from': new Date(),
+      'expiration_date_to': new Date(),
+      'binary_mode': true
+    };
   }
 
   sendData() {
@@ -125,6 +161,6 @@ export class PromoteDialogComponent {
 
   sendToMP() {
     console.log('mandando al servicio', this.preferenceMP);
-    // this.articleService.addPreferenceMP(this.preferenceMP).then((a) => console.log(a), (b) => {console.log(b); });
+    this.articleService.createNewSale(this.preferenceMP).then((a) => console.log(a), (b) => {console.log(b); });
   }
 }

@@ -98,3 +98,7 @@ margin-right: auto;
 max-width: 1920px;
 height: 100%;
 }
+
+.toolbar {
+  background-color: transparent;
+}

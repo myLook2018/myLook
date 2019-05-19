@@ -28,6 +28,7 @@ export class ArticleService {
   // tslint:disable-next-line:no-inferrable-types
   collectionPath: string = 'articles';
   storeFrontPath = 'storeFronts';
+  mercadoPagoPath = 'prueba';
   promotePath = 'promotions';
   db: any;
   require: any;
@@ -212,6 +213,15 @@ export class ArticleService {
         storeName: storeName,
       });
       res.then(ref => console.log(ref.id));
+    });
+  }
+
+  createNewSale(preferenceMP) {
+    console.log('creando venta');
+    return new Promise<any>((resolve) => {
+      const res = this.fst.collection(this.mercadoPagoPath).add(preferenceMP);
+      res.then(ref => console.log(ref.id));
+      resolve(res);
     });
   }
 }

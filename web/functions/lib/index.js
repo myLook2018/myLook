@@ -5,6 +5,12 @@ const admin = require("firebase-admin");
 const promisePool = require('es6-promise-pool');
 const PromisePool = promisePool.PromisePool;
 const secureCompare = require('secure-compare');
+const mercadopago = require('mercadopago');
+
+mercadopago.configure({
+    client_id: '1059447032112952',
+    client_secret: '3at5jmJl40HnPV0kBGPVjmjL4PCA9Iyp'
+});
 // Maximum concurrent account deletions.
 const MAX_CONCURRENT = 3;
 // Método que inicializa las funciones, sin esto no anda
@@ -163,3 +169,17 @@ function getInactiveUsers(users = [], nextPageToken) {
     });
 }
 //# sourceMappingURL=index.js.map
+
+exports.newMercadoPagoDoc = functions.firestore.document('prueba/{userId}')
+    .onCreate((snap, context) => {
+    // Get an object representing the document
+    // e.g. {'name': 'Marie', 'age': 66}
+    const preference = snap.data();
+    mercadopago.preferences.create(preference)
+        .then(function (preferenceASW) {
+          return 'si, anda la cloud functon y salio todo bien';
+        }).catch(function (error) {
+          return 'algo salio mal. Si, no tengo idea que, de nada por lo especifico. Toma este erorr ' + error;
+        });
+    // make the request
+});
