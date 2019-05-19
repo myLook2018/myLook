@@ -23,7 +23,9 @@
     height: 48px;
 	z-index: 10;
 	background: white;
-	padding: 0;
+  padding: 0;
+  margin-left: auto;
+margin-right: auto;
 }
 
 .right-icon {
@@ -88,4 +90,11 @@
 @-ms-keyframes fadein {
     from { opacity: 0; }
     to   { opacity: 1; }
+}
+
+.main-content {
+  margin-left: auto;
+margin-right: auto;
+max-width: 1920px;
+height: 100%;
 }
