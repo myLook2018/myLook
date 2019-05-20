@@ -1,6 +1,7 @@
 package com.mylook.mylook.closet;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -35,27 +38,17 @@ import java.util.ArrayList;
 
 public class OutfitsTab extends Fragment {
 
-    private FirebaseFirestore dB = FirebaseFirestore.getInstance();
-    private ArrayList<Outfit> outfits;
     private GridView outfitGrid;
-    private String dbUserId = Sesion.getInstance().getSessionUserId();
     private ProgressBar mProgressBar;
-    private static boolean loaded = false;
     private OutfitAdapter adapter;
+    private FavoritesViewModel favModel;
 
     public OutfitsTab() {
         // Required empty public constructor
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        outfits = new ArrayList<>();
-        super.onCreate(savedInstanceState);
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.tab_categories, container, false);
     }
 
@@ -65,22 +58,14 @@ public class OutfitsTab extends Fragment {
 
         outfitGrid = view.findViewById(R.id.grid_colecciones);
         FloatingActionButton addOutfit = view.findViewById(R.id.addOutfit);
-        if (!loaded) {
-            mProgressBar.setVisibility(View.VISIBLE);
-            outfits = new ArrayList<>();
-            adapter = new OutfitAdapter(getActivity(), outfits);
-            setGridView();
-            getOutfits();
-        }
-
+        mProgressBar.setVisibility(View.VISIBLE);
+        //TODO set adapter
+        adapter = new OutfitAdapter(getActivity(), null);
+        setGridView();
+        getOutfits();
 
         outfitGrid.setAdapter(adapter);
-        addOutfit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createInputDialog();
-            }
-        });
+        addOutfit.setOnClickListener(v -> createInputDialog());
         super.onViewCreated(view, savedInstanceState);
     }
 
@@ -90,80 +75,21 @@ public class OutfitsTab extends Fragment {
         outfitGrid.setColumnWidth(imageWidth);
         outfitGrid.setHorizontalSpacing(8);
         outfitGrid.setNumColumns(2);
-        outfitGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                loadOutfit(parent, position);
-            }
-        });
+        outfitGrid.setOnItemClickListener((parent, v, position, id) -> loadOutfit(parent, position));
     }
 
-    private void loadOutfit(AdapterView<?> parent, int position) {
-        mProgressBar.setVisibility(View.VISIBLE);
-        final String outfitId = ((Outfit) parent.getAdapter().getItem(position)).getOutfitId();
-        dB.collection("closets").whereEqualTo("userID", dbUserId).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            final String id = task.getResult().getDocuments().get(0).getId();
-                            dB.collection("closets").document(id).collection("outfits")
-                                    .document(outfitId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    Outfit outfit = task.getResult().toObject(Outfit.class);
-                                    Intent intent = new Intent(getContext(), ViewOutfitActivity.class);
-                                    intent.putExtra("items", outfit.getItems());
-                                    intent.putExtra("name", outfit.getName());
-                                    intent.putExtra("category", outfit.getCategory());
-                                    intent.putExtra("id", task.getResult().getId());
-                                    mProgressBar.setVisibility(View.INVISIBLE);
-                                    startActivity(intent);
-                                }
-                            });
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getContext(), "No se ha podido cargar tus favoritos", Toast.LENGTH_LONG).show();
-                    }
-                });
-    }
-
-    private void getOutfits() {
-        dB.collection("outfits")
-                .whereEqualTo("userID", dbUserId)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (final QueryDocumentSnapshot document : task.getResult()) {
-                                String id = document.getId();
-                                dB.collection("closets").document(id).collection("outfits").get()
-                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                if (task.isSuccessful()) {
-                                                    ArrayList<String> arrayList = new ArrayList<>();
-                                                    for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                                                        Outfit outfit = documentSnapshot.toObject(Outfit.class);
-                                                        outfit.setOutfitId(documentSnapshot.getId());
-                                                        outfits.add(outfit);
-                                                        adapter.notifyDataSetChanged();
-                                                        loaded = true;
-                                                    }
-                                                    mProgressBar.setVisibility(View.INVISIBLE);
-                                                }
-                                            }
-                                        });
-                            }
-                        }
-                    }
-                });
-    }
+    /* TODO seccion de codigo para intent a viewoutfit
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                Outfit outfit = task.getResult().toObject(Outfit.class);
+                                Intent intent = new Intent(getContext(), ViewOutfitActivity.class);
+                                intent.putExtra("items", outfit.getItems());
+                                intent.putExtra("name", outfit.getName());
+                                intent.putExtra("category", outfit.getCategory());
+                                intent.putExtra("id", task.getResult().getId());
+                                mProgressBar.setVisibility(View.INVISIBLE);
+                                startActivity(intent);
+                                */
 
     public void createInputDialog() {
         final AlertDialog.Builder dialog = new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme);
@@ -189,18 +115,12 @@ public class OutfitsTab extends Fragment {
                         Intent intent = new Intent(getActivity(), CreateOutfitActivity.class);
                         intent.putExtra("name", input.getText().toString());
                         intent.putExtra("category", "normal");
-                        intent.putExtra("userID", dbUserId);
+                        intent.putExtra("userID", FirebaseAuth.getInstance().getCurrentUser().getUid());
                         startActivity(intent);
                     }
 
                 }).create();
-        alert.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.purple));
-
-            }
-        });
+        alert.setOnShowListener(dialog1 -> alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(R.color.purple, )));
         alert.show();
     }
 }
