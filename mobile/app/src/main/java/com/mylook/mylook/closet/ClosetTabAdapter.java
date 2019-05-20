@@ -12,12 +12,12 @@ public class ClosetTabAdapter extends FragmentPagerAdapter {
     private final List<Fragment> mFragmentList = new ArrayList<>();
     private final List<String> mFragmentTitleList = new ArrayList<>();
 
-    public ClosetTabAdapter(FragmentManager fm, int NumOfTabs) {
+    ClosetTabAdapter(FragmentManager fm, int NumOfTabs) {
         super(fm);
         this.mNumOfTabs = NumOfTabs;
     }
 
-    public void addFragment(Fragment fragment, String title) {
+    void addFragment(Fragment fragment, String title) {
         mFragmentList.add(fragment);
         mFragmentTitleList.add(title);
     }
@@ -27,12 +27,10 @@ public class ClosetTabAdapter extends FragmentPagerAdapter {
         return mFragmentList.get(position);
     }
 
-
     @Override
     public int getCount() {
         return mFragmentList.size();
     }
-
 
     @Override
     public CharSequence getPageTitle(int position) {

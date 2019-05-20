@@ -11,14 +11,14 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.mylook.mylook.entities.Article;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class ImageAdapter extends BaseAdapter {
 
     private Context context;
-    private ArrayList<Article> articles;
+    private List<Article> articles;
 
-    public ImageAdapter(Context context, ArrayList articles) {
+    public ImageAdapter(Context context, List<Article> articles) {
         this.context = context;
         this.articles = articles;
     }

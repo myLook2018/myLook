@@ -13,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="0px"
         android:numColumns="3"
-        android:listSelector="@drawable/states_gridview_closet"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

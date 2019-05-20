@@ -3,7 +3,6 @@ package com.mylook.mylook.closet;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -17,7 +16,6 @@ public class FavoritesViewModel extends ViewModel {
 
     private MutableLiveData<List<Article>> favorites;
     private MutableLiveData<List<Outfit>> outfits;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public FavoritesViewModel() {
     }
@@ -31,8 +29,9 @@ public class FavoritesViewModel extends ViewModel {
     }
 
     private void loadFavorites() {
-        db.collection("articles")
-                .whereArrayContains("favorites", FirebaseAuth.getInstance().getCurrentUser().getUid())
+        FirebaseFirestore.getInstance().collection("articles")
+                .whereArrayContains("favorites",
+                        FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
@@ -41,10 +40,13 @@ public class FavoritesViewModel extends ViewModel {
                             art.setArticleId(document.getId());
                             return art;
                         }).collect(Collectors.toList()));
-                        adapter.notifyDataSetChanged();
-                        mProgressBar.setVisibility(View.INVISIBLE);
                     }
                 });
+    }
+
+    private Article removeFavorite(int position) {
+        if (favorites == null) return null;
+        return favorites.getValue().remove(position);
     }
 
     public LiveData<List<Outfit>> getOutfits() {
@@ -60,8 +62,9 @@ public class FavoritesViewModel extends ViewModel {
     }
 
     private void loadOutfits() {
-        db.collection("outfits")
-                .whereEqualTo("userID", FirebaseAuth.getInstance().getCurrentUser().getUid())
+        FirebaseFirestore.getInstance().collection("outfits")
+                .whereEqualTo("userID",
+                        FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
@@ -74,10 +77,13 @@ public class FavoritesViewModel extends ViewModel {
                                             .collect(Collectors.toList()));
                                     return out;
                                 }).collect(Collectors.toList()));
-                        adapter.notifyDataSetChanged();
-                        mProgressBar.setVisibility(View.INVISIBLE);
                     }
                 });
+    }
+
+    private Outfit removeOutfit(int position) {
+        if (outfits == null) return null;
+        return outfits.getValue().remove(position);
     }
 
 }
