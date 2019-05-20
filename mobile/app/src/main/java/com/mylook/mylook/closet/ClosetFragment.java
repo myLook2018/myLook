@@ -1,6 +1,6 @@
 package com.mylook.mylook.closet;
 
-import android.arch.lifecycle.ViewModelProviders;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,15 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.mylook.mylook.R;
-import com.mylook.mylook.entities.Article;
-import com.mylook.mylook.entities.Outfit;
-
-import java.util.ArrayList;
 
 public class ClosetFragment extends Fragment {
 
     private TabLayout tabLayout;
-    private FavoritesViewModel favModel;
 
     public ClosetFragment() { }
 
@@ -36,10 +31,6 @@ public class ClosetFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        FavoritesViewModel model = ViewModelProviders.of(this).get(FavoritesViewModel.class);
-        model.getFavorites().observe(this, favorites -> {
-            // update UI
-        });
         super.onCreate(savedInstanceState);
     }
 
@@ -71,14 +62,11 @@ public class ClosetFragment extends Fragment {
     }
 
     private void createHelpDialog() {
-        final android.app.AlertDialog.Builder dialogBuilder = new android.app.AlertDialog.Builder(getContext(), R.style.AlertDialogTheme);
-        final android.app.AlertDialog alert = dialogBuilder.setTitle("Ayuda")
+        new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme).setTitle("Ayuda")
                 .setPositiveButton("Aceptar", (dialog, which) ->
                         dialog.cancel()).setMessage("Acá podés ver toda tu ropa favorita y los conjuntos que armás. Para armar un " +
                         "nuevo conjunto andá a la pestaña conjuntos y apretá en el botón +")
-                .create();
-        alert.setOnShowListener(dialog1 -> alert.getButton(android.app.AlertDialog.BUTTON_POSITIVE));
-        alert.show();
+                .create().show();
     }
 
     private void setupViewPager(ViewPager viewPager) {

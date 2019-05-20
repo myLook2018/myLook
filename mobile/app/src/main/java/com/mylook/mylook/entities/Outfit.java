@@ -1,16 +1,21 @@
 package com.mylook.mylook.entities;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Outfit {
     private String name;
     private String category;
-    private ArrayList<String> items;
-    private ArrayList<Article> articles;
+    private List<String> items;
+    private List<Article> articles;
     private String outfitId;
 
     public Outfit() {
+    }
+
+    public Outfit(String name, String category, List<String> items) {
+        this.name = name;
+        this.category = category;
+        this.items = items;
     }
 
     public String getName() {
@@ -29,11 +34,11 @@ public class Outfit {
         this.category = category;
     }
 
-    public ArrayList<String> getItems() {
+    public List<String> getItems() {
         return items;
     }
 
-    public void setItems(ArrayList<String> items) {
+    public void setItems(List<String> items) {
         this.items = items;
     }
 
@@ -45,11 +50,11 @@ public class Outfit {
         this.outfitId = outfitId;
     }
 
-    public ArrayList<Article> getArticles() {
+    public List<Article> getArticles() {
         return articles;
     }
 
     public void setArticles(List<Article> articles) {
-        this.articles.addAll(articles);
+        this.articles = articles;
     }
 }

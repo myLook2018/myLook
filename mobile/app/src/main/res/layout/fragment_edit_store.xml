@@ -74,7 +74,7 @@
                 android:id="@+id/lblStoreName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/storeName"
+                android:text="@string/txtStoreName"
                 tools:textSize="24sp" />
 
             <android.support.design.widget.TextInputLayout
@@ -87,7 +87,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="hint"
-                    android:text="@string/storeName"
+                    android:text="@string/txtStoreName"
                     tools:textSize="24sp" />
 
             </android.support.design.widget.TextInputLayout>
