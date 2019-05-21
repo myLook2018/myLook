@@ -34,6 +34,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.e(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
             notificationTitle = remoteMessage.getNotification().getTitle();
             notificationBody = remoteMessage.getNotification().getBody();
+
         }
 
         if (!remoteMessage.getData().isEmpty()) {
@@ -42,7 +43,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
-        sendNotification(notificationTitle, notificationBody);
+        String recommendation = "0MNMOn0y1UVpJM6EqILG";
+        sendNotification(notificationTitle, notificationBody, recommendation);
     }
 
     @Override
@@ -51,9 +53,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.e(TAG, "Entered in deleted messages");
     }
 
-    private void sendNotification(String notificationTitle, String notificationBody) {
+    private PendingIntent createIntent(String recommendation){
+        Intent newIntent = new Intent(getApplicationContext(), MyLookActivity.class);
+        newIntent.putExtra("recommendationId", recommendation);
+        PendingIntent pendingIntent =  PendingIntent.getActivity(getApplicationContext(), 0, newIntent, 0);
+        return pendingIntent;
+    }
+
+    private void sendNotification(String notificationTitle, String notificationBody, String recommendation) {
         Notification notification;
-        Log.e(TAG, "sendNotification");
+        PendingIntent newIntent = createIntent(recommendation);
+        //Se hace distinto porque a partir de la versión 8 de Android se utilizan canales de notificaciones
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Log.e(TAG, "Version Oreo o Más");
             int notifyID = 1;
@@ -70,6 +80,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     .setSmallIcon(R.drawable.ic_icon_logo)
                      .setColorized(true )
                      .setColor(getResources().getColor(R.color.purple))
+                     .setContentIntent(newIntent)
                     .setChannelId(CHANNEL_ID)
                     .build();
             mNotificationManager.notify(notifyID , notification);
@@ -79,7 +90,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     .setContentTitle(notificationTitle)
                     .setContentText(notificationBody)
                     .setVisibility(Notification.VISIBILITY_PUBLIC)
+                    .setContentIntent(newIntent)
+                    .setColor(getResources().getColor(R.color.purple))
                     .setSmallIcon(R.drawable.ic_icon_logo);
+
             notification = notificationBuilder.build();
             Log.e("Notification", notification.toString());
             NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
