@@ -9,6 +9,8 @@ import android.util.Log;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.closet.ClosetFragment;
@@ -31,9 +33,14 @@ public class Sesion extends Service {
     public static final int PROFILE_FRAGMENT = 5;
     public static final String TAG = "Sesion";
     public static String userId = null;
+    public static boolean isPremium = false;
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public Sesion() {
+    }
+
+    public boolean isPremiumUser(){
+        return isPremium;
     }
 
     public String getSessionUserId(){
@@ -89,20 +96,24 @@ public class Sesion extends Service {
     }
 
     private static Task getUserId() {
-        if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
-            if(FirebaseAuth.getInstance().getCurrentUser().isEmailVerified())
-            return db.collection("clients").whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser!=null) {
+            if(currentUser.isEmailVerified())
+            return db.collection("clients").whereEqualTo("userId", currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
-                        userId = task.getResult().getDocuments().get(0).get("userId").toString();
+                        DocumentSnapshot document = task.getResult().getDocuments().get(0);
+                        userId = document.get("userId").toString();
+                        isPremium = (Boolean) document.get("isPremium");
 
                     } else {
-                        db.collection("clients").whereEqualTo("email", FirebaseAuth.getInstance().getCurrentUser().getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        db.collection("clients").whereEqualTo("email", currentUser.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
                                     userId = task.getResult().getDocuments().get(0).get("userId").toString();
+                                    //cuando entra aca?
                                 }
                             }
                         });

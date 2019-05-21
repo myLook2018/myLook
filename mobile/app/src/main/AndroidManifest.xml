@@ -35,6 +35,8 @@
         </activity>
         <activity android:name=".login.LoginActivity">
         </activity>
+        <activity android:name=".profile.AccountActivity">
+        </activity>
         <activity android:name=".home.MyLookActivity" android:theme="@style/SplashTheme">
 
         </activity>
