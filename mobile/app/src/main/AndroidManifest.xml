@@ -118,7 +118,7 @@
             android:parentActivityName=".login.LoginActivity"/>
         <service android:name=".notifications.MyFirebaseMessagingService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGIN_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
 
