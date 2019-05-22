@@ -21,30 +21,23 @@ import com.mylook.mylook.R;
 import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.utils.ImageAdapter;
 
-public class FavouritesTab extends Fragment {
+public class FavoritesTab extends Fragment {
 
+    private FavoriteRemoved mCallback;
     private GridView gridview;
     private FirebaseFirestore dB = FirebaseFirestore.getInstance();
     private ImageAdapter adapter;
-    private FavoritesViewModel favoritesViewModel;
+    private ClosetModel closet;
     private ProgressBar mProgressBar;
 
-    public FavouritesTab() {
+    public FavoritesTab() {
         // Required empty public constructor
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        favoritesViewModel = ViewModelProviders.of(getParentFragment()).get(FavoritesViewModel.class);
-        favoritesViewModel.getFavorites().observe(this, favorites -> {
-            adapter = new ImageAdapter(getActivity(), favoritesViewModel.getFavorites().getValue());
-            //adapter.notifyDataSetChanged();
-            //mProgressBar.setVisibility(View.INVISIBLE);
-            if (mProgressBar != null && mProgressBar.getVisibility() == View.VISIBLE) {
-                mProgressBar.setVisibility(View.INVISIBLE);
-            }
-        });
         super.onCreate(savedInstanceState);
+        closet = ViewModelProviders.of(getParentFragment()).get(ClosetModel.class);
     }
 
     @Nullable
@@ -55,12 +48,17 @@ public class FavouritesTab extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        adapter = new ImageAdapter(getContext(), closet.getFavorites().getValue());
         mProgressBar = view.findViewById(R.id.mProgressBar);
         mProgressBar.setVisibility(View.VISIBLE);
         gridview = view.findViewById(R.id.grid_favoritos);
         gridview.setAdapter(adapter);
         setGridView();
-        super.onViewCreated(view, savedInstanceState);
+        closet.getFavorites().observe(this, favorites -> {
+            adapter.notifyDataSetChanged();
+            mProgressBar.setVisibility(View.INVISIBLE);
+        });
     }
 
     private void setGridView() {
@@ -72,7 +70,7 @@ public class FavouritesTab extends Fragment {
         gridview.setOnItemClickListener((parent, v, position, id) -> {
             Intent intent = new Intent(getContext(), ArticleInfoActivity.class);
             intent.putExtra("article",
-                    favoritesViewModel.getFavorites().getValue().get(position));
+                    closet.getFavorites().getValue().get(position));
             startActivity(intent);
         });
         gridview.setOnItemLongClickListener((parent, v, position, id) -> {
@@ -88,13 +86,17 @@ public class FavouritesTab extends Fragment {
     }
 
     private void removeFavorite(final int position) {
+        if (closet.removeFavorite(position)) {
+
+        }
+
         dB.collection("articles")
                 .document(favoritesViewModel.getFavorites().getValue().get(position).getArticleId())
                 .update("favorites",
                         FieldValue.arrayRemove(FirebaseAuth.getInstance().getCurrentUser().getUid()))
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        favoritesViewModel.getFavorites().getValue().remove(position);
+                        closet.getFavorites().getValue().remove(position);
                         adapter.notifyDataSetChanged();
                         Toast.makeText(getContext(), "Se eliminó de tu ropero",
                                 Toast.LENGTH_SHORT).show();
@@ -103,5 +105,9 @@ public class FavouritesTab extends Fragment {
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    public interface FavoriteRemoved {
+        void notifyFavoriteRemoved();
     }
 }

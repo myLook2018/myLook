@@ -28,7 +28,6 @@ public class OutfitsTab extends Fragment {
     private GridView outfitGrid;
     private ProgressBar mProgressBar;
     private OutfitAdapter adapter;
-    private FavoritesViewModel favModel;
 
     public OutfitsTab() {
         // Required empty public constructor
@@ -60,7 +59,10 @@ public class OutfitsTab extends Fragment {
         outfitGrid.setColumnWidth(imageWidth);
         outfitGrid.setHorizontalSpacing(8);
         outfitGrid.setNumColumns(2);
-        //outfitGrid.setOnItemClickListener((parent, v, position, id) -> loadOutfit(parent, position));
+        outfitGrid.setOnItemClickListener((parent, v, position, id) -> {
+
+            loadOutfit(parent, position);
+        });
     }
 
     /* TODO seccion de codigo para intent a viewoutfit
@@ -103,5 +105,9 @@ public class OutfitsTab extends Fragment {
                             FirebaseAuth.getInstance().getCurrentUser().getUid());
                     startActivity(intent);
                 }).create().show();
+    }
+
+    public void updateOutfits() {
+        adapter.notifyDataSetChanged();
     }
 }
