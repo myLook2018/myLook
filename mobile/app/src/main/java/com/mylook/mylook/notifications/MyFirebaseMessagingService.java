@@ -17,6 +17,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.mylook.mylook.R;
 import com.mylook.mylook.home.MyLookActivity;
+import com.mylook.mylook.recommend.RequestRecommendActivity;
 import com.mylook.mylook.session.MainActivity;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -36,14 +37,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             notificationBody = remoteMessage.getNotification().getBody();
 
         }
-
+        String recommendation = "";
         if (!remoteMessage.getData().isEmpty()) {
-            Log.e("Data", remoteMessage.getData().toString());
+            recommendation = remoteMessage.getData().get("requestId");
         }
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
-        String recommendation = "0MNMOn0y1UVpJM6EqILG";
         sendNotification(notificationTitle, notificationBody, recommendation);
     }
 
@@ -54,8 +54,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private PendingIntent createIntent(String recommendation){
-        Intent newIntent = new Intent(getApplicationContext(), MyLookActivity.class);
-        newIntent.putExtra("recommendationId", recommendation);
+        Intent newIntent = new Intent(getApplicationContext(), RequestRecommendActivity.class);
+        newIntent.putExtra("requestId", recommendation);
         PendingIntent pendingIntent =  PendingIntent.getActivity(getApplicationContext(), 0, newIntent, 0);
         return pendingIntent;
     }
@@ -63,6 +63,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void sendNotification(String notificationTitle, String notificationBody, String recommendation) {
         Notification notification;
         PendingIntent newIntent = createIntent(recommendation);
+
         //Se hace distinto porque a partir de la versión 8 de Android se utilizan canales de notificaciones
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Log.e(TAG, "Version Oreo o Más");
@@ -81,7 +82,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                      .setColorized(true )
                      .setColor(getResources().getColor(R.color.purple))
                      .setContentIntent(newIntent)
-                    .setChannelId(CHANNEL_ID)
+                     .setChannelId(CHANNEL_ID)
+                     .setAutoCancel(true)
                     .build();
             mNotificationManager.notify(notifyID , notification);
         } else {
@@ -89,15 +91,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Notification.Builder notificationBuilder = new Notification.Builder(getApplicationContext())
                     .setContentTitle(notificationTitle)
                     .setContentText(notificationBody)
-                    .setVisibility(Notification.VISIBILITY_PUBLIC)
+                    .setAutoCancel(true)
                     .setContentIntent(newIntent)
-                    .setColor(getResources().getColor(R.color.purple))
+                    .setColorized(true)
                     .setSmallIcon(R.drawable.ic_icon_logo);
 
             notification = notificationBuilder.build();
             Log.e("Notification", notification.toString());
             NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            manager.notify("default", 123, notification);
+            manager.notify( 123, notification);
         }
     }
 

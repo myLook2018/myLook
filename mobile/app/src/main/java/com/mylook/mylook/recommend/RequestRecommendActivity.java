@@ -84,28 +84,33 @@ public class RequestRecommendActivity extends AppCompatActivity {
         if (intent.hasExtra("requestRecommendation")) {
             RequestRecommendation requestRecommendation = (RequestRecommendation) intent.getSerializableExtra("requestRecommendation");
             requestId = requestRecommendation.getDocumentId();
-            dB.collection("requestRecommendations").document(requestId).get().addOnCompleteListener(
-                    new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            DocumentSnapshot doc =  task.getResult();
-
+        } else{
+            requestId = intent.getStringExtra("requestId");
+        }
+        Log.e(TAG, "requestId"+requestId);
+        dB.collection("requestRecommendations").document(requestId).get().addOnCompleteListener(
+                new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()) {
+                            DocumentSnapshot doc = task.getResult();
                             txtDescription.setText(doc.get("description").toString());
                             txtTitle.setText(doc.get("title").toString());
                             Calendar cal = Calendar.getInstance();
-                            cal.setTimeInMillis((long)doc.get("limitDate"));
+                            cal.setTimeInMillis((long) doc.get("limitDate"));
                             int mes = cal.get(Calendar.MONTH) + 1;
                             final String dateFormat = cal.get(Calendar.DAY_OF_MONTH) + "/" + mes + "/" + cal.get(Calendar.YEAR);
-                            txtLimitDate.setText("Hasta el "+dateFormat);
+                            txtLimitDate.setText("Hasta el " + dateFormat);
                             setImage(doc.get("requestPhoto").toString());
                             answers = (ArrayList<HashMap<String, String>>) doc.get("answers");
-                            isClosed = (boolean)doc.get("isClosed");
+                            isClosed = (boolean) doc.get("isClosed");
                             initRecyclerView(answers);
+                        } else {
+                            Log.e(TAG, "busqueda not succesful");
                         }
                     }
-            );
-
-        }
+                }
+        );
     }
 
     private void setImage(String imageUrl) {

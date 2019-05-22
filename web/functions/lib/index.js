@@ -45,6 +45,10 @@ exports.pushNotifications = functions.firestore.document('requestRecommendations
     return "Didnt write new recommendations";
 });
 exports.newAnswerNotification = functions.firestore.document('requestRecommendations/{docId}').onWrite((snap, context) => {
+    console.log("Executing JavaScript")
+    const id = snap.before.id
+    console.log("change document", "docId: "+id)
+
     const newValue = snap.after.data();
     const previousValue = snap.before.data();
     const newAnswer = newValue.answers;
@@ -59,6 +63,9 @@ exports.newAnswerNotification = functions.firestore.document('requestRecommendat
                 title: "Nueva Recomendación para " + title + " de " + storeName,
                 body: desc,
                 sound: "default"
+            }, 
+            data:{
+                requestId: id
             }
         };
         const options = {
