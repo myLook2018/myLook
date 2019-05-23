@@ -25,7 +25,6 @@ public class GridImageAdapter extends ArrayAdapter {
     private Context mContext;
     private LayoutInflater mInflater;
     private int layoutResource;
-    static final int CODE_REQUEST_ACTIVITY_FOR_RESULT = 1;
     //private String mAppend; no se usaria. en el tutorial lo pone porque usa universal image loader
     private ArrayList<Article> articles;
     private ArrayList<PremiumPublication> publications;

@@ -38,7 +38,7 @@ import java.util.Map;
 public class ArticleInfoActivity extends AppCompatActivity {
 
     private Context mContext = ArticleInfoActivity.this;
-    private ImageView backArrow, articleImage;
+    private ImageView articleImage;
     private Article article;
     private FloatingActionButton btnCloset;
     private String articleId, closetId;
@@ -127,7 +127,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
     }
 
     private void initElements() {
-        backArrow = findViewById(R.id.backArrow);
         btnCloset = findViewById(R.id.btnCloset);
         articleImage = findViewById(R.id.article_image);
         txtTitle = findViewById(R.id.txtTitle);
