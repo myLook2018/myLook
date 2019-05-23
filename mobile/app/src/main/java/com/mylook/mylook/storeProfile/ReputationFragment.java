@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -79,16 +80,22 @@ public class ReputationFragment extends Fragment {
     }
 
     public void countRecommendations() {
+        System.out.println("Store name: " + storeName);
         dB.collection("answeredRecommendations").whereEqualTo("storeName", storeName)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for (DocumentSnapshot documentSnapshot : task.getResult()) {
                     if (documentSnapshot.contains("feedBack")) {
-                        ratingSum += Float.parseFloat((String) documentSnapshot.get("feedBack"));
+                        System.out.println(documentSnapshot.get("feedBack"));
+                        if (documentSnapshot.get("feedBack") != "") {
+                            ratingSum += Float.parseFloat((String) documentSnapshot.get("feedBack"));
+                        }
                         recommendCount++;
                     }
                 }
+                System.out.println("Rating sum:" + ratingSum);
+                System.out.println("Recommend Count: " + recommendCount);
                 if (ratingSum != 0 && recommendCount != 0) {
                     float prom = ratingSum / recommendCount;
                     ratingBar.setRating(prom);

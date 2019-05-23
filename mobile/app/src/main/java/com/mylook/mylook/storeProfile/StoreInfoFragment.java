@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,23 +33,22 @@ import com.mylook.mylook.session.Sesion;
 @SuppressLint("ValidFragment")
 public class StoreInfoFragment extends Fragment {
 
-    private  FirebaseUser user;
+    private FirebaseUser user;
     private FirebaseFirestore dB;
     private ImageView storePhoto;
-    private Button btnSubscribe,btnMoreInfo;
-    private TextView storeName;
-    private TextView txtDescription;
+    private Button btnSubscribe, btnMoreInfo;
+    private TextView storeName, txtDescription;
     private String storeNameString;
     private Context context;
     private boolean mSubscribed;
-    private String documentId="";
+    private String documentId = "";
 
 
-    public StoreInfoFragment(Context context,String storeName) {
+    public StoreInfoFragment(Context context, String storeName) {
         dB = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
-        storeNameString=storeName;
-        this.context=context;
+        storeNameString = storeName;
+        this.context = context;
         checkFollow();
 
     }
@@ -84,7 +84,8 @@ public class StoreInfoFragment extends Fragment {
     public void setTxtDescription(String txtDescription) {
         this.txtDescription.setText(txtDescription);
     }
-    public void setOnClickSubscribe(){
+
+    public void setOnClickSubscribe() {
         btnSubscribe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -99,7 +100,7 @@ public class StoreInfoFragment extends Fragment {
                             Log.d("Firestore task", "DocumentSnapshot written with ID: " + documentReference.getId());
                             documentId = documentReference.getId();
                             setupButtonSubscribe(true);
-                            displayMessage("Ahora estas suscripto a "+storeNameString);
+                            displayMessage("Ahora estas suscripto a " + storeNameString);
                             Sesion.getInstance().updateActivitiesStatus(Sesion.HOME_FRAGMENT);
 
                         }
@@ -118,7 +119,7 @@ public class StoreInfoFragment extends Fragment {
                             if (task.isSuccessful()) {
                                 setupButtonSubscribe(false);
                                 documentId = "";
-                                Log.e("BUTTON",documentId);
+                                Log.e("BUTTON", documentId);
                                 displayMessage("Ya no estás suscripto");
                                 Sesion.getInstance().updateActivitiesStatus(Sesion.HOME_FRAGMENT);
                             }
@@ -139,11 +140,12 @@ public class StoreInfoFragment extends Fragment {
         } else {
             btnSubscribe.setText("Suscribirse");
             btnSubscribe.setBackgroundColor(getResources().getColor(R.color.accent));
-            mSubscribed=false;
+            mSubscribed = false;
         }
 
         btnSubscribe.setEnabled(true);
     }
+
     public void checkFollow() {
 
         dB.collection("subscriptions")
@@ -156,20 +158,21 @@ public class StoreInfoFragment extends Fragment {
                     if (!task.getResult().isEmpty()) {
                         //read subscription id
                         documentId = task.getResult().getDocuments().get(0).getId();
-                        mSubscribed=true;
+                        mSubscribed = true;
                     }
                     setupButtonSubscribe(!task.getResult().isEmpty());
                 }
             }
         });
     }
-    public void initElements(View rootView){
+
+    public void initElements(View rootView) {
         storePhoto = (ImageView) rootView.findViewById(R.id.premium_profile_photo);
-        btnSubscribe =rootView.findViewById(R.id.btn_subscribe);
+        btnSubscribe = rootView.findViewById(R.id.btn_subscribe);
         storeName = (TextView) rootView.findViewById(R.id.profile_store_name);
-        txtDescription=rootView.findViewById(R.id.txtDescription);
+        txtDescription = rootView.findViewById(R.id.txtDescription);
         txtDescription.setMovementMethod(new ScrollingMovementMethod());
-        btnMoreInfo=rootView.findViewById(R.id.btnMasInfo);
+        btnMoreInfo = rootView.findViewById(R.id.btnMasInfo);
     }
 
     private void displayMessage(String message) {

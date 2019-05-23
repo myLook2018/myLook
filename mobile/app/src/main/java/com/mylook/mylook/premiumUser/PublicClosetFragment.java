@@ -48,7 +48,7 @@ public class PublicClosetFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_store_catalog, container, false);
 
         // Obtención del grid view
-        GridViewWithHeaderAndFooter grid = rootView.findViewById(R.id.gridview);
+        GridViewWithHeaderAndFooter grid = rootView.findViewById(R.id.gridview_store_catalog);
         // Inicializar el grid view
         setupGridView(grid);
         return rootView;

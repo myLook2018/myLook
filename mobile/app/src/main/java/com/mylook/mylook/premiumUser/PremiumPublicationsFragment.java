@@ -42,7 +42,7 @@ public class PremiumPublicationsFragment extends Fragment {
         View rootView = inflater.inflate( R.layout.fragment_shopwindow, container, false);
 
         // Obtención del grid view
-        GridViewWithHeaderAndFooter grid = rootView.findViewById(R.id.gridview);
+        GridViewWithHeaderAndFooter grid = rootView.findViewById(R.id.gridview_store_window);
         // Inicializar el grid view
         setupPublicationsGridView(grid);
         return rootView;

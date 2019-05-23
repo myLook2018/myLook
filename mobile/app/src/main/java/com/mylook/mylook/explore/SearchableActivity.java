@@ -10,7 +10,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,8 +26,10 @@ import com.mylook.mylook.entities.PremiumUser;
 import com.mylook.mylook.entities.Store;
 import com.mylook.mylook.utils.CardsHomeFeedAdapter;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class SearchableActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -33,18 +37,22 @@ public class SearchableActivity extends AppCompatActivity {
     private CardsHomeFeedAdapter adapter;
     private RecyclerView recyclerView;
     private ImageView backArrow;
+    private ProgressBar progressBar;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
+
         Toolbar tb = findViewById(R.id.toolbar);
         tb.setTitle("Tu busqueda");
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         recyclerView = findViewById(R.id.recycler_view_content);
+
+        progressBar = findViewById(R.id.home_progress_bar);
 
         results = new ArrayList();
         adapter = new CardsHomeFeedAdapter(this, results);
@@ -56,7 +64,8 @@ public class SearchableActivity extends AppCompatActivity {
         // Get the intent, verify the action and get the query
         Intent intent = getIntent();
         if (intent.hasExtra("query")) {
-            String query = intent.getStringExtra("query");
+            String query = stripAccents(intent.getStringExtra("query"));
+            System.out.println("Query: " + query);
             recyclerView.removeAllViewsInLayout();
             recyclerView.removeAllViews();
             results.clear(); //new
@@ -64,6 +73,7 @@ public class SearchableActivity extends AppCompatActivity {
             doMySearchTitles(query);
             doMySearchStoreNames(query);
             doMySearchStorePremium(query);
+            progressBar.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -76,7 +86,7 @@ public class SearchableActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                                if (documentSnapshot.get("userName").toString().toLowerCase().contains(query.toLowerCase())) {
+                                if (stripAccents(documentSnapshot.get("userName").toString().toLowerCase()).contains(query.toLowerCase())) {
                                     PremiumUser premiumUser = documentSnapshot.toObject(PremiumUser.class);
                                     results.add(premiumUser);
                                     Log.e("Usuario", premiumUser.getUserName());
@@ -96,6 +106,7 @@ public class SearchableActivity extends AppCompatActivity {
 
     private void doMySearchStoreNames(final String query) {
         //query = Character.toUpperCase(query.charAt(0)) + query.substring(1, query.length());
+        Log.d("String QUERY", "doMySearchStoreNames: " + query);
         db.collection("stores")
                 //.whereEqualTo("storeName",query)
                 .get()
@@ -104,10 +115,12 @@ public class SearchableActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                                if (documentSnapshot.get("storeName").toString().toLowerCase().contains(query.toLowerCase())) {
+                                Log.d("Tienda BD", "onComplete: " + documentSnapshot.get("storeName"));
+                                if (stripAccents(documentSnapshot.get("storeName").toString().toLowerCase()).contains(query.toLowerCase())) {
                                     Store store = documentSnapshot.toObject(Store.class);
                                     results.add(store);
                                     Log.e("Tienda", store.getStoreName());
+                                    Log.d("ResultQuery", "onComplete: " + stripAccents(documentSnapshot.get("storeName").toString().toLowerCase()));
                                 }
                             }
                             //articleList.addAll(task.getResult().toObjects(Article.class));
@@ -131,7 +144,7 @@ public class SearchableActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                                if(documentSnapshot.get("title").toString().toLowerCase().contains(query.toLowerCase())) {
+                                if (stripAccents(documentSnapshot.get("title").toString().toLowerCase()).contains(query.toLowerCase())) {
                                     Article art = documentSnapshot.toObject(Article.class);
                                     art.setArticleId(documentSnapshot.getId());
                                     if (!results.contains(art))
@@ -160,7 +173,7 @@ public class SearchableActivity extends AppCompatActivity {
                             for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                 Article art = documentSnapshot.toObject(Article.class);
                                 for (String tag : art.getTags()) {
-                                    if(tag.toLowerCase().contains(query.toLowerCase())){
+                                    if (stripAccents(tag.toLowerCase()).contains(query.toLowerCase())) {
                                         art.setArticleId(documentSnapshot.getId());
                                         if (!results.contains(art))
                                             results.add(art);
@@ -180,9 +193,16 @@ public class SearchableActivity extends AppCompatActivity {
     private void displayMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
+
     @Override
-    public boolean onSupportNavigateUp(){
+    public boolean onSupportNavigateUp() {
         finish();
         return true;
+    }
+
+    public static String stripAccents(String s) {
+        s = Normalizer.normalize(s, Normalizer.Form.NFD);
+        s = s.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+        return s;
     }
 }

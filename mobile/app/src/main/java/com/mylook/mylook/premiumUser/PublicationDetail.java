@@ -1,5 +1,6 @@
 package com.mylook.mylook.premiumUser;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -38,6 +39,7 @@ public class PublicationDetail extends AppCompatActivity{
     private PremiumUser premiumUser;
     private Article art;
     private Context mContext = PublicationDetail.this;
+    static final int CODE_REQUEST= 1;
 
 
     @Override
@@ -122,4 +124,5 @@ public class PublicationDetail extends AppCompatActivity{
         finish();
         return true;
     }
+
 }

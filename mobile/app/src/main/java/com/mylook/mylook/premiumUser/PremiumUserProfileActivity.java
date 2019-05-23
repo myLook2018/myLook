@@ -49,7 +49,7 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         tab = findViewById(R.id.tab);
         viewPagerUserInfo = findViewById(R.id.storeInfoViewPager);
-        viewPagerUserPublications = findViewById(R.id.storeViewPager);
+        viewPagerUserPublications = findViewById(R.id.storeArticlesViewPager);
         Toolbar tb =  findViewById(R.id.toolbar);
         fab=findViewById(R.id.fab);
         tb.setTitle("Usuario Destacado");
@@ -142,16 +142,10 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
             db.collection("visits").document(visitId).set(visit.toMap(), SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    finish();
                 }
             });
         }else{
-            db.collection("visits").add(visit.toMap()).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentReference> task) {
-                    finish();
-                }
-            });
+            db.collection("visits").add(visit.toMap());
         }
     }
     */

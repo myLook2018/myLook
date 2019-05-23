@@ -8,15 +8,14 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -41,7 +40,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
     private Context mContext = ArticleInfoActivity.this;
     private ImageView backArrow, articleImage;
     private Article article;
-    private ExpandableListView expandableListView;
     private FloatingActionButton btnCloset;
     private String articleId, closetId;
     private ArrayList<String> tags;
@@ -58,6 +56,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
     private static int currentPageSlider = 0;
     private static int numPages = 0;
     private ArrayList<String> imageArraySlider;
+    private Toolbar articleToolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -137,22 +136,25 @@ public class ArticleInfoActivity extends AppCompatActivity {
         txtCost = findViewById(R.id.txtCost);
         lnlSizes = findViewById(R.id.lnlSizes);
         lnlColors = findViewById(R.id.lnlColors);
-        backArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
         btnCloset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveOnCloset();
             }
         });
+        articleToolbar=findViewById(R.id.article_info_toolbar);
+        articleToolbar.setNavigationIcon(R.drawable.ic_back_arrow);
+        articleToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("back button", "onClick PARA IR ATRAS");
+                finish();
+            }
+        });
 
-        if (imageArraySlider==null) {
+        if (imageArraySlider == null) {
             ArrayList<String> arrayAux = new ArrayList<String>();
-           arrayAux.add(0, downLoadUri);
+            arrayAux.add(0, downLoadUri);
             articlePager = (ViewPager) findViewById(R.id.view_pager_article);
             articlePager.setAdapter(new SlidingImageAdapter(mContext, arrayAux));
 
@@ -215,7 +217,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
         downLoadUri = article.getPicture();
         System.out.println("Picture del intent: " + downLoadUri);
         Log.d("pictureArray", "Array: " + article.getPicturesArray());
-        if (article.getPicturesArray()!=null){
+        if (article.getPicturesArray() != null) {
             imageArraySlider = new ArrayList<String>();
             for (String image : article.getPicturesArray()) {
                 imageArraySlider.add(image);
@@ -289,5 +291,11 @@ public class ArticleInfoActivity extends AppCompatActivity {
         userInteraction.setTags(tags);
         userInteraction.setUserId(user.getUid());
         dB.collection("interactions").add(userInteraction);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }
