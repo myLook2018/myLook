@@ -23,16 +23,6 @@
             android:textSize="20sp"
             android:text="Name" />
 
-        <TextView
-            android:id="@+id/category"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:layout_alignBaseline="@+id/name"
-            android:layout_toEndOf="@+id/name"
-            android:text="Category" />
-
         <ImageView
             android:id="@+id/article_image1"
             android:layout_width="100dp"

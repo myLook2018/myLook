@@ -1,36 +1,47 @@
 package com.mylook.mylook.closet;
 
 import android.app.AlertDialog;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.mylook.mylook.R;
-import com.mylook.mylook.utils.OutfitAdapter;
+import com.mylook.mylook.utils.OutfitListAdapter;
 
 
 public class OutfitsTab extends Fragment {
 
-    private GridView outfitGrid;
+    private RecyclerView outfitsRecyclerView;
+    private OutfitListAdapter adapter;
+    private ClosetModel closet;
     private ProgressBar mProgressBar;
-    private OutfitAdapter adapter;
 
-    public OutfitsTab() {
-        // Required empty public constructor
+    public OutfitsTab() { }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        adapter = new OutfitListAdapter(getActivity(), null);
+        closet = ViewModelProviders.of(getParentFragment()).get(ClosetModel.class);
+        closet.getOutfits().observe(this, outfits -> {
+            adapter.setOutfits(outfits);
+            if (mProgressBar != null) mProgressBar.setVisibility(View.GONE);
+        });
     }
 
     @Override
@@ -40,28 +51,23 @@ public class OutfitsTab extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        mProgressBar = view.findViewById(R.id.mProgressBar);
-        outfitGrid = view.findViewById(R.id.grid_colecciones);
-        FloatingActionButton addOutfit = view.findViewById(R.id.addOutfit);
-        mProgressBar.setVisibility(View.VISIBLE);
-        //TODO set adapter
-        adapter = new OutfitAdapter(getActivity(), null);
-        setGridView();
-
-        outfitGrid.setAdapter(adapter);
-        addOutfit.setOnClickListener(v -> createInputDialog());
         super.onViewCreated(view, savedInstanceState);
+        mProgressBar = view.findViewById(R.id.mProgressBar);
+        mProgressBar.setVisibility(View.VISIBLE);
+        outfitsRecyclerView = view.findViewById(R.id.recyclerview_outfits);
+        FloatingActionButton addOutfit = view.findViewById(R.id.fab_add_outfit);
+        //TODO set adapter
+        setGridView();
+        outfitsRecyclerView.setAdapter(adapter);
+        addOutfit.setOnClickListener(v -> createInputDialog());
     }
 
     private void setGridView() {
         int widthGrid = getResources().getDisplayMetrics().widthPixels;
         int imageWidth = widthGrid / 2;
-        outfitGrid.setColumnWidth(imageWidth);
-        outfitGrid.setHorizontalSpacing(8);
-        outfitGrid.setNumColumns(2);
-        outfitGrid.setOnItemClickListener((parent, v, position, id) -> {
-
-            loadOutfit(parent, position);
+        outfitsRecyclerView.addOnItemTouchListener();
+        outfitsRecyclerView.setOnItemClickListener((parent, v, position, id) -> {
+            //TODO loadOutfit(parent, position);
         });
     }
 
@@ -78,6 +84,7 @@ public class OutfitsTab extends Fragment {
                                 startActivity(intent);
                                 */
 
+    //TODO despues de seleccionar las prendas (en la actividad que se encargue)
     public void createInputDialog() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme);
         EditText input = new EditText(getContext());
@@ -107,7 +114,8 @@ public class OutfitsTab extends Fragment {
                 }).create().show();
     }
 
-    public void updateOutfits() {
-        adapter.notifyDataSetChanged();
+    public interface OnItemClickListener {
+        void onItemClick()
     }
+
 }

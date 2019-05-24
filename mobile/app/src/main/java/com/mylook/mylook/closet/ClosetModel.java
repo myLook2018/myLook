@@ -15,15 +15,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class ClosetModel extends ViewModel {
+
     private MutableLiveData<List<Article>> favorites;
     private MutableLiveData<List<Outfit>> outfits;
 
-    public void load() {
-        loadFavorites();
-        loadOutfits();
-    }
-
-    public LiveData<List<Article>> getFavorites() {
+    LiveData<List<Article>> getFavorites() {
+        if (favorites == null) {
+            loadFavorites();
+            loadOutfits();
+        }
         return favorites;
     }
 
@@ -50,12 +50,11 @@ class ClosetModel extends ViewModel {
                     .update("favorites", FieldValue.arrayRemove(
                             FirebaseAuth.getInstance().getCurrentUser().getUid()))
                     .isSuccessful()) {
-                displayMessage("Se eliminó el favorito");
-                favoritesTab.notifyRemoval();
-                outfitsTab.notifyRemoval();
-                return removeFavoriteFromOutfits(favorites.getValue().remove(position).getArticleId());
+                int outfitsChanged = removeFavoriteFromOutfits(favorites.getValue().remove(position).getArticleId());
+                favorites.postValue(favorites.getValue());
+                outfits.postValue(outfits.getValue());
+                return outfitsChanged;
             } else {
-                displayMessage("Error al eliminar el favorito");
                 return -1;
             }
         }
@@ -72,7 +71,6 @@ class ClosetModel extends ViewModel {
             if (batch.commit().isSuccessful()) {
                 return (int) outfitsToChange.count();
             } else {
-                displayMessage("Conjuntos actualizados");
                 return -1;
             }
         } else return 0;
@@ -108,12 +106,10 @@ class ClosetModel extends ViewModel {
             if (FirebaseFirestore.getInstance().collection("outfits")
                     .document(outfits.getValue().get(position).getOutfitId())
                     .delete().isSuccessful()) {
-                displayMessage("Se eliminó el conjunto");
-                outfits.remove(position);
-                outfitsTab.notifyRemoval();
+                outfits.getValue().remove(position);
+                outfits.postValue(outfits.getValue());
                 return true;
             } else {
-                displayMessage("Error al eliminar el conjunto");
                 return false;
             }
         }

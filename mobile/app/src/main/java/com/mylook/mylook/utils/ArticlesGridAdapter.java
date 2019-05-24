@@ -13,12 +13,12 @@ import com.mylook.mylook.entities.Article;
 
 import java.util.List;
 
-public class ImageAdapter extends BaseAdapter {
+public class ArticlesGridAdapter extends BaseAdapter {
 
     private Context context;
     private List<Article> articles;
 
-    public ImageAdapter(Context context, List<Article> articles) {
+    public ArticlesGridAdapter(Context context, List<Article> articles) {
         this.context = context;
         this.articles = articles;
     }
@@ -46,5 +46,10 @@ public class ImageAdapter extends BaseAdapter {
                 .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA))
                 .into(imageView);
         return imageView;
+    }
+
+    public void setArticles(List<Article> articles) {
+        this.articles = articles;
+        notifyDataSetChanged();
     }
 }

@@ -17,12 +17,9 @@ import android.widget.Toast;
 
 import com.mylook.mylook.R;
 
-public class ClosetFragment extends Fragment implements FavoritesTab.FavoriteRemoved {
+public class ClosetFragment extends Fragment {
 
     private TabLayout tabLayout;
-    private ClosetModel closet;
-    private FavoritesTab favoritesTab;
-    private OutfitsTab outfitsTab;
 
     public ClosetFragment() {
     }
@@ -31,8 +28,6 @@ public class ClosetFragment extends Fragment implements FavoritesTab.FavoriteRem
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        closet = new ClosetModel();
-        closet.load();
     }
 
     @Nullable
@@ -77,9 +72,9 @@ public class ClosetFragment extends Fragment implements FavoritesTab.FavoriteRem
 
     private void setupViewPager(ViewPager viewPager) {
         ClosetTabAdapter adapter = new ClosetTabAdapter(getChildFragmentManager(), 2);
-        favoritesTab = new FavoritesTab();
+        FavoritesTab favoritesTab = new FavoritesTab();
         adapter.addFragment(favoritesTab, "Favoritos");
-        outfitsTab = new OutfitsTab();
+        OutfitsTab outfitsTab = new OutfitsTab();
         adapter.addFragment(outfitsTab, "Conjuntos");
         viewPager.setAdapter(adapter);
         adapter.notifyDataSetChanged();
@@ -88,10 +83,5 @@ public class ClosetFragment extends Fragment implements FavoritesTab.FavoriteRem
 
     private void displayMessage(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void notifyFavoriteRemoved() {
-        outfitsTab.updateOutfits();
     }
 }
