@@ -47,7 +47,7 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store_final);
         user = FirebaseAuth.getInstance().getCurrentUser();
-        tab = findViewById(R.id.tab);
+        tab = findViewById(R.id.tab_store);
         viewPagerUserInfo = findViewById(R.id.storeInfoViewPager);
         viewPagerUserPublications = findViewById(R.id.storeArticlesViewPager);
         Toolbar tb =  findViewById(R.id.toolbar);

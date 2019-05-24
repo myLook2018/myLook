@@ -143,6 +143,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
         });
         articleToolbar=findViewById(R.id.article_info_toolbar);
         articleToolbar.setNavigationIcon(R.drawable.ic_back_arrow);
+        articleToolbar.setTitle("Información");
         articleToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

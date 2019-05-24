@@ -50,7 +50,6 @@ public class StoreInfoFragment extends Fragment {
         storeNameString = storeName;
         this.context = context;
         checkFollow();
-
     }
 
     public StoreInfoFragment() {
@@ -60,7 +59,6 @@ public class StoreInfoFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_info_store, container, false);
         initElements(rootView);
-
         setOnClickSubscribe();
         btnMoreInfo.setOnClickListener(new View.OnClickListener() {
             @Override

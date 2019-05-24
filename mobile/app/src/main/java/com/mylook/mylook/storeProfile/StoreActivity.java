@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -28,45 +29,52 @@ import com.mylook.mylook.entities.Store;
 import com.mylook.mylook.entities.Visit;
 import com.mylook.mylook.utils.SectionsPagerAdapter;
 
+import java.util.Date;
+
 public class StoreActivity extends AppCompatActivity {
 
     private static ViewPager viewPagerStoreInfo;
+    private TabLayout tab;
     private String nombreTiendaPerfil;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private Visit visit;
     private String visitId = null;
     private FirebaseUser user;
-    private TabLayout tab;
     private ViewPager viewPagerStoreArticles;
+    private String coverPh;
     private StoreInfoFragment infoStoreFragment;
     private StoreContactFragment contactStoreFragment;
-    private String coverPh;
     private ReputationFragment reputationFragment;
+    private Date registerDateReputacion;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store_final);
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        tab = findViewById(R.id.tab);
-        viewPagerStoreInfo = findViewById(R.id.storeInfoViewPager);
-        viewPagerStoreArticles = findViewById(R.id.storeArticlesViewPager);
-
         Toolbar tb = findViewById(R.id.toolbar);
         tb.setTitle("Tienda");
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
+        tab = findViewById(R.id.tab_store);
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
+        viewPagerStoreInfo = findViewById(R.id.storeInfoViewPager);
+        viewPagerStoreArticles = findViewById(R.id.storeArticlesViewPager);
+
         Intent intentStore = getIntent();
         nombreTiendaPerfil = intentStore.getStringExtra("Tienda");
         System.out.println("Store name: " + nombreTiendaPerfil);
+
         contactStoreFragment = new StoreContactFragment(StoreActivity.this, nombreTiendaPerfil);
         infoStoreFragment = new StoreInfoFragment(StoreActivity.this, nombreTiendaPerfil);
         reputationFragment = new ReputationFragment(nombreTiendaPerfil);
         //loadVisit();
         visit = new Visit(nombreTiendaPerfil, user.getUid());
+
         setupViewPagerInfo(viewPagerStoreInfo);
 
         db.collection("stores").whereEqualTo("storeName", nombreTiendaPerfil)
@@ -82,44 +90,22 @@ public class StoreActivity extends AppCompatActivity {
                     contactStoreFragment.setOnClickFacebook(storeAux.getFacebookLink());
                     contactStoreFragment.setOnClickInstagram(storeAux.getInstagramLink());
                     contactStoreFragment.setOnClickTwitter(storeAux.getTwitterLink());
+
                     infoStoreFragment.setStoreName(storeAux.getStoreName());
                     infoStoreFragment.setTxtDescription(storeAux.getStoreDescription());
                     infoStoreFragment.setStorePhoto(storeAux.getProfilePh());
                     coverPh = storeAux.getCoverPh();
+
                     reputationFragment.setRegisterDate(storeAux.getRegisterDate());
+
                     setupViewPager(viewPagerStoreArticles);
                     tab.setupWithViewPager(viewPagerStoreArticles);
+
                 } else {
                     Log.d("Firestore task", "onComplete: " + task.getException());
                 }
             }
         });
-
-
-    }
-
-    private void loadVisit() {
-        db.collection("visits").whereEqualTo("storeName", nombreTiendaPerfil).whereEqualTo("userId", user.getUid()).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            if (task.getResult().getDocuments().size() == 0) {
-                                visitId = null;
-                                visit = new Visit(nombreTiendaPerfil, user.getUid());
-                                //db.collection("visits").add(visit.toMap());
-
-                            } else {
-                                Log.e("OLD VISIT", "ID: " + visitId);
-                                visit = null;
-                                visitId = null;
-                                visit = task.getResult().getDocuments().get(0).toObject(Visit.class);
-                                visitId = task.getResult().getDocuments().get(0).getId();
-                            }
-
-                        }
-                    }
-                });
 
     }
 
@@ -135,6 +121,7 @@ public class StoreActivity extends AppCompatActivity {
     }
 
     public static void moreInfo() {
+        Log.d("store activity", "moreInfo: ENTRO");
         viewPagerStoreInfo.setCurrentItem(1);
     }
 
@@ -146,14 +133,14 @@ public class StoreActivity extends AppCompatActivity {
      * @param viewPager Nueva instancia
      */
     private void setupViewPager(ViewPager viewPager) {
-        StoreTabAdapter adapter = new StoreTabAdapter(getSupportFragmentManager(), 3);
         Log.e("VIEW PAGER", "CARGAAAAAAAAAA");
+        StoreTabAdapter adapter = new StoreTabAdapter(getSupportFragmentManager(), 3);
         adapter.addFragment(0, new ShopwindowFragment(nombreTiendaPerfil, coverPh), "Vidriera");
         adapter.addFragment(1, new CatalogFragment(nombreTiendaPerfil), "Catalogo");
         adapter.addFragment(2, reputationFragment, "Reputación");
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(0);
-        Log.d("view pager adapter tabs", "setupViewPager: " + viewPager.getCurrentItem());
+        Log.d("view pager adapter tabs", "adapter del fragmento: " + adapter.getPageTitle(0));
 
     }
 
@@ -162,6 +149,7 @@ public class StoreActivity extends AppCompatActivity {
         adapter.addFragment(infoStoreFragment);
         adapter.addFragment(contactStoreFragment);
         viewPagerStoreInfo.setAdapter(adapter);
+        Log.d("view pager info store", "setupViewPagerInfo: ENTRO");
     }
 
     @Override

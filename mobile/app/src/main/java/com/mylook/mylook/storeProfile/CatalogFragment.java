@@ -26,8 +26,6 @@ import java.util.ArrayList;
 
 import in.srain.cube.views.GridViewWithHeaderAndFooter;
 
-import static android.app.Activity.RESULT_OK;
-
 public class CatalogFragment extends Fragment {
 
     private FirebaseFirestore dB = null;
@@ -46,18 +44,19 @@ public class CatalogFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        Log.d("Catalog Fragment", "onCreateView: El container es " + container.toString());
         View rootView = inflater.inflate(R.layout.fragment_store_catalog, container, false);
         // Obtención del grid view
-        GridViewWithHeaderAndFooter grid = rootView.findViewById(R.id.gridview_store_catalog);
+        GridViewWithHeaderAndFooter gridCatalogo = rootView.findViewById(R.id.gridview_store_catalog);
         // Inicializar el grid view
-        setupGridView(grid);
+        setupGridView(gridCatalogo);
         return rootView;
     }
 
 
     private void setupGridView(final GridViewWithHeaderAndFooter grid) {
 
-        Log.d("Store gridView", "setupGridView: Setting up store grid.");
+        Log.d("Store Catalogo gridView", "setupGridView: Setting up store grid del catalogo.");
         final ArrayList<Article> storeArticles = new ArrayList<Article>();
         dB.collection("articles").whereEqualTo("storeName", storeName).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override

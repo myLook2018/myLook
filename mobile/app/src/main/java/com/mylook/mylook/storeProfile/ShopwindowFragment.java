@@ -35,6 +35,7 @@ public class ShopwindowFragment extends Fragment {
     private FirebaseFirestore dB = null;
     private static String storeName;
     private static String coverPh;
+    private GridImageAdapter adapter;
 
     public ShopwindowFragment() {
     }
@@ -48,33 +49,34 @@ public class ShopwindowFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_shopwindow, container, false);
 
+        Log.d("Window Fragment", "onCreateView: El container es " + container.toString());
+        View rootView = inflater.inflate(R.layout.fragment_shopwindow, container, false);
         // Obtención del grid view
-        GridViewWithHeaderAndFooter grid = rootView.findViewById(R.id.gridview_store_window);
+        GridViewWithHeaderAndFooter gridWindow = rootView.findViewById(R.id.gridview_store_window);
         // Inicializar el grid view
-        if (coverPh != null)
-            grid.addHeaderView(createHeaderView());
-        setupShopWindowGridView(grid);
+        if (coverPh != null){
+            gridWindow.addHeaderView(createHeaderView());
+        }
+        setupShopWindowGridView(gridWindow);
         return rootView;
     }
 
     private View createHeaderView() {
 
         View view;
-
         LayoutInflater inflater = getActivity().getLayoutInflater();
         view = inflater.inflate(R.layout.grid_header, null, false);
         // Seteando Imagen
-        ImageView image = view.findViewById(R.id.header);
-        Glide.with(image.getContext()).load(coverPh).into(image);
+        ImageView headerImage = view.findViewById(R.id.header);
+        Glide.with(headerImage.getContext()).load(coverPh).into(headerImage);
         return view;
     }
 
     private void setupShopWindowGridView(final GridViewWithHeaderAndFooter grid) {
 
-        Log.d("Store Catalog gridView", "setupGridView: Setting up store grid.");
-        final ArrayList<Article> storeShopWindowArticles = new ArrayList<Article>();
+        Log.d("Store Window gridView", "setupGridView: Setting up store grid de la vidriera.");
+        final ArrayList<Article> storeShopWindowArticles = new ArrayList<>();
         final String[] documentID = new String[1];
         dB.collection("storeFronts").whereEqualTo("storeName", storeName).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -82,6 +84,7 @@ public class ShopwindowFragment extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful() && !task.getResult().getDocuments().isEmpty()) {
                             documentID[0] = task.getResult().getDocuments().get(0).getId();
+                            Log.d("get store front", "onComplete: " + documentID[0]);
                             dB.collection("storeFronts").document(documentID[0]).collection("storeFronts").get()
                                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                         @Override
@@ -94,8 +97,9 @@ public class ShopwindowFragment extends Fragment {
                                         }
                                     });
                             Log.e("VIDRIERAAAA", getActivity().getLocalClassName());
-                            grid.setAdapter(new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview, storeShopWindowArticles));
-
+                            adapter = new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview, storeShopWindowArticles);
+                            grid.setAdapter(adapter);
+                            adapter.notifyDataSetChanged();
                         } else {
                             if (task.getException() != null)
                                 Log.e("Firestore task", "onComplete: " + task.getException());
