@@ -103,7 +103,7 @@ public class EditInfoActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     Toast.makeText(EditInfoActivity.this, "Tu usuario ha sido actualizado", Toast.LENGTH_LONG).show();
-                                    Intent intent = new Intent(EditInfoActivity.this, ProfileActivity.class);
+                                    Intent intent = new Intent(EditInfoActivity.this, AccountActivity.class);
                                     startActivity(intent);
                                     finish();
                                 }

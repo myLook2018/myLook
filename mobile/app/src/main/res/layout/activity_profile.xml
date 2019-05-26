@@ -2,32 +2,40 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/greyBackground">
+
+    <include
+        layout="@layout/layout_top_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteX="25dp" />
 
     <ImageView
         android:id="@+id/imgProfile"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="59dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/ic_profile"
         android:backgroundTint="@color/primary_light"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/txtName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:textSize="20sp"
+        android:layout_marginEnd="8dp"
         android:textColor="@color/black"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imgProfile" />
@@ -37,194 +45,167 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtName" />
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/linearLayout5"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/white"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout7"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtEmail">
 
-        <LinearLayout
-            android:id="@+id/layoutAccount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+
+        <ImageView
+            android:id="@+id/image_account"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_marginStart="8dp"
-            android:clickable="true"
-            android:orientation="horizontal"
-            android:textAlignment="gravity">
+            android:layout_marginTop="8dp"
+            android:tint="@color/primary_light"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_profile" />
 
-            <ImageView
-                android:id="@+id/imageView7"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:tint="@color/primary_light"
-                app:srcCompat="@drawable/ic_profile" />
-
-            <TextView
-                android:id="@+id/txtAccount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:padding="10dp"
-                android:text="Mi cuenta"
-                android:textAlignment="viewStart"
-                android:textColor="@color/black"
-                android:textSize="17sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layoutPremiumRequest"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/txtAccount"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
-            android:clickable="true"
-            android:orientation="horizontal"
+            android:layout_marginEnd="8dp"
+            android:padding="10dp"
+            android:text="Informacion de mi cuenta"
             android:textAlignment="gravity"
-            android:visibility="gone">
+            android:textColor="@color/black"
+            android:textSize="17dp"
+            app:layout_constraintBottom_toBottomOf="@+id/image_account"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/image_account"
+            app:layout_constraintTop_toTopOf="@+id/image_account" />
 
-            <ImageView
-                android:id="@+id/imageView10"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:tint="@color/primary_light"
-                app:srcCompat="@drawable/ic_settings" />
 
-            <TextView
-                android:id="@+id/txtSettings"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="10dp"
-                android:text="Cambiar a cuenta destacada"
-                android:textAlignment="viewStart"
-                android:textColor="@color/black"
-                android:textSize="17dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layoutDifussionGroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+        <ImageView
+            android:id="@+id/img_notificaciones"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_marginStart="8dp"
-            android:clickable="true"
-            android:orientation="horizontal"
-            android:textAlignment="gravity"
-            android:visibility="gone">
+            android:layout_marginTop="8dp"
+            android:tint="@color/primary_light"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/image_account"
+            app:srcCompat="@drawable/ic_settings" />
 
-            <ImageView
-                android:id="@+id/imageView12"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:tint="@color/primary_light"
-                app:srcCompat="@drawable/ic_profile" />
-
-            <TextView
-                android:id="@+id/txtDifussionGroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="10dp"
-                android:text="Grupo de Difusión"
-                android:textAlignment="viewStart"
-                android:textColor="@color/black"
-                android:textSize="17dp" />
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/layoutHelp"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/txtNotifications"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
-            android:clickable="true"
-            android:orientation="horizontal"
-            android:textAlignment="gravity">
+            android:layout_marginEnd="8dp"
+            android:padding="10dp"
+            android:text="Notificaciones"
+            android:textAlignment="viewStart"
+            android:textColor="@color/black"
+            android:textSize="17dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/image_destacado"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/img_notificaciones"
+            app:layout_constraintTop_toTopOf="@+id/img_notificaciones" />
 
-            <ImageView
-                android:id="@+id/imageView8"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:tint="@color/primary_light"
-                app:srcCompat="@drawable/ic_help" />
 
-            <TextView
-                android:id="@+id/txtHelp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="10dp"
-                android:text="Ayuda y FAQ"
-                android:textAlignment="viewStart"
-                android:textColor="@color/black"
-                android:textSize="17sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layoutExit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+        <ImageView
+            android:id="@+id/image_destacado"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_marginStart="8dp"
-            android:clickable="true"
-            android:orientation="horizontal"
-            android:textAlignment="gravity">
+            android:layout_marginTop="8dp"
+            android:tint="@color/primary_light"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/img_notificaciones"
+            app:srcCompat="@drawable/ic_destacado" />
 
-            <ImageView
-                android:id="@+id/imageView9"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:tint="@color/primary_light"
-                app:srcCompat="@drawable/ic_exit" />
-
-            <TextView
-                android:id="@+id/txtExit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="10dp"
-                android:text="Salir"
-                android:textAlignment="viewStart"
-                android:textColor="@color/black"
-                android:textSize="17sp" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout7"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <include
-            android:id="@+id/bottomNavViewBar"
-            layout="@layout/layout_bottom_navigation_view"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/txtSettingsDest"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
-    </LinearLayout>
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:padding="10dp"
+            android:text="Cambiar a cuenta destacada"
+            android:textAlignment="viewStart"
+            android:textColor="@color/black"
+            android:textSize="17dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/image_destacado"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/image_destacado"
+            app:layout_constraintTop_toTopOf="@+id/image_destacado" />
+
+
+        <ImageView
+            android:id="@+id/image_help"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:tint="@color/primary_light"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/image_destacado"
+            app:srcCompat="@drawable/ic_help" />
+
+        <TextView
+            android:id="@+id/txtHelp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:padding="10dp"
+            android:text="Ayuda y FAQ"
+            android:textAlignment="viewStart"
+            android:textColor="@color/black"
+            android:textSize="17dp"
+            app:layout_constraintBottom_toBottomOf="@+id/image_help"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/image_help"
+            app:layout_constraintTop_toTopOf="@+id/image_help" />
+
+
+        <ImageView
+            android:id="@+id/image_exit"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:tint="@color/primary_light"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/image_help"
+            app:srcCompat="@drawable/ic_exit" />
+
+        <TextView
+            android:id="@+id/txtExit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:padding="10dp"
+            android:text="Salir"
+            android:textAlignment="viewStart"
+            android:textColor="@color/black"
+            android:textSize="17dp"
+            app:layout_constraintBottom_toBottomOf="@+id/image_exit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/image_exit"
+            app:layout_constraintTop_toTopOf="@+id/image_exit" />
+
+
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

@@ -62,7 +62,6 @@
 
         </activity>
 
-        <activity android:name=".profile.ProfileActivity" android:launchMode="singleInstance"/>
         <activity android:name=".recommend.RecommendationsActivity"
             android:grantUriPermissions="true"
             android:launchMode="singleInstance">
@@ -78,9 +77,8 @@
             android:theme="@style/Base.Theme.AppCompat"/>
         <activity android:name=".profile.NewPasswordActivity"/>
         <activity android:name=".profile.EditInfoActivity"/>
-        <activity android:name=".profile.MyAccountActivity"/>
         <activity android:name=".premiumUser.PremiumRequestActivity"
-            android:parentActivityName=".profile.ProfileActivity"
+            android:parentActivityName=".profile.AccountActivity"
             android:grantUriPermissions="true"/>
         <activity android:name=".premiumUser.PremiumUserProfileActivity"/>
         <activity android:name=".premiumUser.NewPublicationActivity"

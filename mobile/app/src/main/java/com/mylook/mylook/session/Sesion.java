@@ -34,6 +34,9 @@ public class Sesion extends Service {
     public static final String TAG = "Sesion";
     public static String userId = null;
     public static boolean isPremium = false;
+    public static  String name= "";
+    public static  String mail= "";
+    public static  String clientId= "";
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public Sesion() {
@@ -106,6 +109,9 @@ public class Sesion extends Service {
                         DocumentSnapshot document = task.getResult().getDocuments().get(0);
                         userId = document.get("userId").toString();
                         isPremium = (Boolean) document.get("isPremium");
+                        name = document.get("name").toString() + " " + document.get("surname").toString();
+                        mail = currentUser.getEmail();
+                        clientId = document.getId();
 
                     } else {
                         db.collection("clients").whereEqualTo("email", currentUser.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
