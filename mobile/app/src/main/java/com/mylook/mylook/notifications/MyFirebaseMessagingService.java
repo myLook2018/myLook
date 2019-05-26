@@ -11,7 +11,7 @@ import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.mylook.mylook.home.MainActivity;
+import com.mylook.mylook.home.MyLookActivity;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
         private static final String TAG = "FirebaseMessagingServce";
@@ -35,7 +35,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
         private void sendNotification(String notificationTitle, String notificationBody) {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, MyLookActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
                     PendingIntent.FLAG_ONE_SHOT);

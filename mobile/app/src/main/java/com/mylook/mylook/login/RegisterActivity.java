@@ -5,7 +5,6 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -14,23 +13,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
-import com.mylook.mylook.home.MainActivity;
+import com.mylook.mylook.home.MyLookActivity;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.ArrayList;
@@ -47,7 +38,6 @@ public class RegisterActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private EditText txtEmail, txtPasswd1, txtPasswd2, txtDNI, txtName, txtSurname, txtBirthdate;
     private ConstraintLayout mLayout;
-    private Toolbar tb;
     private MaterialBetterSpinner spinner;
     private Button btnRegister;
     private FirebaseUser user;
@@ -64,27 +54,19 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         initElements();
         mProgressBar.setVisibility(View.GONE);
-        tb = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar tb = findViewById(R.id.toolbar);
         tb.setTitle("Registro");
         setSupportActionBar(tb);
         setupFirebaseAuth();
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                register();
-            }
-        });
+        btnRegister.setOnClickListener(v -> register());
         getExtras();
         initCalendar();
-        txtEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus){
-                    checkExistingEmail(txtEmail.getText().toString());
-                } else {
-                    txtEmail.setTextColor(getResources().getColor(R.color.black));
-                    validMail = true;
-                }
+        txtEmail.setOnFocusChangeListener((v, hasFocus) -> {
+            if(!hasFocus){
+                checkExistingEmail(txtEmail.getText().toString());
+            } else {
+                txtEmail.setTextColor(getResources().getColor(R.color.black));
+                validMail = true;
             }
         });
         if(provider!=null)
@@ -94,23 +76,19 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void checkExistingEmail(String email){
         btnRegister.setEnabled(false);
-        dB.collection("clients").whereEqualTo("email", email)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    Log.e("Task Result", task.getResult().getDocuments().toString());
-                    if(task.getResult().getDocuments().size()>0){
-                        validMail = false;
-                        txtEmail.setTextColor(getResources().getColor(R.color.red));
-                        Toast.makeText(RegisterActivity.this, "El mail ya está en uso", Toast.LENGTH_LONG ).show();
-                    } else{
-                        btnRegister.setEnabled(true);
-                    }
-                    mProgressBar.setVisibility(View.GONE);
+        dB.collection("clients").whereEqualTo("email", email).get()
+                .addOnCompleteListener(task -> {
+                        Log.e("Task Result", task.getResult().getDocuments().toString());
+                        if(task.getResult().getDocuments().size()>0){
+                            validMail = false;
+                            txtEmail.setTextColor(getResources().getColor(R.color.red));
+                            Toast.makeText(RegisterActivity.this, "El mail ya está en uso", Toast.LENGTH_LONG ).show();
+                        } else{
+                            btnRegister.setEnabled(true);
+                        }
+                        mProgressBar.setVisibility(View.GONE);
 
-            }
-        });
+                });
     }
 
     private void disableFields(){
@@ -204,19 +182,15 @@ public class RegisterActivity extends AppCompatActivity {
                 String email = txtEmail.getText().toString();
                 String passwd = txtPasswd1.getText().toString();
                 mAuth.createUserWithEmailAndPassword(email, passwd)
-                        .addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    Log.d("REGISTER", "Esta pro guardar datos");
-
-                                    boolean saved = saveClient();
-                                    setupFirebaseAuth();
-                                } else {
-                                    Log.w("REGISTER", "createUserWithEmail:Failure", task.getException());
-                                    Toast.makeText(RegisterActivity.this, "Algo salio mal",
-                                            Toast.LENGTH_SHORT).show();
-                                }
+                        .addOnCompleteListener(RegisterActivity.this, task -> {
+                            if (task.isSuccessful()) {
+                                Log.d("REGISTER", "Esta pro guardar datos");
+                                boolean saved = saveClient();
+                                setupFirebaseAuth();
+                            } else {
+                                Log.w("REGISTER", "createUserWithEmail:Failure", task.getException());
+                                Toast.makeText(RegisterActivity.this, "Algo salio mal",
+                                        Toast.LENGTH_SHORT).show();
                             }
                         });
             } else {
@@ -239,24 +213,18 @@ public class RegisterActivity extends AppCompatActivity {
         if(!isStringNull(provider))
             client.put("provider", provider);
         dB.collection("clients")
-                .add(client).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-            @Override
-            public void onSuccess(DocumentReference documentReference) {
-                Log.d("SAVE_CLIENT", "Se guarda client");
-                saved[0] = true;
-                sendEmailVerification();
-                logInIntent();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e("SAVE_Client", "No se guarda cliente ", e.getCause());
+                .add(client).addOnSuccessListener(documentReference -> {
+                    Log.d("SAVE_CLIENT", "Se guarda client");
+                    saved[0] = true;
+                    sendEmailVerification();
+                    logInIntent();
+                }).addOnFailureListener(e -> {
+                    Log.e("SAVE_Client", "No se guarda cliente ", e.getCause());
 
-                saved[0] = false;
-                Toast.makeText(RegisterActivity.this, "Algo salio mal",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
+                    saved[0] = false;
+                    Toast.makeText(RegisterActivity.this, "Algo salio mal",
+                            Toast.LENGTH_SHORT).show();
+                });
         return saved[0];
     }
 
@@ -282,18 +250,12 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void setupFirebaseAuth() {
-
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    Intent intent = new Intent(mContext, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else {
-
-                }
+        mAuthListener = firebaseAuth -> {
+            user = firebaseAuth.getCurrentUser();
+            if (user != null) {
+                Intent intent = new Intent(mContext, MyLookActivity.class);
+                startActivity(intent);
+                finish();
             }
         };
     }
@@ -301,7 +263,6 @@ public class RegisterActivity extends AppCompatActivity {
     private void initElements() {
         dB = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
-
         btnRegister = findViewById(R.id.btnRegister);
         mProgressBar =findViewById(R.id.register_progressbar);
         txtEmail = findViewById(R.id.txtEmail);
@@ -318,33 +279,21 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void setCategoryRequest() {
-        dB.collection("categories").whereEqualTo("name", "sexo").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                ArrayList<String> categories = (ArrayList<String>) task.getResult().getDocuments().get(0).get("categories");
-                spinner.setAdapter(new ArrayAdapter<String>(RegisterActivity.this, android.R.layout.simple_selectable_list_item, categories));
-            }
+        dB.collection("categories").whereEqualTo("name", "sexo").get().addOnCompleteListener(task -> {
+            ArrayList<String> categories = (ArrayList<String>) task.getResult().getDocuments().get(0).get("categories");
+            spinner.setAdapter(new ArrayAdapter<>(RegisterActivity.this, android.R.layout.simple_selectable_list_item, categories));
         });
     }
 
     private void initCalendar(){
 
-        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth) {
-                myCalendar.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
-                txtBirthdate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-            }
+        final DatePickerDialog.OnDateSetListener date = (view, year, monthOfYear, dayOfMonth) -> {
+            myCalendar.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
+            txtBirthdate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
         };
 
-        txtBirthdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new DatePickerDialog(RegisterActivity.this, date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-            }
-        });
+        txtBirthdate.setOnClickListener(view -> new DatePickerDialog(RegisterActivity.this, date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH)).show());
     }
 
     private void sendEmailVerification() {
@@ -352,25 +301,22 @@ public class RegisterActivity extends AppCompatActivity {
         // [START send_email_verification]
         user = mAuth.getCurrentUser();
         user.sendEmailVerification()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // [START_EXCLUDE]
-                        // Re-enable button
-                        if (task.isSuccessful()) {
-                            Log.d("EMAIL_VERIFICATION", "Se verifico mail");
-                            Toast.makeText(RegisterActivity.this,
-                                    "Verifica tu mail y luego inicia sesion ",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.d("EMAIL_VERIFICATION", "No se verifico mail", task.getException());
-                            Log.e("SendEmailVerification", "sendEmailVerification", task.getException());
-                            Toast.makeText(RegisterActivity.this,
-                                    "Failed to send verification email.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                        // [END_EXCLUDE]
+                .addOnCompleteListener(this, task -> {
+                    // [START_EXCLUDE]
+                    // Re-enable button
+                    if (task.isSuccessful()) {
+                        Log.d("EMAIL_VERIFICATION", "Se verifico mail");
+                        Toast.makeText(RegisterActivity.this,
+                                "Verifica tu mail y luego inicia sesion ",
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.d("EMAIL_VERIFICATION", "No se verifico mail", task.getException());
+                        Log.e("SendEmailVerification", "sendEmailVerification", task.getException());
+                        Toast.makeText(RegisterActivity.this,
+                                "Failed to send verification email.",
+                                Toast.LENGTH_SHORT).show();
                     }
+                    // [END_EXCLUDE]
                 });
         // [END send_email_verification]
     }

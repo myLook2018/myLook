@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,6 +29,7 @@ import com.mylook.mylook.R;
 import com.mylook.mylook.entities.RequestRecommendation;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 public class RequestRecommendActivity extends AppCompatActivity {
@@ -62,8 +62,8 @@ public class RequestRecommendActivity extends AppCompatActivity {
         txtDescription = findViewById(R.id.txtRecommendDescpription);
         txtTitle = findViewById(R.id.txtRecommendTitle);
         txtLimitDate = findViewById(R.id.txtDate);
-        getIncomingIntent();
         this.dB = FirebaseFirestore.getInstance();
+        getIncomingIntent();
         invalidateOptionsMenu();
     }
 
@@ -80,19 +80,29 @@ public class RequestRecommendActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent.hasExtra("requestRecommendation")) {
-            Log.d(TAG, "getIncomingIntent: found intent extras.");
-
             RequestRecommendation requestRecommendation = (RequestRecommendation) intent.getSerializableExtra("requestRecommendation");
-            txtDescription.setText(requestRecommendation.getDescription());
-            txtTitle.setText(requestRecommendation.getTitle());
-            txtLimitDate.setText("Hasta el "+intent.getStringExtra("dateFormat"));
-            setImage(requestRecommendation.getRequestPhoto());
-            answers = requestRecommendation.getAnswers();
             requestId = requestRecommendation.getDocumentId();
-            isClosed = requestRecommendation.getIsClosed();
-            initRecyclerView(requestRecommendation.getAnswers());
-            Log.e("Firebase", requestRecommendation.getDescription());
-            Log.e("App", txtDescription.getText().toString());
+            dB.collection("requestRecommendations").document(requestId).get().addOnCompleteListener(
+                    new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            DocumentSnapshot doc =  task.getResult();
+
+                            txtDescription.setText(doc.get("description").toString());
+                            txtTitle.setText(doc.get("title").toString());
+                            Calendar cal = Calendar.getInstance();
+                            cal.setTimeInMillis((long)doc.get("limitDate"));
+                            int mes = cal.get(Calendar.MONTH) + 1;
+                            final String dateFormat = cal.get(Calendar.DAY_OF_MONTH) + "/" + mes + "/" + cal.get(Calendar.YEAR);
+                            txtLimitDate.setText("Hasta el "+dateFormat);
+                            setImage(doc.get("requestPhoto").toString());
+                            answers = (ArrayList<HashMap<String, String>>) doc.get("answers");
+                            isClosed = (boolean)doc.get("isClosed");
+                            initRecyclerView(answers);
+                        }
+                    }
+            );
+
         }
     }
 
@@ -105,11 +115,44 @@ public class RequestRecommendActivity extends AppCompatActivity {
                 .into(imgRequestPhoto);
     }
 
+
+    private void updateAnswers(){
+            dB.collection("requestRecommendations").document(requestId).update("answers", answers).addOnCompleteListener(
+                    new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Log.e(TAG, "Respuestas actualizadas");
+                        }
+                    }
+            );
+
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-                dB.collection("requestRecommendations").document(requestId).update("answers",answers);
-                dB.collection("answeredRecommendations").whereEqualTo("requestUID", requestId).get()
+        dB.collection("requestRecommendations").document(requestId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot doc = task.getResult();
+                ArrayList<HashMap> remoteAnswers = (ArrayList<HashMap>) doc.get("answers");
+                if (remoteAnswers.size() != answers.size()){
+                    for (HashMap remoteAnswer: remoteAnswers) {
+                        boolean newRecommendation = true;
+                        for(HashMap localAnswer: answers){
+                            if(localAnswer.get("storeName").toString().equals(remoteAnswer.get("storeName"))){
+                                newRecommendation = false;
+                            }
+                        }
+                            if (newRecommendation){
+                                answers.add(remoteAnswer);
+                            }
+                    }
+                }
+                updateAnswers();
+            }
+        });
+        dB.collection("answeredRecommendations").whereEqualTo("requestUID", requestId).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {

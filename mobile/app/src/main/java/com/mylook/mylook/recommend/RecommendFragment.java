@@ -19,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -40,10 +41,12 @@ public class RecommendFragment extends Fragment {
     private FirebaseFirestore dB;
     private static List<RequestRecommendation> requestRecommendationsList;
     public final static String TAG = "RecommendFragment";
+    public static int NEW_REQUEST = 1;
+    public static int RESULT_OK=1;
     private static RecommendFragment homeInstance = null;
     RequestRecyclerViewAdapter adapter;
 
-    // private ProgressBar progres
+     private ProgressBar progressBar;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         Log.e(TAG, "OnViewCreated- savedInstance" + savedInstanceState);
@@ -52,15 +55,15 @@ public class RecommendFragment extends Fragment {
         this.dB = FirebaseFirestore.getInstance();
         recyclerView = view.findViewById(R.id.recyclerViewRecommend);
         fab = view.findViewById(R.id.fab);
-
+        progressBar = view.findViewById(R.id.progressBar);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, RecommendActivityAddDesc.class);
-                startActivity(intent);
+                startActivityForResult(intent, NEW_REQUEST);
             }
         });
-        if(requestRecommendationsList==null)
+        if(requestRecommendationsList == null || requestRecommendationsList .size() == 0)
             requestRecommendationsList = new ArrayList<RequestRecommendation>();
         adapter = new RequestRecyclerViewAdapter(mContext, requestRecommendationsList);
         recyclerView.setAdapter(adapter);
@@ -80,12 +83,24 @@ public class RecommendFragment extends Fragment {
     }
 
     /**
-     * Método para cuando haya habido algun cambio y haya que actualizar los objetos
+     * Método para cuando haya ocrurrido algun cambio y haya que actualizar los objetos
      */
-    public static void refreshStatus(){
+    public void refreshStatus(){
         if(homeInstance!=null){
-            requestRecommendationsList = new ArrayList<>();
+            initRecyclerView();
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.e("Activity result", "Reuest "+requestCode+" result "+resultCode);
+        if(requestCode == NEW_REQUEST){
+            if(resultCode == RESULT_OK){
+                initRecyclerView();
+            }
+        }
+
     }
 
     @Override
@@ -117,13 +132,15 @@ public class RecommendFragment extends Fragment {
     }
 
     public void getRequestRecommendations() {
-        //progressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
+        Log.e(TAG, "getRequestRecommendations");
         dB.collection("requestRecommendations")
                 .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid()).orderBy("limitDate").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        requestRecommendationsList.clear();
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 RequestRecommendation requestRecommendation = document.toObject(RequestRecommendation.class);
@@ -133,7 +150,7 @@ public class RecommendFragment extends Fragment {
                             adapter.notifyDataSetChanged();
 
                         }
-                        //progressBar.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
                     }
                 });
     }

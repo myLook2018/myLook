@@ -36,6 +36,7 @@ import { Tags } from '../../models/tags';
 import { DataService } from '../../../service/dataService';
 import { LyResizingCroppingImages, ImgCropperConfig } from '@alyle/ui/resizing-cropping-images';
 import { LyTheme2 } from '@alyle/ui';
+
 const styles = {
   actions: {
     display: 'flex'
@@ -203,6 +204,14 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   }
 
   startUpload() {
+    if ( !this.checkImagenLoaded() ) {
+      this.snackBar.open('Es necesario que cargue al menos una imagen de la prenda para poder continuar.', '', {
+        duration: 3000,
+        panelClass: ['blue-snackbar']
+      });
+      return;
+    }
+
     this.isUpLoading = true;
     console.log('las imagenes ', this.croppedImage);
     let imagesToUpload: File[] = [];
@@ -447,5 +456,17 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
       }
     }
     this.startUpload();
+  }
+
+  checkImagenLoaded() {
+    let result = false;
+    this.croppedImage.forEach(image => {
+      console.log('la imagen', image);
+      if (image) {
+        result = true;
+        return result;
+      }
+    });
+    return result;
   }
 }
