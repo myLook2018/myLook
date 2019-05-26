@@ -94,7 +94,7 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
       }
     );
 	}
-	
+
 	hideSpinner(event){
 		console.log("me dijieron que me esconda, yo el spinner");
 		this.spinner.hide();
@@ -120,5 +120,22 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
 
 	editStoreInfo(){
 		alert("not implemented yet, Xdxd");
-	}
+  }
+
+  deleteAccount(){
+    /**
+ * Call the 'recursiveDelete' callable function with a path to initiate
+ * a server-side delete.
+ */
+    console.log('userStore.StoreID', this.userStore)
+  // var deleteFn = firebase.functions().httpsCallable('recursiveDelete');
+  // deleteFn({ storeID: this.userStore.storeID })
+  //     .then(function(result) {
+  //         logMessage('Delete success: ' + JSON.stringify(result));
+  //     })
+  //     .catch(function(err) {
+  //         logMessage('Delete failed, see console,');
+  //         console.warn(err);
+  //     });
+  }
 }

@@ -9,6 +9,7 @@
                   <mat-menu #menu="matMenu">
                     <button *ngIf="isLogedIn" mat-menu-item (click)="editStoreInfo()" >Configuración</button>
                     <button *ngIf="isLogedIn" mat-menu-item (click)="logout()">Salir</button>
+                    <button *ngIf="isLogedIn" mat-menu-item (click)="deleteAccount()">Eliminar Cuenta</button>
                   </mat-menu>
                   <img class="profilePic" src="{{userStore.profilePh}}">
             <!--

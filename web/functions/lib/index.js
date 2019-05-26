@@ -162,4 +162,69 @@ function getInactiveUsers(users = [], nextPageToken) {
         return users;
     });
 }
-//# sourceMappingURL=index.js.map
+
+/**
+ * Initiate a recursive delete of documents at a given path.
+ *
+ * The calling user must be authenticated and have the custom "admin" attribute
+ * set to true on the auth token.
+ *
+ * This delete is NOT an atomic operation and it's possible
+ * that it may fail after only deleting some documents.
+ *
+ * @param {string} data.path the document or collection path to delete.
+ */
+exports.recursiveDeleteStore = functions
+  .runWith({
+    timeoutSeconds: 540,
+    memory: '2GB'
+  })
+
+  .https.onCall((data, context) => {
+    console.log(`User ${context.auth.uid} has requested to delete all his information`);
+    return fullDelete(data.storeID);
+  });
+
+function fullDelete(storeID) {
+  const storeName = admin.firestore().collection('stores').doc(storeID).data().storeName;
+  var deleteRecomendations = admin.firestore().collection('requestRecommendations').where('storeName', '==', storeName);
+  deleteRecomendations.get().then(function(querySnapshot) {
+      console.log('Borrando Recomendaciones');
+      querySnapshot.forEach(function(doc) {
+        doc.ref.delete();
+      });
+    }).then(() => {
+      var deleteInteractions = admin.firestore().collection('interactions').where('storeName', '==', storeName);
+      deleteInteractions.get().then(function(querySnapshot) {
+        console.log('Borrando Interacciones');
+        querySnapshot.forEach(function(doc) {
+          doc.ref.delete();
+        });
+      });
+    }).then(() => {
+      var deletePromotions = admin.firestore().collection('promotions').where('storeId', '==', storeID);
+      deletePromotions.get().then(function(querySnapshot) {
+        console.log('Borrando promociones');
+        querySnapshot.forEach(function(doc) {
+          doc.ref.delete();
+        });
+      });
+    }).then(() => {
+      var deleteArticles = admin.firestore().collection('articles').where('storeName', '==', storeName);
+      deleteArticles.get().then(function(querySnapshot) {
+        console.log('Borrando articulos');
+        querySnapshot.forEach(function(doc) {
+          doc.ref.delete();
+        });
+      });
+    }).then(() => {
+      var deleteStore = admin.firestore().collection('stores').doc(storeID);
+      deleteStore.get().then(function(querySnapshot) {
+        console.log('Borrando articulos');
+          deleteStore.ref.delete();
+      });
+    }).then(() => {
+      console.log('Borrado Finalizado');
+      return 'Se han eliminado todos los documentos del usuario'
+    });
+}
