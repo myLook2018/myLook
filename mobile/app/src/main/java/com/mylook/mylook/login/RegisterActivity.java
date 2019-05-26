@@ -225,21 +225,8 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    private void createCloset() {
-        Closet closet = new Closet(mAuth.getUid());
-        final String[] closetId = new String[1];
-        dB.collection("closets").add(closet)
-                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                        Log.e("CLOSET ON COMPLET", task.getResult().getId());
-                    }
-                });
-    }
-
     private boolean saveClient() {
         final boolean[] saved = new boolean[1];
-        createCloset();
         final Map<String, Object> client = new HashMap<>();
         client.put("email", txtEmail.getText().toString());
         client.put("dni", txtDNI.getText().toString());

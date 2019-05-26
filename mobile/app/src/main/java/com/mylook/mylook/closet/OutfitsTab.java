@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.view.Gravity;
@@ -21,10 +22,8 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.mylook.mylook.R;
-import com.mylook.mylook.utils.OutfitListAdapter;
 
-
-public class OutfitsTab extends Fragment {
+public class OutfitsTab extends Fragment implements OutfitListAdapter.OutfitClickListener {
 
     private RecyclerView outfitsRecyclerView;
     private OutfitListAdapter adapter;
@@ -36,39 +35,31 @@ public class OutfitsTab extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        adapter = new OutfitListAdapter(getActivity(), null);
         closet = ViewModelProviders.of(getParentFragment()).get(ClosetModel.class);
         closet.getOutfits().observe(this, outfits -> {
-            adapter.setOutfits(outfits);
+            adapter = new OutfitListAdapter(getActivity(), outfits);
+            outfitsRecyclerView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
             if (mProgressBar != null) mProgressBar.setVisibility(View.GONE);
         });
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.tab_categories, container, false);
+        final View rootView = inflater.inflate(R.layout.tab_categories, container, false);
+        outfitsRecyclerView = rootView.findViewById(R.id.recyclerview_outfits);
+        outfitsRecyclerView.setHasFixedSize(true);
+        outfitsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        return rootView;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mProgressBar = view.findViewById(R.id.mProgressBar);
+        mProgressBar = view.findViewById(R.id.progressbar_outfits);
         mProgressBar.setVisibility(View.VISIBLE);
-        outfitsRecyclerView = view.findViewById(R.id.recyclerview_outfits);
         FloatingActionButton addOutfit = view.findViewById(R.id.fab_add_outfit);
-        //TODO set adapter
-        setGridView();
-        outfitsRecyclerView.setAdapter(adapter);
         addOutfit.setOnClickListener(v -> createInputDialog());
-    }
-
-    private void setGridView() {
-        int widthGrid = getResources().getDisplayMetrics().widthPixels;
-        int imageWidth = widthGrid / 2;
-        outfitsRecyclerView.addOnItemTouchListener();
-        outfitsRecyclerView.setOnItemClickListener((parent, v, position, id) -> {
-            //TODO loadOutfit(parent, position);
-        });
     }
 
     /* TODO seccion de codigo para intent a viewoutfit
@@ -105,17 +96,19 @@ public class OutfitsTab extends Fragment {
                                 Toast.LENGTH_SHORT).show();
                         return;
                     }
+                    /* TODO
                     Intent intent = new Intent(getActivity(), CreateOutfitActivity.class);
                     intent.putExtra("name", input.getText().toString());
                     intent.putExtra("category", "normal");
                     intent.putExtra("userID",
                             FirebaseAuth.getInstance().getCurrentUser().getUid());
                     startActivity(intent);
+                    */
                 }).create().show();
     }
 
-    public interface OnItemClickListener {
-        void onItemClick()
+    @Override
+    public void onOutfitClick(View view, int position) {
+        //TODO intent to outfit activity
     }
-
 }

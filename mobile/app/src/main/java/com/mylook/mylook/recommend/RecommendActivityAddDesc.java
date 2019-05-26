@@ -306,7 +306,6 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                         enviado = true;
                         mProgressBar.setVisibility(View.GONE);
                         displayMessage("Tu solicitud de recomendacion ha sido enviada");
-                        Sesion.getInstance().updateActivitiesStatus(Sesion.RECOMEND_FRAGMENT);
                         finish();
 
                     }

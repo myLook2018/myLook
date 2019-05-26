@@ -26,9 +26,8 @@ import in.srain.cube.views.GridViewWithHeaderAndFooter;
 
 public class PublicClosetFragment extends Fragment {
 
-    private  FirebaseFirestore dB=null;
-    private  String premiumUserId;
-    private Closet closet;
+    private FirebaseFirestore dB=null;
+    private String premiumUserId;
     private ArrayList<Article> favorites;
 
 
@@ -63,7 +62,6 @@ public class PublicClosetFragment extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                closet = document.toObject(Closet.class);
                                 String id = document.getId();
                                 dB.collection("closets").document(id).collection("favorites").get()
                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

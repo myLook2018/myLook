@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -118,7 +119,7 @@ public class RecommendFragment extends Fragment {
     public void getRequestRecommendations() {
         //progressBar.setVisibility(View.VISIBLE);
         dB.collection("requestRecommendations")
-                .whereEqualTo("userId", Sesion.getInstance().getSessionUserId()).orderBy("limitDate").get()
+                .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid()).orderBy("limitDate").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override

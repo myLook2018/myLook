@@ -88,7 +88,7 @@ public class NewPasswordActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
-                                    DialogManager.getInstance().succesfulChangedPassword(NewPasswordActivity.this,
+                                    new DialogManager().succesfulChangedPassword(NewPasswordActivity.this,
                                             "Cambiar Contraseña",
                                             "La contraseña se cambió correctamente, debe volver a iniciar sesión para aplicar el cambio",
                                             "Aceptar").show();

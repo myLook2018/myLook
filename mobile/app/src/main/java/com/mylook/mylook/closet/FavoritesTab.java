@@ -19,11 +19,9 @@ import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.utils.ArticlesGridAdapter;
 
-import java.io.Serializable;
-
 public class FavoritesTab extends Fragment {
 
-    private GridView gridview;
+    private GridView favoritesGridView;
     private ArticlesGridAdapter adapter;
     private ClosetModel closet;
     private ProgressBar mProgressBar;
@@ -33,10 +31,11 @@ public class FavoritesTab extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        adapter = new ArticlesGridAdapter(getContext(), null);
         closet = ViewModelProviders.of(getParentFragment()).get(ClosetModel.class);
         closet.getFavorites().observe(this, favorites -> {
-            adapter.setArticles(favorites);
+            adapter = new ArticlesGridAdapter(getContext(), favorites);
+            favoritesGridView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
             if (mProgressBar != null) mProgressBar.setVisibility(View.GONE);
         });
     }
@@ -52,22 +51,22 @@ public class FavoritesTab extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mProgressBar = view.findViewById(R.id.mProgressBar);
         mProgressBar.setVisibility(View.VISIBLE);
-        gridview = view.findViewById(R.id.grid_favoritos);
+        favoritesGridView = view.findViewById(R.id.grid_favoritos);
         setGridView();
     }
 
     private void setGridView() {
-        gridview.setAdapter(adapter);
-        gridview.setColumnWidth(getResources().getDisplayMetrics().widthPixels / 3);
-        gridview.setHorizontalSpacing(8);
-        gridview.setNumColumns(3);
-        gridview.setOnItemClickListener((parent, v, position, id) -> {
+        favoritesGridView.setAdapter(adapter);
+        favoritesGridView.setColumnWidth(getResources().getDisplayMetrics().widthPixels / 3);
+        favoritesGridView.setHorizontalSpacing(8);
+        favoritesGridView.setNumColumns(3);
+        favoritesGridView.setOnItemClickListener((parent, v, position, id) -> {
             Intent intent = new Intent(getContext(), ArticleInfoActivity.class);
             startActivity(intent.putExtra("article",
                     (Article) adapter.getItem(position)));
         });
         //TODO ver si agrego este metodo para agregar a conjunto como "playlist"
-        gridview.setOnItemLongClickListener((parent, v, position, id) -> {
+        favoritesGridView.setOnItemLongClickListener((parent, v, position, id) -> {
             new AlertDialog.Builder(getContext())
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle("Eliminar de ropero?")

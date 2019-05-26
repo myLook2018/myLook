@@ -1,4 +1,4 @@
-package com.mylook.mylook.closet;
+/*package com.mylook.mylook.closet;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -86,3 +86,4 @@ public class CreateOutfitActivity extends AppCompatActivity {
         return true;
     }
 }
+*/
