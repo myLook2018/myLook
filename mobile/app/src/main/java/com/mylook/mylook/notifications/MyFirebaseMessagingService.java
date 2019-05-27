@@ -11,7 +11,7 @@ import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.mylook.mylook.home.MyLookActivity;
+import com.mylook.mylook.main.MyLookActivity;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
         private static final String TAG = "FirebaseMessagingServce";

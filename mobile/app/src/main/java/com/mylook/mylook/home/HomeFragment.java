@@ -162,7 +162,7 @@ public class HomeFragment extends Fragment {
         Log.e(TAG, "Begin read Subscriptions- Uid:" + FirebaseAuth.getInstance().getCurrentUser());
         if (list.size() == 0) {
             db.collection("subscriptions")
-                    .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser())
+                    .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .get()
                     .addOnCompleteListener(task -> {
                 if (task.isSuccessful() && task.getResult() != null) {

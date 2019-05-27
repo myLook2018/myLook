@@ -56,9 +56,7 @@ public class ExploreFragment extends Fragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-    public ExploreFragment() {
-
-    }
+    public ExploreFragment() { }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,7 +68,6 @@ public class ExploreFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         return inflater.inflate(R.layout.fragment_explore, null);
-
     }
 
     @Override
@@ -92,12 +89,11 @@ public class ExploreFragment extends Fragment {
         if (mDiscoverableArticles == null || mDiscoverableArticles.size() == 0) {
             mCardAdapter = new CardsExploreAdapter(mContext, R.layout.article_card);
             getDiscoverableArticles();
-        } else{
+        } else {
             mProgressBar.setVisibility(View.GONE);
             mCardStack.setVisibility(View.VISIBLE);
         }
         mCardStack.setAdapter(mCardAdapter);
-
 
         interactions = new ArrayList<>();
         mCardStack.setCardEventListener(new CardStackView.CardEventListener() {
@@ -156,9 +152,7 @@ public class ExploreFragment extends Fragment {
                 userInteraction.setUserId(user.getUid());
                 interactions.add(userInteraction);
 
-                Log.d("CardStackView", "cardClicked");
                 Intent intent = new Intent(mContext, ArticleInfoActivity.class);
-                Log.d("info del articulo", "onClick: paso por intent la data del articulo");
                 Article art = mDiscoverableArticles.get(0);
                 intent.putExtra("article", art);
                 intent.putExtra("tags", userInteraction.getTags());
@@ -172,7 +166,6 @@ public class ExploreFragment extends Fragment {
         //Calendar cal = Calendar.getInstance();
         //cal.add(Calendar.DATE, -14);
         //Date dateBefore2Weeks = cal.getTime();
-
         db.collection("articles")
                 //.whereGreaterThan("creationDate", dateBefore2Weeks) Le saque el filtro para que aparecieran
                 .get()
@@ -213,33 +206,22 @@ public class ExploreFragment extends Fragment {
                 int pl = art.getPromotionLevel();
                 switch (pl) {
                     case 1:
-                        Log.d("ADDING", "PROMO1");
                         promo1.add(art);
                         break;
                     case 2:
-                        Log.d("ADDING", "PROMO2");
                         promo2.add(art);
                         break;
                     case 3:
-                        Log.d("ADDING", "PROMO3");
                         promo3.add(art);
                         break;
                 }
                 totalArticles++;
             }
         }
-        if (totalArticles == 0) {
-            return false;
-        }
-        if (!promo3.isEmpty()) {
-            Collections.shuffle(promo3);
-        }
-        if (!promo2.isEmpty()) {
-            Collections.shuffle(promo2);
-        }
-        if (!promo1.isEmpty()) {
-            Collections.shuffle(promo1);
-        }
+        if (totalArticles == 0) return false;
+        if (!promo3.isEmpty()) Collections.shuffle(promo3);
+        if (!promo2.isEmpty()) Collections.shuffle(promo2);
+        if (!promo1.isEmpty()) Collections.shuffle(promo1);
         Random r = new Random();
         int v;
         while (true) {
@@ -247,51 +229,31 @@ public class ExploreFragment extends Fragment {
                 if (!promo2.isEmpty()) {
                     if (!promo1.isEmpty()) {
                         v = r.nextInt(100);
-                        if (v > 54) {
-                            mDiscoverableArticles.add(promo3.remove(0));
-                        } else if (v > 21) {
-                            mDiscoverableArticles.add(promo2.remove(0));
-                        } else {
-                            mDiscoverableArticles.add(promo1.remove(0));
-                        }
+                        if (v > 54) mDiscoverableArticles.add(promo3.remove(0));
+                        else if (v > 21) mDiscoverableArticles.add(promo2.remove(0));
+                        else mDiscoverableArticles.add(promo1.remove(0));
                     } else {
                         v = r.nextInt(100);
-                        if (v > 35) {
-                            mDiscoverableArticles.add(promo3.remove(0));
-                        } else {
-                            mDiscoverableArticles.add(promo2.remove(0));
-                        }
+                        if (v > 35) mDiscoverableArticles.add(promo3.remove(0));
+                        else mDiscoverableArticles.add(promo2.remove(0));
                     }
                 } else {
                     if (!promo1.isEmpty()) {
                         v = r.nextInt(100);
-                        if (v > 32) {
-                            mDiscoverableArticles.add(promo3.remove(0));
-                        } else {
-                            mDiscoverableArticles.add(promo1.remove(0));
-                        }
-                    } else {
-                        mDiscoverableArticles.add(promo3.remove(0));
-                    }
+                        if (v > 32) mDiscoverableArticles.add(promo3.remove(0));
+                        else mDiscoverableArticles.add(promo1.remove(0));
+                    } else mDiscoverableArticles.add(promo3.remove(0));
                 }
             } else {
                 if (!promo2.isEmpty()) {
                     if (!promo1.isEmpty()) {
                         v = r.nextInt(100);
-                        if (v > 39) {
-                            mDiscoverableArticles.add(promo2.remove(0));
-                        } else {
-                            mDiscoverableArticles.add(promo1.remove(0));
-                        }
-                    } else {
-                        mDiscoverableArticles.add(promo2.remove(0));
-                    }
+                        if (v > 39) mDiscoverableArticles.add(promo2.remove(0));
+                        else mDiscoverableArticles.add(promo1.remove(0));
+                    } else mDiscoverableArticles.add(promo2.remove(0));
                 } else {
-                    if (!promo1.isEmpty()) {
-                        mDiscoverableArticles.add(promo1.remove(0));
-                    } else {
-                        break;
-                    }
+                    if (!promo1.isEmpty()) mDiscoverableArticles.add(promo1.remove(0));
+                    else break;
                 }
             }
         }
@@ -299,7 +261,7 @@ public class ExploreFragment extends Fragment {
     }
 
     private boolean isNew(String id) {
-        return mLocalInteractions.stream().anyMatch(li -> li.getUid().equals(id));
+        return mLocalInteractions.stream().noneMatch(li -> li.getUid().equals(id));
     }
 
     @Override
@@ -314,7 +276,6 @@ public class ExploreFragment extends Fragment {
         }
         interactions.clear();
     }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

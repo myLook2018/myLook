@@ -66,7 +66,7 @@ public class CreateOutfitActivity extends AppCompatActivity {
 
     private void sendOutfit() {
         Outfit createdOutfit = new Outfit(outfitName, outfitCategory, selectedArticles);
-        if (createdOutfit.getItems() != null) {
+        if (createdOutfit.getFavorites() != null) {
             mProgressBar.setVisibility(View.VISIBLE);
             FirebaseFirestore.getInstance().collection("outfits")
                     .add(createdOutfit).addOnCompleteListener(task -> {

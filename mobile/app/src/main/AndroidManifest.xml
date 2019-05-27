@@ -27,7 +27,7 @@
         android:hardwareAccelerated="true"
         android:largeHeap="true">
 
-        <activity android:name=".session.MainActivity">
+        <activity android:name=".main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -35,7 +35,7 @@
         </activity>
         <activity android:name=".login.LoginActivity">
         </activity>
-        <activity android:name=".home.MyLookActivity" android:theme="@style/SplashTheme">
+        <activity android:name=".main.MyLookActivity" android:theme="@style/SplashTheme">
 
         </activity>
         <activity android:name=".info.ArticleInfoActivity"></activity>

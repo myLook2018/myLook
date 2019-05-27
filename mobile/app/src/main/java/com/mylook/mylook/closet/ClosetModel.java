@@ -3,6 +3,8 @@ package com.mylook.mylook.closet;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.util.Log;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -10,20 +12,24 @@ import com.google.firebase.firestore.WriteBatch;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Outfit;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class ClosetModel extends ViewModel {
 
-    private MutableLiveData<List<Article>> favorites;
-    private MutableLiveData<List<Outfit>> outfits;
+    private MutableLiveData<List<Article>> favorites = new MutableLiveData<>();
+    private List<Article> favoritesList = new ArrayList<>();
+    private MutableLiveData<List<Outfit>> outfits = new MutableLiveData<>();
+    private List<Outfit> outfitsList = new ArrayList<>();
+
+    void load() {
+        loadFavorites();
+        loadOutfits();
+    }
 
     LiveData<List<Article>> getFavorites() {
-        if (favorites == null) {
-            loadFavorites();
-            loadOutfits();
-        }
         return favorites;
     }
 
@@ -34,11 +40,12 @@ class ClosetModel extends ViewModel {
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
-                        favorites.postValue(task.getResult().getDocuments().stream().map(document -> {
+                        favoritesList = task.getResult().getDocuments().stream().map(document -> {
                             Article art = document.toObject(Article.class);
                             art.setArticleId(document.getId());
                             return art;
-                        }).collect(Collectors.toList()));
+                        }).collect(Collectors.toList());
+                        favorites.postValue(favoritesList);
                     }
                 });
     }
@@ -46,13 +53,13 @@ class ClosetModel extends ViewModel {
     int removeFavorite(int position) {
         if (favorites != null) {
             if (FirebaseFirestore.getInstance().collection("articles")
-                    .document(favorites.getValue().get(position).getArticleId())
+                    .document(favoritesList.get(position).getArticleId())
                     .update("favorites", FieldValue.arrayRemove(
                             FirebaseAuth.getInstance().getCurrentUser().getUid()))
                     .isSuccessful()) {
-                int outfitsChanged = removeFavoriteFromOutfits(favorites.getValue().remove(position).getArticleId());
-                favorites.postValue(favorites.getValue());
-                outfits.postValue(outfits.getValue());
+                int outfitsChanged = removeFavoriteFromOutfits(favoritesList.remove(position).getArticleId());
+                favorites.postValue(favoritesList);
+                outfits.postValue(outfitsList);
                 return outfitsChanged;
             } else {
                 return -1;
@@ -62,7 +69,7 @@ class ClosetModel extends ViewModel {
     }
 
     private int removeFavoriteFromOutfits(String articleId) {
-        Stream<Outfit> outfitsToChange = outfits.getValue().stream().filter(o -> o.getItems().contains(articleId));
+        Stream<Outfit> outfitsToChange = outfitsList.stream().filter(o -> o.getFavorites().contains(articleId));
         if (outfitsToChange.count() != 0) {
             WriteBatch batch = FirebaseFirestore.getInstance().batch();
             outfitsToChange.forEach(o -> batch.update(FirebaseFirestore.getInstance()
@@ -88,15 +95,15 @@ class ClosetModel extends ViewModel {
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
-                        outfits.postValue(task.getResult().getDocuments().stream()
-                                .map(document -> {
-                                    Outfit out = document.toObject(Outfit.class);
-                                    out.setOutfitId(document.getId());
-                                    out.setArticles(favorites.getValue().stream()
-                                            .filter(f -> out.getItems().contains(f.getArticleId()))
-                                            .collect(Collectors.toList()));
-                                    return out;
-                                }).collect(Collectors.toList()));
+                        outfitsList = task.getResult().getDocuments().stream().map(document -> {
+                            Outfit out = document.toObject(Outfit.class);
+                            out.setOutfitId(document.getId());
+                            out.setArticles(favoritesList.stream()
+                                    .filter(f -> out.getFavorites().contains(f.getArticleId()))
+                                    .collect(Collectors.toList()));
+                            return out;
+                        }).collect(Collectors.toList());
+                        outfits.postValue(outfitsList);
                     }
                 });
     }
@@ -104,10 +111,10 @@ class ClosetModel extends ViewModel {
     boolean removeOutfit(int position) {
         if (outfits != null) {
             if (FirebaseFirestore.getInstance().collection("outfits")
-                    .document(outfits.getValue().get(position).getOutfitId())
+                    .document(outfitsList.get(position).getOutfitId())
                     .delete().isSuccessful()) {
-                outfits.getValue().remove(position);
-                outfits.postValue(outfits.getValue());
+                outfitsList.remove(position);
+                outfits.postValue(outfitsList);
                 return true;
             } else {
                 return false;

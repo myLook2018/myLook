@@ -1,4 +1,4 @@
-package com.mylook.mylook.home;
+package com.mylook.mylook.main;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import com.mylook.mylook.R;
 import com.mylook.mylook.closet.ClosetFragment;
 import com.mylook.mylook.explore.ExploreFragment;
+import com.mylook.mylook.home.HomeFragment;
 import com.mylook.mylook.profile.ProfileFragment;
 import com.mylook.mylook.recommend.RecommendFragment;
 

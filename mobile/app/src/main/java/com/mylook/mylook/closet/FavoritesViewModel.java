@@ -73,7 +73,7 @@ public class FavoritesViewModel extends ViewModel {
                                     Outfit out = document.toObject(Outfit.class);
                                     out.setOutfitId(document.getId());
                                     out.setArticles(favorites.getValue().stream()
-                                            .filter(f -> out.getItems().contains(f.getArticleId()))
+                                            .filter(f -> out.getFavorites().contains(f.getArticleId()))
                                             .collect(Collectors.toList()));
                                     return out;
                                 }).collect(Collectors.toList()));

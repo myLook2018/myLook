@@ -32,6 +32,7 @@ public class FavoritesTab extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         closet = ViewModelProviders.of(getParentFragment()).get(ClosetModel.class);
+        closet.load();
         closet.getFavorites().observe(this, favorites -> {
             adapter = new ArticlesGridAdapter(getContext(), favorites);
             favoritesGridView.setAdapter(adapter);
@@ -56,7 +57,6 @@ public class FavoritesTab extends Fragment {
     }
 
     private void setGridView() {
-        favoritesGridView.setAdapter(adapter);
         favoritesGridView.setColumnWidth(getResources().getDisplayMetrics().widthPixels / 3);
         favoritesGridView.setHorizontalSpacing(8);
         favoritesGridView.setNumColumns(3);

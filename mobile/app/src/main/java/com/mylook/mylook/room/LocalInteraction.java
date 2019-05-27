@@ -8,8 +8,7 @@ import java.util.Date;
 @Entity(primaryKeys = {"uid", "userId"}, tableName = "localinteractions")
 public class LocalInteraction {
 
-    public LocalInteraction() {
-    }
+    public LocalInteraction() { }
 
     private @NonNull String  uid;
 

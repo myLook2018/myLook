@@ -49,19 +49,15 @@ public class RecommendFragment extends Fragment {
      private ProgressBar progressBar;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        Log.e(TAG, "OnViewCreated- savedInstance" + savedInstanceState);
         super.onViewCreated(view, savedInstanceState);
         mContext = view.getContext();
         this.dB = FirebaseFirestore.getInstance();
         recyclerView = view.findViewById(R.id.recyclerViewRecommend);
         fab = view.findViewById(R.id.fab);
         progressBar = view.findViewById(R.id.progressBar);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(mContext, RecommendActivityAddDesc.class);
-                startActivityForResult(intent, NEW_REQUEST);
-            }
+        fab.setOnClickListener(view1 -> {
+            Intent intent = new Intent(mContext, RecommendActivityAddDesc.class);
+            startActivityForResult(intent, NEW_REQUEST);
         });
         if(requestRecommendationsList == null || requestRecommendationsList .size() == 0)
             requestRecommendationsList = new ArrayList<RequestRecommendation>();
@@ -82,15 +78,6 @@ public class RecommendFragment extends Fragment {
         return homeInstance;
     }
 
-    /**
-     * Método para cuando haya ocrurrido algun cambio y haya que actualizar los objetos
-     */
-    public void refreshStatus(){
-        if(homeInstance!=null){
-            initRecyclerView();
-        }
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -105,15 +92,12 @@ public class RecommendFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.e(TAG, "OnCreate - savedInstance" + savedInstanceState);
         super.onCreate(savedInstanceState);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.e(TAG, "OnCreateView- savedInstance" + savedInstanceState);
-
         return inflater.inflate(R.layout.fragment_recommend, null);
     }
 

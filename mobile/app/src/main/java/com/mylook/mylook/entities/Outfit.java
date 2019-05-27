@@ -5,17 +5,17 @@ import java.util.List;
 public class Outfit {
     private String name;
     private String category;
-    private List<String> items;
+    private List<String> favorites;
     private List<Article> articles;
     private String outfitId;
 
     public Outfit() {
     }
 
-    public Outfit(String name, String category, List<String> items) {
+    public Outfit(String name, String category, List<String> favorites) {
         this.name = name;
         this.category = category;
-        this.items = items;
+        this.favorites = favorites;
     }
 
     public String getName() {
@@ -34,12 +34,12 @@ public class Outfit {
         this.category = category;
     }
 
-    public List<String> getItems() {
-        return items;
+    public List<String> getFavorites() {
+        return favorites;
     }
 
-    public void setItems(List<String> items) {
-        this.items = items;
+    public void setFavorites(List<String> favorites) {
+        this.favorites = favorites;
     }
 
     public String getOutfitId() {

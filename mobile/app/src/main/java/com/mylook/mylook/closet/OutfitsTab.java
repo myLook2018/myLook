@@ -67,7 +67,7 @@ public class OutfitsTab extends Fragment implements OutfitListAdapter.OutfitClic
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                 Outfit outfit = task.getResult().toObject(Outfit.class);
                                 Intent intent = new Intent(getContext(), ViewOutfitActivity.class);
-                                intent.putExtra("items", outfit.getItems());
+                                intent.putExtra("items", outfit.getFavorites());
                                 intent.putExtra("name", outfit.getName());
                                 intent.putExtra("category", outfit.getCategory());
                                 intent.putExtra("id", task.getResult().getId());
