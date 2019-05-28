@@ -1,8 +1,9 @@
 package com.mylook.mylook.entities;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Outfit {
+public class Outfit implements Serializable {
     private String name;
     private String category;
     private List<String> favorites;

@@ -114,7 +114,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
@@ -142,7 +141,7 @@ public class HomeFragment extends Fragment {
         if (act != null)
             FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(getActivity(), instanceIdResult -> {
                 final String mToken = instanceIdResult.getToken();
-                db.collection("clients").whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser())
+                db.collection("clients").whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .get().addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null && task.getResult().getDocuments().size() > 0) {
                         Map<String, Object> update = new HashMap<>();

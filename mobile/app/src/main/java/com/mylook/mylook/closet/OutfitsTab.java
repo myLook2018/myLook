@@ -10,27 +10,26 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
-
-import com.google.firebase.auth.FirebaseAuth;
 import com.mylook.mylook.R;
 
-public class OutfitsTab extends Fragment implements OutfitListAdapter.OutfitClickListener {
+import static android.app.Activity.RESULT_OK;
+
+public class OutfitsTab extends Fragment implements OutfitListAdapter.OutfitClickListener,
+        OutfitListAdapter.OutfitLongClickListener {
+
+    static final int OUTFIT_INFO_REQUEST = 1;
 
     private RecyclerView outfitsRecyclerView;
     private OutfitListAdapter adapter;
     private ClosetModel closet;
     private ProgressBar mProgressBar;
 
-    public OutfitsTab() { }
+    public OutfitsTab() {
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,6 +37,8 @@ public class OutfitsTab extends Fragment implements OutfitListAdapter.OutfitClic
         closet = ViewModelProviders.of(getParentFragment()).get(ClosetModel.class);
         closet.getOutfits().observe(this, outfits -> {
             adapter = new OutfitListAdapter(getActivity(), outfits);
+            adapter.setClickListener(this);
+            adapter.setLongClickListener(this);
             outfitsRecyclerView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
             if (mProgressBar != null) mProgressBar.setVisibility(View.GONE);
@@ -62,22 +63,52 @@ public class OutfitsTab extends Fragment implements OutfitListAdapter.OutfitClic
         addOutfit.setOnClickListener(v -> createInputDialog());
     }
 
-    /* TODO seccion de codigo para intent a viewoutfit
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                Outfit outfit = task.getResult().toObject(Outfit.class);
-                                Intent intent = new Intent(getContext(), ViewOutfitActivity.class);
-                                intent.putExtra("items", outfit.getFavorites());
-                                intent.putExtra("name", outfit.getName());
-                                intent.putExtra("category", outfit.getCategory());
-                                intent.putExtra("id", task.getResult().getId());
-                                mProgressBar.setVisibility(View.INVISIBLE);
-                                startActivity(intent);
-                                */
-
     //TODO despues de seleccionar las prendas (en la actividad que se encargue)
     public void createInputDialog() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme);
+
+    }
+
+    @Override
+    public void onOutfitClick(View view, int position) {
+        showOutfit(position);
+    }
+
+    @Override
+    public boolean onOutfitLongClick(View view, int position) {
+        return outfitOptions(position);
+    }
+
+    private boolean outfitOptions(int position) {
+        String[] options = {"Ver", "Editar", "Eliminar"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Conjunto");
+        builder.setItems(options, (dialog, which) -> {
+            switch (which) {
+                case 0:
+                    showOutfit(position);
+                    break;
+                case 1:
+                    editOutfit(position);
+                    break;
+                case 2:
+                    deleteOutfit(position);
+                    break;
+                default:
+                    break;
+            }
+        });
+        builder.show();
+        return true;
+    }
+
+    private void showOutfit(int position) {
+        startActivityForResult(new Intent(getContext(), OutfitInfoActivity.class)
+                .putExtra("outfit", adapter.getItem(position)),
+                OUTFIT_INFO_REQUEST);
+    }
+
+    private void editOutfit(int position) {
+        /*AlertDialog.Builder dialog = new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme);
         EditText input = new EditText(getContext());
         LinearLayout linearLayout = new LinearLayout(getContext());
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -94,21 +125,25 @@ public class OutfitsTab extends Fragment implements OutfitListAdapter.OutfitClic
                     if ("".equals(input.getText().toString())) {
                         Toast.makeText(getContext(), "El nombre no puede estar vacío",
                                 Toast.LENGTH_SHORT).show();
-                        return;
                     }
-                    /* TODO
-                    Intent intent = new Intent(getActivity(), CreateOutfitActivity.class);
-                    intent.putExtra("name", input.getText().toString());
-                    intent.putExtra("category", "normal");
-                    intent.putExtra("userID",
-                            FirebaseAuth.getInstance().getCurrentUser().getUid());
-                    startActivity(intent);
-                    */
                 }).create().show();
+        Intent intent = new Intent(getActivity(), CreateOutfitActivity.class);
+        intent.putExtra("name", input.getText().toString());
+        intent.putExtra("category", "normal");
+        intent.putExtra("userID", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        startActivity(intent);*/
+    }
+
+    private void deleteOutfit(int position) {
+
     }
 
     @Override
-    public void onOutfitClick(View view, int position) {
-        //TODO intent to outfit activity
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == OUTFIT_INFO_REQUEST) {
+            if (resultCode == RESULT_OK) {
+
+            }
+        }
     }
 }

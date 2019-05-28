@@ -14,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -33,19 +32,9 @@ public class ArticleInfoActivity extends AppCompatActivity {
     private Context mContext = ArticleInfoActivity.this;
     private Article article;
     private FloatingActionButton btnCloset;
-    private String articleId;
-    private ArrayList<String> tags;
-    private String downLoadUri;
-    private String dbUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private TextView txtTitle;
-    private TextView txtStoreName;
-    private LinearLayout lnlSizes;
-    private LinearLayout lnlColors;
-    private TextView txtMaterial;
-    private TextView txtCost;
-    private ArrayList<String> imageArraySlider;
+    private ArrayList<String> tags, imageArraySlider;
+    private LinearLayout lnlSizes, lnlColors;
+    private TextView txtMaterial, txtCost, txtTitle, txtStoreName;
     private boolean inCloset;
 
     @Override
@@ -61,8 +50,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
     private void getArticleFromIntent() {
         Intent intent = getIntent();
         article = (Article) intent.getSerializableExtra("article");
-        articleId = article.getArticleId();
-        downLoadUri = article.getPicture();
         if (article.getPicturesArray() != null) {
             imageArraySlider = new ArrayList<>();
             imageArraySlider.addAll(article.getPicturesArray());
@@ -71,7 +58,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
     }
 
     private void initElements() {
-        ImageView backArrow = findViewById(R.id.backArrow);
         btnCloset = findViewById(R.id.btnCloset);
         txtTitle = findViewById(R.id.txtTitle);
         txtStoreName = findViewById(R.id.txtStoreName);
@@ -79,6 +65,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
         txtCost = findViewById(R.id.txtCost);
         lnlSizes = findViewById(R.id.lnlSizes);
         lnlColors = findViewById(R.id.lnlColors);
+        ImageView backArrow = findViewById(R.id.backArrow);
         backArrow.setOnClickListener(view -> finish());
         btnCloset.setOnClickListener(v -> {
             if (inCloset) {
@@ -92,7 +79,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
         articlePager = findViewById(R.id.view_pager_article);
         if (imageArraySlider == null) {
             ArrayList<String> arrayAux = new ArrayList<>();
-            arrayAux.add(0, downLoadUri);
+            arrayAux.add(0, article.getPicture());
             articlePager.setAdapter(new SlidingImageAdapter(mContext, arrayAux));
             CirclePageIndicator indicator = findViewById(R.id.circle_page_indicator);
             indicator.setViewPager(articlePager);
@@ -135,8 +122,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
     }
 
     private void isArticleInCloset() {
-        Log.d("", "isArticleInCloset: ");
-        db.collection("articles").document(articleId).get()
+        FirebaseFirestore.getInstance().collection("articles").document(article.getArticleId()).get()
                 .addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
@@ -144,7 +130,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
                     btnCloset.setEnabled(false);
                     return;
                 }
-                if (Objects.equals(document.get("favorites"), dbUserId)) {
+                if (Objects.equals(document.get("favorites"), FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                     btnCloset.setEnabled(true);
                     inCloset = true;
                     return;
@@ -159,8 +145,8 @@ public class ArticleInfoActivity extends AppCompatActivity {
 
     private void removeFromCloset() {
         btnCloset.setEnabled(false);
-        db.collection("articles").document(article.getArticleId())
-                .update("favorites", FieldValue.arrayRemove(dbUserId))
+        FirebaseFirestore.getInstance().collection("articles").document(article.getArticleId())
+                .update("favorites", FieldValue.arrayRemove(FirebaseAuth.getInstance().getCurrentUser().getUid()))
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         sendNewInteraction();
@@ -174,8 +160,8 @@ public class ArticleInfoActivity extends AppCompatActivity {
 
     private void saveInCloset() {
         btnCloset.setEnabled(false);
-        db.collection("articles").document(article.getArticleId())
-                .update("favorites", FieldValue.arrayUnion(dbUserId))
+        FirebaseFirestore.getInstance().collection("articles").document(article.getArticleId())
+                .update("favorites", FieldValue.arrayUnion(FirebaseAuth.getInstance().getCurrentUser().getUid()))
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         sendNewInteraction();
@@ -199,10 +185,10 @@ public class ArticleInfoActivity extends AppCompatActivity {
         userInteraction.setSavedToCloset(true);
         userInteraction.setLiked(false);
         userInteraction.setClickOnArticle(false);
-        userInteraction.setArticleId(this.articleId);
+        userInteraction.setArticleId(this.article.getArticleId());
         userInteraction.setStoreName(this.article.getStoreName());
         userInteraction.setTags(tags);
-        userInteraction.setUserId(user.getUid());
-        db.collection("interactions").add(userInteraction);
+        userInteraction.setUserId(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        FirebaseFirestore.getInstance().collection("interactions").add(userInteraction);
     }
 }

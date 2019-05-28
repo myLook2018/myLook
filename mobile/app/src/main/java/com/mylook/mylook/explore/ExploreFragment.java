@@ -42,7 +42,7 @@ import java.util.Random;
 public class ExploreFragment extends Fragment {
 
     private Context mContext;
-    private static List<Article> mDiscoverableArticles;
+    private List<Article> mDiscoverableArticles;
     private CardStackView mCardStack;
     private CardsExploreAdapter mCardAdapter;
 
@@ -61,6 +61,7 @@ public class ExploreFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Nullable

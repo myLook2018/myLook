@@ -53,32 +53,47 @@ public class FavoritesTab extends Fragment {
         mProgressBar = view.findViewById(R.id.mProgressBar);
         mProgressBar.setVisibility(View.VISIBLE);
         favoritesGridView = view.findViewById(R.id.grid_favoritos);
-        setGridView();
-    }
-
-    private void setGridView() {
         favoritesGridView.setColumnWidth(getResources().getDisplayMetrics().widthPixels / 3);
         favoritesGridView.setHorizontalSpacing(8);
         favoritesGridView.setNumColumns(3);
-        favoritesGridView.setOnItemClickListener((parent, v, position, id) -> {
-            Intent intent = new Intent(getContext(), ArticleInfoActivity.class);
-            startActivity(intent.putExtra("article",
-                    (Article) adapter.getItem(position)));
-        });
-        //TODO ver si agrego este metodo para agregar a conjunto como "playlist"
-        favoritesGridView.setOnItemLongClickListener((parent, v, position, id) -> {
-            new AlertDialog.Builder(getContext())
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setTitle("Eliminar de ropero?")
-                    .setMessage("El artículo desaparecerá de tu ropero.")
-                    .setPositiveButton("Eliminar", (dialog, which) -> removeFavorite(position))
-                    .setNegativeButton("Cancelar", null)
-                    .show();
-            return true;
-        });
+        favoritesGridView.setOnItemClickListener((parent, v, position, id) -> showFavorite(position));
+        favoritesGridView.setOnItemLongClickListener((parent, v, position, id) -> outfitOptions(position));
     }
 
-    private void removeFavorite(final int position) {
+    private boolean outfitOptions(int position) {
+        String[] options = {"Ver", "Agregar a conjunto", "Eliminar"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Favorito");
+        builder.setItems(options, (dialog, which) -> {
+            switch (which) {
+                case 0:
+                    showFavorite(position);
+                    break;
+                case 1:
+                    addFavoriteToOutfit(position);
+                    break;
+                case 2:
+                    deleteFavorite(position);
+                    break;
+                default:
+                    break;
+            }
+        });
+        builder.show();
+        return true;
+    }
+
+    private void showFavorite(int position) {
+        startActivity(new Intent(getContext(), ArticleInfoActivity.class)
+                .putExtra("article", adapter.getItem(position)));
+    }
+
+    private void addFavoriteToOutfit(int position) {
+        displayToast("Agregar " + position);
+        //TODO ????? agregar tipo playlist
+    }
+
+    private void deleteFavorite(int position) {
         int res = closet.removeFavorite(position);
         switch (res) {
             case -1:

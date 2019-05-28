@@ -21,13 +21,14 @@ public class Article implements Serializable, Comparable<Article>, Comparator<Ar
     private ArrayList<String> sizes;
     private ArrayList<String> tags;
     private ArrayList<String> picturesArray;
+    private ArrayList<String> favorites;
     private Date creationDate;
     private int promotionLevel;
 
     public Article() {
     }
 
-    public Article(String articleId, String title, String code, String provider, float cost, int initial_stock, String material, String picture, String storeName, ArrayList<String> colors, ArrayList<String> sizes, ArrayList<String> tags) {
+    public Article(String articleId, String title, String code, String provider, float cost, int initial_stock, String material, String picture, String storeName, ArrayList<String> colors, ArrayList<String> sizes, ArrayList<String> tags, ArrayList<String> favorites) {
         this.articleId = articleId;
         this.title = title;
         this.code = code;
@@ -40,6 +41,7 @@ public class Article implements Serializable, Comparable<Article>, Comparator<Ar
         this.colors = colors;
         this.sizes = sizes;
         this.tags = tags;
+        this.favorites = favorites;
     }
 
     public ArrayList<String> getPicturesArray() {
@@ -187,5 +189,13 @@ public class Article implements Serializable, Comparable<Article>, Comparator<Ar
     @Override
     public int compare(Article o1, Article o2) {
         return o1.getCreationDate().compareTo(o2.getCreationDate());
+    }
+
+    public ArrayList<String> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(ArrayList<String> favorites) {
+        this.favorites = favorites;
     }
 }

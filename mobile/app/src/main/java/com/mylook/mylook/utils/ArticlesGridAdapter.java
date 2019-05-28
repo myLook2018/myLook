@@ -1,6 +1,7 @@
 package com.mylook.mylook.utils;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -27,7 +28,7 @@ public class ArticlesGridAdapter extends BaseAdapter {
         return articles.size();
     }
 
-    public Object getItem(int position) {
+    public Article getItem(int position) {
         return articles.get(position);
     }
 

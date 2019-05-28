@@ -20,6 +20,7 @@ public class OutfitListAdapter extends RecyclerView.Adapter<OutfitListAdapter.Ou
     private List<Outfit> mOutfits;
     private Context mContext;
     private OutfitClickListener mClickListener;
+    private OutfitLongClickListener mLongClickListener;
 
     OutfitListAdapter(Context mContext, List<Outfit> mOutfits) {
         this.mContext = mContext;
@@ -64,7 +65,7 @@ public class OutfitListAdapter extends RecyclerView.Adapter<OutfitListAdapter.Ou
         return mOutfits.size();
     }
 
-    class OutfitViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class OutfitViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         TextView name, extra;
         ImageView image1, image2, image3;
 
@@ -76,11 +77,18 @@ public class OutfitListAdapter extends RecyclerView.Adapter<OutfitListAdapter.Ou
             image2 = itemView.findViewById(R.id.outfit_article_image2);
             image3 = itemView.findViewById(R.id.outfit_article_image3);
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
             if (mClickListener != null) mClickListener.onOutfitClick(v, getAdapterPosition());
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if (mLongClickListener != null) return mLongClickListener.onOutfitLongClick(v, getAdapterPosition());
+            else return false;
         }
     }
 
@@ -92,7 +100,15 @@ public class OutfitListAdapter extends RecyclerView.Adapter<OutfitListAdapter.Ou
         this.mClickListener = outfitClickListener;
     }
 
+    void setLongClickListener(OutfitLongClickListener outfitLongClickListener) {
+        this.mLongClickListener = outfitLongClickListener;
+    }
+
     interface OutfitClickListener {
         void onOutfitClick(View view, int position);
+    }
+
+    interface OutfitLongClickListener {
+        boolean onOutfitLongClick(View view, int position);
     }
 }
