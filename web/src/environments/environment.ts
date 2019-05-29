@@ -12,7 +12,7 @@ export const environment = {
     storageBucket: 'mylook-develop.appspot.com',
     messagingSenderId: '259536885025'
   },
-  maps:{
+  maps: {
     key: 'AIzaSyA09UF3v-eEMF1nbfjJWO7yKQq4va4__xE'  }
   };
 

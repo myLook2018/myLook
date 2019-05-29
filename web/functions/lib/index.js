@@ -5,6 +5,7 @@ const admin = require("firebase-admin");
 const promisePool = require('es6-promise-pool');
 const PromisePool = promisePool.PromisePool;
 const secureCompare = require('secure-compare');
+const cors = require('cors')({origin: true});
 // Maximum concurrent account deletions.
 const MAX_CONCURRENT = 3;
 // Método que inicializa las funciones, sin esto no anda
@@ -174,57 +175,62 @@ function getInactiveUsers(users = [], nextPageToken) {
  *
  * @param {string} data.path the document or collection path to delete.
  */
-exports.recursiveDeleteStore = functions
-  .runWith({
-    timeoutSeconds: 540,
-    memory: '2GB'
-  })
-
-  .https.onCall((data, context) => {
-    console.log(`User ${context.auth.uid} has requested to delete all his information`);
-    return fullDelete(data.storeID);
+exports.recursiveDeleteStore = functions.runWith({memory: '2GB'}).https.onRequest((req, res) => {
+  console.log('datos', req.query.storeID);
+  console.log('datos', req.query.storeName);
+    res.set('Access-Control-Allow-Origin', '*');
+    res.status('200').send(fullDelete(req.query.storeID, req.query.storeName));
   });
 
-function fullDelete(storeID) {
-  const storeName = admin.firestore().collection('stores').doc(storeID).data().storeName;
-  var deleteRecomendations = admin.firestore().collection('requestRecommendations').where('storeName', '==', storeName);
-  deleteRecomendations.get().then(function(querySnapshot) {
-      console.log('Borrando Recomendaciones');
-      querySnapshot.forEach(function(doc) {
-        doc.ref.delete();
-      });
-    }).then(() => {
-      var deleteInteractions = admin.firestore().collection('interactions').where('storeName', '==', storeName);
-      deleteInteractions.get().then(function(querySnapshot) {
-        console.log('Borrando Interacciones');
-        querySnapshot.forEach(function(doc) {
+function fullDelete(storeID, storeName) {
+  console.log('lalalala', deleteRecomendations);
+  console.log('Borrando Recomendaciones');
+  var deleteStore = admin.firestore().collection('stores').doc(storeID);
+  deleteStore.get().then(doc => {
+    console.log('Borrando tienda');
+    doc.ref.delete();
+  }).then(() => {
+    var deleteRecomendations = admin.firestore().collection('requestRecommendations').where('storeName', '==', storeName);
+    if (deleteRecomendations) {
+      deleteRecomendations.get().then(querySnapshot => {
+        querySnapshot.forEach(doc => {
           doc.ref.delete();
         });
       });
-    }).then(() => {
-      var deletePromotions = admin.firestore().collection('promotions').where('storeId', '==', storeID);
-      deletePromotions.get().then(function(querySnapshot) {
-        console.log('Borrando promociones');
-        querySnapshot.forEach(function(doc) {
+    }
+  }).then(() => {
+    var deleteInteractions = admin.firestore().collection('interactions').where('storeName', '==', storeName);
+    if (deleteInteractions) {
+      console.log('Borrando Interacciones');
+      deleteInteractions.get().then(querySnapshot => {
+        querySnapshot.forEach(doc => {
           doc.ref.delete();
         });
       });
-    }).then(() => {
-      var deleteArticles = admin.firestore().collection('articles').where('storeName', '==', storeName);
-      deleteArticles.get().then(function(querySnapshot) {
-        console.log('Borrando articulos');
-        querySnapshot.forEach(function(doc) {
+    }
+  }).then(() => {
+    var deletePromotions = admin.firestore().collection('promotions').where('storeId', '==', storeID);
+    if (deletePromotions) {
+      console.log('Borrando promociones');
+      deletePromotions.get().then( querySnapshot => {
+        querySnapshot.forEach( doc => {
           doc.ref.delete();
         });
       });
-    }).then(() => {
-      var deleteStore = admin.firestore().collection('stores').doc(storeID);
-      deleteStore.get().then(function(querySnapshot) {
-        console.log('Borrando articulos');
-          deleteStore.ref.delete();
+    }
+  }).then(() => {
+    var deleteArticles = admin.firestore().collection('articles').where('storeName', '==', storeName);
+    if (deleteArticles) {
+      console.log('Borrando articulos');
+      deleteArticles.get().then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          doc.ref.delete();
+        });
       });
-    }).then(() => {
-      console.log('Borrado Finalizado');
-      return 'Se han eliminado todos los documentos del usuario'
-    });
+    }
+  }).then(() => {
+    console.log('Borrado Finalizado');
+    console.log('Se han eliminado todos los documentos del usuario');
+  });
+
 }

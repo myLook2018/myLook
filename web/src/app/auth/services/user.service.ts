@@ -80,4 +80,13 @@ export class UserService {
       }, err => reject(err));
     });
   }
+
+  deleteUser() {
+    firebase.auth().currentUser.delete().then(() => {
+      console.log('usuario eliminado');
+    }).catch(error => {
+      console.log('fallo la eliminacion', error);
+    });
+
+  }
 }

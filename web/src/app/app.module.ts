@@ -84,6 +84,7 @@ import { MinimaLight, MinimaDark } from '@alyle/ui/themes/minima';
 import { LyButtonModule } from '@alyle/ui/button';
 import { LyResizingCroppingImageModule } from '@alyle/ui/resizing-cropping-images';
 import { LyIconModule } from '@alyle/ui/icon';
+import { AngularFireFunctionsModule } from '@angular/fire/functions';
 
 import {
   LyHammerGestureConfig,
@@ -165,6 +166,7 @@ import { HttpClientModule} from '@angular/common/http';
     LyResizingCroppingImageModule,
     LyButtonModule,
     LyIconModule,
+    AngularFireFunctionsModule,
     LyThemeModule.setTheme('minima-light'),
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyC7gRAUi_0C-w5gqsWIVp0IKyEZT-3UiUA'

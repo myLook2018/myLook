@@ -7,7 +7,8 @@ import {
 } from 'angularfire2/storage';
 import { finalize, delay } from 'rxjs/operators';
 import { StoreModel } from '../auth/models/store.model';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
+
 @Injectable()
 export class DataService {
   task: AngularFireUploadTask;
@@ -15,13 +16,15 @@ export class DataService {
   public storeInfo: StoreModel = new StoreModel();
   _subscription: Subscription;
   isNewUser = true;
+
   constructor(
     private storage: AngularFireStorage,
     public userService: UserService
-    ) {}
+  ) {
+  }
 
-    uploadPictureFile(fileSelected) {
-      return new Promise<any>((resolve, reject) => {
+  uploadPictureFile(fileSelected) {
+    return new Promise<any>((resolve, reject) => {
       const file = fileSelected;
       if (file.type.split('/')[0] !== 'image') {
         return reject('Tipo de imagen no soportado');
@@ -126,4 +129,5 @@ export class DataService {
     this._subscription.unsubscribe();
     return this.storeInfo;
   }
+
 }
