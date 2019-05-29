@@ -48,6 +48,7 @@ export class DataService {
   }
 
   uploadPicture(fileSelected: FileList) {
+    console.log(FileList);
     return new Promise<any>((resolve, reject) => {
       console.log(fileSelected);
       const file = fileSelected.item(0);

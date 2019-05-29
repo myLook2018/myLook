@@ -33,17 +33,19 @@ export class ArticleService {
     this.db = firebase.firestore();
   }
 
-  /*getArticles(storeName) {
-    console.log(`en el get`);
-    return this.articles = this.articleCollection.snapshotChanges().pipe(map(changes => {
-      return changes.map(a => {
-        const data = a.payload.doc.data();
-        data.articleId = a.payload.doc.id;
-        console.log(data);
-        return data;
+  getArticles(storeName) {
+    console.log(`en el get subscriptions`);
+    return this.articles = this.articleCollection.snapshotChanges().pipe(map( changes => {
+      return changes.map( a => {
+        if (a.payload.doc.data().storeName === storeName) {
+          const data = a.payload.doc.data();
+          console.log(data);
+          data.articleId = a.payload.doc.id;
+          return data;
+        }
       });
     }));
-  }*/
+  }
 
   getArticlesCopado(storeName) {
     this.articlesCopado = [];

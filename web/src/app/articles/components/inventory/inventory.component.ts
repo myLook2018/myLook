@@ -16,6 +16,7 @@ import { StoreModel } from '../../../auth/models/store.model';
 import { PromoteDialogComponent } from '../dialogs/promoteDialog';
 import { FrontDialogComponent } from '../dialogs/frontDialog';
 import { DataService } from 'src/app/service/dataService';
+import { Subscription } from 'rxjs';
 
 declare var Mercadopago: any;
 @Component({
@@ -35,7 +36,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
   articles: Article[];
   selectionMode = false;
   selectedIndexes = [];
-
+  articlesSubscription: Subscription;
   constructor(
     public snackBar: MatSnackBar,
     public fb: FormBuilder,
@@ -72,14 +73,14 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     console.log('-+-+-+-+-+-Inicializando Inventario-+-+-+-+-+-');
+    this.dataSource = [];
     this.dataService.getStoreInfo().then(store => {
       this.userStore = store;
-      this.articleService
-        .getArticlesCopado(this.userStore.storeName)
-        .then(articles => {
-          this.dataSource = [];
+      this.articlesSubscription = this.articleService
+      .getArticles(this.userStore.storeName).subscribe( articles => {
+          // console.log(articles);
+          this.articles = articles.filter(Boolean);
           console.log(articles);
-          this.articles = articles;
           this.dataSource = new MatTableDataSource(this.articles);
           this.sort.sort(<MatSortable>{ id: 'promotionLevel', start: 'desc' });
           this.dataSource.sort = this.sort;
@@ -89,6 +90,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     console.log('destruyendo subscripciones');
+    this.articlesSubscription.unsubscribe();
   }
 
   createForm() {

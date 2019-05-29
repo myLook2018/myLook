@@ -5,21 +5,17 @@
       <div class="col-md-6 col-md-offset-3">
         <form [formGroup]="signupForm">
           <mat-form-field class="inputForm">
-            <input matInput placeholder="Email"  class="form-control" formControlName="email" [(ngModel)]="email">
-            <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
-              Por favor ingrese un Email valido
-            </mat-error>
-            <mat-error *ngIf="emailFormControl.hasError('required')">
-              Se requiere
-              <strong>Email</strong>
-            </mat-error>
+            <input matInput placeholder="Email" required class="form-control" formControlName="email" [(ngModel)]="email" (change)="clearErrors()">
           </mat-form-field>
+            <mat-error *ngIf="errorMessage">
+              {{errorMessage}}
+            </mat-error>
           <div style="display: flex; margin-top: 10px;">
             <div>
               Ya tienes cuenta?
               <a [routerLink]="[ '/Ingresar']"style="text-decoration: none;color: #6a99ff;">Ingresar.</a>
             </div>
-            <button mat-button type="submit" (click)="checkEmail()" class="registerButton">Registrar</button>
+            <button [disabled]="signupForm.invalid" mat-button type="submit" (click)="checkEmail()" class="registerButton">Registrar</button>
           </div>
         </form>
       </div>

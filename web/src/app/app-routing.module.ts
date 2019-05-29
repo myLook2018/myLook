@@ -18,7 +18,7 @@ export const rootRouterConfig: Routes = [
 
   { path: '', pathMatch: 'full' ,redirectTo: '/Inicio'},
   { path: 'Inicio', component: HomePageComponent},
-  { path: '', runGuardsAndResolvers: 'always', 
+  { path: '', runGuardsAndResolvers: 'always',
     children: [
       { path: 'Tiendas/:storeName', component: StoreComponent, resolve: { data: UserResolver }},
       { path: 'Tiendas/:storeName/Inventario', component: InventoryComponent, resolve: { data: UserResolver }},
@@ -28,9 +28,9 @@ export const rootRouterConfig: Routes = [
   { path: 'Ingresar', component: LoginComponent},
   { path: 'Registrarse', component: SignupComponent},
   { path: 'user', component: UserComponent, resolve: { data: UserResolver }},
-  { path: 'Registrar Tienda', component: RegisterComponent},
-  
-  { path: '**', redirectTo:'/Inicio'},
+  { path: 'Registrar-Tienda', component: RegisterComponent},
+
+  { path: '**', redirectTo: '/Inicio'},
 ];
 
 @NgModule({

@@ -28,6 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.RequestRecommendation;
+import com.mylook.mylook.session.Sesion;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -105,17 +106,28 @@ public class RequestRecommendActivity extends AppCompatActivity {
                 .into(imgRequestPhoto);
     }
 
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-                dB.collection("requestRecommendations").document(requestId).update("answers",answers);
-                dB.collection("answeredRecommendations").whereEqualTo("requestUID", requestId).get()
+        Log.e(TAG, "Entered On destroy: Request "+requestId);
+        Sesion.getInstance().updateActivitiesStatus(Sesion.RECOMEND_FRAGMENT);
+        dB.collection("requestRecommendations").document(requestId).update("answers",answers).
+                addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.e("update answers", "Succesfull: "+task.isSuccessful());
+                    }
+                });
+        dB.collection("answeredRecommendations").whereEqualTo("requestUID", requestId).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         for (HashMap<String,String> answer: answers ){
                             for (DocumentSnapshot doc:task.getResult().getDocuments()){
+                                Log.e(TAG, "Store doc"+doc.get("storeName")+", store answer"+answer.get("storeName"));
                                 if(doc.get("storeName").equals(answer.get("storeName")))
+                                Log.e(TAG, "id: "+ doc.getId()+" - Feedback "+answer.get("feedBack"));
                                 {
                                     dB.collection("answeredRecommendations").document(doc.getId()).update("feedBack", answer.get("feedBack"));
                                 }

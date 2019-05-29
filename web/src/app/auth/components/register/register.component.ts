@@ -7,7 +7,6 @@ import { MatHorizontalStepper } from '@angular/material/stepper';
 import { UserService } from '../../services/user.service';
 import { AngularFireUploadTask, AngularFireStorage, AngularFireStorageReference } from 'angularfire2/storage';
 import { DataService } from '../../../service/dataService';
-import { ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-register',
@@ -25,6 +24,8 @@ export class RegisterComponent implements OnInit {
   isRegistering = false;
   errorMessage = '';
   registerStoreFormGroup: FormGroup;
+  registerStoreFormGroupStep1: FormGroup;
+  registerStoreFormGroupStep2: FormGroup;
   userLoginForm: FormGroup;
   isLinear = true;
   storeName = '';
@@ -62,24 +63,26 @@ export class RegisterComponent implements OnInit {
   }
   createForm() {
     console.log(`emailToRegistre: ${this.email}`);
-    this.registerStoreFormGroup = this.fb.group({
+    this.registerStoreFormGroupStep1 = this.fb.group({
       storeName: ['', Validators.required],
       storeMail: [this.email, Validators.email],
-      ownerName: ['', Validators.required],
-      // profilePh: ['', Validators.required],
-      // coverPh:  ['', Validators.required],
       storePhone: ['', Validators.required],
-      facebookLink: ['', Validators.required],
-      storeProvince: ['', Validators.required],
+
+    });
+    this.registerStoreFormGroupStep2 = this.fb.group({
+      ownerName: [''],
       storeCity: ['', Validators.required],
-      storeAddressNumber: ['', Validators.required],
-      storeFloor: ['', Validators.required],
-      storePosition: ['', Validators.required],
-      storeDescription: ['', Validators.required],
-      instagramLink: ['', Validators.required],
-      twitterLink: ['', Validators.required],
+      storeProvince: ['', Validators.required],
       storeAddress: ['', Validators.required],
-      provider: ['', Validators.required],
+      storeAddressNumber: ['', Validators.required],
+      storeFloor: [''],
+      storePosition: [''],
+      storeDescription: [''],
+      facebookLink: [''],
+      instagramLink: [''],
+      twitterLink: [''],
+      provider: [''],
+
     });
 
     this.createUserForm();
@@ -119,20 +122,23 @@ export class RegisterComponent implements OnInit {
     this.isRegistering = true;
     if (this.password === this.confirmPassword) {
       if (this.password.length > 6) {
-
         this.userLoginForm.addControl('password', new FormControl(this.password, Validators.required));
         this.authService.doRegister(this.userLoginForm).then(() => {
           this.userService.getCurrentUser().then((user) => {
-            this.registerStoreFormGroup.addControl('firebaseUserId', new FormControl(user.uid, Validators.required));
+            this.registerStoreFormGroupStep1.addControl('firebaseUserId', new FormControl(user.uid, Validators.required));
           }
           ).then(() => {
+            console.log('subiendo imagen de perfil');
             this.dataService.uploadPicture(this.profileFile).then((fileURL) => {
-              this.registerStoreFormGroup.addControl('profilePh', new FormControl(fileURL, Validators.required));
+              this.registerStoreFormGroupStep1.addControl('profilePh', new FormControl(fileURL, Validators.required));
             }).then(() => {
+            console.log('subiendo imagen de portada');
               this.dataService.uploadPicture(this.portadaFile).then((fileURL) => {
-                this.registerStoreFormGroup.addControl('coverPh', new FormControl(fileURL, Validators.required));
+                this.registerStoreFormGroupStep1.addControl('coverPh', new FormControl(fileURL, Validators.required));
               }).then(() => {
-                this.userService.addStore(this.registerStoreFormGroup.value).then(() => { });
+                this.buildFinalForm();
+                console.log('formFinal', this.registerStoreFormGroup);
+                this.userService.addStore(this.registerStoreFormGroup.value.store).then(() => { });
               }).then(() => {
                 this.authService.doFirstLogin(this.userLoginForm).then(() => {
                   this.isRegistering = false;
@@ -143,11 +149,11 @@ export class RegisterComponent implements OnInit {
           });
         });
       } else {
-        console.log(`la contraseña debe ser de al menos 6 caracteres`);
+        this.errorMessage = 'la contraseña debe ser de al menos 6 caracteres';
         this.isRegistering = false;
       }
     } else {
-      console.log(`las contraseñas son diferentes`);
+      this.errorMessage = `las contraseñas son diferentes`;
       this.isRegistering = false;
     }
   }
@@ -182,4 +188,23 @@ export class RegisterComponent implements OnInit {
     }
   }
 
+  clearErrors() {
+    this.errorMessage = '';
+  }
+
+  buildFinalForm() {
+    const newValues = Object.assign({}, this.registerStoreFormGroupStep1.value, this.registerStoreFormGroupStep2.value);
+    const valuesJson = JSON.parse(JSON.stringify(newValues));
+    const form = this.toFormGroup(valuesJson);
+    this.registerStoreFormGroup = new FormGroup({store: form});
+    console.log(this.registerStoreFormGroup);
+  }
+
+  toFormGroup(elements) {
+    const values: any = {};
+    for (const key of Object.keys(elements)) {
+      values[key] = new FormControl(elements[key]);
+    }
+    return new FormGroup(values);
+  }
 }

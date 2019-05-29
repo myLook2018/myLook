@@ -32,20 +32,20 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
-import com.mylook.mylook.home.MainActivity;
+import com.mylook.mylook.home.MyLookActivity;
 
 
 /**
@@ -80,11 +80,23 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.e("Login", "Started on create");
+        setupLoginActivity();
+        Log.e("Login", "FInish on create");
+    }
+
+    @Override
+    protected void onResume() {
+        Log.e("Login", "Resume act");
+        super.onResume();
+        setupLoginActivity();
+        Log.e("Login", "FInish on resume");
+    }
+
+    private void setupLoginActivity() {
         setContentView(R.layout.activity_login);
         initElements();
         mContext = LoginActivity.this;
         mProgressBar.setVisibility(View.GONE);
-        //FirebaseAuth.getInstance().signOut();
         FacebookSdk.sdkInitialize(getApplicationContext());
         setupFirebaseAuth();
         setupFacebookAuth();
@@ -121,13 +133,6 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         });
-        Log.e("Login", "FInish on create");
-    }
-
-    @Override
-    protected void onResume() {
-        Log.e("Login", "Resume act");
-        super.onResume();
     }
 
     private boolean isStringNull(String string) {
@@ -144,39 +149,48 @@ public class LoginActivity extends AppCompatActivity {
                     .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-
-                            } else {
-                                if (task.getException().getMessage().equals("A network error (such as timeout, interrupted connection or unreachable host) has occurred."))
-                                    Toast.makeText(mContext, "Revisa tu conexión a internet",
-                                            Toast.LENGTH_SHORT).show();
-                                else {
-                                    Toast.makeText(mContext, "Algo salió mal :(",
-                                            Toast.LENGTH_SHORT).show();
-                                    Log.e("[LoginActivity]   ", task.getException().getMessage());
-                                    //Intent intent = new Intent(mContext, LoginActivity.class);
-                                    //startActivity(intent);
-                                    //finish();
+                            if (!task.isSuccessful()) {
+                                Exception e = task.getException();
+                                if (e != null) {
+                                    if (task.getException().getMessage().equals("A network error (such as timeout, interrupted connection or unreachable host) has occurred.")) {
+                                        Toast.makeText(mContext, "Revisa tu conexión a internet",
+                                                Toast.LENGTH_SHORT).show();
+                                    } else if (e instanceof FirebaseAuthInvalidCredentialsException) {
+                                        Toast.makeText(mContext, "Contraseña incorrecta",
+                                                Toast.LENGTH_SHORT).show();
+                                    } else if (e instanceof FirebaseAuthInvalidUserException) {
+                                        Toast.makeText(mContext, "El Email no existe",
+                                                Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(mContext, "Algo salió mal :(",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                    onResume();
                                 }
                             }
                             mProgressBar.setVisibility(View.GONE);
                         }
+
+                    }
+        );
+    } else
+
+    {
+        if (isLoggedIn()) {
+            mProgressBar.setVisibility(View.VISIBLE);
+            AccessToken accessToken = AccessToken.getCurrentAccessToken();
+            mAuth.signInWithCredential(FacebookAuthProvider.getCredential(accessToken.getToken()))
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            user = mAuth.getCurrentUser();
+                            mProgressBar.setVisibility(View.GONE);
+                        }
                     });
-        } else {
-            if (isLoggedIn()) {
-                mProgressBar.setVisibility(View.VISIBLE);
-                AccessToken accessToken = AccessToken.getCurrentAccessToken();
-                mAuth.signInWithCredential(FacebookAuthProvider.getCredential(accessToken.getToken()))
-                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                user = mAuth.getCurrentUser();
-                                mProgressBar.setVisibility(View.GONE);
-                            }
-                        });
-            }
         }
     }
+
+}
 
     private boolean validateFields() {
         if (isStringNull(mEmail.getText().toString())) {
@@ -209,11 +223,6 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.addAuthStateListener(mAuthListener);
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-    }
 
     @Override
     protected void onDestroy() {
@@ -242,8 +251,8 @@ public class LoginActivity extends AppCompatActivity {
                                     startActivity(intent);
                                     finish();
                                 } else {
-                                    if ( user!=null && user.isEmailVerified()) {
-                                        Intent intent = new Intent(mContext, MainActivity.class);
+                                    if (user != null && user.isEmailVerified()) {
+                                        Intent intent = new Intent(mContext, MyLookActivity.class);
                                         Toast.makeText(mContext, "Bienvenido a myLook!",
                                                 Toast.LENGTH_SHORT).show();
                                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -252,12 +261,8 @@ public class LoginActivity extends AppCompatActivity {
                                     } else {
                                         Log.d("[LoginActivity]   ", "eMail no verificado");
                                         displayMessage("Tu email aún no esta verificado");
-                                        Intent intent = new Intent(mContext, LoginActivity.class);
                                         FirebaseAuth.getInstance().signOut();
-                                        mContext.
-                                        startActivity(intent);
-                                        finish();
-                                        //onResume();
+                                        onResume();
                                     }
                                 }
                             } else {
@@ -420,5 +425,11 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }
+
 
