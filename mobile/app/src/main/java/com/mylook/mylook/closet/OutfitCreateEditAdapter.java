@@ -1,10 +1,10 @@
 package com.mylook.mylook.closet;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -17,9 +17,9 @@ public class OutfitCreateEditAdapter extends BaseAdapter {
 
     private Context context;
     private List<Article> articles;
-    private List<Article> selected;
+    private List<Integer> selected;
 
-    public OutfitCreateEditAdapter(Context context, List<Article> articles, List<Article> selected) {
+    OutfitCreateEditAdapter(Context context, List<Article> articles, List<Integer> selected) {
         this.context = context;
         this.articles = articles;
         this.selected = selected;
@@ -37,7 +37,8 @@ public class OutfitCreateEditAdapter extends BaseAdapter {
         return 0;
     }
 
-    public View getView(int position, View convertView, ViewGroup parent) {
+    /*public View getView(int position, View convertView, ViewGroup parent) {
+        Log.d("", "getView: rendering grid view item" + position);
         SelectableArticleGridItemView gridItemView;
         ImageView imageView;
         if (convertView == null) {
@@ -52,19 +53,25 @@ public class OutfitCreateEditAdapter extends BaseAdapter {
                 .into(imageView);
         gridItemView.display(selected.contains(getItem(position)));
         return gridItemView;
+    }*/
+
+    public View getView(int position, View convertView, ViewGroup parent) {
+        Log.d("", "getView: rendering grid view item" + position);
+        SelectableImageView imageView;
+        if (convertView == null) {
+            imageView = new SelectableImageView(context);
+        } else {
+            imageView = (SelectableImageView) convertView;
+        }
+        Glide.with(context).asBitmap().load(articles.get(position).getPicture())
+                .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA))
+                .into(imageView);
+        imageView.displayAsSelected(selected.contains(position));
+        return imageView;
     }
 
-    public void setArticles(List<Article> articles) {
-        this.articles = articles;
-        notifyDataSetChanged();
-    }
-
-    public List<Article> getSelected() {
+    List<Integer> getSelected() {
         return selected;
-    }
-
-    public boolean isSelected(int position) {
-        return selected.contains(getItem(position));
     }
 
 }

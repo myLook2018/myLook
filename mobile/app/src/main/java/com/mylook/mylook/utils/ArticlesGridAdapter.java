@@ -37,6 +37,7 @@ public class ArticlesGridAdapter extends BaseAdapter {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
+        Log.d("", "getView: rendering grid view item" + position);
         ImageView imageView;
         if (convertView == null) {
             imageView = new ImageView(context);
@@ -47,10 +48,5 @@ public class ArticlesGridAdapter extends BaseAdapter {
                 .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA))
                 .into(imageView);
         return imageView;
-    }
-
-    public void setArticles(List<Article> articles) {
-        this.articles = articles;
-        notifyDataSetChanged();
     }
 }

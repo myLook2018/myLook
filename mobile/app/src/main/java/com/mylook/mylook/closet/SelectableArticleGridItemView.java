@@ -18,7 +18,8 @@ public class SelectableArticleGridItemView extends FrameLayout {
     }
 
     public void display(boolean isSelected) {
-        imageView.setBackgroundResource(isSelected ? R.drawable.selected_article_grid_item : null);
+        if (isSelected) imageView.setBackgroundResource(R.drawable.selected_article_grid_item);
+        else imageView.setBackgroundResource(R.drawable.not_selected_article_grid_item);
     }
 
     public ImageView getImageView() {

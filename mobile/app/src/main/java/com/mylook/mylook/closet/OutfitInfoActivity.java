@@ -95,7 +95,8 @@ public class OutfitInfoActivity extends AppCompatActivity {
 
     private void editOutfit() {
         startActivityForResult(new Intent(this, OutfitCreateEditActivity.class)
-                        .putExtra("outfit", outfit), OUTFIT_EDIT_REQUEST);
+                        .putExtra("outfit", outfit)
+                .putExtra("create", false), OUTFIT_EDIT_REQUEST);
     }
 
     private void deleteOutfit() {

@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-
     <item>
         <shape>
-            <gradient
-                android:centerColor="#00000000"
-                android:endColor="#99000000"
-                android:startColor="#99000000"
-                android:type="radial"/>
+            <gradient android:startColor="#99673AB7"
+                android:angle="45">
+            </gradient>
         </shape>
     </item>
-
+    <item android:drawable="@drawable/ic_check"
+        android:width="48dp"
+        android:height="48dp"
+        android:gravity="center">
+    </item>
 </layer-list>
