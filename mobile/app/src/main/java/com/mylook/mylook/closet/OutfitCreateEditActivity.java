@@ -21,12 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class OutfitCreateEditActivity extends AppCompatActivity {
+public class OutfitCreateEditActivity extends AppCompatActivity {
 
     public static final int OUTFIT_EDIT_REQUEST = 1;
     public static final int OUTFIT_CREATE_REQUEST = 2;
     private GridView gridView;
-    private ArticlesGridAdapter adapter;
+    private OutfitCreateEditAdapter adapter;
     private ProgressBar progressBar;
     private Outfit outfit;
     private List<Article> selected;
@@ -39,6 +39,7 @@ class OutfitCreateEditActivity extends AppCompatActivity {
         initElements();
         getAll();
         getDataFromIntent();
+        adapter = new OutfitCreateEditAdapter(this, all, selected);
         fillGrid();
     }
 
@@ -79,8 +80,31 @@ class OutfitCreateEditActivity extends AppCompatActivity {
             selected = outfit.getArticles();
             if (ab != null) ab.setTitle("Editar conjunto");
         }
-
         gridView.setAdapter(adapter);
     }
 
+    private void fillGrid() {
+        gridView.setColumnWidth(getResources().getDisplayMetrics().widthPixels / 3);
+        gridView.setHorizontalSpacing(8);
+        gridView.setNumColumns(3);
+        gridView.setOnItemClickListener((parent, v, position, id) -> selectForOutfit(v, position));
+        adapter.notifyDataSetChanged();
+        progressBar.setVisibility(View.GONE);
+    }
+
+    private void selectForOutfit(View v, int position) {
+        Article clicked = adapter.getItem(position);
+        if (adapter.getSelected().contains(clicked)) {
+            adapter.getSelected().remove(clicked);
+            ((SelectableArticleGridItemView) v).display(false);
+        } else {
+            adapter.getSelected().add(clicked);
+            ((SelectableArticleGridItemView) v).display(true);
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        return super.onSupportNavigateUp();
+    }
 }

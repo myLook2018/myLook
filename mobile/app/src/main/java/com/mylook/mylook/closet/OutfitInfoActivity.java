@@ -27,6 +27,7 @@ import static com.mylook.mylook.closet.OutfitCreateEditActivity.OUTFIT_EDIT_REQU
 public class OutfitInfoActivity extends AppCompatActivity {
 
     private static final int OUTFIT_DELETED = 1;
+    private static final int FAVORITE_DELETED = 2;
     private GridView gridView;
     private ArticlesGridAdapter adapter;
     private ProgressBar progressBar;
@@ -54,10 +55,10 @@ public class OutfitInfoActivity extends AppCompatActivity {
     private void getOutfitFromIntent() {
         Intent intent = getIntent();
         outfit = (Outfit) intent.getSerializableExtra("outfit");
-        adapter = new ArticlesGridAdapter(this, outfit.getArticles());
-        gridView.setAdapter(adapter);
         ActionBar ab = getSupportActionBar();
         if (ab != null) ab.setTitle(outfit.getName());
+        adapter = new ArticlesGridAdapter(this, outfit.getArticles());
+        gridView.setAdapter(adapter);
     }
 
     private void fillGrid() {
@@ -98,7 +99,7 @@ public class OutfitInfoActivity extends AppCompatActivity {
     }
 
     private void deleteOutfit() {
-        setResult(OUTFIT_DELETED, new Intent().putExtra("outfitId", outfit));
+        setResult(OUTFIT_DELETED, new Intent().putExtra("outfit", outfit));
         finish();
     }
 
@@ -141,9 +142,19 @@ public class OutfitInfoActivity extends AppCompatActivity {
             outfit.getFavorites().remove(adapter.getItem(position).getArticleId());
             outfit.getArticles().remove(adapter.getItem(position));
             adapter.notifyDataSetChanged();
+            setResult(FAVORITE_DELETED, new Intent().putExtra("outfit", outfit));
         } else {
             displayToast("Error al eliminar del ropero");
         }
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        return super.onSupportNavigateUp();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        //TODO
+    }
 }
