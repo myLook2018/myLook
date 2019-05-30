@@ -3,7 +3,6 @@ package com.mylook.mylook.closet;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
@@ -26,7 +25,6 @@ class ClosetModel extends ViewModel {
 
     void load() {
         loadFavorites();
-        loadOutfits();
     }
 
     LiveData<List<Article>> getFavorites() {
@@ -46,6 +44,7 @@ class ClosetModel extends ViewModel {
                             return art;
                         }).collect(Collectors.toList());
                         favorites.postValue(favoritesList);
+                        loadOutfits();
                     }
                 });
     }
@@ -76,10 +75,9 @@ class ClosetModel extends ViewModel {
                             .collection("outfits").document(o.getOutfitId()),
                     "favorites", FieldValue.arrayRemove(articleId)));
             if (batch.commit().isSuccessful()) {
+                outfitsList.removeAll(outfitsToChange.collect(Collectors.toList()));
                 return (int) outfitsToChange.count();
-            } else {
-                return -1;
-            }
+            } else return -1;
         } else return 0;
     }
 
@@ -121,5 +119,9 @@ class ClosetModel extends ViewModel {
             }
         }
         return false;
+    }
+
+    void reloadOutfits() {
+        loadOutfits();
     }
 }

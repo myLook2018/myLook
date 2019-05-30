@@ -23,11 +23,13 @@ import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.utils.ArticlesGridAdapter;
 
 import static com.mylook.mylook.closet.OutfitCreateEditActivity.OUTFIT_EDIT_REQUEST;
+import static com.mylook.mylook.closet.OutfitCreateEditActivity.OUTFIT_UNCHANGED;
 
 public class OutfitInfoActivity extends AppCompatActivity {
 
-    private static final int OUTFIT_DELETED = 1;
-    private static final int FAVORITE_DELETED = 2;
+    static final int OUTFIT_INFO_REQUEST = 1;
+    static final int OUTFIT_DELETED = 1;
+    static final int OUTFIT_EDITED = 2;
     private GridView gridView;
     private ArticlesGridAdapter adapter;
     private ProgressBar progressBar;
@@ -82,6 +84,9 @@ public class OutfitInfoActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
             case R.id.edit_outfit:
                 editOutfit();
                 return true;
@@ -143,19 +148,21 @@ public class OutfitInfoActivity extends AppCompatActivity {
             outfit.getFavorites().remove(adapter.getItem(position).getArticleId());
             outfit.getArticles().remove(adapter.getItem(position));
             adapter.notifyDataSetChanged();
-            setResult(FAVORITE_DELETED, new Intent().putExtra("outfit", outfit));
+            setResult(OUTFIT_EDITED, new Intent().putExtra("outfit", outfit));
         } else {
             displayToast("Error al eliminar del ropero");
         }
     }
 
     @Override
-    public boolean onSupportNavigateUp() {
-        return super.onSupportNavigateUp();
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        //TODO
+        if (requestCode == OUTFIT_EDIT_REQUEST) {
+            if (resultCode == OUTFIT_EDITED) {
+                //TODO consultar por los favoritos todos, del intent sacar el outfit,
+                // crear un nuevo objeto outfit y reemplazarlo, hacer el cruce de datos y renderizar de nuevo UI
+                // setResult(editado) para identificar cuando regrese a OutfitsTab que debe consultar de nuevo
+            }
+            //TODO sino devuelve OUTFIT_UNCHANGED (no se preve funcionalidad)
+        }
     }
 }

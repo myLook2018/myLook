@@ -14,14 +14,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
+
 import com.mylook.mylook.R;
 
-import static android.app.Activity.RESULT_OK;
+import static com.mylook.mylook.closet.OutfitCreateEditActivity.OUTFIT_CREATED;
+import static com.mylook.mylook.closet.OutfitCreateEditActivity.OUTFIT_CREATE_REQUEST;
+import static com.mylook.mylook.closet.OutfitCreateEditActivity.OUTFIT_EDIT_REQUEST;
+import static com.mylook.mylook.closet.OutfitInfoActivity.OUTFIT_DELETED;
+import static com.mylook.mylook.closet.OutfitInfoActivity.OUTFIT_EDITED;
+import static com.mylook.mylook.closet.OutfitInfoActivity.OUTFIT_INFO_REQUEST;
 
 public class OutfitsTab extends Fragment implements OutfitListAdapter.OutfitClickListener,
         OutfitListAdapter.OutfitLongClickListener {
-
-    static final int OUTFIT_INFO_REQUEST = 1;
 
     private RecyclerView outfitsRecyclerView;
     private OutfitListAdapter adapter;
@@ -40,7 +45,6 @@ public class OutfitsTab extends Fragment implements OutfitListAdapter.OutfitClic
             adapter.setClickListener(this);
             adapter.setLongClickListener(this);
             outfitsRecyclerView.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
             if (mProgressBar != null) mProgressBar.setVisibility(View.GONE);
         });
     }
@@ -60,12 +64,7 @@ public class OutfitsTab extends Fragment implements OutfitListAdapter.OutfitClic
         mProgressBar = view.findViewById(R.id.progressbar_outfits);
         mProgressBar.setVisibility(View.VISIBLE);
         FloatingActionButton addOutfit = view.findViewById(R.id.fab_add_outfit);
-        addOutfit.setOnClickListener(v -> createInputDialog());
-    }
-
-    //TODO despues de seleccionar las prendas (en la actividad que se encargue)
-    public void createInputDialog() {
-
+        addOutfit.setOnClickListener(v -> createOutfit());
     }
 
     @Override
@@ -91,7 +90,7 @@ public class OutfitsTab extends Fragment implements OutfitListAdapter.OutfitClic
                     editOutfit(position);
                     break;
                 case 2:
-                    deleteOutfit(position);
+                    confirmDeleteOutfit(position);
                     break;
                 default:
                     break;
@@ -103,47 +102,57 @@ public class OutfitsTab extends Fragment implements OutfitListAdapter.OutfitClic
 
     private void showOutfit(int position) {
         startActivityForResult(new Intent(getContext(), OutfitInfoActivity.class)
-                .putExtra("outfit", adapter.getItem(position)),
-                OUTFIT_INFO_REQUEST);
+                .putExtra("outfit", adapter.getItem(position)), OUTFIT_INFO_REQUEST);
+    }
+
+    private void createOutfit() {
+        startActivityForResult(new Intent(getContext(), OutfitCreateEditActivity.class)
+                .putExtra("create", true), OUTFIT_CREATE_REQUEST);
     }
 
     private void editOutfit(int position) {
-        /*AlertDialog.Builder dialog = new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme);
-        EditText input = new EditText(getContext());
-        LinearLayout linearLayout = new LinearLayout(getContext());
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        input.setHint("Nombre");
-        input.setLayoutParams(layoutParams);
-        linearLayout.addView(input);
-        linearLayout.setPadding(60, 20, 60, 20);
-        layoutParams.gravity = Gravity.CENTER;
-        dialog.setView(linearLayout);
+        startActivityForResult(new Intent(getContext(), OutfitCreateEditActivity.class)
+                .putExtra("create", false)
+                .putExtra("outfit", adapter.getItem(position)), OUTFIT_CREATE_REQUEST);
+    }
 
-        dialog.setTitle("Elegí un nombre para tu conjunto")
-                .setPositiveButton("Aceptar", (paramDialogInterface, paramInt) -> {
-                    if ("".equals(input.getText().toString())) {
-                        Toast.makeText(getContext(), "El nombre no puede estar vacío",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                }).create().show();
-        Intent intent = new Intent(getActivity(), CreateOutfitActivity.class);
-        intent.putExtra("name", input.getText().toString());
-        intent.putExtra("category", "normal");
-        intent.putExtra("userID", FirebaseAuth.getInstance().getCurrentUser().getUid());
-        startActivity(intent);*/
+    private void confirmDeleteOutfit(int position) {
+        new AlertDialog.Builder(getContext())
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Eliminar conjunto")
+                .setMessage("Estás seguro de que querés eliminar el conjunto?")
+                .setPositiveButton("Eliminar", (dialog, which) -> deleteOutfit(position))
+                .setNegativeButton("Cancelar", null)
+                .show();
     }
 
     private void deleteOutfit(int position) {
+        if (closet.removeOutfit(position)) {
+            displayToast("Conjunto eliminado");
+        } else {
+            displayToast("Error al eliminar conjunto");
+        }
+    }
 
+    private void displayToast(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == OUTFIT_INFO_REQUEST) {
-            if (resultCode == RESULT_OK) {
-
-            }
+        switch (requestCode) {
+            case OUTFIT_INFO_REQUEST:
+                if (resultCode == OUTFIT_EDITED) closet.reloadOutfits();
+                if (resultCode == OUTFIT_DELETED) closet.reloadOutfits();
+                break;
+            case OUTFIT_CREATE_REQUEST:
+                if (resultCode == OUTFIT_CREATED) closet.reloadOutfits();
+                break;
+            case OUTFIT_EDIT_REQUEST:
+                if (resultCode == OUTFIT_EDITED) closet.reloadOutfits();
+                break;
+            //TODO agregar el caso de ArticleInfoActivity en el cual saco de favoritos,
+            // paso por intent el id del articulo, onSuccess del delete hago reload
         }
     }
 }

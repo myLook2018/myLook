@@ -19,7 +19,7 @@
             android:focusable="true"
             android:theme="@style/AppTheme.Toolbar"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
-            app:titleTextColor="@color/white"/>
+            app:titleTextColor="@color/white" />
 
         <EditText
             android:id="@+id/outfit_create_edit_name"

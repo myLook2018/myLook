@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,18 +18,24 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Interaction;
+import com.mylook.mylook.entities.Outfit;
 import com.mylook.mylook.storeProfile.StoreActivity;
 import com.mylook.mylook.utils.SlidingImageAdapter;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class ArticleInfoActivity extends AppCompatActivity {
 
+    public static final int ARTICLE_INFO_REQUEST = 1;
+    private static final int FAVORITE_CHANGED = 2;
+    private static final int FAVORITE_UNCHANGED = 3;
     private Context mContext = ArticleInfoActivity.this;
     private Article article;
     private FloatingActionButton btnCloset;
@@ -36,6 +43,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
     private LinearLayout lnlSizes, lnlColors;
     private TextView txtMaterial, txtCost, txtTitle, txtStoreName;
     private boolean inCloset;
+    private boolean alreadyInCloset;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,14 +75,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
         lnlColors = findViewById(R.id.lnlColors);
         ImageView backArrow = findViewById(R.id.backArrow);
         backArrow.setOnClickListener(view -> finish());
-        btnCloset.setOnClickListener(v -> {
-            if (inCloset) {
-                removeFromCloset();
-            } else {
-                saveInCloset();
-            }
-            inCloset = !inCloset;
-        });
+        btnCloset.setOnClickListener(v -> changeSavedInCloset());
         ViewPager articlePager;
         articlePager = findViewById(R.id.view_pager_article);
         if (imageArraySlider == null) {
@@ -90,6 +91,20 @@ public class ArticleInfoActivity extends AppCompatActivity {
             indicator.setViewPager(articlePager);
             indicator.setRadius(5 * getResources().getDisplayMetrics().density);
         }
+    }
+
+    private void changeSavedInCloset() {
+        if (alreadyInCloset) {
+            displayMessage("Ya se encuentra en favoritos");
+            return;
+        }
+        inCloset = !inCloset;
+        if (inCloset) {
+            btnCloset.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.ic_favorite_border_white_48dp));
+        } else {
+            btnCloset.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.ic_favorite_white_48dp));
+        }
+        //TODO change state UI
     }
 
     private void setDetail() {
@@ -132,52 +147,36 @@ public class ArticleInfoActivity extends AppCompatActivity {
                 }
                 if (Objects.equals(document.get("favorites"), FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                     btnCloset.setEnabled(true);
+                    alreadyInCloset = true;
                     inCloset = true;
-                    return;
+                } else {
+                    btnCloset.setEnabled(true);
+                    alreadyInCloset = false;
+                    inCloset = false;
                 }
-                btnCloset.setEnabled(true);
-                inCloset = false;
             } else {
                 btnCloset.setEnabled(false);
             }
         });
     }
 
-    private void removeFromCloset() {
-        btnCloset.setEnabled(false);
-        FirebaseFirestore.getInstance().collection("articles").document(article.getArticleId())
-                .update("favorites", FieldValue.arrayRemove(FirebaseAuth.getInstance().getCurrentUser().getUid()))
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        sendNewInteraction();
-                        displayMessage("Se eliminó de tu ropero");
-                    } else {
-                        displayMessage("Error al eliminar del ropero");
-                    }
-                    btnCloset.setEnabled(true);
-                });
+    @Override
+    protected void onDestroy() {
+        if (inCloset) {
+            FirebaseFirestore.getInstance().collection("articles").document(article.getArticleId())
+                    .update("favorites", FieldValue.arrayUnion(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            sendNewInteraction();
+                            displayMessage("Se añadió a tu ropero");
+                        } else {
+                            displayMessage("Error al añadir al ropero");
+                        }
+                    });
+        }
+        super.onDestroy();
     }
 
-    private void saveInCloset() {
-        btnCloset.setEnabled(false);
-        FirebaseFirestore.getInstance().collection("articles").document(article.getArticleId())
-                .update("favorites", FieldValue.arrayUnion(FirebaseAuth.getInstance().getCurrentUser().getUid()))
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        sendNewInteraction();
-                        displayMessage("Se añadió a tu ropero");
-                    } else {
-                        displayMessage("Error al añadir al ropero");
-                    }
-                    btnCloset.setEnabled(true);
-                });
-    }
-
-    private void displayMessage(String message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
-    // TODO eliminar y contar desde articulos... hace falta refactorizar relacionados
     private void sendNewInteraction() {
         Interaction userInteraction = new Interaction();
         Log.e("PROMOTION LEVEL", article.getPromotionLevel() + "");
@@ -190,5 +189,9 @@ public class ArticleInfoActivity extends AppCompatActivity {
         userInteraction.setTags(tags);
         userInteraction.setUserId(FirebaseAuth.getInstance().getCurrentUser().getUid());
         FirebaseFirestore.getInstance().collection("interactions").add(userInteraction);
+    }
+
+    private void displayMessage(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 }

@@ -9,6 +9,7 @@ public class Outfit implements Serializable {
     private List<String> favorites;
     private List<Article> articles;
     private String outfitId;
+    private String userID;
 
     public Outfit() {
     }
@@ -57,5 +58,13 @@ public class Outfit implements Serializable {
 
     public void setArticles(List<Article> articles) {
         this.articles = articles;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 }

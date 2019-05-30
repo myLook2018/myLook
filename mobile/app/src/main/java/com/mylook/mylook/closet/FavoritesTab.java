@@ -15,7 +15,6 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.mylook.mylook.R;
-import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.utils.ArticlesGridAdapter;
 
@@ -57,11 +56,11 @@ public class FavoritesTab extends Fragment {
         favoritesGridView.setHorizontalSpacing(8);
         favoritesGridView.setNumColumns(3);
         favoritesGridView.setOnItemClickListener((parent, v, position, id) -> showFavorite(position));
-        favoritesGridView.setOnItemLongClickListener((parent, v, position, id) -> outfitOptions(position));
+        favoritesGridView.setOnItemLongClickListener((parent, v, position, id) -> favoriteOptions(position));
     }
 
-    private boolean outfitOptions(int position) {
-        String[] options = {"Ver", "Agregar a conjunto", "Eliminar"};
+    private boolean favoriteOptions(int position) {
+        String[] options = {"Ver", "Eliminar"};
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Favorito");
         builder.setItems(options, (dialog, which) -> {
@@ -70,10 +69,7 @@ public class FavoritesTab extends Fragment {
                     showFavorite(position);
                     break;
                 case 1:
-                    addFavoriteToOutfit(position);
-                    break;
-                case 2:
-                    deleteFavorite(position);
+                    confirmDeleteFavorite(position);
                     break;
                 default:
                     break;
@@ -84,13 +80,19 @@ public class FavoritesTab extends Fragment {
     }
 
     private void showFavorite(int position) {
+        //TODO startActivityForResult
         startActivity(new Intent(getContext(), ArticleInfoActivity.class)
                 .putExtra("article", adapter.getItem(position)));
     }
 
-    private void addFavoriteToOutfit(int position) {
-        displayToast("Agregar " + position);
-        //TODO ????? agregar tipo playlist
+    private void confirmDeleteFavorite(int position) {
+        new AlertDialog.Builder(getContext())
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Eliminar favorito")
+                .setMessage("Estás seguro de que querés eliminar el favorito?")
+                .setPositiveButton("Eliminar", (dialog, which) -> deleteFavorite(position))
+                .setNegativeButton("Cancelar", null)
+                .show();
     }
 
     private void deleteFavorite(int position) {
@@ -101,11 +103,9 @@ public class FavoritesTab extends Fragment {
                 break;
             case 0:
                 displayToast("Se eliminó de tu ropero");
-                adapter.notifyDataSetChanged();
                 break;
             default:
                 displayToast("Se eliminó de tu ropero y actualizaron " + res + " conjuntos");
-                adapter.notifyDataSetChanged();
                 break;
         }
     }
