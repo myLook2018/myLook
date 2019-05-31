@@ -31,7 +31,7 @@ import com.mylook.mylook.utils.SectionsPagerAdapter;
 
 import java.util.Date;
 
-public class StoreActivity extends AppCompatActivity {
+public class StoreActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener{
 
     private static ViewPager viewPagerStoreInfo;
     private TabLayout tab;
@@ -44,6 +44,8 @@ public class StoreActivity extends AppCompatActivity {
     private String coverPh;
     private StoreInfoFragment infoStoreFragment;
     private StoreContactFragment contactStoreFragment;
+    private ShopwindowFragment shopwindowFragment;
+    private CatalogFragment catalogFragment;
     private ReputationFragment reputationFragment;
     private Date registerDateReputacion;
 
@@ -71,11 +73,10 @@ public class StoreActivity extends AppCompatActivity {
 
         contactStoreFragment = new StoreContactFragment(StoreActivity.this, nombreTiendaPerfil);
         infoStoreFragment = new StoreInfoFragment(StoreActivity.this, nombreTiendaPerfil);
-        reputationFragment = new ReputationFragment(nombreTiendaPerfil);
-        //loadVisit();
-        visit = new Visit(nombreTiendaPerfil, user.getUid());
 
         setupViewPagerInfo(viewPagerStoreInfo);
+
+        visit = new Visit(nombreTiendaPerfil, user.getUid());
 
         db.collection("stores").whereEqualTo("storeName", nombreTiendaPerfil)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -96,7 +97,7 @@ public class StoreActivity extends AppCompatActivity {
                     infoStoreFragment.setStorePhoto(storeAux.getProfilePh());
                     coverPh = storeAux.getCoverPh();
 
-                    reputationFragment.setRegisterDate(storeAux.getRegisterDate());
+                    registerDateReputacion=storeAux.getRegisterDate();
 
                     setupViewPager(viewPagerStoreArticles);
                     tab.setupWithViewPager(viewPagerStoreArticles);
@@ -106,6 +107,22 @@ public class StoreActivity extends AppCompatActivity {
                 }
             }
         });
+
+    }
+
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        Log.d("Tab Selected", "onTabSelected: ENTRO");
+        viewPagerStoreArticles.setCurrentItem(tab.getPosition());
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
 
     }
 
@@ -134,10 +151,16 @@ public class StoreActivity extends AppCompatActivity {
      */
     private void setupViewPager(ViewPager viewPager) {
         Log.e("VIEW PAGER", "CARGAAAAAAAAAA");
+        shopwindowFragment = new ShopwindowFragment(nombreTiendaPerfil, coverPh);
+        catalogFragment = new CatalogFragment(nombreTiendaPerfil);
+        reputationFragment = new ReputationFragment(nombreTiendaPerfil);
+        if (registerDateReputacion!=null){
+            reputationFragment.setRegisterDate(registerDateReputacion);
+        }
         StoreTabAdapter adapter = new StoreTabAdapter(getSupportFragmentManager(), 3);
-        adapter.addFragment(0, new ShopwindowFragment(nombreTiendaPerfil, coverPh), "Vidriera");
-        adapter.addFragment(1, new CatalogFragment(nombreTiendaPerfil), "Catalogo");
-        adapter.addFragment(2, reputationFragment, "Reputación");
+        adapter.addFragment(0,shopwindowFragment, "Vidriera");
+        adapter.addFragment(1,catalogFragment, "Catalogo");
+        adapter.addFragment(2,reputationFragment, "Reputación");
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(0);
         Log.d("view pager adapter tabs", "adapter del fragmento: " + adapter.getPageTitle(0));
@@ -151,6 +174,7 @@ public class StoreActivity extends AppCompatActivity {
         viewPagerStoreInfo.setAdapter(adapter);
         Log.d("view pager info store", "setupViewPagerInfo: ENTRO");
     }
+
 
     @Override
     public boolean onSupportNavigateUp() {

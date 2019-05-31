@@ -95,7 +95,6 @@ public class GridImageAdapter extends ArrayAdapter {
             });
         }
         Glide.with(mContext).load(imgUrl).into(holder.image);
-        //aca iria el Glide
         return convertView;
     }
 

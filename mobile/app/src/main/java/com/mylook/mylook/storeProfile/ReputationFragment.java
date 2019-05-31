@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +45,7 @@ public class ReputationFragment extends Fragment {
 
     @SuppressLint("ValidFragment")
     public ReputationFragment(String name) {
-
+        Log.d("Constructor Reputacion", "ReputationFragment: ENTRO");
         dB = FirebaseFirestore.getInstance();
         this.storeName = name;
 
@@ -53,11 +54,9 @@ public class ReputationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d("Reputation Fragment", "onCreateView: El container es " + container.toString());
         View rootView = inflater.inflate(R.layout.fragment_store_reputation, container, false);
         initElements(rootView);
-        countRecommendations();
-        countSubscribers();
-        lblDate.setText((CharSequence) registerDate);
         return rootView;
     }
 
@@ -70,6 +69,9 @@ public class ReputationFragment extends Fragment {
         ratingBar = rootView.findViewById(R.id.ratingBar);
         lblCantRecommendations = rootView.findViewById(R.id.lblCantRecommendations);
         lblRecommendationsDescr = rootView.findViewById(R.id.lblRecomendationsDescr);
+        lblDate.setText((CharSequence) registerDate);
+        countRecommendations();
+        countSubscribers();
     }
 
     public void setRegisterDate(Date date) {
@@ -143,4 +145,5 @@ public class ReputationFragment extends Fragment {
         } else description = "Sus recomendaciones son excelentes!";
         return description;
     }
+
 }

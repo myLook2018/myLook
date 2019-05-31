@@ -1,18 +1,13 @@
 package com.mylook.mylook.storeProfile;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -30,12 +25,14 @@ public class CatalogFragment extends Fragment {
 
     private FirebaseFirestore dB = null;
     private static String storeName;
+    private GridImageAdapter adapter;
 
     public CatalogFragment() {
     }
 
     @SuppressLint("ValidFragment")
     public CatalogFragment(String name) {
+        Log.d("Constructor CATALOGO", "CatalogFragment: ENTRO");
         dB = FirebaseFirestore.getInstance();
         storeName = name;
     }
@@ -43,21 +40,23 @@ public class CatalogFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         Log.d("Catalog Fragment", "onCreateView: El container es " + container.toString());
         View rootView = inflater.inflate(R.layout.fragment_store_catalog, container, false);
-        // Obtención del grid view
         GridViewWithHeaderAndFooter gridCatalogo = rootView.findViewById(R.id.gridview_store_catalog);
-        // Inicializar el grid view
         setupGridView(gridCatalogo);
         return rootView;
     }
 
 
     private void setupGridView(final GridViewWithHeaderAndFooter grid) {
-
         Log.d("Store Catalogo gridView", "setupGridView: Setting up store grid del catalogo.");
-        final ArrayList<Article> storeArticles = new ArrayList<Article>();
+        adapter = new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview, getCatalogStore());
+        grid.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+    }
+
+    private ArrayList<Article> getCatalogStore() {
+        final ArrayList<Article> auxCatalogArticles = new ArrayList<>();
         dB.collection("articles").whereEqualTo("storeName", storeName).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -65,15 +64,15 @@ public class CatalogFragment extends Fragment {
                     for (DocumentSnapshot documentReference : task.getResult().getDocuments()) {
                         Article art = documentReference.toObject(Article.class);
                         art.setArticleId(documentReference.getId());
-                        storeArticles.add(art);
+                        auxCatalogArticles.add(art);
                     }
-                    Log.e("CATALOGOOOOO", getActivity().getLocalClassName());
-                    grid.setAdapter(new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview, storeArticles));
+                    Log.d("Aux Array Catalog ", "Size array: " + auxCatalogArticles.size());
+                    adapter.notifyDataSetChanged();
                 } else {
                     Log.e("Firestore task", "onComplete: " + task.getException());
                 }
             }
         });
-
+        return auxCatalogArticles;
     }
 }

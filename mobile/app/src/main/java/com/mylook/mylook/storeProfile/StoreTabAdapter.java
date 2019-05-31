@@ -11,25 +11,28 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StoreTabAdapter extends FragmentStatePagerAdapter {
+public class StoreTabAdapter extends FragmentPagerAdapter {
     int mNumOfTabs;
-    private final List<Fragment> mFragmentList = new ArrayList<>();
-    private final List<String> mFragmentTitleList = new ArrayList<>();
+    private final ArrayList<Fragment> mFragmentList = new ArrayList<>();
+    private final ArrayList<String> mFragmentTitleList = new ArrayList<>();
 
     public StoreTabAdapter(FragmentManager fm, int NumOfTabs) {
         super(fm);
         this.mNumOfTabs = NumOfTabs;
+        Log.d("Constructor", "StoreTabAdapter: ENTRO");
     }
 
     public void addFragment(int index, Fragment fragment, String title) {
-        mFragmentList.add(index,fragment);
-        mFragmentTitleList.add(index,title);
+        Log.d("Store Tab Adapter", "addFragment: " + index);
+        Log.d("Store Tab Adapter", "addFragment: " + title);
+        mFragmentList.add(index, fragment);
+        mFragmentTitleList.add(index, title);
     }
 
     @Override
     public Fragment getItem(int position) {
-        Log.d("Store tab adaprte", "getItem: ENTRO");
-        switch (position){
+        Log.d("Store tab adapter", "getItem: ENTRO a la posicion " + position);
+        switch (position) {
             case 0:
                 Log.d("case 0", "getItem: ENTRO" + mFragmentTitleList.get(0));
                 Log.d("switch", "getItem: Size list" + getCount());
@@ -42,8 +45,10 @@ public class StoreTabAdapter extends FragmentStatePagerAdapter {
                 Log.d("case 2", "getItem: ENTRO" + mFragmentTitleList.get(2));
                 Log.d("switch", "getItem: Size list" + getCount());
                 return mFragmentList.get(2);
+            default:
+                return null;
         }
-       return null;
+        //return mFragmentList.get(position);
     }
 
 
