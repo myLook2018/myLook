@@ -37,7 +37,6 @@ public class ArticlesGridAdapter extends BaseAdapter {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.d("", "getView: rendering grid view item" + position);
         ImageView imageView;
         if (convertView == null) {
             imageView = new ImageView(context);

@@ -32,7 +32,6 @@ class ClosetModel extends ViewModel {
     }
 
     private void loadFavorites() {
-        favorites = new MutableLiveData<>();
         FirebaseFirestore.getInstance().collection("articles")
                 .whereArrayContains("favorites", FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get()
@@ -86,7 +85,6 @@ class ClosetModel extends ViewModel {
     }
 
     private void loadOutfits() {
-        outfits = new MutableLiveData<>();
         FirebaseFirestore.getInstance().collection("outfits")
                 .whereEqualTo("userID",
                         FirebaseAuth.getInstance().getCurrentUser().getUid())

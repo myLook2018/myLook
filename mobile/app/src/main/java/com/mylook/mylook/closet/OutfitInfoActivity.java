@@ -18,12 +18,14 @@ import android.widget.Toast;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
+import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Outfit;
 import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.utils.ArticlesGridAdapter;
 
+import java.util.List;
+
 import static com.mylook.mylook.closet.OutfitCreateEditActivity.OUTFIT_EDIT_REQUEST;
-import static com.mylook.mylook.closet.OutfitCreateEditActivity.OUTFIT_UNCHANGED;
 
 public class OutfitInfoActivity extends AppCompatActivity {
 
@@ -158,6 +160,17 @@ public class OutfitInfoActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == OUTFIT_EDIT_REQUEST) {
             if (resultCode == OUTFIT_EDITED) {
+                progressBar.setVisibility(View.VISIBLE);
+                outfit = (Outfit) (data != null ? data.getSerializableExtra("outfit") : null);
+                if (outfit != null) {
+                    ActionBar ab = getSupportActionBar();
+                    if (ab != null) ab.setTitle(outfit.getName());
+                    gridView.setAdapter(new ArticlesGridAdapter(this, outfit.getArticles()));
+                } else {
+                    displayToast("Error al mostrar los cambios en el conjunto");
+                }
+                setResult(OUTFIT_EDITED, data);
+                progressBar.setVisibility(View.GONE);
                 //TODO consultar por los favoritos todos, del intent sacar el outfit,
                 // crear un nuevo objeto outfit y reemplazarlo, hacer el cruce de datos y renderizar de nuevo UI
                 // setResult(editado) para identificar cuando regrese a OutfitsTab que debe consultar de nuevo

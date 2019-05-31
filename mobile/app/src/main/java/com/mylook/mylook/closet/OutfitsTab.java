@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -25,8 +27,7 @@ import static com.mylook.mylook.closet.OutfitInfoActivity.OUTFIT_DELETED;
 import static com.mylook.mylook.closet.OutfitInfoActivity.OUTFIT_EDITED;
 import static com.mylook.mylook.closet.OutfitInfoActivity.OUTFIT_INFO_REQUEST;
 
-public class OutfitsTab extends Fragment implements OutfitListAdapter.OutfitClickListener,
-        OutfitListAdapter.OutfitLongClickListener {
+public class OutfitsTab extends Fragment implements OutfitListAdapter.OutfitClickListener {
 
     private RecyclerView outfitsRecyclerView;
     private OutfitListAdapter adapter;
@@ -41,9 +42,7 @@ public class OutfitsTab extends Fragment implements OutfitListAdapter.OutfitClic
         super.onCreate(savedInstanceState);
         closet = ViewModelProviders.of(getParentFragment()).get(ClosetModel.class);
         closet.getOutfits().observe(this, outfits -> {
-            adapter = new OutfitListAdapter(getActivity(), outfits);
-            adapter.setClickListener(this);
-            adapter.setLongClickListener(this);
+            adapter = new OutfitListAdapter(getActivity(), outfits, this);
             outfitsRecyclerView.setAdapter(adapter);
             if (mProgressBar != null) mProgressBar.setVisibility(View.GONE);
         });
@@ -67,75 +66,40 @@ public class OutfitsTab extends Fragment implements OutfitListAdapter.OutfitClic
         addOutfit.setOnClickListener(v -> createOutfit());
     }
 
-    @Override
-    public void onOutfitClick(View view, int position) {
-        showOutfit(position);
+    private void displayToast(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public boolean onOutfitLongClick(View view, int position) {
-        return outfitOptions(position);
-    }
-
-    private boolean outfitOptions(int position) {
-        String[] options = {"Ver", "Editar", "Eliminar"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Conjunto");
-        builder.setItems(options, (dialog, which) -> {
-            switch (which) {
-                case 0:
-                    showOutfit(position);
-                    break;
-                case 1:
-                    editOutfit(position);
-                    break;
-                case 2:
-                    confirmDeleteOutfit(position);
-                    break;
-                default:
-                    break;
-            }
-        });
-        builder.show();
-        return true;
-    }
-
-    private void showOutfit(int position) {
+    public void showOutfit(View v, int position) {
         startActivityForResult(new Intent(getContext(), OutfitInfoActivity.class)
                 .putExtra("outfit", adapter.getItem(position)), OUTFIT_INFO_REQUEST);
     }
 
-    private void createOutfit() {
-        startActivityForResult(new Intent(getContext(), OutfitCreateEditActivity.class)
-                .putExtra("create", true), OUTFIT_CREATE_REQUEST);
-    }
-
-    private void editOutfit(int position) {
+    @Override
+    public void editOutfit(View v, int position) {
         startActivityForResult(new Intent(getContext(), OutfitCreateEditActivity.class)
                 .putExtra("create", false)
                 .putExtra("outfit", adapter.getItem(position)), OUTFIT_CREATE_REQUEST);
     }
 
-    private void confirmDeleteOutfit(int position) {
+    @Override
+    public void deleteOutfit(View v, int position) {
         new AlertDialog.Builder(getContext())
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Eliminar conjunto")
                 .setMessage("Estás seguro de que querés eliminar el conjunto?")
-                .setPositiveButton("Eliminar", (dialog, which) -> deleteOutfit(position))
+                .setPositiveButton("Eliminar", (dialog, which) -> {
+                    if (closet.removeOutfit(position)) displayToast("Conjunto eliminado");
+                    else displayToast("Error al eliminar conjunto");
+                })
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
 
-    private void deleteOutfit(int position) {
-        if (closet.removeOutfit(position)) {
-            displayToast("Conjunto eliminado");
-        } else {
-            displayToast("Error al eliminar conjunto");
-        }
-    }
-
-    private void displayToast(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    private void createOutfit() {
+        startActivityForResult(new Intent(getContext(), OutfitCreateEditActivity.class)
+                .putExtra("create", true), OUTFIT_CREATE_REQUEST);
     }
 
     @Override
@@ -155,4 +119,6 @@ public class OutfitsTab extends Fragment implements OutfitListAdapter.OutfitClic
             // paso por intent el id del articulo, onSuccess del delete hago reload
         }
     }
+
+
 }

@@ -2,7 +2,6 @@ package com.mylook.mylook.closet;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -167,7 +166,7 @@ public class OutfitCreateEditActivity extends AppCompatActivity {
         } else {
             HashMap<String, Object> data = new HashMap<>();
             //TODO cambiar categoria (capaz sacarlo)
-            data.put("name", editText.getText());
+            data.put("name", editText.getText().toString());
             data.put("category", "");
             data.put("userID", FirebaseAuth.getInstance().getCurrentUser().getUid());
             data.put("favorites", selectedIds);
@@ -197,7 +196,15 @@ public class OutfitCreateEditActivity extends AppCompatActivity {
             if (FirebaseFirestore.getInstance().collection("outfits")
                     .document(outfitDocument).set(data).isSuccessful()) {
                 displayToast("Conjunto " + editText.getText() + " editado");
-                setResult(OUTFIT_EDITED);
+                Outfit outfit = new Outfit();
+                outfit.setOutfitId(outfitDocument);
+                outfit.setName(editText.getText().toString());
+                outfit.setCategory("");
+                outfit.setUserID(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                List<Article> list = new ArrayList<>();
+                selectedIndexes.forEach(i -> list.add(adapter.getItem(i)));
+                outfit.setArticles(list);
+                setResult(OUTFIT_EDITED, new Intent().putExtra("outfit", outfit));
                 return true;
             } else {
                 displayToast("Error al editar el conjunto");
