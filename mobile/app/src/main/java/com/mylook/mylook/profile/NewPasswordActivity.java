@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -27,6 +28,7 @@ import com.mylook.mylook.dialogs.DialogManager;
 public class NewPasswordActivity extends AppCompatActivity {
     private EditText oldPassword, newPassword, newPasswordVerif;
     private TextInputLayout oldPassInput, newPassInput, newPassVerifInput;
+    private ProgressBar mProgressBar;
     private ImageButton btnChange;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private Toolbar tb;
@@ -45,12 +47,8 @@ public class NewPasswordActivity extends AppCompatActivity {
         newPassword = findViewById(R.id.txtPassword);
         newPasswordVerif = findViewById(R.id.txtPasswordVerif);
         btnChange = findViewById(R.id.btn_changePassword);
-        btnChange.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                validateFields();
-            }
-        });
+        mProgressBar = findViewById(R.id.progressbar);
+        mProgressBar.setVisibility(View.GONE);
         tb = findViewById(R.id.info_account_toolbar);
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
@@ -65,9 +63,17 @@ public class NewPasswordActivity extends AppCompatActivity {
         oldPassInput.setErrorEnabled(false);
         newPassVerifInput.setErrorEnabled(false);
         newPassInput.setErrorEnabled(false);
+        btnChange.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                validateFields();
+            }
+        });
+
     }
 
     private void validateFields() {
+        mProgressBar.setVisibility(View.VISIBLE);
         oldPassInput.setErrorEnabled(false);
         newPassVerifInput.setErrorEnabled(false);
         newPassInput.setErrorEnabled(false);
@@ -77,6 +83,7 @@ public class NewPasswordActivity extends AppCompatActivity {
         newPasswordVerif.clearFocus();
         if (newPassword.getText().length() < 6 || newPasswordVerif.getText().length() < 6) {
             Toast.makeText(NewPasswordActivity.this, "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT);
+            mProgressBar.setVisibility(View.INVISIBLE);
         } else {
             if (newPassword.getText().toString().equals(newPasswordVerif.getText().toString())) {
                 AuthCredential credential = EmailAuthProvider
@@ -90,6 +97,7 @@ public class NewPasswordActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
+                                    mProgressBar.setVisibility(View.INVISIBLE);
                                     DialogManager.getInstance().succesfulChangedPassword(NewPasswordActivity.this,
                                             "Cambiar Contraseña",
                                             "La contraseña se cambió correctamente, debe volver a iniciar sesión para aplicar el cambio",
@@ -97,6 +105,7 @@ public class NewPasswordActivity extends AppCompatActivity {
                                     Log.e("New Password", "Password updated");
                                 } else {
                                     Log.e("New Password", "Error password not updated");
+                                    mProgressBar.setVisibility(View.INVISIBLE);
                                 }
                             }
                         });
@@ -105,6 +114,7 @@ public class NewPasswordActivity extends AppCompatActivity {
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        mProgressBar.setVisibility(View.INVISIBLE);
                         Toast.makeText(NewPasswordActivity.this, "La contraseña actual es incorrecta", Toast.LENGTH_SHORT).show();
                         oldPassInput.setErrorEnabled(true);
 
@@ -113,6 +123,7 @@ public class NewPasswordActivity extends AppCompatActivity {
                     }
                 });
             } else {
+                mProgressBar.setVisibility(View.INVISIBLE);
                 Log.e("New Password", "COntraseñas no coinciden");
                 newPassInput.setError("Contraseñas diferentes");
                 newPassInput.setErrorTextColor(getResources().getColorStateList(R.color.red));
@@ -122,6 +133,7 @@ public class NewPasswordActivity extends AppCompatActivity {
             }
         }
     }
+
     @Override
     public void onBackPressed() {
         finish();
