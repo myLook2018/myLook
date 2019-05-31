@@ -4,9 +4,11 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.text.Editable;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -34,9 +36,9 @@ public class Sesion extends Service {
     public static final String TAG = "Sesion";
     public static String userId = null;
     public static boolean isPremium = false;
-    public static  String name= "";
-    public static  String mail= "";
-    public static  String clientId= "";
+    public static String name= "";
+    public static String mail= "";
+    public static String clientId= "";
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public Sesion() {
@@ -98,7 +100,17 @@ public class Sesion extends Service {
         return getUserId();
     }
 
-    private static Task getUserId() {
+    public static void updateData(){
+        db.collection("clients").document(clientId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot document) {
+                isPremium = (Boolean) document.get("isPremium");
+                name = document.get("name").toString() + " " + document.get("surname").toString();
+                mail = (String) document.get("email");
+            }
+        });
+    }
+    public static Task getUserId() {
         final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser!=null) {
             if(currentUser.isEmailVerified())

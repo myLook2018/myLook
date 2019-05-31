@@ -1,16 +1,16 @@
 package com.mylook.mylook.profile;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,12 +23,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mylook.mylook.R;
 import com.mylook.mylook.dialogs.DialogManager;
-import com.mylook.mylook.login.LoginActivity;
 
 public class NewPasswordActivity extends AppCompatActivity {
     private EditText oldPassword, newPassword, newPasswordVerif;
     private TextInputLayout oldPassInput, newPassInput, newPassVerifInput;
-    private Button btnChange;
+    private ImageButton btnChange;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private Toolbar tb;
 
@@ -42,9 +41,9 @@ public class NewPasswordActivity extends AppCompatActivity {
     }
 
     private void initializeElements() {
-        oldPassword = findViewById(R.id.oldPassword);
-        newPassword = findViewById(R.id.newPassword);
-        newPasswordVerif = findViewById(R.id.newPasswordVerification);
+        oldPassword = findViewById(R.id.txtOldPassword);
+        newPassword = findViewById(R.id.txtPassword);
+        newPasswordVerif = findViewById(R.id.txtPasswordVerif);
         btnChange = findViewById(R.id.btn_changePassword);
         btnChange.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,8 +51,11 @@ public class NewPasswordActivity extends AppCompatActivity {
                 validateFields();
             }
         });
-        tb = findViewById(R.id.toolbar);
-        tb.setTitle("Cambiar contraseña");
+        tb = findViewById(R.id.info_account_toolbar);
+        setSupportActionBar(tb);
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+        this.setTitle("Cambiar Contraseña");
         newPassInput = findViewById(R.id.newPasswordInput);
         newPassVerifInput = findViewById(R.id.newPasswordVerifInput);
         oldPassInput = findViewById(R.id.oldPasswordInput);
@@ -119,5 +121,9 @@ public class NewPasswordActivity extends AppCompatActivity {
                 newPassVerifInput.setErrorEnabled(true);
             }
         }
+    }
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 }

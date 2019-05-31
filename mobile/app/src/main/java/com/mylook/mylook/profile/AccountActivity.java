@@ -3,16 +3,15 @@ package com.mylook.mylook.profile;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
 import com.mylook.mylook.dialogs.DialogManager;
 import com.mylook.mylook.premiumUser.PremiumRequestActivity;
@@ -20,6 +19,7 @@ import com.mylook.mylook.session.Sesion;
 
 public class AccountActivity extends AppCompatActivity {
 
+    private int USER_CHANGED=1;
     private TextView txtName;
     private TextView txtEmail;
     private ImageView imageDestacado;
@@ -46,22 +46,49 @@ public class AccountActivity extends AppCompatActivity {
         setOnClickListener();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initElements();
+        setUserProfile();
+        setOnClickListener();
+    }
+
     private void initElements() {
-        setContentView(R.layout.activity_profile);
-        ((Toolbar)findViewById(R.id.toolbar)).setTitle("Mi Cuenta");
+        setContentView(R.layout.activity_account);
+        Toolbar tb = findViewById(R.id.toolbar);
+        setSupportActionBar(tb);
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+        this.setTitle("Mi Cuenta");
         mContext = AccountActivity.this;
         txtEmail = findViewById(R.id.txtEmail);
         txtName = findViewById(R.id.txtName);
         imageAccount = findViewById(R.id.image_account);
-        txtAccount = findViewById(R.id.txtAccount);
+        txtAccount = findViewById(R.id.txtPrivAccount);
         imageNotifications = findViewById(R.id.img_notificaciones);
-        txtNotifications = findViewById(R.id.txtNotifications);
+        txtNotifications = findViewById(R.id.txtemail);
         imageDestacado =findViewById(R.id.image_destacado);
         txtDestacado = findViewById(R.id.txtSettingsDest);
         imageHelp = findViewById(R.id.image_help);
-        txtHelp = findViewById(R.id.txtHelp);
+        txtHelp = findViewById(R.id.txtemail);
         imageExit = findViewById(R.id.image_exit);
         txtExit = findViewById(R.id.txtExit);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==1){
+            if(resultCode==USER_CHANGED){
+                Sesion.updateData();
+                txtName.setText(data.getCharSequenceExtra("name"));
+                txtEmail.setText(data.getCharSequenceExtra("email"));
+                Log.e("ACCOUNT ACTIVITY", "El usuario cabio");
+                //onResume();
+            }
+        }
+
     }
 
 
@@ -71,7 +98,7 @@ public class AccountActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(getApplicationContext(), EditInfoActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,1);
             }
         });
 
@@ -173,6 +200,11 @@ public class AccountActivity extends AppCompatActivity {
             imageDestacado.setVisibility(View.VISIBLE);
             txtDestacado.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 
 }
