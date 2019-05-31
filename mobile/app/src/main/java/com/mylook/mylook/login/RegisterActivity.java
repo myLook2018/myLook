@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -32,6 +34,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Closet;
 import com.mylook.mylook.home.MyLookActivity;
+import com.mylook.mylook.profile.EditInfoActivity;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.ArrayList;
@@ -50,9 +53,8 @@ public class RegisterActivity extends AppCompatActivity {
     private ConstraintLayout mLayout;
     private Toolbar tb;
     private MaterialBetterSpinner spinner;
-    private Button btnRegister;
+    private ImageButton btnRegister;
     private FirebaseUser user;
-    private FirebaseFirestore dB;
     final Calendar myCalendar = Calendar.getInstance();
     private String provider = null;
     private boolean validMail = true;
@@ -64,10 +66,6 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         initElements();
-        mProgressBar.setVisibility(View.GONE);
-        tb = (Toolbar) findViewById(R.id.toolbar);
-        tb.setTitle("Registro");
-        setSupportActionBar(tb);
         setupFirebaseAuth();
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,7 +93,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void checkExistingEmail(String email){
         btnRegister.setEnabled(false);
-        dB.collection("clients").whereEqualTo("email", email)
+        FirebaseFirestore.getInstance().collection("clients").whereEqualTo("email", email)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -233,7 +231,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void createCloset() {
         Closet closet = new Closet(mAuth.getUid());
         final String[] closetId = new String[1];
-        dB.collection("closets").add(closet)
+        FirebaseFirestore.getInstance().collection("closets").add(closet)
                 .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentReference> task) {
@@ -256,7 +254,7 @@ public class RegisterActivity extends AppCompatActivity {
         client.put("isPremium", false);
         if(!isStringNull(provider))
             client.put("provider", provider);
-        dB.collection("clients")
+        FirebaseFirestore.getInstance().collection("clients")
                 .add(client).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
@@ -317,11 +315,15 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void initElements() {
-        dB = FirebaseFirestore.getInstance();
+        tb = findViewById(R.id.toolbar);
+        tb.setTitle("Registro");
+        setSupportActionBar(tb);
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
         mAuth = FirebaseAuth.getInstance();
-
         btnRegister = findViewById(R.id.btnRegister);
-        mProgressBar =findViewById(R.id.progressbar);
+        mProgressBar =findViewById(R.id.register_progressbar);
+        mProgressBar.setVisibility(View.GONE);
         txtEmail = findViewById(R.id.txtEmail);
         txtPasswd1 = findViewById(R.id.txtPasswd);
         txtPasswd2 = findViewById(R.id.txtPasswd2);
@@ -329,20 +331,17 @@ public class RegisterActivity extends AppCompatActivity {
         txtName = findViewById(R.id.txtName);
         txtSurname = findViewById(R.id.txtSurname);
         txtBirthdate = findViewById(R.id.txtBirthdate);
-        mLayout = findViewById(R.id.register_form);
         mContext = RegisterActivity.this;
         spinner = findViewById(R.id.spinner);
         setCategoryRequest();
     }
 
     private void setCategoryRequest() {
-        dB.collection("categories").whereEqualTo("name", "sexo").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                ArrayList<String> categories = (ArrayList<String>) task.getResult().getDocuments().get(0).get("categories");
-                spinner.setAdapter(new ArrayAdapter<String>(RegisterActivity.this, android.R.layout.simple_selectable_list_item, categories));
-            }
-        });
+        ArrayList<String> sexos =new ArrayList<>();
+        sexos.add("Femenino");
+        sexos.add("Masculino");
+        sexos.add("Otro");
+        spinner.setAdapter(new ArrayAdapter<>(RegisterActivity.this,android.R.layout.simple_selectable_list_item, sexos));;
     }
 
     private void initCalendar(){

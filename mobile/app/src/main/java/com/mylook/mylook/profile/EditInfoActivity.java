@@ -171,7 +171,7 @@ public class EditInfoActivity extends AppCompatActivity {
         sexos.add("Femenino");
         sexos.add("Masculino");
         sexos.add("Otro");
-        cmbSexo.setAdapter(new ArrayAdapter<>(EditInfoActivity.this,android.R.layout.simple_selectable_list_item, sexos));;
+        cmbSexo.setAdapter(new ArrayAdapter<>(EditInfoActivity.this,android.R.layout.simple_selectable_list_item, sexos));
     }
 
     private void setData() {
