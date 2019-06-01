@@ -2,10 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { StoreModel } from 'src/app/auth/models/store.model';
 import { UserService } from 'src/app/auth/services/user.service';
 import { AuthService } from 'src/app/auth/services/auth.service';
-<<<<<<< HEAD
 import { ArticleService } from 'src/app/articles/services/article.service';
-=======
->>>>>>> develop
+
 import {
   Router,
   ActivatedRoute,
@@ -30,14 +28,11 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
   FirebaseUser = new StoreModel();
   userStore = new StoreModel();
   isLogedIn = false;
-<<<<<<< HEAD
   deleteFn = this.fns.httpsCallable('recursiveDelete');
   constructor(
     public articleService: ArticleService,
     public fns: AngularFireFunctions,
-=======
-  constructor(
->>>>>>> develop
+
     public userService: UserService,
     public authService: AuthService,
     public dataServide: DataService,
@@ -168,6 +163,8 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
     console.log('userStore.StoreID', this.userStore.firebaseUID);
     this.articleService.removeStore(this.userStore.firebaseUID, this.userStore.storeName).toPromise().then(res => {
       console.log('asdasdasdasd', res);
+    }, error => {
+      console.log('exploto', error);
     });
     this.deleteUserDefenetly();
     // this.http.post(this._baseUrl + '/API/identity/user',user,{ headers: headers}).map((response: Response) =>{

@@ -245,7 +245,7 @@ export class ArticleService {
   }
 
   /** POST: add a new hero to the database */
-  public removeStore(storeIDReal: string, storeNameReal): Observable<string> {
+  public removeStore(storeIDReal: string, storeNameReal) {
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
