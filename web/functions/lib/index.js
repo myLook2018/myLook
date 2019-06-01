@@ -165,15 +165,10 @@ function getInactiveUsers(users = [], nextPageToken) {
 }
 
 /**
- * Initiate a recursive delete of documents at a given path.
- *
- * The calling user must be authenticated and have the custom "admin" attribute
- * set to true on the auth token.
+ * Initiate a recursive delete of documents of a store.
  *
  * This delete is NOT an atomic operation and it's possible
- * that it may fail after only deleting some documents.
- *
- * @param {string} data.path the document or collection path to delete.
+ * that it may fail after only deleting some documents. (es verdad)
  */
 exports.recursiveDeleteStore = functions.runWith({memory: '2GB'}).https.onRequest((req, res) => {
   res.set('Access-Control-Allow-Origin', '*');
