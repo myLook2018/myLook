@@ -26,7 +26,6 @@
             value="{{ articleData.title }}"
             required
             minlength="2"
-            maxlength="8"
           />
           <mat-error *ngIf="articleForm.get('title')">
             Campo obligatorio.
@@ -61,7 +60,7 @@
         <mat-form-field style="width: 95%">
           <input
             matInput
-            type="number"
+            min='0' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57"
             placeholder="Precio"
             formControlName="cost"
             value="{{ articleData.cost }}"
@@ -74,7 +73,7 @@
         <mat-form-field style="width: 95%">
           <input
             matInput
-            type="number"
+            min='0' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57"
             placeholder="Stock inicial"
             formControlName="initial_stock"
             value="{{ articleData.initial_stock }}"

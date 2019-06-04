@@ -6,7 +6,13 @@ const PromisePool = promisePool.PromisePool;
 const secureCompare = require('secure-compare');
 // Maximum concurrent account deletions.
 const MAX_CONCURRENT = 3;
+let request = require('request');
+let mercadopago = require('mercadopago');
 
+mercadopago.configure({
+    client_id: '1059447032112952',
+    client_secret: '3at5jmJl40HnPV0kBGPVjmjL4PCA9Iyp'
+});
 
 // Método que inicializa las funciones, sin esto no anda
 admin.initializeApp(functions.config().firebase)
@@ -121,11 +127,23 @@ exports.closeRecommendations = functions.https.onRequest((req: any, res: any) =>
 });
 
 
-
+exports.newMercadoPagoDoc = functions.firestore.document('prueba/{userId}')
+    .onCreate((snap:any, context: any) => {
+    // Get an object representing the document
+    // e.g. {'name': 'Marie', 'age': 66}
+    const preference = snap.data();
+    mercadopago.preferences.create(preference)
+        .then(function (preferenceASW: any) {
+          return 'si, anda la cloud functon y salio todo bien';
+        }).catch(function (error: any) {
+          return 'algo salio mal. Si, no tengo idea que, de nada por lo especifico. Toma este erorr ' + error;
+        });
+    // make the request
+});
 
 /**
  * When requested this Function will delete every user accounts that has been inactive for one year.
- * 
+ *
  */
 exports.accountcleanup = functions.https.onRequest((req: any, res: any) => {
     const key = req.query.key;
@@ -186,9 +204,20 @@ function getInactiveUsers(users = [], nextPageToken?: any) {
         if (result.pageToken) {
             return getInactiveUsers(users, result.pageToken);
         }
-
         return users;
     });
 }
 
-
+exports.newMercadoPagoDoc = functions.firestore.document('prueba/{userId}')
+    .onCreate((snap:any, context: any) => {
+    // Get an object representing the document
+    // e.g. {'name': 'Marie', 'age': 66}
+    const preference = snap.data();
+    mercadopago.preferences.create(preference)
+        .then(function (preferenceASW: any) {
+          return 'si, anda la cloud functon y salio todo bien';
+        }).catch(function (error: any) {
+          return 'algo salio mal. Si, no tengo idea que, de nada por lo especifico. Toma este erorr ' + error;
+        });
+    // make the request
+});
