@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import com.mylook.mylook.closet.ClosetActivity;
 import com.mylook.mylook.explore.ExploreActivity;
 import com.mylook.mylook.home.MyLookActivity;
-import com.mylook.mylook.profile.ProfileActivity;
+import com.mylook.mylook.profile.AccountActivity;
 import com.mylook.mylook.R;
 import com.mylook.mylook.recommend.RecommendationsActivity;
 
@@ -37,7 +37,7 @@ public class BottomNavigationViewHelper {
                         context.startActivity(intent4);
                         break;
                     case R.id.ic_profile:
-                        Intent intent5 = new Intent(context, ProfileActivity.class);
+                        Intent intent5 = new Intent(context, AccountActivity.class);
                         context.startActivity(intent5);
                         break;
                 }

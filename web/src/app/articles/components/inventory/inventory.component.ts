@@ -109,7 +109,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   openPromoteDialog(article): void {
     const promoteRef = this.dialog.open(PromoteDialogComponent, {
-      width: '300px',
+      width: '400px',
       data: article
     });
     const sub = promoteRef.componentInstance.onAdd.subscribe(res => {

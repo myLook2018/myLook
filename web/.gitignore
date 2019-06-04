@@ -4,11 +4,13 @@
 /dist
 
 #FirebaseCache
-./firebase
+./.firebase
+/.firebase
 
 # dependencies
 /node_modules
 /functions/node_modules
+/functions/package-lock.json
 /package-lock.json
 ./package-lock.json
 package-lock.json

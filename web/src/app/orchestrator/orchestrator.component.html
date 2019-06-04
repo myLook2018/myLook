@@ -1,5 +1,5 @@
 <div class="mat-typography" style="top: 0">
-    <mat-toolbar>
+    <mat-toolbar class="toolbar">
         <mat-toolbar-row class="mat-elevation-z8 navbar">
             <img id="logo" src="/assets/brandNoBackground.png" />
             <span class="spacer"></span>
@@ -19,7 +19,7 @@
         </mat-toolbar-row>
     </mat-toolbar>
 
-    <mat-sidenav-container style="height: 100%;">
+    <mat-sidenav-container class="main-content mat-elevation-z2">
         <mat-sidenav *ngIf="isLogedIn" mat-sidenav #sidenav mode="side" opened class="example-sidenav" [fixedInViewport]="false"
         [fixedTopGap]="false" [fixedBottomGap]="false" class="mat-elevation-z2">
             <mat-nav-list>
