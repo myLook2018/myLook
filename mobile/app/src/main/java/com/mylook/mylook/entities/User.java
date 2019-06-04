@@ -9,7 +9,7 @@ public class User implements  Comparable<User> {
     private String gender;
     private String email;
     private String dni;
-    private String birthday;
+    private long birthday;
     private String installToken;
     private boolean isPremium;
 
@@ -33,13 +33,13 @@ public class User implements  Comparable<User> {
         if(!dni.equals(o.dni)){
             return 1;
         }
-        if(!birthday.equals(o.birthday)){
+        if(birthday!=o.birthday){
             return 1;
         }
         return 0;
     }
 
-    public User(String name, String surname, String userId, String gender, String email, String dni, String birthday,boolean isPremium) {
+    public User(String name, String surname, String userId, String gender, String email, String dni, long birthday,boolean isPremium) {
         this.name = name;
         this.surname = surname;
         this.userId = userId;
@@ -114,11 +114,11 @@ public class User implements  Comparable<User> {
         this.dni = dni;
     }
 
-    public String getBirthday() {
+    public long getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(String birthday) {
+    public void setBirthday(long birthday) {
         this.birthday = birthday;
     }
 

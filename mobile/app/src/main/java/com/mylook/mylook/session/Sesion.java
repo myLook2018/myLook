@@ -4,11 +4,15 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.text.Editable;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.closet.ClosetFragment;
@@ -31,9 +35,17 @@ public class Sesion extends Service {
     public static final int PROFILE_FRAGMENT = 5;
     public static final String TAG = "Sesion";
     public static String userId = null;
+    public static boolean isPremium = false;
+    public static String name= "";
+    public static String mail= "";
+    public static String clientId= "";
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public Sesion() {
+    }
+
+    public boolean isPremiumUser(){
+        return isPremium;
     }
 
     public String getSessionUserId(){
@@ -88,21 +100,38 @@ public class Sesion extends Service {
         return getUserId();
     }
 
-    private static Task getUserId() {
-        if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
-            if(FirebaseAuth.getInstance().getCurrentUser().isEmailVerified())
-            return db.collection("clients").whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+    public static void updateData(){
+        db.collection("clients").document(clientId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot document) {
+                isPremium = (Boolean) document.get("isPremium");
+                name = document.get("name").toString() + " " + document.get("surname").toString();
+                mail = (String) document.get("email");
+            }
+        });
+    }
+    public static Task getUserId() {
+        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser!=null) {
+            if(currentUser.isEmailVerified())
+            return db.collection("clients").whereEqualTo("userId", currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
-                        userId = task.getResult().getDocuments().get(0).get("userId").toString();
+                        DocumentSnapshot document = task.getResult().getDocuments().get(0);
+                        userId = document.get("userId").toString();
+                        isPremium = (Boolean) document.get("isPremium");
+                        name = document.get("name").toString() + " " + document.get("surname").toString();
+                        mail = currentUser.getEmail();
+                        clientId = document.getId();
 
                     } else {
-                        db.collection("clients").whereEqualTo("email", FirebaseAuth.getInstance().getCurrentUser().getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        db.collection("clients").whereEqualTo("email", currentUser.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
                                     userId = task.getResult().getDocuments().get(0).get("userId").toString();
+                                    //cuando entra aca?
                                 }
                             }
                         });

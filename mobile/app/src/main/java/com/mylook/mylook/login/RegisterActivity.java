@@ -164,6 +164,10 @@ public class RegisterActivity extends AppCompatActivity {
             displayMessage("Debes ingresar una Fecha de Nacimiento");
             return false;
         }
+        if (isStringNull(txtDNI.getText().toString())) {
+            displayMessage("Debes ingresar un DNI");
+            return false;
+        }
 
         Calendar today = Calendar.getInstance();
         int diff = today.get(Calendar.YEAR) - myCalendar.get(Calendar.YEAR);
@@ -317,7 +321,7 @@ public class RegisterActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         btnRegister = findViewById(R.id.btnRegister);
-        mProgressBar =findViewById(R.id.register_progressbar);
+        mProgressBar =findViewById(R.id.progressbar);
         txtEmail = findViewById(R.id.txtEmail);
         txtPasswd1 = findViewById(R.id.txtPasswd);
         txtPasswd2 = findViewById(R.id.txtPasswd2);

@@ -138,7 +138,7 @@ public class ProfileFragment extends Fragment {
         txtAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), MyAccountActivity.class);
+                Intent intent = new Intent(getContext(), EditInfoActivity.class);
                 startActivity(intent);
             }
         });
@@ -146,7 +146,7 @@ public class ProfileFragment extends Fragment {
         imageAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), MyAccountActivity.class);
+                Intent intent = new Intent(getContext(), EditInfoActivity.class);
                 startActivity(intent);
             }
         });

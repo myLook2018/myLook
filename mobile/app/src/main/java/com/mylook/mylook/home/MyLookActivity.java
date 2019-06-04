@@ -21,16 +21,22 @@ public class MyLookActivity extends AppCompatActivity implements BottomNavigatio
     private String activeFragment;
     Fragment fragment = null;
     private Sesion currentSesion;
+    boolean isPremium;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activeFragment = HomeFragment.TAG;
-
+        isPremium= Sesion.getInstance().isPremiumUser();
         loadFragment(HomeFragment.getInstance());
         setContentView(R.layout.activity_mylook_app);
-        BottomNavigationView navigation = findViewById(R.id.navigation);
+        BottomNavigationView navigation= findViewById(R.id.navigation);
+        if(isPremium)
+            navigation.inflateMenu(R.menu.bottom_navigation_menu_premium);
+        else
+            navigation.inflateMenu(R.menu.bottom_navigation_menu);
+
         navigation.setOnNavigationItemSelectedListener(MyLookActivity.this);
         toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
