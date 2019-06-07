@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -48,36 +49,33 @@ class ClosetModel extends ViewModel {
                 });
     }
 
-    int removeFavorite(int position) {
-        if (favorites != null) {
-            if (FirebaseFirestore.getInstance().collection("articles")
-                    .document(favoritesList.get(position).getArticleId())
-                    .update("favorites", FieldValue.arrayRemove(
-                            FirebaseAuth.getInstance().getCurrentUser().getUid()))
-                    .isSuccessful()) {
-                int outfitsChanged = removeFavoriteFromOutfits(favoritesList.remove(position).getArticleId());
-                favorites.postValue(favoritesList);
-                outfits.postValue(outfitsList);
-                return outfitsChanged;
-            } else {
-                return -1;
-            }
-        }
-        return -1;
+    Task<Void> removeFavorite(int position) {
+        return FirebaseFirestore.getInstance().collection("articles")
+                .document(favoritesList.get(position).getArticleId())
+                .update("favorites", FieldValue.arrayRemove(
+                        FirebaseAuth.getInstance().getCurrentUser().getUid()))
+                .addOnSuccessListener(task -> {
+                    favorites.postValue(favoritesList);
+                });
     }
 
-    private int removeFavoriteFromOutfits(String articleId) {
-        Stream<Outfit> outfitsToChange = outfitsList.stream().filter(o -> o.getFavorites().contains(articleId));
-        if (outfitsToChange.count() != 0) {
+    Task<Void> removeFavoriteFromOutfits(List<String> outfitsToChange, String idToDelete) {
+        if (outfitsToChange.size() != 0) {
             WriteBatch batch = FirebaseFirestore.getInstance().batch();
-            outfitsToChange.forEach(o -> batch.update(FirebaseFirestore.getInstance()
-                            .collection("outfits").document(o.getOutfitId()),
-                    "favorites", FieldValue.arrayRemove(articleId)));
-            if (batch.commit().isSuccessful()) {
-                outfitsList.removeAll(outfitsToChange.collect(Collectors.toList()));
-                return (int) outfitsToChange.count();
-            } else return -1;
-        } else return 0;
+            outfitsToChange.forEach(outfitDoc -> batch.update(FirebaseFirestore.getInstance()
+                            .collection("outfits").document(outfitDoc),
+                    "favorites", FieldValue.arrayRemove(idToDelete)));
+            return batch.commit().addOnSuccessListener(task -> {
+                for (int i = 0; i < outfitsList.size(); i++) {
+                    if (outfitsToChange.contains(outfitsList.get(i).getOutfitId())) {
+                        //TODO estas borrando el outfit cuando deberias borrar el favorito del outfit (si contiene en los articulos a idToDelete
+                        outfitsList.remove(i);
+                    }
+                }
+                outfits.postValue(outfitsList);
+            });
+        }
+        return null;
     }
 
     LiveData<List<Outfit>> getOutfits() {
@@ -104,19 +102,13 @@ class ClosetModel extends ViewModel {
                 });
     }
 
-    boolean removeOutfit(int position) {
-        if (outfits != null) {
-            if (FirebaseFirestore.getInstance().collection("outfits")
-                    .document(outfitsList.get(position).getOutfitId())
-                    .delete().isSuccessful()) {
-                outfitsList.remove(position);
-                outfits.postValue(outfitsList);
-                return true;
-            } else {
-                return false;
-            }
-        }
-        return false;
+    Task<Void> removeOutfit(int position) {
+        return FirebaseFirestore.getInstance().collection("outfits")
+                .document(outfitsList.get(position).getOutfitId()).delete()
+                .addOnSuccessListener(task -> {
+                    outfitsList.remove(position);
+                    outfits.postValue(outfitsList);
+                });
     }
 
     void reloadOutfits() {

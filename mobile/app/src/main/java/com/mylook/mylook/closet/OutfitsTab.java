@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.mylook.mylook.R;
 
 import static com.mylook.mylook.closet.OutfitCreateEditActivity.OUTFIT_CREATED;
@@ -80,7 +81,7 @@ public class OutfitsTab extends Fragment implements OutfitListAdapter.OutfitClic
     public void editOutfit(View v, int position) {
         startActivityForResult(new Intent(getContext(), OutfitCreateEditActivity.class)
                 .putExtra("create", false)
-                .putExtra("outfit", adapter.getItem(position)), OUTFIT_CREATE_REQUEST);
+                .putExtra("outfit", adapter.getItem(position)), OUTFIT_EDIT_REQUEST);
     }
 
     @Override
@@ -90,8 +91,9 @@ public class OutfitsTab extends Fragment implements OutfitListAdapter.OutfitClic
                 .setTitle("Eliminar conjunto")
                 .setMessage("Estás seguro de que querés eliminar el conjunto?")
                 .setPositiveButton("Eliminar", (dialog, which) -> {
-                    if (closet.removeOutfit(position)) displayToast("Conjunto eliminado");
-                    else displayToast("Error al eliminar conjunto");
+                    closet.removeOutfit(position)
+                            .addOnSuccessListener(task -> displayToast("Conjunto eliminado"))
+                            .addOnFailureListener(task -> displayToast("Error al eliminar conjunto"));
                 })
                 .setNegativeButton("Cancelar", null)
                 .show();

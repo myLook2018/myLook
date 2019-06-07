@@ -14,9 +14,19 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.mylook.mylook.R;
+import com.mylook.mylook.entities.Article;
+import com.mylook.mylook.entities.Outfit;
 import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.utils.ArticlesGridAdapter;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FavoritesTab extends Fragment {
 
@@ -25,7 +35,8 @@ public class FavoritesTab extends Fragment {
     private ClosetModel closet;
     private ProgressBar mProgressBar;
 
-    public FavoritesTab() { }
+    public FavoritesTab() {
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,7 +91,6 @@ public class FavoritesTab extends Fragment {
     }
 
     private void showFavorite(int position) {
-        //TODO startActivityForResult
         startActivity(new Intent(getContext(), ArticleInfoActivity.class)
                 .putExtra("article", adapter.getItem(position)));
     }
@@ -96,18 +106,24 @@ public class FavoritesTab extends Fragment {
     }
 
     private void deleteFavorite(int position) {
-        int res = closet.removeFavorite(position);
-        switch (res) {
-            case -1:
-                displayToast("Error al eliminar del ropero");
-                break;
-            case 0:
-                displayToast("Se eliminó de tu ropero");
-                break;
-            default:
-                displayToast("Se eliminó de tu ropero y actualizaron " + res + " conjuntos");
-                break;
-        }
+        String idToDelete = adapter.getItem(position).getArticleId();
+        mProgressBar.setVisibility(View.VISIBLE);
+        closet.removeFavorite(position)
+                .addOnSuccessListener(success1 -> {
+                    List<String> outfitsToChange = closet.getOutfits().getValue().stream()
+                            .filter(o -> o.getFavorites().contains(idToDelete))
+                            .map(Outfit::getOutfitId).collect(Collectors.toList());
+                    if (outfitsToChange.size() != 0) {
+                        closet.removeFavoriteFromOutfits(outfitsToChange, idToDelete)
+                                .addOnSuccessListener(success2 ->
+                                        displayToast("Se eliminó de tu ropero y actualizaron conjuntos"))
+                                .addOnFailureListener(fail ->
+                                        displayToast("Se eliminó de tu ropero, pero los conjuntos no se actualizaron"));
+                    } else {
+                        displayToast("Se eliminó de tu ropero");
+                    }
+                })
+                .addOnFailureListener(fail -> displayToast("Error al eliminar del ropero"));
     }
 
     private void displayToast(String message) {

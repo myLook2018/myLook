@@ -112,7 +112,6 @@ public class OutfitCreateEditActivity extends AppCompatActivity {
     }
 
     private void selectForOutfit(View v, int position) {
-        adapter.getSelected().forEach(art -> Log.d("", "selectForOutfit: selectedIndexes " + position));
         String id = adapter.getItem(position).getArticleId();
         if (adapter.getSelected().contains(position)) {
             Log.d("", "selectForOutfit: not selectedIndexes");
@@ -125,7 +124,6 @@ public class OutfitCreateEditActivity extends AppCompatActivity {
             selectedIds.add(id);
             ((SelectableImageView) v).displayAsSelected(true);
         }
-        adapter.getSelected().forEach(art -> Log.d("", "selectForOutfit: selectedIndexes " + position));
     }
 
     @Override
@@ -143,14 +141,10 @@ public class OutfitCreateEditActivity extends AppCompatActivity {
                 this.finish();
                 return true;
             case R.id.action_confirm:
-                boolean res;
                 if (mode.equals("create")) {
-                    res = createOutfit();
+                    createOutfit();
                 } else {
-                    res = editOutfit();
-                }
-                if (res) {
-                    this.finish();
+                    editOutfit();
                 }
                 return true;
             default:
@@ -159,57 +153,60 @@ public class OutfitCreateEditActivity extends AppCompatActivity {
 
     }
 
-    private boolean createOutfit() {
+    private void createOutfit() {
         if (editText.getText().toString().equals("")) {
             displayToast("Ingrese un nombre para el conjunto");
-            return false;
         } else {
+            progressBar.setVisibility(View.VISIBLE);
             HashMap<String, Object> data = new HashMap<>();
-            //TODO cambiar categoria (capaz sacarlo)
             data.put("name", editText.getText().toString());
+            //TODO sacar???
             data.put("category", "");
             data.put("userID", FirebaseAuth.getInstance().getCurrentUser().getUid());
             data.put("favorites", selectedIds);
-            if (FirebaseFirestore.getInstance().collection("outfits")
-                    .add(data).isSuccessful()) {
-                displayToast("Conjunto " + editText.getText() + " creado");
-                setResult(OUTFIT_CREATED);
-                return true;
-            } else {
-                displayToast("Error al crear el conjunto");
-                return false;
-            }
+            FirebaseFirestore.getInstance().collection("outfits").add(data)
+                    .addOnSuccessListener(doc -> {
+                        displayToast("Conjunto " + editText.getText() + " creado");
+                        setResult(OUTFIT_CREATED);
+                        this.finish();
+                    })
+                    .addOnFailureListener(e -> {
+                        displayToast("Error al crear el conjunto");
+                        progressBar.setVisibility(View.GONE);
+                    });
         }
     }
 
-    private boolean editOutfit() {
+    private void editOutfit() {
         if (editText.getText().toString().equals("")) {
             displayToast("Ingrese un nombre para el conjunto");
-            return false;
         } else {
+            progressBar.setVisibility(View.VISIBLE);
             HashMap<String, Object> data = new HashMap<>();
-            //TODO cambiar categoria (capaz sacarlo)
             data.put("name", editText.getText().toString());
+            //TODO sacar???
             data.put("category", "");
             data.put("userID", FirebaseAuth.getInstance().getCurrentUser().getUid());
             data.put("favorites", selectedIds);
-            if (FirebaseFirestore.getInstance().collection("outfits")
-                    .document(outfitDocument).set(data).isSuccessful()) {
-                displayToast("Conjunto " + editText.getText() + " editado");
-                Outfit outfit = new Outfit();
-                outfit.setOutfitId(outfitDocument);
-                outfit.setName(editText.getText().toString());
-                outfit.setCategory("");
-                outfit.setUserID(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                List<Article> list = new ArrayList<>();
-                selectedIndexes.forEach(i -> list.add(adapter.getItem(i)));
-                outfit.setArticles(list);
-                setResult(OUTFIT_EDITED, new Intent().putExtra("outfit", outfit));
-                return true;
-            } else {
-                displayToast("Error al editar el conjunto");
-                return false;
-            }
+            FirebaseFirestore.getInstance().collection("outfits")
+                    .document(outfitDocument).set(data)
+                    .addOnSuccessListener(task -> {
+                        displayToast("Conjunto " + editText.getText() + " editado");
+                        Outfit outfit = new Outfit();
+                        outfit.setOutfitId(outfitDocument);
+                        outfit.setName(editText.getText().toString());
+                        outfit.setCategory("");
+                        outfit.setUserID(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        List<Article> list = new ArrayList<>();
+                        selectedIndexes.forEach(i -> list.add(adapter.getItem(i)));
+                        outfit.setArticles(list);
+                        setResult(OUTFIT_EDITED, new Intent().putExtra("outfit", outfit));
+                        this.finish();
+                    })
+                    .addOnFailureListener(e -> {
+                        displayToast("Error al editar el conjunto");
+                        progressBar.setVisibility(View.GONE);
+                    });
         }
     }
 

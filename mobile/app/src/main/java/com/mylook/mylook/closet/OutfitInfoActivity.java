@@ -18,12 +18,9 @@ import android.widget.Toast;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
-import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Outfit;
 import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.utils.ArticlesGridAdapter;
-
-import java.util.List;
 
 import static com.mylook.mylook.closet.OutfitCreateEditActivity.OUTFIT_EDIT_REQUEST;
 
@@ -171,11 +168,7 @@ public class OutfitInfoActivity extends AppCompatActivity {
                 }
                 setResult(OUTFIT_EDITED, data);
                 progressBar.setVisibility(View.GONE);
-                //TODO consultar por los favoritos todos, del intent sacar el outfit,
-                // crear un nuevo objeto outfit y reemplazarlo, hacer el cruce de datos y renderizar de nuevo UI
-                // setResult(editado) para identificar cuando regrese a OutfitsTab que debe consultar de nuevo
             }
-            //TODO sino devuelve OUTFIT_UNCHANGED (no se preve funcionalidad)
         }
     }
 }

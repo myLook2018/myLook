@@ -51,6 +51,39 @@ public class OutfitListAdapter extends RecyclerView.Adapter<OutfitListAdapter.Ou
         outfitViewHolder.btnView.setOnClickListener(v -> clickListener.showOutfit(v, i));
         outfitViewHolder.btnEdit.setOnClickListener(v -> clickListener.editOutfit(v, i));
         outfitViewHolder.btnDelete.setOnClickListener(v -> clickListener.deleteOutfit(v, i));
+
+        /*
+        Button btn = (Button) findViewById(R.id.button);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(context, view);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.one:
+                                Toast.makeText(getApplicationContext(), "1",
+                                        Toast.LENGTH_SHORT).show();
+                                return true;
+                            case R.id.two:
+                                Toast.makeText(getApplicationContext(), "2",
+                                        Toast.LENGTH_SHORT).show();
+                                return true;
+                            case R.id.three:
+                                Toast.makeText(getApplicationContext(), "3",
+                                        Toast.LENGTH_SHORT).show();
+                                return true;
+                        }
+                        return false;
+                    }
+                });
+                popupMenu.inflate(R.menu.main);
+                popupMenu.show();
+            }
+        });
+        */
+
         if (count > 0) Glide.with(context).asDrawable()
                 .load(outfit.getArticles().get(0).getPicture())
                 .into(outfitViewHolder.image1);

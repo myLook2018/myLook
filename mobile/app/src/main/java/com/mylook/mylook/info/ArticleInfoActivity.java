@@ -33,9 +33,6 @@ import java.util.stream.Stream;
 
 public class ArticleInfoActivity extends AppCompatActivity {
 
-    public static final int ARTICLE_INFO_REQUEST = 1;
-    private static final int FAVORITE_CHANGED = 2;
-    private static final int FAVORITE_UNCHANGED = 3;
     private Context mContext = ArticleInfoActivity.this;
     private Article article;
     private FloatingActionButton btnCloset;
@@ -99,16 +96,13 @@ public class ArticleInfoActivity extends AppCompatActivity {
             return;
         }
         inCloset = !inCloset;
-        if (inCloset) {
-            btnCloset.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.ic_favorite_border_white_48dp));
-        } else {
-            btnCloset.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.ic_favorite_white_48dp));
-        }
-        //TODO change state UI
+        if (inCloset) btnCloset.setBackgroundDrawable(ContextCompat.getDrawable(this,
+                R.drawable.ic_favorite_border_white_48dp));
+        else btnCloset.setBackgroundDrawable(ContextCompat.getDrawable(this,
+                R.drawable.ic_favorite_white_48dp));
     }
 
     private void setDetail() {
-        //TODO pasar a xml
         txtStoreName.setText(article.getStoreName());
         txtTitle.setText(article.getTitle());
         txtMaterial.setText(article.getMaterial());
