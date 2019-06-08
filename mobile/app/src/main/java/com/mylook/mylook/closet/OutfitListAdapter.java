@@ -84,24 +84,21 @@ public class OutfitListAdapter extends RecyclerView.Adapter<OutfitListAdapter.Ou
         });
         */
 
-        if (count > 0) Glide.with(context).asDrawable()
-                .load(outfit.getArticles().get(0).getPicture())
-                .into(outfitViewHolder.image1);
-        else Glide.with(context).asDrawable()
-                .load(placeholder)
-                .into(outfitViewHolder.image1);
-        if (count > 1) Glide.with(context).asDrawable()
-                    .load(outfit.getArticles().get(1).getPicture())
-                    .into(outfitViewHolder.image2);
-        else Glide.with(context).asDrawable()
-                    .load(placeholder)
-                    .into(outfitViewHolder.image2);
-        if (count > 2) Glide.with(context).asDrawable()
-                .load(outfit.getArticles().get(2).getPicture())
-                .into(outfitViewHolder.image3);
-        else Glide.with(context).asDrawable()
-                .load(placeholder)
-                .into(outfitViewHolder.image3);
+
+        switch (count > 3 ? 3 : count) {
+            case 3:
+                Glide.with(context).asDrawable()
+                        .load(outfit.getArticles().get(2).getPicture())
+                        .into(outfitViewHolder.image3);
+            case 2:
+                Glide.with(context).asDrawable()
+                        .load(outfit.getArticles().get(1).getPicture())
+                        .into(outfitViewHolder.image2);
+            case 1:
+                Glide.with(context).asDrawable()
+                        .load(outfit.getArticles().get(0).getPicture())
+                        .into(outfitViewHolder.image1);
+        }
     }
 
     @Override

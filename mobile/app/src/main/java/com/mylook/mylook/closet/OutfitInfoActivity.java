@@ -13,9 +13,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Outfit;
@@ -33,6 +33,8 @@ public class OutfitInfoActivity extends AppCompatActivity {
     private ArticlesGridAdapter adapter;
     private ProgressBar progressBar;
     private Outfit outfit;
+    private TextView emptyTitleTextView;
+    private TextView emptyInfoTextView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,11 +53,17 @@ public class OutfitInfoActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.outfit_articles_progressbar);
         progressBar.setVisibility(View.VISIBLE);
         gridView = findViewById(R.id.outfit_articles_grid);
+        emptyTitleTextView = findViewById(R.id.outfit_articles_empty_title);
+        emptyInfoTextView = findViewById(R.id.outfit_articles_empty_info);
     }
 
     private void getOutfitFromIntent() {
         Intent intent = getIntent();
         outfit = (Outfit) intent.getSerializableExtra("outfit");
+        if (!outfit.getArticles().isEmpty()) {
+            emptyTitleTextView.setVisibility(View.GONE);
+            emptyInfoTextView.setVisibility(View.GONE);
+        }
         ActionBar ab = getSupportActionBar();
         if (ab != null) ab.setTitle(outfit.getName());
         adapter = new ArticlesGridAdapter(this, outfit.getArticles());
@@ -67,8 +75,6 @@ public class OutfitInfoActivity extends AppCompatActivity {
         gridView.setHorizontalSpacing(8);
         gridView.setNumColumns(3);
         gridView.setOnItemClickListener((parent, v, position, id) -> showFavorite(position));
-        //TODO ver si agrego este metodo para agregar a conjunto como "playlist"
-        gridView.setOnItemLongClickListener((parent, v, position, id) -> outfitOptions(position));
         adapter.notifyDataSetChanged();
         progressBar.setVisibility(View.GONE);
     }
@@ -99,58 +105,38 @@ public class OutfitInfoActivity extends AppCompatActivity {
 
     private void editOutfit() {
         startActivityForResult(new Intent(this, OutfitCreateEditActivity.class)
-                        .putExtra("outfit", outfit)
+                .putExtra("outfit", outfit)
                 .putExtra("create", false), OUTFIT_EDIT_REQUEST);
     }
 
     private void deleteOutfit() {
-        setResult(OUTFIT_DELETED, new Intent().putExtra("outfit", outfit));
-        finish();
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Eliminar conjunto")
+                .setMessage("Estás seguro de que querés eliminar el conjunto?")
+                .setPositiveButton("Eliminar", (dialog, which) -> {
+                            progressBar.setVisibility(View.VISIBLE);
+                            FirebaseFirestore.getInstance().collection("outfits")
+                                    .document(outfit.getOutfitId()).delete()
+                                    .addOnSuccessListener(task -> {
+                                        setResult(OUTFIT_DELETED, new Intent().putExtra("outfit", outfit));
+                                        finish();
+                                    })
+                                    .addOnFailureListener(task ->
+                                            displayToast("Error al eliminar conjunto"));
+                        }
+                )
+                .setNegativeButton("Cancelar", null)
+                .show();
     }
 
     private void displayToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
-    private boolean outfitOptions(int position) {
-        String[] options = {"Ver", "Editar", "Eliminar"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Conjunto");
-        builder.setItems(options, (dialog, which) -> {
-            switch (which) {
-                case 0:
-                    showFavorite(position);
-                    break;
-                case 1:
-                    deleteFavoriteFromOutfit(position);
-                    break;
-                default:
-                    break;
-            }
-        });
-        builder.show();
-        return true;
-    }
-
     private void showFavorite(int position) {
         startActivity(new Intent(this, ArticleInfoActivity.class)
                 .putExtra("article", adapter.getItem(position)));
-    }
-
-    private void deleteFavoriteFromOutfit(int position) {
-        boolean res = FirebaseFirestore.getInstance().collection("outfits")
-                .document(outfit.getOutfitId()).update("favorites",
-                        FieldValue.arrayRemove(adapter.getItem(position).getArticleId()))
-                .isSuccessful();
-        if (res) {
-            displayToast("Se eliminó de tu ropero");
-            outfit.getFavorites().remove(adapter.getItem(position).getArticleId());
-            outfit.getArticles().remove(adapter.getItem(position));
-            adapter.notifyDataSetChanged();
-            setResult(OUTFIT_EDITED, new Intent().putExtra("outfit", outfit));
-        } else {
-            displayToast("Error al eliminar del ropero");
-        }
     }
 
     @Override
