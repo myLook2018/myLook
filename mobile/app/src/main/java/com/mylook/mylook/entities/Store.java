@@ -1,6 +1,5 @@
 package com.mylook.mylook.entities;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 public class Store {
@@ -24,7 +23,6 @@ public class Store {
     private String facebookLink;
     private String provider;
     private Date registerDate;
-    //private String storeCreationDate;
 
     public Store(){}
 

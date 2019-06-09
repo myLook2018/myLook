@@ -8,13 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StoreTabAdapter extends FragmentPagerAdapter {
-    int mNumOfTabs;
     private final List<Fragment> mFragmentList = new ArrayList<>();
     private final List<String> mFragmentTitleList = new ArrayList<>();
 
-    public StoreTabAdapter(FragmentManager fm, int NumOfTabs) {
+    public StoreTabAdapter(FragmentManager fm) {
         super(fm);
-        this.mNumOfTabs = NumOfTabs;
     }
 
     public void addFragment(int index, Fragment fragment, String title) {

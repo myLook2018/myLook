@@ -1,6 +1,5 @@
 package com.mylook.mylook.login;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -45,7 +44,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
-import com.mylook.mylook.home.MyLookActivity;
+import com.mylook.mylook.main.MyLookActivity;
 
 
 /**

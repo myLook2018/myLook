@@ -26,7 +26,7 @@
     <string name="title_activity_store">StoreActivity</string>
 
     <!-- Strings related to store -->
-    <string name="storeName">Store name</string>
+    <string name="txtStoreName">Store name</string>
     <string name="userNameStore">User name</string>
     <string name="storeDescription">Store description</string>
     <string name="webSite">Web Site</string>
