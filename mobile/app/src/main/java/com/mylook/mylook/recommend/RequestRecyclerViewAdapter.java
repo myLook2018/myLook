@@ -60,7 +60,16 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
             holder.txtDate.setText("Cerrada");
             holder.txtDate.setTextColor(Color.RED);
         } else {
-            holder.txtDate.setText("Faltan " + daysLeft + " días");
+            if(daysLeft == 0){
+                holder.txtDate.setText("Último día");
+                holder.txtDate.setTextColor(Color.RED);
+            } else if (daysLeft > 1) {
+                holder.txtDate.setText("Faltan " + daysLeft + " días");
+                holder.txtDate.setTextColor(Color.BLACK);
+            } else {
+                holder.txtDate.setText("Falta " + daysLeft + " día");
+                holder.txtDate.setTextColor(Color.BLACK);
+            }
         }
         holder.titleRequest.setText(requestRecommendation.getTitle());
         if(!requestRecommendation.getAnswers().isEmpty()) {
