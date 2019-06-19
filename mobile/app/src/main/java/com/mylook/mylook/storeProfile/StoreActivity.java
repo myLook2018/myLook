@@ -6,11 +6,15 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.GridView;
 import android.widget.ImageView;
 
@@ -48,6 +52,7 @@ public class StoreActivity extends AppCompatActivity {
     private StoreContactFragment contactStoreFragment;
     private String coverPh;
     private ReputationFragment reputationFragment;
+    private ShareActionProvider mShareActionProvider;
 
 
     @Override
@@ -64,6 +69,7 @@ public class StoreActivity extends AppCompatActivity {
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
+        invalidateOptionsMenu();
         storeList = new ArrayList<Store>();
         Intent intentStore = getIntent();
         nombreTiendaPerfil = intentStore.getStringExtra("Tienda");
@@ -179,4 +185,37 @@ public class StoreActivity extends AppCompatActivity {
         finish();
         return true;
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.store_menu, menu);
+        // Locate MenuItem with ShareActionProvider
+        MenuItem item = menu.findItem(R.id.share_store);
+
+        // Fetch and store ShareActionProvider
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.e("Title","Item selected");
+        int id = item.getItemId();
+        if (id == R.id.share_store) {
+            Log.e("Share", "Share store");
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta tienda wachin! https://www.mylook.com/store?storeName=" + nombreTiendaPerfil);
+            sendIntent.setType("text/plain");
+            setShareIntent(sendIntent);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void setShareIntent(Intent shareIntent) {
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(shareIntent);
+        }
+    }
+
 }

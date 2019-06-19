@@ -6,8 +6,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ShareActionProvider;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
@@ -53,11 +59,14 @@ public class ArticleInfoActivity extends AppCompatActivity {
     private LinearLayout lnlColors;
     private TextView txtMaterial;
     private TextView txtCost;
+    private ShareActionProvider mShareActionProvider;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_more_info_article_collapsing);
+        Toolbar tb = (Toolbar) findViewById(R.id.toolbar_more_info);
+        invalidateOptionsMenu();
         getArticleFromIntent();
         getUserId();
     }
@@ -224,4 +233,25 @@ public class ArticleInfoActivity extends AppCompatActivity {
         userInteraction.setUserId(user.getUid());
         dB.collection("interactions").add(userInteraction);
     }
+
+     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.share_article) {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta ropa wachin! https://www.mylook.com/recommendation?article=" + articleId);
+            sendIntent.setType("text/plain");
+            setShareIntent(sendIntent);
+        }
+        return true;
+    }
+
+    private void setShareIntent(Intent shareIntent) {
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(shareIntent);
+        }
+    }
+
+
 }

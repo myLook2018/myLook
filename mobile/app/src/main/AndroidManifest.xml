@@ -38,8 +38,30 @@
         <activity android:name=".home.MyLookActivity" android:theme="@style/SplashTheme">
 
         </activity>
-        <activity android:name=".info.ArticleInfoActivity"></activity>
-        <activity android:name=".storeProfile.StoreActivity"></activity>
+        <activity android:name=".info.ArticleInfoActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Poner un data por cada link que se quiera relacionar-->
+                <data
+                    android:pathPrefix="/article"
+                    android:host="www.mylook.com"
+                    android:scheme="https" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".storeProfile.StoreActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Poner un data por cada link que se quiera relacionar-->
+                <data
+                    android:pathPrefix="/store"
+                    android:host="www.mylook.com"
+                    android:scheme="https" />
+            </intent-filter>
+        </activity>
         <activity android:name=".explore.ExploreActivity"
             android:screenOrientation="portrait" >
             <meta-data android:name="android.app.default_searchable"
