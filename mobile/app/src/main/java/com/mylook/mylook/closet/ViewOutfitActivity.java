@@ -1,19 +1,14 @@
 package com.mylook.mylook.closet;
 
-import android.app.ActionBar;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -27,7 +22,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
-import com.mylook.mylook.login.LoginActivity;
 
 import java.util.HashMap;
 
@@ -38,7 +32,6 @@ public class ViewOutfitActivity extends AppCompatActivity {
     private Toolbar tb;
     private String collectionName, category, outfitId;
     private ProgressBar mProgressBar;
-    private ImageView topLeft, topRight, bottomLeft, bottomRight;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,10 +40,6 @@ public class ViewOutfitActivity extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         mProgressBar = findViewById(R.id.mProgressBar);
         mProgressBar.setVisibility(View.VISIBLE);
-        topLeft = findViewById(R.id.topCloth);
-        topRight = findViewById(R.id.topAccesory);
-        bottomLeft = findViewById(R.id.mediumCloth);
-        bottomRight = findViewById(R.id.bottomCloth);
 
         initElements();
         loadOutfit();
@@ -111,12 +100,14 @@ public class ViewOutfitActivity extends AppCompatActivity {
         if (id == R.id.delete_outfit) {
             deleteAlert();
         } else if(id == R.id.edit_outfit){
-            Intent intent = new Intent(getApplicationContext(), OutfitActivity.class);
+            /* TODO
+            Intent intent = new Intent(getApplicationContext(), CreateOutfitActivity.class);
             intent.putExtra("name",collectionName);
             intent.putExtra("category",category);
             intent.putExtra("id",outfitId);
             startActivity(intent);
             finish();
+            */
         } else if (id==R.id.home) {
 
 

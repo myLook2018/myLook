@@ -58,8 +58,8 @@ public class CardsExploreAdapter extends ArrayAdapter<Article> {
         public ImageView image;
 
         public ViewHolder(View view) {
-            this.name = (TextView) view.findViewById(R.id.text_content);
-            this.image = (ImageView) view.findViewById(R.id.image_content);
+            this.name = view.findViewById(R.id.text_content);
+            this.image = view.findViewById(R.id.image_content);
         }
     }
 

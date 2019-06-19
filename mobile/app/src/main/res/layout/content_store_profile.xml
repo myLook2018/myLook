@@ -14,7 +14,6 @@
         android:id="@+id/relLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/profile_store_layout"
         android:layout_marginTop="150dp">
 
         <android.support.design.widget.TabLayout
@@ -43,7 +42,6 @@
             android:src="@drawable/ic_add"
             app:borderWidth="0dp"
             android:visibility="gone"/>
-
 
     </RelativeLayout>
 </RelativeLayout>

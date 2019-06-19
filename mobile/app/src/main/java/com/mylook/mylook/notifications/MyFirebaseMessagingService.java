@@ -33,7 +33,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             sendNotification(notificationTitle, notificationBody);
         }
 
-
         private void sendNotification(String notificationTitle, String notificationBody) {
             Intent intent = new Intent(this, MyLookActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
