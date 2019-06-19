@@ -44,8 +44,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
-import com.mylook.mylook.main.MyLookActivity;
-
+import com.mylook.mylook.home.MyLookActivity;
 
 /**
  * A login screen that offers login via email/password.
