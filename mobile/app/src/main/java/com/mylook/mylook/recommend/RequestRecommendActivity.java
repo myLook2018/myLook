@@ -3,6 +3,7 @@ package com.mylook.mylook.recommend;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -79,13 +80,21 @@ public class RequestRecommendActivity extends AppCompatActivity {
 
     private void getIncomingIntent() {
         Log.d(TAG, "getIncomingIntent: checking for incoming intents.");
-
         Intent intent = getIntent();
         if (intent.hasExtra("requestRecommendation")) {
             RequestRecommendation requestRecommendation = (RequestRecommendation) intent.getSerializableExtra("requestRecommendation");
             requestId = requestRecommendation.getDocumentId();
-        } else{
+        } else if(intent.hasExtra("requestRecommendation")){
             requestId = intent.getStringExtra("requestId");
+        }else {
+            // Cuando viene de un deeplink
+            Uri data  = intent.getData();
+            try {
+                requestId = data.getQueryParameter("requestId");
+            } catch(Exception e){
+                if(intent.hasExtra("requestId"))
+                    requestId = intent.getStringExtra("requestId");
+            }
         }
         Log.e(TAG, "requestId"+requestId);
         dB.collection("requestRecommendations").document(requestId).get().addOnCompleteListener(

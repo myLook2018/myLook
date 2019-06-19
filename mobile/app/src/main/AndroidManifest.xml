@@ -71,6 +71,17 @@
             android:grantUriPermissions="true">
         </activity>
         <activity android:name=".recommend.RequestRecommendActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Poner un data por cada link que se quiera relacionar-->
+                <data
+                    android:pathPrefix="/recommendation"
+                    android:host="www.mylook.com"
+                    android:scheme="https" />
+            </intent-filter>
+
         </activity>
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat"/>

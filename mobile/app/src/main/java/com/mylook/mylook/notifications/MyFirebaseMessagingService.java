@@ -31,15 +31,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         String notificationTitle = null, notificationBody = null;
 
         // Check if message contains a notification payload.
-        if (remoteMessage.getNotification() != null) {
-            Log.e(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-            notificationTitle = remoteMessage.getNotification().getTitle();
-            notificationBody = remoteMessage.getNotification().getBody();
-
+        if (remoteMessage.getData() != null) {
+            Log.e(TAG, "Message Notification Body: " + remoteMessage.getData().get("body"));
+            notificationTitle = remoteMessage.getData().get("title");
+            notificationBody = remoteMessage.getData().get("body");
         }
         String recommendation = "";
         if (!remoteMessage.getData().isEmpty()) {
             recommendation = remoteMessage.getData().get("requestId");
+        }
+        for(String data: remoteMessage.getData().keySet()){
+            Log.e(TAG,data+": "+remoteMessage.getData().get(data));
         }
 
         // Also if you intend on generating your own notifications as a result of a received FCM
@@ -79,7 +81,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     .setContentTitle(notificationTitle)
                     .setContentText(notificationBody)
                     .setSmallIcon(R.drawable.ic_icon_logo)
-                     .setColorized(true )
                      .setColor(getResources().getColor(R.color.purple))
                      .setContentIntent(newIntent)
                      .setChannelId(CHANNEL_ID)
@@ -93,7 +94,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     .setContentText(notificationBody)
                     .setAutoCancel(true)
                     .setContentIntent(newIntent)
-                    .setColorized(true)
+                    .setColor(getResources().getColor(R.color.purple))
                     .setSmallIcon(R.drawable.ic_icon_logo);
 
             notification = notificationBuilder.build();

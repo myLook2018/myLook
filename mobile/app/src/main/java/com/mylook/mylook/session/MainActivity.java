@@ -13,10 +13,23 @@ import com.mylook.mylook.login.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
     private Sesion currentSesion;
-
+    private static final String TAG = "Main Activity";
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSession();
+        Intent incomingIntent = getIntent();
+        if(incomingIntent.getExtras() != null){
+            Log.e(TAG, "Intent as extras");
+            if(incomingIntent.hasExtra("pushnotification"))
+                Log.e(TAG,incomingIntent.getStringExtra("pushnotification"));
+            if(incomingIntent.hasExtra("requestId")){
+                Log.e(TAG, incomingIntent.getStringExtra("requestId"));
+            }
+            for(String key : incomingIntent.getExtras().keySet()){
+                Log.e(TAG,"Key: "+key+" - Value:"+incomingIntent.getExtras().get(key).toString());
+            }
+
+        }
         if(currentSesion!=null) {
             currentSesion.initializeElements().addOnCompleteListener(new OnCompleteListener() {
                 @Override

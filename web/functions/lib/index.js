@@ -47,24 +47,30 @@ exports.pushNotifications = functions.firestore.document('requestRecommendations
 exports.newAnswerNotification = functions.firestore.document('requestRecommendations/{docId}').onWrite((snap, context) => {
     console.log("Executing JavaScript")
     const id = snap.before.id
-    console.log("change document", "docId: "+id)
+    console.log("change document", "docId: " + id)
 
     const newValue = snap.after.data();
     const previousValue = snap.before.data();
     const newAnswer = newValue.answers;
-    const oldAnswer = previousValue.answers;
-    if (newAnswer.length >= oldAnswer.length) {
+    let oldAnswer = null
+    if (previousValue.answers)
+        oldAnswer = previousValue.answers;
+
+    if (oldAnswer == null || newAnswer.length >= oldAnswer.length) {
+        console.log("new answer")
         const title = newValue.title;
         let userId = newValue.userId;
+        console.log("Title and user")
         const desc = newAnswer[newAnswer.length - 1].description;
         const storeName = newAnswer[newAnswer.length - 1].storeName;
+        console.log("Desc and storeName")
         const payload = {
             notification: {
                 title: "Nueva Recomendación para " + title + " de " + storeName,
                 body: desc,
                 sound: "default"
-            }, 
-            data:{
+            },
+            data: {
                 requestId: id
             }
         };
@@ -74,22 +80,42 @@ exports.newAnswerNotification = functions.firestore.document('requestRecommendat
         };
         return admin.firestore().collection("clients").get()
             .then((snapshot) => {
-            snapshot.forEach((doc) => {
-                console.log('user', 'userId ' + userId + ' - Doc user Id' + doc.data().userId + ' - docId ' + doc.id);
-                if (userId == doc.data().userId || userId == doc.id) {
-                    console.log("Es este Usuario!!! " + userId);
-                    const registrationToken = doc.data().installToken;
-                    return admin.messaging().sendToDevice(registrationToken, payload, options)
-                        .then((response) => {
-                        console.log('Successfully sent message:', response);
-                    })
-                        .catch((error) => {
-                        console.log('Error sending message:', error);
-                    });
-                }
-            });
-        });
-        ;
+                snapshot.forEach((doc) => {
+                    console.log('user', 'userId ' + userId + ' - Doc user Id' + doc.data().userId + ' - docId ' + doc.id);
+                    if (userId == doc.data().userId || userId == doc.id) {
+                        console.log("Es este Usuario!!! " + userId);
+                        const registrationToken = doc.data().installToken;
+                        var message = {
+                            data: {
+                                "title": "Nueva Recomendación para " + title + " de " + storeName,
+                                "deepLink": "www.mylook.com/recommendation",
+                                "body": desc,
+                                "sound": "default",
+                                "requestId": id
+                            },
+                            "token": registrationToken
+                        };
+                        console.log(JSON.stringify(message))
+                        return admin.messaging().send(message)
+                            .then((response) => {
+                                // Response is a message ID string.
+                                console.log('Successfully sent message:', response);
+                            })
+                            .catch((error) => {
+                                console.log('Error sending message:', error);
+                            });
+
+
+                        // return admin.messaging().sendToDevice(registrationToken, payload, options)
+                        //     .then((response) => {
+                        //         console.log('Successfully sent message:', response);
+                        //     })
+                        //     .catch((error) => {
+                        //         console.log('Error sending message:', error);
+                        //     });
+                    }
+                });
+            });;
     }
 });
 exports.closeRecommendations = functions.https.onRequest((req, res) => {
@@ -103,14 +129,14 @@ exports.closeRecommendations = functions.https.onRequest((req, res) => {
     }
     return admin.firestore().collection("requestRecommendations").get()
         .then((snapshot) => {
-        snapshot.docs.filter((snap) => {
-            return snap.data().limitDate < (new Date).getTime() && !snap.data().isClosed;
-        }).forEach((element) => {
-            admin.firestore().collection("requestRecommendations").doc(element.id).update({ isClosed: true }).then((result) => {
-                console.log("Cambio de estado exitoso!!", result);
+            snapshot.docs.filter((snap) => {
+                return snap.data().limitDate < (new Date).getTime() && !snap.data().isClosed;
+            }).forEach((element) => {
+                admin.firestore().collection("requestRecommendations").doc(element.id).update({ isClosed: true }).then((result) => {
+                    console.log("Cambio de estado exitoso!!", result);
+                });
             });
         });
-    });
 });
 /**
  * When requested this Function will delete every user accounts that has been inactive for one year.
