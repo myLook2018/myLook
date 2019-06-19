@@ -29,6 +29,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.RequestRecommendation;
+import com.mylook.mylook.home.MyLookActivity;
+import com.mylook.mylook.session.MainActivity;
 import com.mylook.mylook.session.Sesion;
 
 import java.util.ArrayList;
@@ -49,6 +51,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
     private boolean isClosed = false;
     private Menu optionsMenu;
     private ShareActionProvider mShareActionProvider;
+    private boolean fromDeepLink = false;
 
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,11 +85,14 @@ public class RequestRecommendActivity extends AppCompatActivity {
         Log.d(TAG, "getIncomingIntent: checking for incoming intents.");
         Intent intent = getIntent();
         if (intent.hasExtra("requestRecommendation")) {
+            fromDeepLink = false;
             RequestRecommendation requestRecommendation = (RequestRecommendation) intent.getSerializableExtra("requestRecommendation");
             requestId = requestRecommendation.getDocumentId();
-        } else if(intent.hasExtra("requestRecommendation")){
+        } else if(intent.hasExtra("requestId")){
+            fromDeepLink = true;
             requestId = intent.getStringExtra("requestId");
         }else {
+            fromDeepLink = true;
             // Cuando viene de un deeplink
             Uri data  = intent.getData();
             try {
@@ -147,7 +153,6 @@ public class RequestRecommendActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Sesion.getInstance().updateActivitiesStatus(Sesion.RECOMEND_FRAGMENT);
         dB.collection("requestRecommendations").document(requestId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -184,7 +189,21 @@ public class RequestRecommendActivity extends AppCompatActivity {
                         }
                     }
                 });
+
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(fromDeepLink){
+            Intent intent= new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            Sesion.getInstance().updateActivitiesStatus(Sesion.RECOMEND_FRAGMENT);
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if(!isClosed) {
@@ -203,6 +222,8 @@ public class RequestRecommendActivity extends AppCompatActivity {
         }
         return true;
     }
+
+
 
     private void setShareIntent(Intent shareIntent) {
         if (mShareActionProvider != null) {
