@@ -17,8 +17,10 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.mylook.mylook.R;
 import com.mylook.mylook.home.MyLookActivity;
+import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.recommend.RequestRecommendActivity;
 import com.mylook.mylook.session.MainActivity;
+import com.mylook.mylook.storeProfile.StoreActivity;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "FirebaseMessagingServce";
@@ -36,9 +38,22 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             notificationTitle = remoteMessage.getData().get("title");
             notificationBody = remoteMessage.getData().get("body");
         }
-        String recommendation = "";
+        String id = "";
+        Class activity;
         if (!remoteMessage.getData().isEmpty()) {
-            recommendation = remoteMessage.getData().get("requestId");
+            if(remoteMessage.getData().containsKey("requestId")) {
+                id = remoteMessage.getData().get("requestId");
+                activity = RequestRecommendActivity.class;
+            }
+            if(remoteMessage.getData().containsKey("articleId")) {
+                id = remoteMessage.getData().get("articleId");
+                activity = ArticleInfoActivity.class;
+            }
+            if(remoteMessage.getData().containsKey("storeId")) {
+                id = remoteMessage.getData().get("storeId");
+                activity = StoreActivity.class;
+            }
+
         }
         for(String data: remoteMessage.getData().keySet()){
             Log.e(TAG,data+": "+remoteMessage.getData().get(data));
@@ -46,7 +61,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
-        sendNotification(notificationTitle, notificationBody, recommendation);
+        sendNotification(notificationTitle, notificationBody, id);
     }
 
     @Override
