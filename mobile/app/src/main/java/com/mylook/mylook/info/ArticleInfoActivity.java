@@ -46,7 +46,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
 
     private ExpandableListView expandableListView;
     private FloatingActionButton btnCloset;
-
+    private FloatingActionButton btnShare;
     private String articleId,closetId;
     private ArrayList<String> tags;
     private String downLoadUri, dbUserId;
@@ -140,6 +140,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
         txtCost=findViewById(R.id.txtCost);
         lnlSizes=findViewById(R.id.lnlSizes);
         lnlColors=findViewById(R.id.lnlColors);
+        btnShare =  findViewById(R.id.btnShare);
         Glide.with(mContext).load(downLoadUri).into(articleImage);
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,7 +155,21 @@ public class ArticleInfoActivity extends AppCompatActivity {
                 saveOnCloset();
             }
         });
+        btnShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareArticle();
+            }
+        });
 
+    }
+
+    private void shareArticle(){
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta prenda! https://www.mylook.com/article?id="+articleId);
+        sendIntent.setType("text/plain");
+        startActivity(Intent.createChooser(sendIntent, "Share via"));
     }
 
     private void getArticleFromIntent(){
@@ -232,25 +247,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
         userInteraction.setTags(tags);
         userInteraction.setUserId(user.getUid());
         dB.collection("interactions").add(userInteraction);
-    }
-
-     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.share_article) {
-            Intent sendIntent = new Intent();
-            sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta ropa wachin! https://www.mylook.com/recommendation?article=" + articleId);
-            sendIntent.setType("text/plain");
-            setShareIntent(sendIntent);
-        }
-        return true;
-    }
-
-    private void setShareIntent(Intent shareIntent) {
-        if (mShareActionProvider != null) {
-            mShareActionProvider.setShareIntent(shareIntent);
-        }
     }
 
 
