@@ -2,6 +2,7 @@ package com.mylook.mylook.storeProfile;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,9 +29,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Store;
 import com.mylook.mylook.entities.Visit;
+import com.mylook.mylook.session.MainActivity;
 import com.mylook.mylook.utils.SectionsPagerAdapter;
 
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 public class StoreActivity extends AppCompatActivity {
@@ -54,6 +57,7 @@ public class StoreActivity extends AppCompatActivity {
     private String coverPh;
     private ReputationFragment reputationFragment;
     private ShareActionProvider mShareActionProvider;
+    private boolean fromDeepLink = false;
 
 
     @Override
@@ -113,16 +117,21 @@ public class StoreActivity extends AppCompatActivity {
 
     private void getIncomingIntent(){
         Intent intentStore = getIntent();
-        if(intentStore.hasExtra("Tienda"))
+        if(intentStore.hasExtra("Tienda")) {
             nombreTiendaPerfil = intentStore.getStringExtra("Tienda");
+            fromDeepLink = false;
+        }
         else {
             try {
-                nombreTiendaPerfil = intentStore.getData().getQueryParameter("storeName");
+                fromDeepLink = true;
+                nombreTiendaPerfil = Uri.decode(intentStore.getData().getQueryParameter("storeName"));
             } catch (Exception e){
-                nombreTiendaPerfil= intentStore.getStringExtra("storeName").replace("%20"," ");
+                nombreTiendaPerfil= Uri.decode(intentStore.getStringExtra("storeName").replace("%20"," "));
             }
         }
     }
+
+
     private void loadVisit() {
         db.collection("visits").whereEqualTo("storeName",nombreTiendaPerfil).whereEqualTo("userId",user.getUid()).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -205,7 +214,7 @@ public class StoreActivity extends AppCompatActivity {
         MenuItem item = menu.findItem(R.id.share_store);
 
         // Fetch and store ShareActionProvider
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        //mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
         return true;
     }
 
@@ -217,17 +226,20 @@ public class StoreActivity extends AppCompatActivity {
             Log.e("Share", "Share store");
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta tienda wachin! https://www.mylook.com/store?storeName=" + nombreTiendaPerfil.replace(" ","%20"));
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta tienda wachin! https://www.mylook.com/store?storeName=" + Uri.encode(nombreTiendaPerfil));
             sendIntent.setType("text/plain");
-            setShareIntent(sendIntent);
+            startActivity(Intent.createChooser(sendIntent, "Share via"));
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void setShareIntent(Intent shareIntent) {
-        if (mShareActionProvider != null) {
-            mShareActionProvider.setShareIntent(shareIntent);
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(fromDeepLink){
+            Intent intent= new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
         }
     }
-
 }

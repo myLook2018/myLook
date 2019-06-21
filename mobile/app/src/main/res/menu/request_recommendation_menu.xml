@@ -15,7 +15,7 @@
         android:icon="@drawable/ic_share"
         android:title="@string/share_req"
         app:showAsAction="never"
-        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"/>
+        />
 
     <!--<item android:id="@+id/delete_req"-->
         <!--android:title="@string/delete_req"-->

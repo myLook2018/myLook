@@ -210,7 +210,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
             MenuItem item = menu.findItem(R.id.share_req);
 
             // Fetch and store ShareActionProvider
-           mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+           //mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
         } else {
 //            menu.getItem(0).setVisible(false);
 //            menu.getItem(1).setVisible(false);
@@ -222,13 +222,6 @@ public class RequestRecommendActivity extends AppCompatActivity {
     }
 
 
-
-    private void setShareIntent(Intent shareIntent) {
-        if (mShareActionProvider != null) {
-            mShareActionProvider.setShareIntent(shareIntent);
-        }
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -237,7 +230,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
             sendIntent.setAction(Intent.ACTION_SEND);
             sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta recomendación wachin! https://www.mylook.com/recommendation?requestId="+requestId);
             sendIntent.setType("text/plain");
-            setShareIntent(sendIntent);
+            startActivity(Intent.createChooser(sendIntent, "Share via"));
         }
 //        if(id == R.id.delete_req){
 //            // do something

@@ -33,6 +33,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Interaction;
+import com.mylook.mylook.session.MainActivity;
 import com.mylook.mylook.session.Sesion;
 import com.mylook.mylook.storeProfile.StoreActivity;
 
@@ -61,6 +62,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
     private TextView txtMaterial;
     private TextView txtCost;
     private ShareActionProvider mShareActionProvider;
+    private boolean fromDeepLink = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,7 +73,15 @@ public class ArticleInfoActivity extends AppCompatActivity {
         getArticleFromIntent();
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(fromDeepLink){
+            Intent intent= new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
     private void getUserId() {
         dB.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -178,8 +188,10 @@ public class ArticleInfoActivity extends AppCompatActivity {
         if(intent.hasExtra("article")) {
             article= (Article) intent.getSerializableExtra("article");
             articleId=article.getArticleId();
+            fromDeepLink = false;
             getUserId();
         } else{
+            fromDeepLink = true;
             try {
                 articleId = intent.getData().getQueryParameter("articleId");
             } catch (Exception e){
