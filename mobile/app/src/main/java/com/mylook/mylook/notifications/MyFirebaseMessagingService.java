@@ -16,6 +16,7 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.mylook.mylook.R;
+import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.home.MyLookActivity;
 import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.recommend.RequestRecommendActivity;
@@ -39,7 +40,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             notificationBody = remoteMessage.getData().get("body");
         }
         String id = "";
-        Class activity;
+        Class activity = null;
         if (!remoteMessage.getData().isEmpty()) {
             if(remoteMessage.getData().containsKey("requestId")) {
                 id = remoteMessage.getData().get("requestId");
@@ -61,7 +62,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
-        sendNotification(notificationTitle, notificationBody, id);
+        sendNotification(notificationTitle, notificationBody, id, activity);
     }
 
     @Override
@@ -70,16 +71,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.e(TAG, "Entered in deleted messages");
     }
 
-    private PendingIntent createIntent(String recommendation){
-        Intent newIntent = new Intent(getApplicationContext(), RequestRecommendActivity.class);
-        newIntent.putExtra("requestId", recommendation);
+    private PendingIntent createIntent(String id, Class activity){
+        Intent newIntent = new Intent(getApplicationContext(), activity);
+        if (activity == RequestRecommendActivity.class)
+            newIntent.putExtra("requestId", id);
+        if (activity == StoreActivity.class)
+            newIntent.putExtra("storeId", id);
+        if (activity == ArticleInfoActivity.class)
+            newIntent.putExtra("articleId", id);
         PendingIntent pendingIntent =  PendingIntent.getActivity(getApplicationContext(), 0, newIntent, 0);
         return pendingIntent;
     }
 
-    private void sendNotification(String notificationTitle, String notificationBody, String recommendation) {
+    private void sendNotification(String notificationTitle, String notificationBody, String recommendation, Class activity) {
         Notification notification;
-        PendingIntent newIntent = createIntent(recommendation);
+        PendingIntent newIntent = createIntent(recommendation, activity);
 
         //Se hace distinto porque a partir de la versión 8 de Android se utilizan canales de notificaciones
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

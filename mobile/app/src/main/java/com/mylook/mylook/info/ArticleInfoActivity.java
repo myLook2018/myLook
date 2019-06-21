@@ -27,6 +27,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
@@ -68,7 +69,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
         Toolbar tb = (Toolbar) findViewById(R.id.toolbar_more_info);
         invalidateOptionsMenu();
         getArticleFromIntent();
-        getUserId();
     }
 
 
@@ -167,7 +167,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
     private void shareArticle(){
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta prenda! https://www.mylook.com/article?id="+articleId);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta prenda! https://www.mylook.com/article?articleId="+articleId);
         sendIntent.setType("text/plain");
         startActivity(Intent.createChooser(sendIntent, "Share via"));
     }
@@ -175,12 +175,29 @@ public class ArticleInfoActivity extends AppCompatActivity {
     private void getArticleFromIntent(){
         //retrieve data from intent
         Intent intent = getIntent();
-        article= (Article) intent.getSerializableExtra("article");
-        Log.e("ROPERO", article.getArticleId());
-        articleId=article.getArticleId();
-        tags = intent.getStringArrayListExtra("tags");
+        if(intent.hasExtra("article")) {
+            article= (Article) intent.getSerializableExtra("article");
+            articleId=article.getArticleId();
+            getUserId();
+        } else{
+            try {
+                articleId = intent.getData().getQueryParameter("articleId");
+            } catch (Exception e){
+                articleId = intent.getStringExtra("articleId");
+            }
+            getArticleFromId(articleId);
+        }
     }
 
+    private void getArticleFromId(String id){
+        dB.collection("articles").document(id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                article = task.getResult().toObject(Article.class);
+                getUserId();
+            }
+        });
+    }
 
 
 

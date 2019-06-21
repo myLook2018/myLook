@@ -30,6 +30,7 @@ import com.mylook.mylook.entities.Store;
 import com.mylook.mylook.entities.Visit;
 import com.mylook.mylook.utils.SectionsPagerAdapter;
 
+import java.net.URI;
 import java.util.ArrayList;
 
 public class StoreActivity extends AppCompatActivity {
@@ -71,8 +72,7 @@ public class StoreActivity extends AppCompatActivity {
         ab.setDisplayHomeAsUpEnabled(true);
         invalidateOptionsMenu();
         storeList = new ArrayList<Store>();
-        Intent intentStore = getIntent();
-        nombreTiendaPerfil = intentStore.getStringExtra("Tienda");
+        getIncomingIntent();
         contactStoreFragment = new StoreContactFragment(StoreActivity.this, nombreTiendaPerfil);
         infoStoreFragment = new StoreInfoFragment(StoreActivity.this, nombreTiendaPerfil);
         reputationFragment=new ReputationFragment(nombreTiendaPerfil);
@@ -111,6 +111,18 @@ public class StoreActivity extends AppCompatActivity {
 
     }
 
+    private void getIncomingIntent(){
+        Intent intentStore = getIntent();
+        if(intentStore.hasExtra("Tienda"))
+            nombreTiendaPerfil = intentStore.getStringExtra("Tienda");
+        else {
+            try {
+                nombreTiendaPerfil = intentStore.getData().getQueryParameter("storeName");
+            } catch (Exception e){
+                nombreTiendaPerfil= intentStore.getStringExtra("storeName").replace("%20"," ");
+            }
+        }
+    }
     private void loadVisit() {
         db.collection("visits").whereEqualTo("storeName",nombreTiendaPerfil).whereEqualTo("userId",user.getUid()).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -205,7 +217,7 @@ public class StoreActivity extends AppCompatActivity {
             Log.e("Share", "Share store");
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta tienda wachin! https://www.mylook.com/store?storeName=" + nombreTiendaPerfil);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta tienda wachin! https://www.mylook.com/store?storeName=" + nombreTiendaPerfil.replace(" ","%20"));
             sendIntent.setType("text/plain");
             setShareIntent(sendIntent);
         }
