@@ -1,6 +1,5 @@
 package com.mylook.mylook.login;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -46,7 +45,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.home.MyLookActivity;
-
 
 /**
  * A login screen that offers login via email/password.

@@ -2,28 +2,25 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relativeLayout3"
+    android:id="@+id/constraintlayout_outfits"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/greyBackground"
-    tools:context=".closet.CategoryTab">
+    tools:context=".closet.OutfitsTab">
 
-    <GridView
-        android:id="@+id/grid_colecciones"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview_outfits"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:foregroundGravity="center"
         android:gravity="center"
-        android:numColumns="2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/addOutfit"
+        android:id="@+id/fab_add_outfit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
@@ -32,11 +29,11 @@
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:src="@drawable/ic_add"
-        app:layout_constraintBottom_toBottomOf="@+id/grid_colecciones"
+        app:layout_constraintBottom_toBottomOf="@id/recyclerview_outfits"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ProgressBar
-        android:id="@+id/mProgressBar"
+        android:id="@+id/progressbar_outfits"
         style="?android:attr/progressBarStyle"
         android:layout_width="200dp"
         android:layout_height="70dp"

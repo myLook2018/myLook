@@ -62,7 +62,7 @@ public class SearchableActivity extends AppCompatActivity {
             results.clear(); //new
             doMySearchTags(query);
             doMySearchTitles(query);
-            doMySearchStoreNames(query);
+            //TODO doMySearchStoreNames(query);
             doMySearchStorePremium(query);
         }
     }
