@@ -33,7 +33,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<<<<<<< HEAD
         <activity android:name=".login.LoginActivity">
         </activity>
         <activity android:name=".home.MyLookActivity" android:theme="@style/SplashTheme">
@@ -68,13 +67,6 @@
             <meta-data android:name="android.app.default_searchable"
                 android:value=".SearchableActivity" />
         </activity>
-=======
-        <activity android:name=".login.LoginActivity"/>
-        <activity android:name=".profile.AccountActivity" android:parentActivityName=".home.MyLookActivity"/>
-        <activity android:name=".home.MyLookActivity" android:theme="@style/SplashTheme"/>
-        <activity android:name=".info.ArticleInfoActivity"/>
-        <activity android:name=".storeProfile.StoreActivity"/>
->>>>>>> develop
         <activity android:name=".explore.SearchableActivity"
             android:launchMode="singleTop">
             <intent-filter>
