@@ -152,6 +152,7 @@ public class RecommendFragment extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 RequestRecommendation requestRecommendation = document.toObject(RequestRecommendation.class);
                                 requestRecommendation.setDocumentId(document.getId());
+                                Log.e("Request", requestRecommendation.getDocumentId());
                                 requestRecommendationsList.add(requestRecommendation);
                             }
                             adapter.notifyDataSetChanged();

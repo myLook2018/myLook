@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -75,17 +76,37 @@ public class Sesion extends Service {
      */
     public static Sesion getInstance() {
         if (singleton == null) {
-            Log.e("getInstance", "singleton ==null" );
             Task task=getUserId();
-            if(task!=null) {
-                singleton = new Sesion();
+            try {
+                Tasks.await(task);
+            } catch (Exception e){
+
             }
+            if(userId == null){
+                try {
+                    Tasks.await(getMailUserId());
+                } catch (Exception e){
+
+                }
+            }
+                singleton = new Sesion();
         }
         return singleton;
     }
 
     public Task initializeElements(){
         return getUserId();
+    }
+
+    private static Task getMailUserId(){
+        return db.collection("clients").whereEqualTo("email", FirebaseAuth.getInstance().getCurrentUser().getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    userId = task.getResult().getDocuments().get(0).get("userId").toString();
+                }
+            }
+        });
     }
 
     private static Task getUserId() {
@@ -96,16 +117,6 @@ public class Sesion extends Service {
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
                         userId = task.getResult().getDocuments().get(0).get("userId").toString();
-
-                    } else {
-                        db.collection("clients").whereEqualTo("email", FirebaseAuth.getInstance().getCurrentUser().getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    userId = task.getResult().getDocuments().get(0).get("userId").toString();
-                                }
-                            }
-                        });
                     }
                 }
             });
