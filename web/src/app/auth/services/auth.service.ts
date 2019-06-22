@@ -35,6 +35,7 @@ export class AuthService {
         if (res.length === 0) {
           return resolve(true);
         } else {
+          console.log(`ya esta registrado`);
           return reject(`Ya existe un usuario registrado con el mail ingresado.`);
         }
       });

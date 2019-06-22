@@ -5,6 +5,12 @@ const admin = require("firebase-admin");
 const promisePool = require('es6-promise-pool');
 const PromisePool = promisePool.PromisePool;
 const secureCompare = require('secure-compare');
+const mercadopago = require('mercadopago');
+mercadopago.configure({
+    client_id: '1059447032112952',
+    client_secret: '3at5jmJl40HnPV0kBGPVjmjL4PCA9Iyp'
+});
+
 // Maximum concurrent account deletions.
 const MAX_CONCURRENT = 3;
 // Método que inicializa las funciones, sin esto no anda
@@ -105,14 +111,6 @@ exports.newAnswerNotification = functions.firestore.document('requestRecommendat
                                 console.log('Error sending message:', error);
                             });
 
-
-                        // return admin.messaging().sendToDevice(registrationToken, payload, options)
-                        //     .then((response) => {
-                        //         console.log('Successfully sent message:', response);
-                        //     })
-                        //     .catch((error) => {
-                        //         console.log('Error sending message:', error);
-                        //     });
                     }
                 });
             });;
@@ -195,4 +193,23 @@ function getInactiveUsers(users = [], nextPageToken) {
         return users;
     });
 }
+
+
+exports.newMercadoPagoDoc = functions.firestore.document('prueba/{userId}')
+    .onCreate((snap, context) => {
+        // Get an object representing the document
+        // e.g. {'name': 'Marie', 'age': 66}
+        const preference = snap.data();
+        console.log('preference', preference);
+        mercadopago.preferences.create(preference)
+            .then((respuesta) => {
+                console.log('respuesta', respuesta);
+                return 'si, anda la cloud functon y salio todo bien';
+            }).catch((error) => {
+                console.log('error', error);
+                return 'algo salio mal. Si, no tengo idea que, de nada por lo especifico. Toma este erorr ' + error;
+            });
+        // make the request
+    });
+
 //# sourceMappingURL=index.js.map

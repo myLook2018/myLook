@@ -11,9 +11,9 @@
     </mat-card-header>
 
     <div>
-      <mat-horizontal-stepper #stepper [linear]="isLinear">
+      <mat-horizontal-stepper #stepper [linear]="isLinear" style="    max-height: calc(75vh); overflow: overlay;">
         <mat-step [stepControl]="step1">
-          <form [formGroup]="registerStoreFormGroup">
+          <form [formGroup]="registerStoreFormGroupStep1">
             <ng-template matStepLabel>Usuario</ng-template>
 
             <div #firstStep style="display: flex; height: 435px;">
@@ -21,15 +21,14 @@
               <div style="display: block;margin-left: auto; margin-right:auto;">
 
                 <mat-form-field style="display: block;">
-                  <input matInput autofocus placeholder="Nombre de la Tienda" formControlName="storeName" [(ngModel)]="storeName">
+                  <input required matInput autofocus placeholder="Nombre de la Tienda" formControlName="storeName" [(ngModel)]="storeName" (keypress)="clearErrors()">
                 </mat-form-field>
-
+                <mat-error *ngIf="errorMessage" style="display:table-caption">
+                    {{errorMessage}}
+                </mat-error>
                 <div style="display: table-cell">
                   <div style="display: block; width: 200px; height: auto; position: relative;">
                     <div style="text-align: center;">
-                      <div *ngIf="!(errorMessage === '')" style="color:red">
-                        {{errorMessage}}
-                      </div>
                       <label>Foto de Perfil</label>
                     </div>
                     <div #firstColumn>
@@ -54,7 +53,7 @@
 
                   <div style="display: grid; margin-top: 10px;">
                     <mat-form-field>
-                      <input matInput placeholder="Telefono Personal" formControlName="storePhone">
+                      <input required matInput placeholder="Telefono Personal" formControlName="storePhone" min='0' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57">
                     </mat-form-field>
                   </div>
                 </div>
@@ -64,7 +63,7 @@
 
             <div style="display: grid;">
               <div style="margin-left: auto">
-                <button mat-mini-fab class="nextButton orangeButton" (click)="isStoreNameAvailable(stepper)">
+                <button [disabled]="registerStoreFormGroupStep1.invalid" mat-mini-fab class="nextButton orangeButton" (click)="isStoreNameAvailable(stepper)">
                   <mat-icon>navigate_next</mat-icon>
                 </button>
               </div>
@@ -74,7 +73,7 @@
 
 
         <mat-step [stepControl]="step2">
-          <form [formGroup]="registerStoreFormGroup">
+          <form [formGroup]="registerStoreFormGroupStep2">
             <ng-template matStepLabel>Tienda</ng-template>
             <div>
               <div style="display: block; width: auto; height: auto; position: relative; margin-left: auto; margin-right: auto">
@@ -105,11 +104,11 @@
 
             <div style="display: flex">
               <mat-form-field style="width: 30%;">
-                <input matInput placeholder="Provincia" formControlName="storeProvince">
+                <input required matInput placeholder="Provincia" formControlName="storeProvince">
               </mat-form-field>
 
               <mat-form-field style="width: 40%;">
-                <input matInput placeholder="Ciudad" formControlName="storeCity">
+                <input required matInput placeholder="Ciudad" formControlName="storeCity">
               </mat-form-field>
             </div>
             <!-- this creates a google map on the page with the given lat/lng from -->
@@ -120,15 +119,15 @@
 
             <div style="display: flex">
               <mat-form-field id="storeAddress" style="width: 45%">
-                <input matInput placeholder="Dirección" formControlName="storeAddress">
+                <input required matInput placeholder="Dirección" formControlName="storeAddress">
               </mat-form-field>
 
               <mat-form-field id="storeAddressNumber" style="width: 15%">
-                <input matInput placeholder="N°" formControlName="storeAddressNumber">
+                <input required matInput placeholder="N°" formControlName="storeAddressNumber" min='0' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57">
               </mat-form-field>
 
               <mat-form-field id="storeFloor" style="width: 10%;">
-                <input matInput placeholder="Piso" formControlName="storeFloor">
+                <input matInput placeholder="Piso" formControlName="storeFloor" min='0' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57">
               </mat-form-field>
 
               <mat-form-field id="storeFloor" style="width: 10%;">
@@ -147,7 +146,7 @@
                   <mat-icon>navigate_before</mat-icon>
                 </button>
                 <span class="fill-space"></span>
-                <button mat-mini-fab matStepperNext class="nextButton orangeButton" (click)="stepper.next()">
+                <button [disabled]="registerStoreFormGroupStep2.invalid" mat-mini-fab matStepperNext class="nextButton orangeButton" (click)="stepper.next()">
                   <mat-icon>navigate_next</mat-icon>
                 </button>
               </mat-toolbar-row>
@@ -163,13 +162,17 @@
           <ng-template matStepLabel>Confirmar Datos</ng-template>
 
           <mat-form-field class="full-length">
-            <input matInput [disabled]="isRegistering" placeholder="Contraseña" [(ngModel)]='password' type="password">
+            <input matInput [disabled]="isRegistering" placeholder="Contraseña" [(ngModel)]='password' type="password" (keypress)="clearErrors()">
           </mat-form-field>
 
           <mat-form-field class="full-length">
-            <input matInput [disabled]="isRegistering" placeholder="Confirmar contraseña" [(ngModel)]='confirmPassword'
+            <input matInput [disabled]="isRegistering" placeholder="Confirmar contraseña" [(ngModel)]='confirmPassword' (keypress)="clearErrors()"
               type="password">
           </mat-form-field>
+
+          <mat-error *ngIf="errorMessage">
+            {{errorMessage}}
+          </mat-error>
 
           <mat-toolbar>
             <mat-toolbar-row style="background-color: white">

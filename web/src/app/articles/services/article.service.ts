@@ -5,10 +5,19 @@ import {
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Article } from '../models/article';
-import { map, filter } from 'rxjs/operators';
+import { map, filter, catchError } from 'rxjs/operators';
 import * as firebase from 'firebase';
 import { StoreFront } from '../models/storeFront';
 import { reject } from 'q';
+import { HttpClient } from '@angular/common/http';
+import { PreferenceMP } from '../models/preferenceMP';
+import { HttpHeaders } from '@angular/common/http';
+
+const httpOptions = {
+  headers: new HttpHeaders({
+    'Content-Type':  'application/json'
+  })
+};
 
 @Injectable()
 export class ArticleService {
@@ -19,11 +28,12 @@ export class ArticleService {
   // tslint:disable-next-line:no-inferrable-types
   collectionPath: string = 'articles';
   storeFrontPath = 'storeFronts';
+  mercadoPagoPath = 'prueba';
   promotePath = 'promotions';
   db: any;
   require: any;
 
-  constructor(public fst: AngularFirestore) {
+  constructor(public fst: AngularFirestore, private http: HttpClient) {
     console.log(`en el collector`);
     this.articleCollection = this.fst.collection(this.collectionPath);
     this.promoteCollection = this.fst.collection(this.promotePath);
@@ -203,6 +213,15 @@ export class ArticleService {
         storeName: storeName,
       });
       res.then(ref => console.log(ref.id));
+    });
+  }
+
+  createNewSale(preferenceMP) {
+    console.log('creando venta');
+    return new Promise<any>((resolve) => {
+      const res = this.fst.collection(this.mercadoPagoPath).add(preferenceMP);
+      res.then(ref => console.log(ref.id));
+      resolve(res);
     });
   }
 }

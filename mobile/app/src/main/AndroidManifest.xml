@@ -66,7 +66,6 @@
             android:screenOrientation="portrait" >
             <meta-data android:name="android.app.default_searchable"
                 android:value=".SearchableActivity" />
-
         </activity>
         <activity android:name=".explore.SearchableActivity"
             android:launchMode="singleTop"
@@ -79,10 +78,7 @@
                 android:value=".explore.ExploreActivity" />
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>
-
         </activity>
-
-        <activity android:name=".profile.ProfileActivity" android:launchMode="singleInstance"/>
         <activity android:name=".recommend.RecommendationsActivity"
             android:grantUriPermissions="true"
             android:launchMode="singleInstance">
@@ -107,11 +103,10 @@
         </activity>
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat"/>
-        <activity android:name=".profile.NewPasswordActivity"/>
-        <activity android:name=".profile.EditInfoActivity"/>
-        <activity android:name=".profile.MyAccountActivity"/>
+        <activity android:name=".profile.NewPasswordActivity" android:parentActivityName=".profile.EditInfoActivity"/>
+        <activity android:name=".profile.EditInfoActivity" android:parentActivityName=".profile.AccountActivity"/>
         <activity android:name=".premiumUser.PremiumRequestActivity"
-            android:parentActivityName=".profile.ProfileActivity"
+            android:parentActivityName=".profile.AccountActivity"
             android:grantUriPermissions="true"/>
         <activity android:name=".premiumUser.PremiumUserProfileActivity"/>
         <activity android:name=".premiumUser.NewPublicationActivity"
@@ -149,6 +144,8 @@
         </activity>
         <activity android:name=".login.ResetPasswordActivity"
             android:parentActivityName=".login.LoginActivity"/>
+
+
         <service android:name=".notifications.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>

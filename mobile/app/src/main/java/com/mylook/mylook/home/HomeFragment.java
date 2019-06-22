@@ -15,6 +15,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -40,6 +43,8 @@ import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.PremiumUser;
 import com.mylook.mylook.entities.Subscription;
 import com.mylook.mylook.login.LoginActivity;
+import com.mylook.mylook.profile.AccountActivity;
+import com.mylook.mylook.profile.ProfileFragment;
 import com.mylook.mylook.room.LocalInteraction;
 import com.mylook.mylook.session.Sesion;
 import com.mylook.mylook.utils.CardsHomeFeedAdapter;
@@ -95,7 +100,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        setHasOptionsMenu(true);
         mContext = getContext();
         recyclerView = view.findViewById(R.id.recycler_view_content);
         mProgressBar = view.findViewById(R.id.home_progress_bar);
@@ -149,7 +154,21 @@ public class HomeFragment extends Fragment {
         readSubscriptions();
         updateInstallationToken();
     }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.home_menu, menu);
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.settings_menu) {
+            Intent intent = new Intent(getContext(), AccountActivity.class);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onStart() {

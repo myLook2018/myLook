@@ -4,12 +4,16 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.text.Editable;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.closet.ClosetFragment;
@@ -32,9 +36,17 @@ public class Sesion extends Service {
     public static final int PROFILE_FRAGMENT = 5;
     public static final String TAG = "Sesion";
     public static String userId = null;
+    public static boolean isPremium = false;
+    public static String name= "";
+    public static String mail= "";
+    public static String clientId= "";
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public Sesion() {
+    }
+
+    public boolean isPremiumUser(){
+        return isPremium;
     }
 
     public String getSessionUserId(){
@@ -118,13 +130,20 @@ public class Sesion extends Service {
                     if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
                         userId = task.getResult().getDocuments().get(0).get("userId").toString();
                     }
-                }
-            });
-        }else
-        {
-            return null;
+                });
+            }
         }
-        return null;
+    }
+
+    public static void updateData(){
+        db.collection("clients").document(clientId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot document) {
+                isPremium = (Boolean) document.get("isPremium");
+                name = document.get("name").toString() + " " + document.get("surname").toString();
+                mail = (String) document.get("email");
+            }
+        });
     }
 
     @Override
