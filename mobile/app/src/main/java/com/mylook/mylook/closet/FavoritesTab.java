@@ -15,10 +15,12 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.mylook.mylook.R;
+import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Outfit;
 import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.utils.ArticlesGridAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,12 +40,6 @@ public class FavoritesTab extends Fragment {
         super.onCreate(savedInstanceState);
         closet = ViewModelProviders.of(getParentFragment()).get(ClosetModel.class);
         closet.load();
-        closet.getFavorites().observe(this, favorites -> {
-            adapter = new ArticlesGridAdapter(getContext(), favorites);
-            favoritesGridView.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
-            if (mProgressBar != null) mProgressBar.setVisibility(View.GONE);
-        });
     }
 
     @Nullable
@@ -63,6 +59,11 @@ public class FavoritesTab extends Fragment {
         favoritesGridView.setNumColumns(3);
         favoritesGridView.setOnItemClickListener((parent, v, position, id) -> showFavorite(position));
         favoritesGridView.setOnItemLongClickListener((parent, v, position, id) -> favoriteOptions(position));
+        closet.getFavorites().observe(this, favorites -> {
+            adapter = new ArticlesGridAdapter(getContext(), favorites);
+            favoritesGridView.setAdapter(adapter);
+            if (mProgressBar != null) mProgressBar.setVisibility(View.GONE);
+        });
     }
 
     private boolean favoriteOptions(int position) {
