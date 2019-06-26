@@ -52,6 +52,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mylook.mylook.R;
+import com.mylook.mylook.session.Sesion;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 

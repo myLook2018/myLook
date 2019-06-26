@@ -16,10 +16,12 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Outfit;
+import com.mylook.mylook.session.Sesion;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,18 +69,21 @@ public class OutfitCreateEditActivity extends AppCompatActivity {
 
     private void getAll() {
         all = new ArrayList<>();
-        FirebaseFirestore.getInstance().collection("articles")
-                .whereArrayContains("favorites", FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        all.addAll(task.getResult().getDocuments().stream().map(document -> {
-                            Article art = document.toObject(Article.class);
-                            if (art != null) {
-                                art.setArticleId(document.getId());
+        FirebaseFirestore.getInstance().collection("closets").whereEqualTo("userID", Sesion.getInstance().getSessionUserId())
+                .get().addOnSuccessListener(task -> {
+                    if (task.getDocuments().size() > 0) {
+                        DocumentSnapshot closet = task.getDocuments().get(0);
+                        closet.getReference().collection("favorites").get().addOnSuccessListener(taskFavorites -> {
+                            if (taskFavorites.getDocuments().size() > 0) {
+                                all.addAll(task.getDocuments().stream().map(document -> {
+                                    Article art = document.toObject(Article.class);
+                                    if (art != null) {
+                                        art.setArticleId(document.getId());
+                                    }
+                                    return art;
+                                }).collect(Collectors.toList()));
                             }
-                            return art;
-                        }).collect(Collectors.toList()));
+                        });
                     }
                     getDataFromIntent();
                     adapter = new OutfitCreateEditAdapter(this, all, selectedIndexes);
@@ -162,7 +167,7 @@ public class OutfitCreateEditActivity extends AppCompatActivity {
             data.put("name", editText.getText().toString());
             //TODO sacar???
             data.put("category", "");
-            data.put("userID", FirebaseAuth.getInstance().getCurrentUser().getUid());
+            data.put("userID", Sesion.getInstance().getSessionUserId());
             data.put("favorites", selectedIds);
             FirebaseFirestore.getInstance().collection("outfits").add(data)
                     .addOnSuccessListener(doc -> {

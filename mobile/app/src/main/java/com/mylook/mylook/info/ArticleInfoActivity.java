@@ -3,6 +3,7 @@ package com.mylook.mylook.info;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
@@ -22,11 +23,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
@@ -39,6 +44,8 @@ import com.mylook.mylook.utils.SlidingImageAdapter;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -51,18 +58,10 @@ public class ArticleInfoActivity extends AppCompatActivity {
     private FloatingActionButton btnCloset;
     private FloatingActionButton btnShare;
     private String articleId,closetId;
-    private ArrayList<String> tags;
     private String downLoadUri, dbUserId;
     private Article article;
-    private FirebaseUser user =FirebaseAuth.getInstance().getCurrentUser();;
+    private FirebaseUser user =FirebaseAuth.getInstance().getCurrentUser();
     private FirebaseFirestore dB =FirebaseFirestore.getInstance();
-    private TextView txtTitle;
-    private TextView txtStoreName;
-    private LinearLayout lnlSizes;
-    private LinearLayout lnlColors;
-    private TextView txtMaterial;
-    private TextView txtCost;
-    private ShareActionProvider mShareActionProvider;
     private boolean fromDeepLink = false;
     private ArrayList<String> tags, imageArraySlider;
     private LinearLayout lnlSizes, lnlColors;
@@ -73,7 +72,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_more_info_article_collapsing);
+        setContentView(R.layout.activity_article_details);
         Toolbar tb = (Toolbar) findViewById(R.id.toolbar_more_info);
         invalidateOptionsMenu();
         getArticleFromIntent();
@@ -89,33 +88,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
         }
     }
 
-    private void getUserId() {
-        dB.collection("clients").whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
-                    dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
-                    downLoadUri=article.getPicture();
-                    initElements();
-                    setDetail();
-                } else {
-                    dB.collection("clients").whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                dbUserId = task.getResult().getDocuments().get(0).get("userId").toString();
-                                downLoadUri=article.getPicture();
-                                initElements();
-                                setDetail();
-                                 isArticleInCloset();
-                            }
-                        }
-                    });
-                }
-            }
-        });
-       
-    }
 
     private void changeSavedInCloset() {
         if (alreadyInCloset) {
@@ -168,26 +140,11 @@ public class ArticleInfoActivity extends AppCompatActivity {
         lnlSizes=findViewById(R.id.lnlSizes);
         lnlColors=findViewById(R.id.lnlColors);
         btnShare =  findViewById(R.id.btnShare);
-        Glide.with(mContext).load(downLoadUri).into(articleImage);
-        backArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+        //Glide.with(mContext).load(downLoadUri).into(articleImage);
+        backArrow.setOnClickListener(view -> finish());
 
-        btnCloset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveOnCloset();
-            }
-        });
-        btnShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                shareArticle();
-            }
-        });
+        btnCloset.setOnClickListener(v -> saveOnCloset());
+        btnShare.setOnClickListener(v -> shareArticle());
         ViewPager articlePager;
         articlePager = findViewById(R.id.view_pager_article);
         if (imageArraySlider == null) {
@@ -221,7 +178,9 @@ public class ArticleInfoActivity extends AppCompatActivity {
             article= (Article) intent.getSerializableExtra("article");
             articleId=article.getArticleId();
             fromDeepLink = false;
-            getUserId();
+            initElements();
+            setDetail();
+            isArticleInCloset();
         } else{
             fromDeepLink = true;
             try {
@@ -234,12 +193,12 @@ public class ArticleInfoActivity extends AppCompatActivity {
     }
 
     private void getArticleFromId(String id){
-        dB.collection("articles").document(id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                article = task.getResult().toObject(Article.class);
-                getUserId();
-            }
+        dB.collection("articles").document(id).get().addOnCompleteListener(task -> {
+            article = task.getResult().toObject(Article.class);
+            dbUserId = Sesion.getInstance().userId;
+            downLoadUri=article.getPicture();
+            initElements();
+            setDetail();
         });
     }
 
@@ -255,32 +214,26 @@ public class ArticleInfoActivity extends AppCompatActivity {
         dB.collection("closets")
                 .whereEqualTo("userID",dbUserId)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful() && task.getResult().getDocuments().size()>0){
-                            closetId=task.getResult().getDocuments().get(0).getId();
-                            dB.collection("closets").document(closetId).collection("favorites")
-                                    .whereEqualTo("articleId",articleId).get()
-                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                            if(task.getResult().getDocuments().size()==0){
-                                                Log.e("CLOSET", closetId);
-                                                dB.collection("closets").document(closetId).collection("favorites").add(favorites);
-                                                sendNewInteraction();
-                                                displayMessage("Se añadió a tu ropero");
-                                                Sesion.getInstance().updateActivitiesStatus(Sesion.HOME_FRAGMENT, Sesion.CLOSET_FRAGMENT);
-                                            }else
-                                            {
-                                                displayMessage("Ya está en tu ropero");
-                                            }
-                                        }
-                                    });
-                        }else
-                        {
-                            displayMessage("No tienes un ropero asociado");
-                        }
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful() && task.getResult().getDocuments().size()>0){
+                        closetId=task.getResult().getDocuments().get(0).getId();
+                        dB.collection("closets").document(closetId).collection("favorites")
+                                .whereEqualTo("articleId",articleId).get()
+                                .addOnCompleteListener(task1 -> {
+                                    if(task1.getResult().getDocuments().size()==0){
+                                        Log.e("CLOSET", closetId);
+                                        dB.collection("closets").document(closetId).collection("favorites").add(favorites);
+                                        sendNewInteraction();
+                                        displayMessage("Se añadió a tu ropero");
+                                        Sesion.getInstance().updateActivitiesStatus(Sesion.HOME_FRAGMENT, Sesion.CLOSET_FRAGMENT);
+                                    }else
+                                    {
+                                        displayMessage("Ya está en tu ropero");
+                                    }
+                                });
+                    }else
+                    {
+                        displayMessage("No tienes un ropero asociado");
                     }
                 });
     }
@@ -288,7 +241,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
     protected void onDestroy() {
         if (inCloset) {
             FirebaseFirestore.getInstance().collection("articles").document(article.getArticleId())
-                    .update("favorites", FieldValue.arrayUnion(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+                    .update("favorites", FieldValue.arrayUnion(Sesion.getInstance().userId))
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             sendNewInteraction();
@@ -309,7 +262,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
                     btnCloset.setEnabled(false);
                     return;
                 }
-                if (Objects.equals(document.get("favorites"), FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                if (Objects.equals(document.get("favorites"), Sesion.getInstance().userId)) {
                     btnCloset.setEnabled(true);
                     alreadyInCloset = true;
                     inCloset = true;
@@ -334,7 +287,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
         userInteraction.setArticleId(this.article.getArticleId());
         userInteraction.setStoreName(this.article.getStoreName());
         userInteraction.setTags(tags);
-        userInteraction.setUserId(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        userInteraction.setUserId(Sesion.getInstance().userId);
         FirebaseFirestore.getInstance().collection("interactions").add(userInteraction);
     }
 

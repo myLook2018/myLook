@@ -35,6 +35,7 @@ import com.mylook.mylook.entities.PremiumUser;
 import com.mylook.mylook.entities.Subscription;
 import com.mylook.mylook.login.LoginActivity;
 import com.mylook.mylook.profile.AccountActivity;
+import com.mylook.mylook.session.Sesion;
 import com.mylook.mylook.utils.CardsHomeFeedAdapter;
 
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ import java.util.Random;
 
 public class HomeFragment extends Fragment {
     private CardsHomeFeedAdapter adapter;
-    private ArrayList<Article> list;
+    private static ArrayList<Article> list;
     private ArrayList<Subscription> subscriptionList;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private ProgressBar mProgressBar;
@@ -56,6 +57,8 @@ public class HomeFragment extends Fragment {
     private int totalArticles = 0;
     private Context mContext;
     final static String TAG = "HomeFragment";
+    private Sesion currentSesion = Sesion.getInstance();
+
     private static HomeFragment homeInstance;
 
     public static HomeFragment getInstance() {

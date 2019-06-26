@@ -16,6 +16,7 @@ import com.mylook.mylook.closet.ClosetFragment;
 import com.mylook.mylook.explore.ExploreFragment;
 import com.mylook.mylook.profile.ProfileFragment;
 import com.mylook.mylook.recommend.RecommendFragment;
+import com.mylook.mylook.session.Sesion;
 import com.mylook.mylook.session.Session;
 
 public class MyLookActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {

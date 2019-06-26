@@ -3,10 +3,12 @@ package com.mylook.mylook.storeProfile;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
@@ -16,12 +18,16 @@ import android.view.MenuItem;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Store;
 import com.mylook.mylook.entities.Visit;
 import com.mylook.mylook.session.MainActivity;
+import com.mylook.mylook.session.Sesion;
 import com.mylook.mylook.utils.SectionsPagerAdapter;
 
 import java.net.URI;
@@ -40,6 +46,13 @@ public class StoreActivity extends AppCompatActivity {
     private ReputationFragment reputationFragment;
     private ShareActionProvider mShareActionProvider;
     private boolean fromDeepLink = false;
+    private String nombreTiendaPerfil;
+    private ArrayList<Store> storeList;
+    private Visit visit;
+    private String visitId;
+    private ShopwindowFragment shopwindowFragment;
+    private FirebaseFirestore db;
+    private CatalogFragment catalogFragment;
 
 
     @Override
@@ -52,15 +65,16 @@ public class StoreActivity extends AppCompatActivity {
         Toolbar tb =  findViewById(R.id.toolbar);
         tb.setTitle("Tienda");
         ActionBar ab = getSupportActionBar();
+        if(ab != null)
         ab.setDisplayHomeAsUpEnabled(true);
         invalidateOptionsMenu();
         storeList = new ArrayList<Store>();
         getIncomingIntent();
-        contactStoreFragment = new StoreContactFragment(StoreActivity.this, nombreTiendaPerfil);
-        infoStoreFragment = new StoreInfoFragment(StoreActivity.this, nombreTiendaPerfil);
-        reputationFragment=new ReputationFragment(nombreTiendaPerfil);
+        contactStoreFragment = new StoreContactFragment();
+        infoStoreFragment = new StoreInfoFragment();
+        reputationFragment=new ReputationFragment();
         //loadVisit();
-        visit=new Visit(nombreTiendaPerfil,user.getUid());
+        visit=new Visit(nombreTiendaPerfil, Sesion.getInstance().getSessionUserId());
         setupViewPagerInfo(viewPagerStoreInfo);
         Intent intentStore = getIntent();
         loadStore(intentStore.getStringExtra("Tienda"));
@@ -98,27 +112,28 @@ public class StoreActivity extends AppCompatActivity {
 
 
     private void loadVisit() {
-        db.collection("visits").whereEqualTo("storeName",nombreTiendaPerfil).whereEqualTo("userId",user.getUid()).get()
+        db.collection("visits").whereEqualTo("storeName", nombreTiendaPerfil).whereEqualTo("userId", Sesion.getInstance().getSessionUserId()).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
-                            if(task.getResult().getDocuments().size()==0){
-                                visitId=null;
-                                visit=new Visit(nombreTiendaPerfil,user.getUid());
+                        if (task.isSuccessful()) {
+                            if (task.getResult().getDocuments().size() == 0) {
+                                visitId = null;
+                                visit = new Visit(nombreTiendaPerfil, Sesion.getInstance().getSessionUserId());
                                 //db.collection("visits").add(visit.toMap());
 
-                            }else{
-                                Log.e("OLD VISIT","ID: " +visitId);
+                            } else {
+                                Log.e("OLD VISIT", "ID: " + visitId);
                                 visit = null;
-                                visitId=null;
-                                visit=task.getResult().getDocuments().get(0).toObject(Visit.class);
-                                visitId=task.getResult().getDocuments().get(0).getId();
-                                }
-
+                                visitId = null;
+                                visit = task.getResult().getDocuments().get(0).toObject(Visit.class);
+                                visitId = task.getResult().getDocuments().get(0).getId();
                             }
+
                         }
-                    });
+                    }
+                });
+    }
     private void setFragments() {
         getSupportActionBar().setTitle(store.getStoreName());
 
@@ -141,7 +156,6 @@ public class StoreActivity extends AppCompatActivity {
         infoStoreFragment = new StoreInfoFragment();
         infoStoreFragment.setArguments(bundle);
         setupViewPagerInfo(viewPagerStoreInfo);
-
         shopwindowFragment = new ShopwindowFragment();
         shopwindowFragment.setArguments(bundle);
         catalogFragment = new CatalogFragment();
