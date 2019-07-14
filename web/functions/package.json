@@ -16,6 +16,9 @@
     "mercadopago": "^1.0.23",
     "secure-compare": "^3.0.1"
   },
+  "engines": {
+    "node": "8"
+  },
   "devDependencies": {
     "typescript": "^3.2.2",
     "eslint": "^4.13.1",

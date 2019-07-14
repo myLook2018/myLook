@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "mylook-app"
+    "default": "mylook-app",
+    "myLook": "app-mylook"
   }
 }

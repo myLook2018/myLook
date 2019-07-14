@@ -1,7 +1,6 @@
 {
   "hosting": {
-    "site" : "mylook-app",
-    "public": "public",
+    "public": "dist/myLook",
     "ignore": [
       "firebase.json",
       "**/.*",

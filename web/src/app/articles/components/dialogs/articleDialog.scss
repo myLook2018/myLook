@@ -97,6 +97,7 @@ input[type=number]::-webkit-outer-spin-button {
 .closeIconButton {
   height: 40px;
   margin-left: 108px;
-  margin-top: 43px;
+  position: absolute;
   z-index: 500;
+  margin-top: 2px;
 }
