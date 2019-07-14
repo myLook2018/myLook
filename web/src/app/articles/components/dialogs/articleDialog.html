@@ -114,8 +114,9 @@
                   <button *ngIf="isLoadedImage" (click)="cropping1.fitToScreen()" ly-button>Fit to screen</button>
                   <button *ngIf="isLoadedImage" (click)="cropping1.setScale(1)" ly-button>1:1</button>
                 -->
-              <div style="height: 40px">
+              <div>
                 <button
+                  class="closeIconButton"
                   *ngIf="isLoadedImage[0]"
                   (click)="cropping0.clean()"
                   (click)="doClean(0)"
@@ -188,8 +189,9 @@
                     <button *ngIf="isLoadedImage" (click)="cropping2.fitToScreen()" ly-button>Fit to screen</button>
                     <button *ngIf="isLoadedImage" (click)="cropping2.setScale(1)" ly-button>1:1</button>
                   -->
-              <div style="height: 40px">
+              <div>
                 <button
+                  class="closeIconButton"
                   *ngIf="isLoadedImage[1]"
                   (click)="cropping1.clean()"
                   (click)="doClean(1)"
@@ -261,8 +263,9 @@
                       <button *ngIf="isLoadedImage" (click)="cropping1.fitToScreen()" ly-button>Fit to screen</button>
                       <button *ngIf="isLoadedImage" (click)="cropping1.setScale(1)" ly-button>1:1</button>
                     -->
-              <div style="height: 40px">
+              <div>
                 <button
+                  class="closeIconButton"
                   *ngIf="isLoadedImage[2]"
                   (click)="cropping2.clean()"
                   (click)="doClean(2)"

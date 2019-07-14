@@ -62,6 +62,13 @@
     width: 100%;
 }
 
+.coverPh {
+  position: absolute;
+  z-index: -1;
+  width: inherit;
+  height: auto;
+}
+
 .articlesCard{
     width: 90%;
     min-width: 90%;

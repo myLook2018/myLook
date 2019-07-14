@@ -167,7 +167,9 @@ import { HttpClientModule} from '@angular/common/http';
     LyIconModule,
     LyThemeModule.setTheme('minima-light'),
     AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyC7gRAUi_0C-w5gqsWIVp0IKyEZT-3UiUA'
+      apiKey: 'AIzaSyDmuhZx-ew-zpQzQcjiqk2yJu5OonBuSMc',
+      language: 'en',
+      libraries: ['geometry', 'places']
     })
   ],
   exports: [RouterModule],

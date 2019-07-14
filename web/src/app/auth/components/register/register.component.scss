@@ -89,6 +89,10 @@
   width: 40%;
 }
 
+#OptionalInformation {
+  width: 33.3%
+}
+
 .circleBase {
   border-radius: 50%;
   //behavior: url(PIE.htc); /* remove if you don't care about IE8 */
@@ -109,6 +113,11 @@
   color: rgba(255,255,255,.87);
 }
 
+::ng-deep .mat-horizontal-content-container {
+  overflow: hidden;
+  padding: 0 24px 0px 24px;
+}
+
 ::ng-deep .mat-progress-bar-fill::after {
   background-color: #9C27B0;
 }
@@ -118,13 +127,13 @@
 }
 
 ::ng-deep .mat-progress-bar {
-  border-radius: 2px;
+  border-radius: 0px;
 }
 
 .proggressBar{
   margin-top: 15px;
-  width: 548px;
-  margin-left: -24px;
+  width: 502px;
+  margin-left: -17px;
 }
 
 // oculta las flechitas de los input=number
@@ -132,4 +141,9 @@ input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+agm-map {
+  height: 300px;
+  width: auto;
 }

@@ -1,69 +1,116 @@
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+  rel="stylesheet"
+/>
 <div class="backgroundColor container mat-typography">
-
   <div id="cardContainer" class="container" fxLayoutAlign="center center"></div>
   <mat-card id="registerCard">
     <mat-card-header>
       <!-- <span class="fill-space"></span> -->
       <div class="headerImage">
-        <img src="/assets/brandNoBackground.png" class="centerImage bannerImage">
+        <img
+          src="/assets/brandNoBackground.png"
+          class="centerImage bannerImage"
+        />
       </div>
     </mat-card-header>
 
     <div>
-      <mat-horizontal-stepper #stepper [linear]="isLinear" style="    max-height: calc(75vh); overflow: overlay;">
+      <mat-horizontal-stepper
+        #stepper
+        [linear]="isLinear"
+        style="    max-height: calc(80vh); overflow: overlay;"
+      >
         <mat-step [stepControl]="step1">
           <form [formGroup]="registerStoreFormGroupStep1">
             <ng-template matStepLabel>Usuario</ng-template>
 
             <div #firstStep style="display: flex; height: 435px;">
-
               <div style="display: block;margin-left: auto; margin-right:auto;">
-
                 <mat-form-field style="display: block;">
-                  <input required matInput autofocus placeholder="Nombre de la Tienda" formControlName="storeName" [(ngModel)]="storeName" (keypress)="clearErrors()">
+                  <input
+                    required
+                    matInput
+                    autofocus
+                    placeholder="Nombre de la Tienda"
+                    formControlName="storeName"
+                    [(ngModel)]="storeName"
+                    (keypress)="clearErrors()"
+                  />
                 </mat-form-field>
                 <mat-error *ngIf="errorMessage" style="display:table-caption">
-                    {{errorMessage}}
+                  {{ errorMessage }}
                 </mat-error>
                 <div style="display: table-cell">
-                  <div style="display: block; width: 200px; height: auto; position: relative;">
+                  <div
+                    style="display: block; width: 200px; height: auto; position: relative;"
+                  >
                     <div style="text-align: center;">
                       <label>Foto de Perfil</label>
                     </div>
                     <div #firstColumn>
                       <div class="circleBase" style="height: 200px;">
-
                         <!--  <object data="avatar.jpg" [src]="" type="image/jpg">
                           <img src="../../../../assets/noPhotoSelected.png" />
                         </object>
                       -->
                         <div>
-                          <img *ngFor="let url of urlsProfile" [src]="url" class="rounded mb-3" height="200px" width="200px"
-                            style="display: block;">
+                          <img
+                            *ngFor="let url of urlsProfile"
+                            [src]="url"
+                            class="rounded mb-3"
+                            height="200px"
+                            width="200px"
+                            style="display: block;"
+                          />
                         </div>
                       </div>
                       <div>
-                        <button class="purpleButton" type="button" mat-raised-button style="display: block; margin-left: auto; margin-right: auto; margin-top: 10px"
-                          (click)="imgProfile.click()">Añade una foto</button>
-                        <input hidden class="file-input" #imgProfile type="file" (change)="detectFilesProfile($event)">
+                        <button
+                          class="purpleButton"
+                          type="button"
+                          mat-raised-button
+                          style="display: block; margin-left: auto; margin-right: auto; margin-top: 10px"
+                          (click)="imgProfile.click()"
+                        >
+                          Añade una foto
+                        </button>
+                        <input
+                          hidden
+                          class="file-input"
+                          #imgProfile
+                          type="file"
+                          (change)="detectFilesProfile($event)"
+                        />
                       </div>
                     </div>
                   </div>
 
                   <div style="display: grid; margin-top: 10px;">
                     <mat-form-field>
-                      <input required matInput placeholder="Telefono Personal" formControlName="storePhone" min='0' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57">
+                      <input
+                        required
+                        matInput
+                        placeholder="Telefono Personal"
+                        formControlName="storePhone"
+                        min="0"
+                        type="number"
+                        onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57"
+                      />
                     </mat-form-field>
                   </div>
                 </div>
-
               </div>
             </div>
 
             <div style="display: grid;">
               <div style="margin-left: auto">
-                <button [disabled]="registerStoreFormGroupStep1.invalid" mat-mini-fab class="nextButton orangeButton" (click)="isStoreNameAvailable(stepper)">
+                <button
+                  [disabled]="registerStoreFormGroupStep1.invalid || !profileFile"
+                  mat-mini-fab
+                  class="nextButton orangeButton"
+                  (click)="isStoreNameAvailable(stepper)"
+                >
                   <mat-icon>navigate_next</mat-icon>
                 </button>
               </div>
@@ -71,82 +118,160 @@
           </form>
         </mat-step>
 
-
         <mat-step [stepControl]="step2">
           <form [formGroup]="registerStoreFormGroupStep2">
             <ng-template matStepLabel>Tienda</ng-template>
             <div>
-              <div style="display: block; width: auto; height: auto; position: relative; margin-left: auto; margin-right: auto">
+              <div
+                style="display: block; width: auto; height: auto; position: relative; margin-left: auto; margin-right: auto"
+              >
                 <div #firstColumn>
                   <div style="height: 200px;">
-                    <div *ngFor="let url of urlsPortada ;  let i=index">
-                      <img [src]="url" class="rounded mb-3" height="200" style="display: block; margin-left: auto; margin-right: auto;">
+                    <div *ngFor="let url of urlsPortada; let i = index">
+                      <img
+                        [src]="url"
+                        class="rounded mb-3"
+                        height="200"
+                        style="display: block; margin-left: auto; margin-right: auto;"
+                      />
                     </div>
                   </div>
                 </div>
                 <div>
-                  <button class="purpleButton" type="button" mat-raised-button style="display: block; margin-left: auto; margin-right: auto; margin-top: 10px"
-                    (click)="imgPortada.click()">Añade una portada a tu tienda</button>
-                  <input hidden class="file-input" #imgPortada type="file" (change)="detectFilesPortada($event)">
+                  <button
+                    class="purpleButton"
+                    type="button"
+                    mat-raised-button
+                    style="display: block; margin-left: auto; margin-right: auto; margin-top: 10px"
+                    (click)="imgPortada.click()"
+                  >
+                    Añade una portada a tu tienda
+                  </button>
+                  <input
+                    hidden
+                    class="file-input"
+                    #imgPortada
+                    type="file"
+                    (change)="detectFilesPortada($event)"
+                  />
                 </div>
               </div>
 
               <div class="full-length">
                 <mat-form-field class="full-length">
-                  <textarea matInput placeholder="Descripción" formControlName="storeDescription" type="text" style="padding: 0"></textarea>
+                  <textarea
+                    matInput
+                    placeholder="Descripción"
+                    formControlName="storeDescription"
+                    type="text"
+                    style="padding: 0"
+                  ></textarea>
                 </mat-form-field>
               </div>
-
             </div>
             <!-- <mat-form-field>
               <input matInput placeholder="Horarios de atención" formControlName="attendanceHours">
           </mat-form-field> -->
 
-            <div style="display: flex">
-              <mat-form-field style="width: 30%;">
+            <div style="display: grid">
+              <div>
+                <mat-form-field id="storeFloor" style="width: 100%;">
+                  <input
+                    matInput
+                    formControlName="storeAddress"
+                    placeholder="Ingresar Dirección"
+                    (keydown.enter)="$event.preventDefault()"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="off"
+                    type="text"
+                    #search
+                  />
+                </mat-form-field>
+              </div>
+
+              <div>
+                <agm-map
+                  [latitude]="latitude"
+                  [longitude]="longitude"
+                  [zoom]="zoom"
+                >
+                  <agm-marker
+                    [latitude]="latitude"
+                    [longitude]="longitude"
+                    [markerDraggable]="true"
+                    (dragEnd)="markerDragEnd($event)"
+                  ></agm-marker>
+                </agm-map>
+              </div>
+              <!-- <mat-form-field style="width: 30%;">
                 <input required matInput placeholder="Provincia" formControlName="storeProvince">
               </mat-form-field>
 
               <mat-form-field style="width: 40%;">
                 <input required matInput placeholder="Ciudad" formControlName="storeCity">
-              </mat-form-field>
+              </mat-form-field> -->
             </div>
             <!-- this creates a google map on the page with the given lat/lng from -->
             <!-- the component as the initial center of the map: -->
-            <agm-map [latitude]="lat" [longitude]="lng" style="height: 300px;">
+            <!-- <agm-map [latitude]="lat" [longitude]="lng" style="height: 300px;">
               <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
-            </agm-map>
+            </agm-map> -->
 
-            <div style="display: flex">
-              <mat-form-field id="storeAddress" style="width: 45%">
+            <div style="display: flex; margin-top: 10px;">
+              <!-- <mat-form-field id="storeAddress" style="width: 45%">
                 <input required matInput placeholder="Dirección" formControlName="storeAddress">
               </mat-form-field>
 
               <mat-form-field id="storeAddressNumber" style="width: 15%">
                 <input required matInput placeholder="N°" formControlName="storeAddressNumber" min='0' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57">
+              </mat-form-field> -->
+
+              <mat-form-field id="OptionalInformation">
+                <input
+                  matInput
+                  placeholder="Piso (Opcional)"
+                  formControlName="storeFloor"
+                  min="0"
+                  type="number"
+                  onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57"
+                />
               </mat-form-field>
 
-              <mat-form-field id="storeFloor" style="width: 10%;">
-                <input matInput placeholder="Piso" formControlName="storeFloor" min='0' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57">
+              <mat-form-field id="OptionalInformation">
+                <input
+                  matInput
+                  placeholder="Departamento (Opcional)"
+                  formControlName="storeDept"
+                />
               </mat-form-field>
 
-              <mat-form-field id="storeFloor" style="width: 10%;">
-                <input matInput placeholder="Dpto" formControlName="storeFloor">
-              </mat-form-field>
-
-              <mat-form-field id="storeFloor" style="width: 20%;">
-                <input matInput placeholder="Torre(opcional)" formControlName="storeFloor">
+              <mat-form-field id="OptionalInformation">
+                <input
+                  matInput
+                  placeholder="Torre (Opcional)"
+                  formControlName="storeTower"
+                />
               </mat-form-field>
             </div>
 
-
             <mat-toolbar>
               <mat-toolbar-row style="background-color: white">
-                <button mat-mini-fab matStepperPrevious class="nextButton orangeButton">
+                <button
+                  mat-mini-fab
+                  matStepperPrevious
+                  class="nextButton orangeButton"
+                >
                   <mat-icon>navigate_before</mat-icon>
                 </button>
                 <span class="fill-space"></span>
-                <button [disabled]="registerStoreFormGroupStep2.invalid" mat-mini-fab matStepperNext class="nextButton orangeButton" (click)="stepper.next()">
+                <button
+                  [disabled]="registerStoreFormGroupStep2.invalid || !portadaFile"
+                  mat-mini-fab
+                  matStepperNext
+                  class="nextButton orangeButton"
+                  (click)="stepper.next()"
+                >
                   <mat-icon>navigate_next</mat-icon>
                 </button>
               </mat-toolbar-row>
@@ -154,43 +279,66 @@
           </form>
         </mat-step>
 
-
-
-
         <mat-step [stepControl]="step3">
-
           <ng-template matStepLabel>Confirmar Datos</ng-template>
 
           <mat-form-field class="full-length">
-            <input matInput [disabled]="isRegistering" placeholder="Contraseña" [(ngModel)]='password' type="password" (keypress)="clearErrors()">
+            <input
+              matInput
+              [disabled]="isRegistering"
+              placeholder="Contraseña"
+              [(ngModel)]="password"
+              type="password"
+              (keypress)="clearErrors()"
+            />
           </mat-form-field>
 
           <mat-form-field class="full-length">
-            <input matInput [disabled]="isRegistering" placeholder="Confirmar contraseña" [(ngModel)]='confirmPassword' (keypress)="clearErrors()"
-              type="password">
+            <input
+              matInput
+              [disabled]="isRegistering"
+              placeholder="Confirmar contraseña"
+              [(ngModel)]="confirmPassword"
+              (keypress)="clearErrors()"
+              type="password"
+            />
           </mat-form-field>
 
           <mat-error *ngIf="errorMessage">
-            {{errorMessage}}
+            {{ errorMessage }}
           </mat-error>
 
           <mat-toolbar>
             <mat-toolbar-row style="background-color: white">
-              <button mat-mini-fab [disabled]="isRegistering" matStepperPrevious class="nextButton orangeButton">
+              <button
+                mat-mini-fab
+                [disabled]="isRegistering"
+                matStepperPrevious
+                class="nextButton orangeButton"
+              >
                 <mat-icon>navigate_before</mat-icon>
               </button>
               <span class="fill-space"></span>
-              <button mat-mini-fab matStepperNext [disabled]="isRegistering" class="nextButton orangeButton" (click)="tryRegister()">
+              <button
+                mat-mini-fab
+                matStepperNext
+                [disabled]="isRegistering"
+                class="nextButton orangeButton"
+                (click)="tryRegister()"
+              >
                 <mat-icon class="material-icons">done</mat-icon>
               </button>
             </mat-toolbar-row>
           </mat-toolbar>
-
         </mat-step>
       </mat-horizontal-stepper>
     </div>
     <div class="proggressBar">
-      <mat-progress-bar *ngIf="isRegistering" mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>
+      <mat-progress-bar
+        *ngIf="isRegistering"
+        mode="indeterminate"
+        color="deeppurple-amber"
+      ></mat-progress-bar>
     </div>
   </mat-card>
 </div>
