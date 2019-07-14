@@ -13,7 +13,6 @@
 }
 
 #loginCard {
-  width: 60%;
   margin-left: auto;
   margin-right: auto;
   margin-top: calc(10vh); // need to be refactor
@@ -79,8 +78,8 @@ position: absolute;
 
 .proggressBar{
   margin-top: 15px;
-  width: 448px;
-  margin-left: -24px;
+  width: 402px;
+  margin-left: -17px;
 }
 
 .mat-card .mat-divider-horizontal {
@@ -89,5 +88,23 @@ position: absolute;
   left: 0;
   width: 100%;
   margin-top: 10px;
+}
 
+.gradient {
+height: calc(100vh - 146px);
+background: rgba(252,236,252,0.14);
+background: -moz-linear-gradient(top, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
+background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(252,236,252,0.14)), color-stop(49%, rgba(251,166,225,0.16)), color-stop(85%, rgba(255,124,216,0.18)), color-stop(100%, rgba(253,137,215,0.19)));
+background: -webkit-linear-gradient(top, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
+background: -o-linear-gradient(top, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
+background: -ms-linear-gradient(top, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
+background: linear-gradient(to bottom, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', endColorstr='#fd89d7', GradientType=0 );
+}
+
+.disabledButton {
+  display: block;
+  margin-left: auto;
+  background-color: rgba(197, 127, 169, 0.5);
+  color: white;
 }
