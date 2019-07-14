@@ -130,21 +130,30 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
 */
     this.createForm();
     if (articleData.picture !== undefined) {
-      let articlePicture = (this.isNew = false);
+      const articlePicture = (this.isNew = false);
     } else {
     }
   }
 
   ngOnInit(): void {
-    this._subscription = this.tagsService.getTags().subscribe(tags => {
-      this.allTags = tags[0];
-      this.filteredTags = this.tagsCtrl.valueChanges.pipe(
-        startWith(null),
-        map((tag: string | null) =>
-          tag ? this._filter(tag) : this.allTags.preset.slice()
-        )
-      );
-    });
+    try {
+
+      this._subscription = this.tagsService.getTags().subscribe(tags => {
+        this.allTags = tags[0];
+        this.filteredTags = this.tagsCtrl.valueChanges.pipe(
+          startWith(null),
+          map((tag: string | null) => {
+            if (tag) {
+              return this._filter(tag);
+            } else if ( this.allTags ) {
+              return this.allTags.preset.slice();
+            }
+          }
+          // tag ? this._filter(tag) : this.allTags.preset.slice() el this.allTags venia undefined a veces.
+          )
+        );
+      });
+    } catch (error) { console.log(error); }
   }
 
   ngOnDestroy(): void {

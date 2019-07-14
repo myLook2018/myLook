@@ -454,7 +454,7 @@
       <button
         *ngIf="!isNew"
 
-        [disabled]="articleForm.invalid"
+        [disabled]="articleForm.invalid || isUpLoading"
         style="background-color: #9C27B0; color: white"
         type="button"
         mat-raised-button
@@ -465,7 +465,7 @@
       </button>
       <button
         *ngIf="isNew"
-        [disabled]="articleForm.invalid"
+        [disabled]="articleForm.invalid || isUpLoading"
         class="activatedButton"
         type="button"
 

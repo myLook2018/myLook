@@ -161,6 +161,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
       sub.unsubscribe();
     });
   }
+
   openArticleDialog(article: Article): void {
     let dataToSend = {};
     if (article !== undefined) {
@@ -206,7 +207,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     }
   }
 
-  setVidriera(idOfFrontsArticles: string[]) {
+  setVidriera(idOfFrontsArticles: string[] =  this.selectedIndexes) {
     this.resetSelectedVidriera();
     for (let i = 0; i < idOfFrontsArticles.length; i++) {
       console.log(`ahora ponemos en vidriera a ` + idOfFrontsArticles[i]);
@@ -237,11 +238,13 @@ export class InventoryComponent implements OnInit, OnDestroy {
   }
 
   addIdToSelecteds(row, event) {
-    const index = this.selectedIndexes.indexOf(row, 0);
+    console.log('row',row);
+    console.log('event',event);
+    const index = this.selectedIndexes.indexOf(this.articles[row].articleId, 0);
     if (index > -1) {
       this.selectedIndexes.splice(index, 1);
     } else {
-      this.selectedIndexes.push(row);
+      this.selectedIndexes.push(this.articles[row].articleId);
     }
     console.log(`estado actual ` + this.selectedIndexes);
   }
