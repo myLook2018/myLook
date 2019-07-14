@@ -19,32 +19,31 @@
   max-width: 400px;
 }
 
-.inputForm{
+.inputForm {
   width: 100%;
 }
 
-.acceptButton{
+.acceptButton {
   display: block;
   margin-left: auto;
   background-color: rgb(197, 127, 169);
   color: white;
 }
 
-.externalLogin{
+.externalLogin {
   width: 80%;
   margin-left: 10%;
   color: white;
 }
 
-.logingForm{
+.logingForm {
   margin-top: 10px;
 }
 
-#bottom-right
-{
-right: 0;
-bottom: 0;
-position: absolute;
+#bottom-right {
+  right: 0;
+  bottom: 0;
+  position: absolute;
 }
 
 .spacer {
@@ -65,7 +64,7 @@ position: absolute;
 }
 
 ::ng-deep .mat-progress-bar-fill::after {
-  background-color: #9C27B0;
+  background-color: #9c27b0;
 }
 
 ::ng-deep .mat-progress-bar-buffer {
@@ -76,14 +75,13 @@ position: absolute;
   border-radius: 2px;
 }
 
-.proggressBar{
+.proggressBar {
   margin-top: 15px;
   width: 402px;
   margin-left: -17px;
 }
 
 .mat-card .mat-divider-horizontal {
-
   position: relative;
   left: 0;
   width: 100%;
@@ -91,15 +89,52 @@ position: absolute;
 }
 
 .gradient {
-height: calc(100vh - 146px);
-background: rgba(252,236,252,0.14);
-background: -moz-linear-gradient(top, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
-background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(252,236,252,0.14)), color-stop(49%, rgba(251,166,225,0.16)), color-stop(85%, rgba(255,124,216,0.18)), color-stop(100%, rgba(253,137,215,0.19)));
-background: -webkit-linear-gradient(top, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
-background: -o-linear-gradient(top, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
-background: -ms-linear-gradient(top, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
-background: linear-gradient(to bottom, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', endColorstr='#fd89d7', GradientType=0 );
+  height: calc(100vh - 146px);
+  background: rgba(252, 236, 252, 0.14);
+  background: -moz-linear-gradient(
+    top,
+    rgba(252, 236, 252, 0.14) 0%,
+    rgba(251, 166, 225, 0.16) 49%,
+    rgba(255, 124, 216, 0.18) 85%,
+    rgba(253, 137, 215, 0.19) 100%
+  );
+  background: -webkit-gradient(
+    left top,
+    left bottom,
+    color-stop(0%, rgba(252, 236, 252, 0.14)),
+    color-stop(49%, rgba(251, 166, 225, 0.16)),
+    color-stop(85%, rgba(255, 124, 216, 0.18)),
+    color-stop(100%, rgba(253, 137, 215, 0.19))
+  );
+  background: -webkit-linear-gradient(
+    top,
+    rgba(252, 236, 252, 0.14) 0%,
+    rgba(251, 166, 225, 0.16) 49%,
+    rgba(255, 124, 216, 0.18) 85%,
+    rgba(253, 137, 215, 0.19) 100%
+  );
+  background: -o-linear-gradient(
+    top,
+    rgba(252, 236, 252, 0.14) 0%,
+    rgba(251, 166, 225, 0.16) 49%,
+    rgba(255, 124, 216, 0.18) 85%,
+    rgba(253, 137, 215, 0.19) 100%
+  );
+  background: -ms-linear-gradient(
+    top,
+    rgba(252, 236, 252, 0.14) 0%,
+    rgba(251, 166, 225, 0.16) 49%,
+    rgba(255, 124, 216, 0.18) 85%,
+    rgba(253, 137, 215, 0.19) 100%
+  );
+  background: linear-gradient(
+    to bottom,
+    rgba(252, 236, 252, 0.14) 0%,
+    rgba(251, 166, 225, 0.16) 49%,
+    rgba(255, 124, 216, 0.18) 85%,
+    rgba(253, 137, 215, 0.19) 100%
+  );
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', endColorstr='#fd89d7', GradientType=0 );
 }
 
 .disabledButton {
@@ -107,4 +142,36 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
   margin-left: auto;
   background-color: rgba(197, 127, 169, 0.5);
   color: white;
+}
+
+.externalLoginFacebook {
+  width: 80%;
+  margin-left: 10%;
+  margin-top: 1rem;
+  color: white;
+  background-color: #3b5998;
+}
+
+.externalLoginGoogle {
+  width: 80%;
+  margin-left: 10%;
+  margin-top: 0.5rem;
+  color: white;
+  background-color: #d34836;
+}
+
+.disabledButtonFacebook {
+  width: 80%;
+  margin-left: 10%;
+  margin-top: 1rem;
+  color: white;
+  background-color: #3b58987e;
+}
+
+.disabledButtonGoogle {
+  width: 80%;
+  margin-left: 10%;
+  margin-top: 0.5rem;
+  color: white;
+  background-color: #d3483670;
 }

@@ -34,10 +34,8 @@
     </form>
     <mat-divider id="divider"></mat-divider>
     <form>
-      <button mat-button [disabled]="isLoading" class="externalLogin" style="background-color: #3b5998;margin-top: 15px; margin-bottom: 7px;"
-      (click)="tryFacebookLogin()">Acceder con Facebook</button>
-      <button mat-button [disabled]="isLoading" class="externalLogin" style="background-color: #d34836" (click)="tryGoogleLogin()">Acceder
-          con Google</button>
+      <button mat-button [disabled]="isLoading || true" class="externalLoginFacebook" (click)="tryFacebookLogin()" [ngClass]="{disabledButtonFacebook: true}">Acceder con Facebook</button>
+      <button mat-button [disabled]="isLoading || true" class="externalLoginGoogle" (click)="tryGoogleLogin()" [ngClass]="{disabledButtonGoogle: true}">Acceder con Google</button>
         </form>
         <div class="proggressBar">
           <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>

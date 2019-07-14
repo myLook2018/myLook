@@ -24,10 +24,32 @@
   margin-top: calc(10vh);
 }
 
-.externalRegister {
+.externalRegisterFacebook {
   width: 80%;
   margin-left: 10%;
   color: white;
+  background-color: #3b5998
+}
+
+.externalRegisterGoogle {
+  width: 80%;
+  margin-left: 10%;
+  color: white;
+  background-color: #d34836
+}
+
+.disabledButtonFacebook {
+  width: 80%;
+  margin-left: 10%;
+  color: white;
+  background-color: #3b58987e
+}
+
+.disabledButtonGoogle {
+  width: 80%;
+  margin-left: 10%;
+  color: white;
+  background-color: #d3483670
 }
 
 .inputForm {
