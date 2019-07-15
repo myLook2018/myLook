@@ -32,6 +32,10 @@
         </div>
         <div class="frontArticles">
           <div style="display: flex; flex-wrap: wrap; min-width: 1020px;">
+            <div class="noFrontLoaded" *ngIf="articles.length === 0">
+              ¡No hay articulos en su vidriera!
+                <!-- <img src="/assets/brandNoBackground.png" class="img-size centerImage"> -->
+            </div>
             <div style="padding: 0px; margin: 9px" *ngFor="let art of articles">
               <img height="321" width="321" src={{art.picturesArray[0]}}>
             </div>
