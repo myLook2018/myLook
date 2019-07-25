@@ -31,3 +31,66 @@
   background-color: #ff9800;
   color: #ffffff;
 }
+
+.articleName {
+  font-weight: bold;
+  color: #9C27B0;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.promotionPicture {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10px;
+}
+
+.opciones{
+  height: 6rem;
+}
+
+.finalCost {
+  font-size: 1.5rem;
+  color: #9C27B0;
+}
+
+.formButtons {
+  width: 100%
+}
+
+.mat-dialog-actions {
+  justify-content: flex-end;
+  padding-bottom: 2rem;
+}
+
+.disabledButton {
+  background-color: rgba(197, 127, 169, 0.5);
+  color: white;
+
+}
+
+.confirmButton {
+  background-color: #9C27B0;
+  color: #ffffff;
+
+}
+
+::ng-deep .mat-progress-bar-fill::after {
+  background-color: #9c27b0;
+}
+
+::ng-deep .mat-progress-bar-buffer {
+  background: rgb(218, 154, 230);
+}
+
+::ng-deep .mat-progress-bar {
+  border-radius: 2px;
+}
+
+.proggressBar {
+  margin-bottom: -2rem;
+  width: 25rem;
+  margin-right: -24px;
+  margin-left: -25px;
+}

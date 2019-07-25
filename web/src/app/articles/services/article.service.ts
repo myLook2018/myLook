@@ -21,6 +21,7 @@ const httpOptions = {
 
 @Injectable()
 export class ArticleService {
+  mpURL = 'https://us-central1-app-mylook.cloudfunctions.net/postMercadopagoCheckout';
   articleCollection: AngularFirestoreCollection<Article>;
   promoteCollection: AngularFirestoreCollection;
   articles: Observable<Article[]>;
@@ -223,5 +224,9 @@ export class ArticleService {
       res.then(ref => console.log(ref.id));
       resolve(res);
     });
+  }
+
+  tryPromoteMP(preferenceMP)  {
+    return this.http.post(this.mpURL, preferenceMP);
   }
 }

@@ -108,6 +108,25 @@ export class InventoryComponent implements OnInit, OnDestroy {
   }
 
   openPromoteDialog(article): void {
+    const dataToSend = {
+      storeName: this.userStore.storeName,
+      phone: this.userStore.storePhone,
+      phoneArea: '2966',
+      ownerName: this.userStore.ownerName,
+      storeEmail: this.userStore.storeMail,
+      dni: 38773582,
+      title: article.title,
+      code: article.code,
+      id: article.articleId,
+      picture: article.picture,
+      cost: article.cost,
+      sizes: article.sizes,
+      material: article.material,
+      colors: article.colors,
+      initial_stock: article.initial_stock,
+      provider: article.provider,
+      tags: article.tags
+    };
     const promoteRef = this.dialog.open(PromoteDialogComponent, {
       width: '400px',
       data: article

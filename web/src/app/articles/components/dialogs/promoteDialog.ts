@@ -16,15 +16,18 @@ export class PromoteDialogComponent {
   maxDate: any;
   onAdd = new EventEmitter();
   dailyCost;
-  promotionCost;
+  promotionCost = 0;
   diferenceInDays;
   minDate = new Date();
-  duration;
+  duration = 0;
   selectedPromotion;
   selectedPayMethod: Number;
   promotionData;
   firstFormGroup: FormGroup ;
   preferenceMP: PreferenceMP;
+  finalCost: number;
+  userData;
+  isDisabled = true;
 
   promotionsLevels = [
     { value: 2, viewValue: 'Promoción Básica' },
@@ -51,9 +54,10 @@ export class PromoteDialogComponent {
       this.firstFormGroup = this._formBuilder.group({
         promotionLevelCtrl: ['', Validators.required],
         durationCtrl: ['', Validators.required]
-        // payMethodCtrl: ['', Validators.required],
+
       });
-      this.initializePreference();
+      this.userData = data;
+
     }
 
 
@@ -63,41 +67,30 @@ export class PromoteDialogComponent {
 
   initializePreference() {
     this.preferenceMP =  {
-      'items': [],
+      'items': [{
+        'title': 'Promoción de prenda - MyLook',
+        'quantity': 1,
+        'currency_id': 'ARS',
+        'unit_price': this.promotionCost
+        }],
       'payer': {
-          'name': 'Alexis',
-          'surname': 'Donato',
-          'email': 'lala@gmail.com',
+          'name': this.userData.storeName,
+          'surname': this.userData.storeName,
+          'email': this.userData.email,
           'phone': {
-              'area_code': '209595',
-              'number': '53213'
+              'area_code': this.userData.phoneArea,
+              'number': this.userData.phone
           },
           'identification': {
               'type': 'DNI', // Available ID types at https://api.mercadopago.com/v1/identification_types
-              'number': '3213'
-          },
-          'address': {
-              'street_name': 'string',
-              'street_number': 213,
-              'zip_code': 321
+              'number': this.userData.dni
           }
       },
       'back_urls': {
-          'success': 'https://www.success.com',
-          'failure': 'http://www.failure.com'
-      },
-      'auto_return': 'approved',
-      'payment_methods': {
-          'installments': 12,
-          'default_payment_method_id': null,
-          'default_installments': null
-      },
-      'notification_url': 'https://www.your-site.com/ipn',
-      'external_reference': 'string',
-      'expires': true,
-      'expiration_date_from': new Date(),
-      'expiration_date_to': new Date(),
-      'binary_mode': true
+        'success': 'https://www.tu-sitio/success',
+        'failure': 'http://www.tu-sitio/failure',
+    },
+    'auto_return': 'approved',
     };
   }
 
@@ -114,42 +107,49 @@ export class PromoteDialogComponent {
   }
 
   tryCalculateCost() {
-    const finalCost = 10 * this.duration * (this.selectedPromotion - 1);
+    if (this.selectedPromotion) {
+      this.finalCost = 10 * this.duration * (this.selectedPromotion - 1);
+    } else { this.finalCost = 0 }
 
     switch (this.duration) {
       case 1: {
-        this.promotionCost = finalCost;
+        this.promotionCost = this.finalCost;
         break;
       }
       case 2: {
-        this.promotionCost = finalCost * 0.95;
+        this.promotionCost = this.finalCost * 0.95;
         break;
       }
       case 3: {
-        this.promotionCost = finalCost * 0.9;
+        this.promotionCost = this.finalCost * 0.9;
         break;
       }
       case 5: {
-        this.promotionCost = finalCost * 0.85;
+        this.promotionCost = this.finalCost * 0.85;
         break;
       }
       case 7: {
-        this.promotionCost = finalCost * 0.80;
+        this.promotionCost = this.finalCost * 0.80;
         break;
       }
       case 14: {
-        this.promotionCost = finalCost * 0.75;
+        this.promotionCost = this.finalCost * 0.75;
         break;
       }
       case 14: {
-        this.promotionCost = finalCost * 0.70;
+        this.promotionCost = this.finalCost * 0.70;
         break;
+      }
+      case undefined: {
+        this.promotionCost = 0;
       }
     }
 
     try {
       console.log(`Promocion por ${this.duration} dias.`);
       console.log(`Nivel de promocion: ${this.selectedPromotion}.`);
+      console.log('a pagar ' + this.finalCost );
+
     } catch {
       console.log(`no pude calcular diff`);
     }
@@ -159,8 +159,10 @@ export class PromoteDialogComponent {
           stepper.next();
   }
 
-  sendToMP() {
+  async sendToMP() {
+    this.initializePreference();
     console.log('mandando al servicio', this.preferenceMP);
-    this.articleService.createNewSale(this.preferenceMP).then((a) => console.log(a), (b) => {console.log(b); });
+    const res: any = await this.articleService.tryPromoteMP(this.preferenceMP).toPromise();
+    window.open(res.initPoint);
   }
 }
