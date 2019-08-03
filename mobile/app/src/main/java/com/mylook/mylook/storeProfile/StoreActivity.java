@@ -1,20 +1,37 @@
 package com.mylook.mylook.storeProfile;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.GridView;
+import android.widget.ImageView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Store;
 import com.mylook.mylook.entities.Visit;
+import com.mylook.mylook.session.MainActivity;
+import com.mylook.mylook.session.Sesion;
 import com.mylook.mylook.utils.SectionsPagerAdapter;
 
+import java.net.URI;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +44,16 @@ public class StoreActivity extends AppCompatActivity {
     private StoreInfoFragment infoStoreFragment;
     private StoreContactFragment contactStoreFragment;
     private ReputationFragment reputationFragment;
+    private ShareActionProvider mShareActionProvider;
+    private boolean fromDeepLink = false;
+    private String nombreTiendaPerfil;
+    private ArrayList<Store> storeList;
+    private Visit visit;
+    private String visitId;
     private ShopwindowFragment shopwindowFragment;
+    private FirebaseFirestore db;
     private CatalogFragment catalogFragment;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,13 +62,22 @@ public class StoreActivity extends AppCompatActivity {
         viewPagerStoreInfo = findViewById(R.id.storeInfoViewPager);
         viewPagerStoreArticles = findViewById(R.id.storeViewPager);
 
+        Toolbar tb =  findViewById(R.id.toolbar);
+        tb.setTitle("Tienda");
+        ActionBar ab = getSupportActionBar();
+        if(ab != null)
+        ab.setDisplayHomeAsUpEnabled(true);
+        invalidateOptionsMenu();
+        storeList = new ArrayList<Store>();
+        getIncomingIntent();
+        contactStoreFragment = new StoreContactFragment();
+        infoStoreFragment = new StoreInfoFragment();
+        reputationFragment=new ReputationFragment();
+        //loadVisit();
+        visit=new Visit(nombreTiendaPerfil, Sesion.getInstance().getSessionUserId());
+        setupViewPagerInfo(viewPagerStoreInfo);
         Intent intentStore = getIntent();
         loadStore(intentStore.getStringExtra("Tienda"));
-
-        Toolbar tb = findViewById(R.id.toolbar);
-        setSupportActionBar(tb);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         super.onCreate(savedInstanceState);
     }
 
@@ -60,6 +94,46 @@ public class StoreActivity extends AppCompatActivity {
                 });
     }
 
+    private void getIncomingIntent(){
+        Intent intentStore = getIntent();
+        if(intentStore.hasExtra("Tienda")) {
+            nombreTiendaPerfil = intentStore.getStringExtra("Tienda");
+            fromDeepLink = false;
+        }
+        else {
+            try {
+                fromDeepLink = true;
+                nombreTiendaPerfil = Uri.decode(intentStore.getData().getQueryParameter("storeName"));
+            } catch (Exception e){
+                nombreTiendaPerfil= Uri.decode(intentStore.getStringExtra("storeName").replace("%20"," "));
+            }
+        }
+    }
+
+
+    private void loadVisit() {
+        db.collection("visits").whereEqualTo("storeName", nombreTiendaPerfil).whereEqualTo("userId", Sesion.getInstance().getSessionUserId()).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            if (task.getResult().getDocuments().size() == 0) {
+                                visitId = null;
+                                visit = new Visit(nombreTiendaPerfil, Sesion.getInstance().getSessionUserId());
+                                //db.collection("visits").add(visit.toMap());
+
+                            } else {
+                                Log.e("OLD VISIT", "ID: " + visitId);
+                                visit = null;
+                                visitId = null;
+                                visit = task.getResult().getDocuments().get(0).toObject(Visit.class);
+                                visitId = task.getResult().getDocuments().get(0).getId();
+                            }
+
+                        }
+                    }
+                });
+    }
     private void setFragments() {
         getSupportActionBar().setTitle(store.getStoreName());
 
@@ -82,7 +156,6 @@ public class StoreActivity extends AppCompatActivity {
         infoStoreFragment = new StoreInfoFragment();
         infoStoreFragment.setArguments(bundle);
         setupViewPagerInfo(viewPagerStoreInfo);
-
         shopwindowFragment = new ShopwindowFragment();
         shopwindowFragment.setArguments(bundle);
         catalogFragment = new CatalogFragment();
@@ -127,5 +200,41 @@ public class StoreActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         finish();
         return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.store_menu, menu);
+        // Locate MenuItem with ShareActionProvider
+        MenuItem item = menu.findItem(R.id.share_store);
+
+        // Fetch and store ShareActionProvider
+        //mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.e("Title","Item selected");
+        int id = item.getItemId();
+        if (id == R.id.share_store) {
+            Log.e("Share", "Share store");
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta tienda wachin! https://www.mylook.com/store?storeName=" + Uri.encode(nombreTiendaPerfil));
+            sendIntent.setType("text/plain");
+            startActivity(Intent.createChooser(sendIntent, "Share via"));
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(fromDeepLink){
+            Intent intent= new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 }

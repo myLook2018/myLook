@@ -182,6 +182,28 @@ public class Article implements Serializable, Comparable<Article>, Comparator<Ar
     }
 
     @Override
+    public String toString() {
+        return "Article{" +
+                "articleId='" + articleId + '\'' +
+                ", title='" + title + '\'' +
+                ", code='" + code + '\'' +
+                ", provider='" + provider + '\'' +
+                ", cost=" + cost +
+                ", initial_stock=" + initial_stock +
+                ", material='" + material + '\'' +
+                ", picture='" + picture + '\'' +
+                ", storeName='" + storeName + '\'' +
+                ", colors=" + colors +
+                ", sizes=" + sizes +
+                ", tags=" + tags +
+                ", picturesArray=" + picturesArray +
+                ", favorites=" + favorites +
+                ", creationDate=" + creationDate +
+                ", promotionLevel=" + promotionLevel +
+                '}';
+    }
+
+    @Override
     public int compareTo(Article o) {
         return this.getCreationDate().compareTo(o.creationDate);
     }

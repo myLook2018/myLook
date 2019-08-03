@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -22,8 +21,6 @@ import com.mylook.mylook.entities.RequestRecommendation;
 import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import static android.graphics.ColorSpace.Model.RGB;
 
 public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecyclerViewAdapter.ViewHolder> {
 
@@ -63,14 +60,25 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
             holder.txtDate.setText("Cerrada");
             holder.txtDate.setTextColor(Color.RED);
         } else {
-            holder.txtDate.setText("Faltan " + daysLeft + " días");
+            if(daysLeft == 0){
+                holder.txtDate.setText("Último día");
+                holder.txtDate.setTextColor(Color.RED);
+            } else if (daysLeft > 1) {
+                holder.txtDate.setText("Faltan " + daysLeft + " días");
+                holder.txtDate.setTextColor(Color.BLACK);
+            } else {
+                holder.txtDate.setText("Falta " + daysLeft + " día");
+                holder.txtDate.setTextColor(Color.BLACK);
+            }
         }
         holder.titleRequest.setText(requestRecommendation.getTitle());
         if(!requestRecommendation.getAnswers().isEmpty()) {
             holder.state.setVisibility(View.VISIBLE);
+            holder.responses.setVisibility(View.VISIBLE);
             holder.state.setText(String.valueOf(requestRecommendation.getAnswers().size()));
         } else {
             holder.state.setVisibility(View.INVISIBLE);
+            holder.responses.setVisibility(View.INVISIBLE);
         }
 
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
@@ -94,14 +102,16 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
         TextView titleRequest;
         TextView txtDate;
         TextView state;
+        ImageView responses;
         LinearLayout parentLayout;
 
         public ViewHolder(View itemView) {
             super(itemView);
             requestPhoto = itemView.findViewById(R.id.imgRequestPhoto);
             titleRequest = itemView.findViewById(R.id.txtRecommendTitle);
+            responses = itemView.findViewById(R.id.rdbStateImage);
             txtDate = itemView.findViewById(R.id.txtDate);
-            state=itemView.findViewById(R.id.rdbState);
+            state=itemView.findViewById(R.id.rdbStateText);
             parentLayout=itemView.findViewById(R.id.parentLayout);
         }
     }

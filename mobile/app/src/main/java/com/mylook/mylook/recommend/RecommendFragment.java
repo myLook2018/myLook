@@ -2,9 +2,11 @@ package com.mylook.mylook.recommend;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,11 +20,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.RequestRecommendation;
+import com.mylook.mylook.session.Sesion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,19 +122,22 @@ public class RecommendFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
         Log.e(TAG, "getRequestRecommendations");
         dB.collection("requestRecommendations")
-                .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid()).orderBy("limitDate").get()
+                .whereEqualTo("userId", Sesion.getInstance().getSessionUserId()).orderBy("limitDate").get()
                 .addOnCompleteListener(task -> {
                     requestRecommendationsList.clear();
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             RequestRecommendation requestRecommendation = document.toObject(RequestRecommendation.class);
                             requestRecommendation.setDocumentId(document.getId());
+                            Log.e("Request", requestRecommendation.getDocumentId());
                             requestRecommendationsList.add(requestRecommendation);
                         }
                         adapter.notifyDataSetChanged();
 
                     }
+                    adapter.notifyDataSetChanged();
                     progressBar.setVisibility(View.GONE);
+
                 });
     }
 
