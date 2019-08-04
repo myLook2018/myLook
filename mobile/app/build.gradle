@@ -6,7 +6,7 @@ android {
         applicationId "com.mylook.mylook"
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 1
+        versionCode 24
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true

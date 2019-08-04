@@ -3,6 +3,7 @@ package com.mylook.mylook.recommend;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,6 +28,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.RequestRecommendation;
+import com.mylook.mylook.home.MyLookActivity;
+import com.mylook.mylook.session.MainActivity;
+import com.mylook.mylook.session.Sesion;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,6 +50,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
     private boolean isClosed = false;
     private Menu optionsMenu;
     private ShareActionProvider mShareActionProvider;
+    private boolean fromDeepLink = false;
 
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,33 +82,49 @@ public class RequestRecommendActivity extends AppCompatActivity {
 
     private void getIncomingIntent() {
         Log.d(TAG, "getIncomingIntent: checking for incoming intents.");
-
         Intent intent = getIntent();
         if (intent.hasExtra("requestRecommendation")) {
+            fromDeepLink = false;
             RequestRecommendation requestRecommendation = (RequestRecommendation) intent.getSerializableExtra("requestRecommendation");
             requestId = requestRecommendation.getDocumentId();
-            dB.collection("requestRecommendations").document(requestId).get().addOnCompleteListener(
-                    new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            DocumentSnapshot doc =  task.getResult();
-
+        } else if(intent.hasExtra("requestId")){
+            fromDeepLink = true;
+            requestId = intent.getStringExtra("requestId");
+        }else {
+            fromDeepLink = true;
+            // Cuando viene de un deeplink
+            Uri data  = intent.getData();
+            try {
+                requestId = data.getQueryParameter("requestId");
+            } catch(Exception e){
+                if(intent.hasExtra("requestId"))
+                    requestId = intent.getStringExtra("requestId");
+            }
+        }
+        Log.e(TAG, "requestId"+requestId);
+        dB.collection("requestRecommendations").document(requestId).get().addOnCompleteListener(
+                new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()) {
+                            DocumentSnapshot doc = task.getResult();
                             txtDescription.setText(doc.get("description").toString());
                             txtTitle.setText(doc.get("title").toString());
                             Calendar cal = Calendar.getInstance();
-                            cal.setTimeInMillis((long)doc.get("limitDate"));
+                            cal.setTimeInMillis((long) doc.get("limitDate"));
                             int mes = cal.get(Calendar.MONTH) + 1;
                             final String dateFormat = cal.get(Calendar.DAY_OF_MONTH) + "/" + mes + "/" + cal.get(Calendar.YEAR);
-                            txtLimitDate.setText("Hasta el "+dateFormat);
+                            txtLimitDate.setText("Hasta el " + dateFormat);
                             setImage(doc.get("requestPhoto").toString());
                             answers = (ArrayList<HashMap<String, String>>) doc.get("answers");
-                            isClosed = (boolean)doc.get("isClosed");
+                            isClosed = (boolean) doc.get("isClosed");
                             initRecyclerView(answers);
+                        } else {
+                            Log.e(TAG, "busqueda not succesful");
                         }
                     }
-            );
-
-        }
+                }
+        );
     }
 
     private void setImage(String imageUrl) {
@@ -167,16 +188,28 @@ public class RequestRecommendActivity extends AppCompatActivity {
                         }
                     }
                 });
+        Sesion.getInstance().updateActivitiesStatus(Sesion.RECOMEND_FRAGMENT);
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(fromDeepLink){
+            Intent intent= new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if(!isClosed) {
             getMenuInflater().inflate(R.menu.request_recommendation_menu, menu);
             // Locate MenuItem with ShareActionProvider
-//            MenuItem item = menu.findItem(R.id.share_req);
+            MenuItem item = menu.findItem(R.id.share_req);
 
             // Fetch and store ShareActionProvider
-//            mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+           //mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
         } else {
 //            menu.getItem(0).setVisible(false);
 //            menu.getItem(1).setVisible(false);
@@ -187,22 +220,17 @@ public class RequestRecommendActivity extends AppCompatActivity {
         return true;
     }
 
-    private void setShareIntent(Intent shareIntent) {
-        if (mShareActionProvider != null) {
-            mShareActionProvider.setShareIntent(shareIntent);
-        }
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-//        if(id == R.id.share_req){
-//            Intent sendIntent = new Intent();
-//            sendIntent.setAction(Intent.ACTION_SEND);
-//            sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
-//            sendIntent.setType("text/plain");
-//            setShareIntent(sendIntent);
-//        }
+        if(id == R.id.share_req){
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta recomendación wachin! https://www.mylook.com/recommendation?requestId="+requestId);
+            sendIntent.setType("text/plain");
+            startActivity(Intent.createChooser(sendIntent, "Share via"));
+        }
 //        if(id == R.id.delete_req){
 //            // do something
 //        }

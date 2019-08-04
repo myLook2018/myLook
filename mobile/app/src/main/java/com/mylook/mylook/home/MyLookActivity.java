@@ -1,24 +1,22 @@
 package com.mylook.mylook.home;
 
-import android.animation.LayoutTransition;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.mylook.mylook.R;
 import com.mylook.mylook.closet.ClosetFragment;
 import com.mylook.mylook.explore.ExploreFragment;
 import com.mylook.mylook.profile.ProfileFragment;
 import com.mylook.mylook.recommend.RecommendFragment;
+import com.mylook.mylook.session.Sesion;
 import com.mylook.mylook.session.Session;
 
 public class MyLookActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, ExploreFragment.OnNavbarToggle {

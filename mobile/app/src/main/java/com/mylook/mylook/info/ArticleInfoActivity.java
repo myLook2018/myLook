@@ -12,11 +12,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -33,19 +36,29 @@ import java.util.Objects;
 
 public class ArticleInfoActivity extends AppCompatActivity {
 
-    private Context mContext = ArticleInfoActivity.this;
-    private Article article;
+    private Context mContext = this;
+    private ImageView backArrow, articleImage;
+    private ExpandableListView expandableListView;
     private FloatingActionButton btnCloset;
+    private FloatingActionButton btnShare;
+    private String articleId,closetId;
+    private String downLoadUri, dbUserId;
+    private Article article;
     private ArrayList<String> tags, imageArraySlider;
     private LinearLayout lnlSizes, lnlColors;
     private TextView txtMaterial, txtCost, txtTitle, txtStoreName;
     private boolean inCloset;
     private boolean alreadyInCloset;
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private FirebaseFirestore dB = FirebaseFirestore.getInstance();
+    private boolean fromDeepLink = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_details);
+        Toolbar tb = (Toolbar) findViewById(R.id.toolbar_more_info);
+        invalidateOptionsMenu();
         getArticleFromIntent();
         initElements();
         setDetail();
@@ -78,6 +91,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
         btnCloset.setOnClickListener(v -> changeSavedInCloset());
         ViewPager articlePager;
         articlePager = findViewById(R.id.view_pager_article);
+
         if (imageArraySlider == null) {
             ArrayList<String> arrayAux = new ArrayList<>();
             arrayAux.add(0, article.getPicture());

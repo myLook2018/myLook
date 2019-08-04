@@ -47,6 +47,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mylook.mylook.R;
+import com.mylook.mylook.session.Sesion;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
@@ -247,7 +248,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 latLong.add(currentLocation.getLatitude());
                 latLong.add(currentLocation.getLongitude());
                 final Map<String, Object> recommendation = new HashMap<>();
-                recommendation.put("userId", user.getUid());
+                recommendation.put("userId", Sesion.getInstance().getSessionUserId() );
                 recommendation.put("description", txtDescription.getText().toString());
                 recommendation.put("limitDate", limitDate.getTime());
                 recommendation.put("updateDate", "update");
