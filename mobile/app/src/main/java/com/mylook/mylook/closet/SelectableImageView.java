@@ -2,8 +2,8 @@ package com.mylook.mylook.closet;
 
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.AppCompatImageView;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.widget.AppCompatImageView;
 
 import com.mylook.mylook.R;
 

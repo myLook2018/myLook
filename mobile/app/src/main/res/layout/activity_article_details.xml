@@ -5,18 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/article_info_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/toolbar_relative">
-        <include layout="@layout/layout_top_toolbar_info_article"></include>
-    </RelativeLayout>
+        android:layout_height="51dp"
+        android:background="@color/primary"
+        android:clickable="true"
+        android:elevation="4dp"
+        android:focusable="true"
+        android:theme="@style/AppTheme.Toolbar"
+        app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
+        app:titleTextColor="@color/white">
+    </androidx.appcompat.widget.Toolbar>
 
     <ScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/toolbar_relative"
+        android:layout_below="@id/article_info_toolbar"
         android:layout_above="@id/buy_relative"
         android:orientation="vertical">
 
@@ -32,7 +38,7 @@
                 android:layout_marginBottom="0dp"
                 android:orientation="vertical">
 
-                <android.support.v4.view.ViewPager
+                <androidx.viewpager.widget.ViewPager
                     android:id="@+id/view_pager_article"
                     android:layout_width="match_parent"
                     android:layout_height="408dp"
@@ -51,13 +57,13 @@
                     app:pageColor="#fff"
                     app:snap="false" />
 
-                <android.support.design.widget.FloatingActionButton
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/btnCloset"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|right|end"
                     android:layout_margin="16dp"
-                    android:src="@drawable/ic_closet_2"
+                    android:src="@drawable/ic_favorite_border_white_48dp"
                     app:layout_anchorGravity="bottom|right|end"
                     android:layout_alignBottom="@id/view_pager_article"
                     android:layout_alignParentRight="true"/>
@@ -98,7 +104,7 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <android.support.design.button.MaterialButton
+        <com.google.android.material.button.MaterialButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"

@@ -2,8 +2,8 @@ package com.mylook.mylook.utils;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,12 +27,12 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
     private Context mContext;
     private List articlesAndStoresList;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView nameStore, txtTitle;
-        public ImageView articleImage;
-        public CardView articleCardView;
+    class MyViewHolder extends RecyclerView.ViewHolder {
+        TextView nameStore, txtTitle;
+        ImageView articleImage;
+        CardView articleCardView;
 
-        public MyViewHolder(View view) {
+        MyViewHolder(View view) {
             super(view);
             articleCardView =  view.findViewById(R.id.article_card_view);
             nameStore =  view.findViewById(R.id.store_name);

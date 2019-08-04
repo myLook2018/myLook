@@ -2,9 +2,9 @@ package com.mylook.mylook.utils;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +24,6 @@ public class GridImageAdapter extends ArrayAdapter {
     private Context mContext;
     private LayoutInflater mInflater;
     private int layoutResource;
-    //private String mAppend; no se usaria. en el tutorial lo pone porque usa universal image loader
     private ArrayList<Article> articles;
     private ArrayList<PremiumPublication> publications;
 
@@ -73,7 +72,6 @@ public class GridImageAdapter extends ArrayAdapter {
             final PremiumPublication pub = (PremiumPublication) getItem(position);
             imgUrl = pub.getPublicationPhoto();
             holder.image.setOnClickListener(v -> {
-                Log.e("CLICK EN LA FOTO", pub.getPublicationPhoto());
                 Intent intent = new Intent(mContext, PublicationDetail.class);
                 intent.putExtra("publication", pub);
                 mContext.startActivity(intent);

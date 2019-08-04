@@ -1,13 +1,18 @@
 package com.mylook.mylook.home;
 
+import android.animation.LayoutTransition;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.mylook.mylook.R;
 import com.mylook.mylook.closet.ClosetFragment;
@@ -16,9 +21,11 @@ import com.mylook.mylook.profile.ProfileFragment;
 import com.mylook.mylook.recommend.RecommendFragment;
 import com.mylook.mylook.session.Session;
 
-public class MyLookActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+public class MyLookActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, ExploreFragment.OnNavbarToggle {
     Fragment fragment = null;
     boolean isPremium;
+    BottomNavigationView navigation;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,14 +33,14 @@ public class MyLookActivity extends AppCompatActivity implements BottomNavigatio
         isPremium= Session.getInstance().isPremiumUser();
         loadFragment(HomeFragment.getInstance());
         setContentView(R.layout.activity_mylook_app);
-        BottomNavigationView navigation= findViewById(R.id.navigation);
+        navigation= findViewById(R.id.navigation);
         if(isPremium)
             navigation.inflateMenu(R.menu.bottom_navigation_menu_premium);
         else
             navigation.inflateMenu(R.menu.bottom_navigation_menu);
 
         navigation.setOnNavigationItemSelectedListener(MyLookActivity.this);
-        Toolbar toolbar = findViewById(R.id.main_toolbar);
+        toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
         setTheme(R.style.AppTheme);
     }
@@ -81,4 +88,25 @@ public class MyLookActivity extends AppCompatActivity implements BottomNavigatio
         }
         return false;
     }
+
+    @Override
+    public void onHide() {
+        hideBottomNavigationView();
+    }
+
+    @Override
+    public void onShow() {
+        showBottomNavigationView();
+    }
+
+    // android:animateLayoutChanges="true" in constraint layout
+
+    private void hideBottomNavigationView() {
+        navigation.setVisibility(View.GONE);
+    }
+
+    public void showBottomNavigationView() {
+        navigation.setVisibility(View.VISIBLE);
+    }
+
 }

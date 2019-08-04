@@ -3,7 +3,7 @@ package com.mylook.mylook.dialogs;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;

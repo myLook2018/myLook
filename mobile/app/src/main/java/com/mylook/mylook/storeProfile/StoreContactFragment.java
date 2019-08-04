@@ -4,9 +4,9 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,15 +35,15 @@ public class StoreContactFragment extends Fragment {
         storeLocation.setText(getArguments().getString("location"));
         TextView storePhone = view.findViewById(R.id.store_phone);
         storePhone.setText(getArguments().getString("phone"));
+        lnlFacebook = view.findViewById(R.id.lnlFace);
         txtFacebook = view.findViewById(R.id.txtFacebook);
         setOnClickFacebook(getArguments().getString("facebook"));
+        lnlTwitter = view.findViewById(R.id.lnlTw);
         txtTwitter = view.findViewById(R.id.txtTwitter);
         setOnClickTwitter(getArguments().getString("twitter"));
+        lnlInstagram = view.findViewById(R.id.lnlInta);
         txtInstagram = view.findViewById(R.id.txtInstagram);
         setOnClickInstagram(getArguments().getString("instagram"));
-        lnlFacebook = view.findViewById(R.id.lnlFace);
-        lnlInstagram = view.findViewById(R.id.lnlInta);
-        lnlTwitter = view.findViewById(R.id.lnlTw);
     }
 
     //TODO puede simplificarse el codigo bastante aca con parametros

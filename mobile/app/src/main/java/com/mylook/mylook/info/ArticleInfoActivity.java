@@ -3,13 +3,15 @@ package com.mylook.mylook.info;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
-import android.widget.ImageView;
+import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,18 +20,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.WriteBatch;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Interaction;
-import com.mylook.mylook.entities.Outfit;
+import com.mylook.mylook.session.Session;
 import com.mylook.mylook.storeProfile.StoreActivity;
 import com.mylook.mylook.utils.SlidingImageAdapter;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 public class ArticleInfoActivity extends AppCompatActivity {
 
@@ -63,6 +63,11 @@ public class ArticleInfoActivity extends AppCompatActivity {
     }
 
     private void initElements() {
+        Toolbar tb = findViewById(R.id.article_info_toolbar);
+        setSupportActionBar(tb);
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) ab.setDisplayHomeAsUpEnabled(true);
+
         btnCloset = findViewById(R.id.btnCloset);
         txtTitle = findViewById(R.id.txtTitle);
         txtStoreName = findViewById(R.id.txtStoreName);
@@ -70,8 +75,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
         txtCost = findViewById(R.id.txtCost);
         lnlSizes = findViewById(R.id.lnlSizes);
         lnlColors = findViewById(R.id.lnlColors);
-        ImageView backArrow = findViewById(R.id.backArrow);
-        backArrow.setOnClickListener(view -> finish());
         btnCloset.setOnClickListener(v -> changeSavedInCloset());
         ViewPager articlePager;
         articlePager = findViewById(R.id.view_pager_article);
@@ -92,13 +95,13 @@ public class ArticleInfoActivity extends AppCompatActivity {
 
     private void changeSavedInCloset() {
         if (alreadyInCloset) {
-            displayMessage("Ya se encuentra en favoritos");
+            displayMessage("Ya se encuentra en favoritos.");
             return;
         }
         inCloset = !inCloset;
-        if (inCloset) btnCloset.setBackgroundDrawable(ContextCompat.getDrawable(this,
+        if (inCloset) btnCloset.setBackground(ContextCompat.getDrawable(this,
                 R.drawable.ic_favorite_border_white_48dp));
-        else btnCloset.setBackgroundDrawable(ContextCompat.getDrawable(this,
+        else btnCloset.setBackground(ContextCompat.getDrawable(this,
                 R.drawable.ic_favorite_white_48dp));
     }
 
@@ -163,6 +166,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             sendNewInteraction();
                             displayMessage("Se añadió a tu ropero");
+                            Session.getInstance().setFavoriteAdded(true);
                         } else {
                             displayMessage("Error al añadir al ropero");
                         }
@@ -187,5 +191,16 @@ public class ArticleInfoActivity extends AppCompatActivity {
 
     private void displayMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

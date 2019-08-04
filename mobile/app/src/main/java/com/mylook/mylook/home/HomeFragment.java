@@ -3,13 +3,14 @@ package com.mylook.mylook.home;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,6 +36,7 @@ import com.mylook.mylook.entities.PremiumUser;
 import com.mylook.mylook.entities.Subscription;
 import com.mylook.mylook.login.LoginActivity;
 import com.mylook.mylook.profile.AccountActivity;
+import com.mylook.mylook.session.Session;
 import com.mylook.mylook.utils.CardsHomeFeedAdapter;
 
 import java.util.ArrayList;
@@ -45,7 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private CardsHomeFeedAdapter adapter;
     private ArrayList<Article> list;
     private ArrayList<Subscription> subscriptionList;
@@ -53,6 +55,7 @@ public class HomeFragment extends Fragment {
     private ProgressBar mProgressBar;
     private ImageView starImage;
     private TextView emptyArticles;
+    private SwipeRefreshLayout refreshLayout;
     private int totalArticles = 0;
     private Context mContext;
     final static String TAG = "HomeFragment";
@@ -61,6 +64,11 @@ public class HomeFragment extends Fragment {
     public static HomeFragment getInstance() {
         if (homeInstance == null) homeInstance = new HomeFragment();
         return homeInstance;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -85,10 +93,12 @@ public class HomeFragment extends Fragment {
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(mContext, 2);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        mContext = getContext();
-        setupFirebaseAuth();
         recyclerView.setAdapter(adapter);
 
+        refreshLayout = view.findViewById(R.id.refresh_layout_home);
+        refreshLayout.setOnRefreshListener(this);
+
+        setupFirebaseAuth();
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             mProgressBar.setVisibility(View.VISIBLE);
             loadFragment();
@@ -97,19 +107,16 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
     private void loadFragment() {
-        readSubscriptions();
+        if (Session.getInstance().doesHomeUpdate()) {
+            readSubscriptions();
+        }
         updateInstallationToken();
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.home_menu, menu);
-
     }
 
     @Override
@@ -252,6 +259,7 @@ public class HomeFragment extends Fragment {
                         }
                     }
                 }
+                refreshLayout.setRefreshing(false);
             });
         }
     }
@@ -369,4 +377,8 @@ public class HomeFragment extends Fragment {
         return true;
     }
 
+    @Override
+    public void onRefresh() {
+        readSubscriptions();
+    }
 }
