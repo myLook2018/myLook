@@ -252,7 +252,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 latLong.add(currentLocation.getLatitude());
                 latLong.add(currentLocation.getLongitude());
                 final Map<String, Object> recommendation = new HashMap<>();
-                recommendation.put("userId", user.getUid());
+                recommendation.put("userId", Sesion.getInstance().getSessionUserId() );
                 recommendation.put("description", txtDescription.getText().toString());
                 recommendation.put("limitDate", limitDate.getTime());
                 recommendation.put("updateDate", "update");

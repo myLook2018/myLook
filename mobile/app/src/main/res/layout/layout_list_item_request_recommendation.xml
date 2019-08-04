@@ -34,21 +34,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <TextView
-                    android:id="@+id/rdbState"
+                <ImageView
+                    android:id="@+id/rdbStateImage"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginEnd="8dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@android:drawable/sym_action_chat"
-                    android:backgroundTint="@color/accent"
-                    android:ellipsize="start"
+                    android:foreground="@android:drawable/stat_notify_chat"
+                    android:foregroundGravity="center"
+                    android:foregroundTint="@color/accent"
                     android:textAlignment="center"
-                    android:textColor="@color/browser_actions_bg_grey"
+                    app:layout_constraintBottom_toBottomOf="@+id/rdbStateText"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/rdbStateText"
+                    app:srcCompat="@android:drawable/stat_notify_chat" />
+
+                <TextView
+                    android:id="@+id/rdbStateText"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:ellipsize="start"
+                    android:foregroundGravity="center"
+                    android:gravity="center"
+                    android:textAlignment="textEnd"
+                    android:textColor="@color/accent"
                     android:textIsSelectable="false"
                     android:textSize="20sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/rdbStateImage"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="2" />
 
                 <TextView
                     android:id="@+id/txtRecommendTitle"
@@ -75,6 +91,7 @@
                     android:textSize="14dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
+
             </android.support.constraint.ConstraintLayout>
 
         </LinearLayout>

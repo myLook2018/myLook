@@ -46,7 +46,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.main.MyLookActivity;
 
-
 /**
  * A login screen that offers login via email/password.
  */
@@ -329,11 +328,17 @@ public class LoginActivity extends AppCompatActivity {
             Log.e("Login - Mylook", "Data " + data.toString());
             try {
                 Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-                Log.e("Login - Mylook", "Get Signed ACcount" + task.getResult().toString());
+                //Log.e("Login - Mylook", "Get Signed ACcount" + task.getResult().toString());
                 // Google Sign In was successful, authenticate with Firebase
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                firebaseAuthWithGoogle(account);
-            } catch (ApiException e) {
+                task.addOnCompleteListener(new OnCompleteListener<GoogleSignInAccount>() {
+                    @Override
+                    public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
+                        GoogleSignInAccount account = task.getResult();
+                        firebaseAuthWithGoogle(account);
+                    }
+                });
+
+            } catch (Exception e) {
                 // Google Sign In failed, update UI appropriately
                 Log.e("TAG", "Google sign in failed - " + e.getMessage());
                 mProgressBar.setVisibility(View.GONE);

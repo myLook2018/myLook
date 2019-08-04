@@ -39,11 +39,6 @@ public class OutfitsTab extends Fragment implements OutfitListAdapter.OutfitClic
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         closet = ViewModelProviders.of(getParentFragment()).get(ClosetModel.class);
-        closet.getOutfits().observe(this, outfits -> {
-            adapter = new OutfitListAdapter(getActivity(), outfits, this);
-            outfitsRecyclerView.setAdapter(adapter);
-            if (mProgressBar != null) mProgressBar.setVisibility(View.GONE);
-        });
     }
 
     @Override
@@ -62,6 +57,11 @@ public class OutfitsTab extends Fragment implements OutfitListAdapter.OutfitClic
         mProgressBar.setVisibility(View.VISIBLE);
         FloatingActionButton addOutfit = view.findViewById(R.id.fab_add_outfit);
         addOutfit.setOnClickListener(v -> createOutfit());
+        closet.getOutfits().observe(this, outfits -> {
+            adapter = new OutfitListAdapter(getActivity(), outfits, this);
+            outfitsRecyclerView.setAdapter(adapter);
+            if (mProgressBar != null) mProgressBar.setVisibility(View.GONE);
+        });
     }
 
     private void displayToast(String message) {

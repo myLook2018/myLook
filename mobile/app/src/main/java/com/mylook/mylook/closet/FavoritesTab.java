@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +32,7 @@ public class FavoritesTab extends Fragment {
     private ProgressBar mProgressBar;
 
     public static void refreshStatus() {
-        closet.reloadFavorites();
+            closet.reloadFavorites();
     }
 
     @Override
@@ -63,6 +65,11 @@ public class FavoritesTab extends Fragment {
         favoritesGridView.setNumColumns(3);
         favoritesGridView.setOnItemClickListener((parent, v, position, id) -> showFavorite(position));
         favoritesGridView.setOnItemLongClickListener((parent, v, position, id) -> favoriteOptions(position));
+        closet.getFavorites().observe(this, favorites -> {
+            adapter = new ArticlesGridAdapter(getContext(), favorites);
+            favoritesGridView.setAdapter(adapter);
+            if (mProgressBar != null) mProgressBar.setVisibility(View.GONE);
+        });
     }
 
     private boolean favoriteOptions(int position) {
