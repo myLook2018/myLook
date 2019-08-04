@@ -106,24 +106,6 @@
             app:layout_constraintTop_toBottomOf="@+id/image_account"
             app:srcCompat="@drawable/ic_settings" />
 
-        <TextView
-            android:id="@+id/txtemail"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:padding="10dp"
-            android:text="Notificaciones"
-            android:textAlignment="viewStart"
-            android:textColor="@color/black"
-            android:textSize="17dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/image_destacado"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/img_notificaciones"
-            app:layout_constraintTop_toTopOf="@+id/img_notificaciones" />
-
-
         <ImageView
             android:id="@+id/image_destacado"
             android:layout_width="40dp"

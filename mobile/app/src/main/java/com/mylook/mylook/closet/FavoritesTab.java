@@ -15,10 +15,12 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.mylook.mylook.R;
+import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Outfit;
 import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.utils.ArticlesGridAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
