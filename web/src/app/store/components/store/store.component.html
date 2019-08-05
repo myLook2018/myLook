@@ -1,8 +1,11 @@
 <div class="mat-typography" style="top: 0">
        <div class="mainContainer mat-typography">
-        <div class="profileDats" [ngStyle]="{ 'background-image': 'url(' + userStore.coverPh + ')'}">
-          <div class="profile">
-            <img class="profileImg" src={{userStore.profilePh}}>              
+         <!-- [style.background-image]="'url('+ userStore.coverPh +')'"  -->
+        <div class="profileDats"
+        >
+        <img class="coverPh" src={{userStore.coverPh}}>
+        <div class="profile">
+            <img class="profileImg" src={{userStore.profilePh}}>
             <div class="contact">
               <div>
                 <h1 class="profileName" style="font-size: 40px;">{{userStore.storeName}}</h1>
