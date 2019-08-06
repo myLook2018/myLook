@@ -8,6 +8,8 @@ const secureCompare = require('secure-compare');
 const cors = require('cors')({ origin: true });
 const Busboy = require('busboy');
 const axios = require('axios');
+const https = require('https');
+const access_token = 'APP_USR-1059447032112952-040618-c6e69a975167f3e9a01ca5939306a4b6-181044052'
 const mercadopago = require('mercadopago');
 mercadopago.configure({
   client_id: '1059447032112952',
@@ -243,24 +245,6 @@ function getInactiveUsers(users = [], nextPageToken) {
       return users;
     });
 }
-//# sourceMappingURL=index.js.map
-
-// exports.newMercadoPagoDoc = functions.firestore.document('prueba/{userId}')
-//     .onCreate((snap, context) => {
-//     // Get an object representing the document
-//     // e.g. {'name': 'Marie', 'age': 66}
-//     const preference = snap.data();
-//     console.log('preference', preference);
-//     return mercadopago.preferences.create(preference).then( (response) => {
-//           console.log('response', response);
-//           console.log('si, anda la cloud functon y salio todo bien');
-//           return response.body.init_point;
-//         }).catch( (error) => {
-//           console.log('error', error);
-//           return 'algo salio mal. Si, no tengo idea que, de nada por lo especifico. Toma este erorr ' + error;
-//         });
-//     // make the request
-// });
 
 exports.postMercadopagoCheckout = functions.https.onRequest((req, res) => {
   cors(req, res, () => {
@@ -282,9 +266,81 @@ exports.postMercadopagoCheckout = functions.https.onRequest((req, res) => {
           error: error.message
         });
       });
+  });
+});
 
-    // res.status(200).json({
-    //   message: req.body
-    // });
+exports.getMercadoPagoNotification = functions.https.onRequest((req, res) => {
+  cors(req, res, () => {
+    console.log('lo que nos traen req', req)
+    console.log('lo que nos traen body', req.body)
+    console.log('lo que nos traen query', req.query)
+    console.log('lo que nos traen query.id', req.query.id)
+
+    https.get(`https://api.mercadopago.com/v1/payments/${req.query.id}?access_token=APP_USR-1059447032112952-040618-c6e69a975167f3e9a01ca5939306a4b6-181044052`, (resp) => {
+      console.log('aca nos repoonde mp', resp)
+      resp.on("data", function(d) {
+        //d.external_reference tiene el id del doc y los codigos de nivel de promocion
+        console.log( 'lo que nos informa MP: ', JSON.parse(d.toString()));
+        const laData = JSON.parse(d.toString());
+        const external_reference = laData.external_reference
+        console.log('external reference: ', external_reference);
+
+        // 0:promotionLevel - 1:duracion en dias - 2:uid del articulo
+        var articleInformation = external_reference.split("-");
+        console.log('el array de las cosas', articleInformation);
+
+        const articlePromotionLevel = parseInt(articleInformation[0]);
+        const promotionDuration = parseInt(articleInformation[1]);
+        const articleToPromoteId = articleInformation[2];
+
+        // La platita que nos ingresó
+        const promotionCost = parseInt(laData.transaction_amount);
+        console.log('promotionCost ', promotionCost);
+
+        //forma de pago
+        const payMethod = laData.payment_type_id
+        console.log('payMethod ', payMethod);
+
+        // storeName
+        const storeName = laData.payer.first_name
+        console.log('storeName ', storeName);
+
+        console.log('actualizando la prenda en promocion');
+        admin.firestore().collection('articles').doc(articleToPromoteId).update({ promotionLevel: articlePromotionLevel }).then(result => {
+          console.log('Cambio de estado exitoso!! promocion actuualizada ... ', result);
+
+          admin.firestore().collection('stores').where('storeName', '==', storeName ).get().then(snapshot => {
+            snapshot.forEach(doc => {
+              console.log('doc.Id ', doc.id);
+
+              let end = new Date;
+              let duration = promotionDuration;
+              end.setDate(end.getDate() + duration);
+              const promotion = {
+                articleId: articleToPromoteId,
+                startOfPromotion: new Date,
+                endOfPromotion: end,
+                storeId: doc.id,
+                payMethod: payMethod,
+                promotionLevel: articlePromotionLevel,
+                promotionCost: promotionCost,
+              };
+
+              console.log('creando documento para guardar la promoció');
+              admin.firestore().collection('promotions').add(promotion).then((docRef) => {
+                console.log('creamos el documento: ', docRef.id);
+                return res.status(200).json({
+                  message:'OK'
+                });
+              });
+
+            });
+          });
+        });
+      }).on("error", (err) => {
+        console.log("Error: " + err.message);
+      });;
+
+    });
   });
 });

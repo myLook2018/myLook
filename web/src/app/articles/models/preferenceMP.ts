@@ -20,7 +20,7 @@ export class PreferenceMP {
           zip_code: string
       }
   };
-  'back_urls': {
+  'back_urls'?: {
       'success': string,
       'failure': string
   };

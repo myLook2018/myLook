@@ -66,11 +66,14 @@ export class PromoteDialogComponent {
   }
 
   initializePreference() {
+    console.log('lo que tenemos de dato', this.userData);
     this.preferenceMP =  {
       'items': [{
+        'id': `${this.selectedPromotion}-${this.duration}-${this.userData.articleId}`,
         'title': 'Promoción de prenda - MyLook',
         'quantity': 1,
         'currency_id': 'ARS',
+        'picture_url': this.userData.picturesArray[0],
         'unit_price': this.promotionCost
         }],
       'payer': {
@@ -87,10 +90,11 @@ export class PromoteDialogComponent {
           }
       },
       'back_urls': {
-        'success': 'https://www.tu-sitio/success',
+        'success': `http://localhost:4200/Tiendas/${this.userData.storeName}/Inventario`,
         'failure': 'http://www.tu-sitio/failure',
     },
     'auto_return': 'approved',
+    'external_reference': `${this.selectedPromotion}-${this.duration}-${this.userData.articleId}`
     };
   }
 
@@ -109,7 +113,7 @@ export class PromoteDialogComponent {
   tryCalculateCost() {
     if (this.selectedPromotion) {
       this.finalCost = 10 * this.duration * (this.selectedPromotion - 1);
-    } else { this.finalCost = 0 }
+    } else { this.finalCost = 0; }
 
     switch (this.duration) {
       case 1: {
@@ -152,6 +156,9 @@ export class PromoteDialogComponent {
 
     } catch {
       console.log(`no pude calcular diff`);
+    }
+    finally {
+      this.promotionCost = 2;
     }
   }
 

@@ -1,4 +1,5 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Article } from '../../models/article';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ArticleDialogComponent } from '../dialogs/articleDialog';
@@ -43,7 +44,8 @@ export class InventoryComponent implements OnInit, OnDestroy {
     public articleService: ArticleService,
     public dataService: DataService,
     public dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.createForm();
     this.options = fb.group({
@@ -72,6 +74,12 @@ export class InventoryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    if (this.route.snapshot.paramMap.get('collection_status')) {
+      const isAprovedPay = this.route.snapshot.paramMap.get('collection_status');
+      const articleId = this.route.snapshot.paramMap.get('external_reference');
+      console.log('este es el external ID ', articleId);
+      console.log('es aprobado? ', isAprovedPay);
+    }
     console.log('-+-+-+-+-+-Inicializando Inventario-+-+-+-+-+-');
     this.dataSource = [];
     this.dataService.getStoreInfo().then(store => {
@@ -90,7 +98,9 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     console.log('destruyendo subscripciones');
-    this.articlesSubscription.unsubscribe();
+    if (this.articlesSubscription) {
+      this.articlesSubscription.unsubscribe();
+    }
   }
 
   createForm() {
@@ -118,7 +128,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
       title: article.title,
       code: article.code,
       id: article.articleId,
-      picture: article.picture,
+      picture: article.picturesArray[0],
       cost: article.cost,
       sizes: article.sizes,
       material: article.material,
@@ -134,7 +144,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     const sub = promoteRef.componentInstance.onAdd.subscribe(res => {
       if (res !== undefined) {
         this.promoteArticle(res, article, this.userStore.firebaseUID);
-        this.RedirectToMercadoPago(res);
+        // this.RedirectToMercadoPago(res);
       }
     });
     promoteRef.afterClosed().subscribe(result => {
@@ -296,12 +306,12 @@ export class InventoryComponent implements OnInit, OnDestroy {
     this.selectedIndexes = [];
   }
 
-  RedirectToMercadoPago(promData) {
-    switch (promData.promotionCost) {
-      case 10: {
-        window.open('https://www.mercadopago.com/mla/checkout/start?pref_id=181044052-8b71c605-305a-44b5-8328-e07bb750ea94');
-        break;
-      }
-    }
-  }
+  // RedirectToMercadoPago(promData) {
+  //   switch (promData.promotionCost) {
+  //     case 10: {
+  //       window.open('https://www.mercadopago.com/mla/checkout/start?pref_id=181044052-8b71c605-305a-44b5-8328-e07bb750ea94');
+  //       break;
+  //     }
+  //   }
+  // }
 }
