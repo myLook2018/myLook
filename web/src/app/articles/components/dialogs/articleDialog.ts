@@ -218,80 +218,80 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
 
   startUpload() {
     this.isUpLoading = true;
-  //   if ( !this.checkImagenLoaded() ) {
-  //     this.snackBar.open('Es necesario que cargue al menos una imagen de la prenda para poder continuar.', '', {
-  //       duration: 3000,
-  //       panelClass: ['blue-snackbar']
-  //     });
-  //     return;
-  //   }
+    if ( !this.checkImagenLoaded() ) {
+      this.snackBar.open('Es necesario que cargue al menos una imagen de la prenda para poder continuar.', '', {
+        duration: 3000,
+        panelClass: ['blue-snackbar']
+      });
+      return;
+    }
 
-  //   this.isUpLoading = true;
-  //   console.log('las imagenes ', this.croppedImage);
-  //   let imagesToUpload: File[] = [];
-  //   this.croppedImage.forEach(photo => {
-  //     //delete
-  //     console.log('photo ', photo);
-  //     const sub: string = photo.substr(22);
-  //     console.log('sub ', sub);
-  //     const imageBlob = this.dataURItoBlob(sub);
-  //     const imageFile = new File(
-  //       [imageBlob],
-  //       this.articleForm.controls['title'].value,
-  //       { type: 'image/jpeg' }
-  //     );
-  //     imagesToUpload.push(imageFile);
-  //   });
-  //   this.articleForm.addControl(
-  //     'promotionLevel',
-  //     new FormControl(1, Validators.required)
-  //   );
-  //   this.articleForm.addControl(
-  //     'creationDate',
-  //     new FormControl(new Date(), Validators.required)
-  //   );
-  //   this.articleForm.get('tags').setValue(this.tags.map(x => x));
-  //   this.articleForm.get('sizes').setValue(this.sizes.map(x => x));
-  //   this.articleForm.get('colors').setValue(this.colors.map(x => x));
-  //   this.uploadPictures(imagesToUpload).then(picturesURL => {
-  //     this.articleForm.get('picturesArray').setValue(picturesURL.map(x => x));
-  //     this.articleService.addArticle(this.articleForm.value).then(() => {
-  //       this.isUpLoading = false;
-  //       console.log('prenda guardada');
-  //       this.openSnackBar('Prenda guardada en MyLook!', 'close');
-  //       this.dialogRef.close();
-  //     });
-  //   });
-  // }
+    this.isUpLoading = true;
+    console.log('las imagenes ', this.croppedImage);
+    let imagesToUpload: File[] = [];
+    this.croppedImage.forEach(photo => {
+      //delete
+      console.log('photo ', photo);
+      const sub: string = photo.substr(22);
+      console.log('sub ', sub);
+      const imageBlob = this.dataURItoBlob(sub);
+      const imageFile = new File(
+        [imageBlob],
+        this.articleForm.controls['title'].value,
+        { type: 'image/jpeg' }
+      );
+      imagesToUpload.push(imageFile);
+    });
+    this.articleForm.addControl(
+      'promotionLevel',
+      new FormControl(1, Validators.required)
+    );
+    this.articleForm.addControl(
+      'creationDate',
+      new FormControl(new Date(), Validators.required)
+    );
+    this.articleForm.get('tags').setValue(this.tags.map(x => x));
+    this.articleForm.get('sizes').setValue(this.sizes.map(x => x));
+    this.articleForm.get('colors').setValue(this.colors.map(x => x));
+    this.uploadPictures(imagesToUpload).then(picturesURL => {
+      this.articleForm.get('picturesArray').setValue(picturesURL.map(x => x));
+      this.articleService.addArticle(this.articleForm.value).then(() => {
+        this.isUpLoading = false;
+        console.log('prenda guardada');
+        this.openSnackBar('Prenda guardada en MyLook!', 'close');
+        this.dialogRef.close();
+      });
+    });
+  }
 
-  // uploadPictures(items: any[]) {
-  //   return new Promise<any>(resolve => {
-  //     const result = [];
-  //     // tslint:disable-next-line: quotemark
-  //     console.log('items ', items);
+  uploadPictures(items: any[]) {
+    return new Promise<any>(resolve => {
+      const result = [];
+      // tslint:disable-next-line: quotemark
+      console.log('items ', items);
 
-  //     this.dataService.uploadPictureFile(items[0]).then(res0 => {
-  //       console.log('res0 ', res0);
-  //       result.push(res0);
-  //       if (items[1] !== '') {
-  //         this.dataService.uploadPictureFile(items[1]).then(res1 => {
-  //           console.log('res1', res1);
-  //           result.push(res1);
-  //           if (items[2] !== '') {
-  //             this.dataService.uploadPictureFile(items[2]).then(res2 => {
-  //               console.log('res2', res2);
-  //               result.push(res2);
-  //               resolve(result);
-  //             });
-  //           } else {
-  //             resolve(result);
-  //           }
-  //         });
-  //       } else {
-  //         resolve(result);
-  //       }
-  //     });
-  //   });
+      this.dataService.uploadPictureFile(items[0]).then(res0 => {
+        console.log('res0 ', res0);
+        result.push(res0);
+        if (items[1] !== '') {
+          this.dataService.uploadPictureFile(items[1]).then(res1 => {
+            console.log('res1', res1);
+            result.push(res1);
+            if (items[2] !== '') {
+              this.dataService.uploadPictureFile(items[2]).then(res2 => {
+                console.log('res2', res2);
+                result.push(res2);
+                resolve(result);
+              });
+            } else {
+              resolve(result);
+            }
+          });
+        } else {
+          resolve(result);
+        }
+      });
+    });
   }
 
   // actualiza la descripcion de una prenda
@@ -413,7 +413,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     myReader.onloadend = function(loadEvent: any) {
       image.src = loadEvent.target.result;
       that.cropper.setImage(image);
-      // that.data[that.actualImageId] = image;
+      that.data[that.actualImageId] = image;
     };
     myReader.readAsDataURL(file);
   }

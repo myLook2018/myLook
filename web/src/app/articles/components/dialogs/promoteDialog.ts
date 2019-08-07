@@ -90,8 +90,8 @@ export class PromoteDialogComponent {
           }
       },
       'back_urls': {
-        'success': `http://localhost:4200/Tiendas/${this.userData.storeName}/Inventario`,
-        'failure': 'http://www.tu-sitio/failure',
+        'success': `https://app-mylook.firebaseapp.com/Tiendas${this.userData.storeName}/Inventario`,
+        'failure': 'https://app-mylook.firebaseapp.com/Tiendas/Error',
     },
     'auto_return': 'approved',
     'external_reference': `${this.selectedPromotion}-${this.duration}-${this.userData.articleId}`
@@ -156,9 +156,6 @@ export class PromoteDialogComponent {
 
     } catch {
       console.log(`no pude calcular diff`);
-    }
-    finally {
-      this.promotionCost = 2;
     }
   }
 
