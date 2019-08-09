@@ -7,20 +7,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -33,24 +32,20 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Closet;
-import com.mylook.mylook.home.MyLookActivity;
-import com.mylook.mylook.profile.EditInfoActivity;
+import com.mylook.mylook.entities.User;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     private Context mContext;
     private ProgressBar mProgressBar;
     private EditText txtEmail, txtPasswd1, txtPasswd2, txtDNI, txtName, txtSurname, txtBirthdate;
-    private ConstraintLayout mLayout;
     private Toolbar tb;
     private MaterialBetterSpinner spinner;
     private ImageButton btnRegister;
@@ -58,6 +53,8 @@ public class RegisterActivity extends AppCompatActivity {
     final Calendar myCalendar = Calendar.getInstance();
     private String provider = null;
     private boolean validMail = true;
+    private ArrayAdapter<String> adapterSex;
+    private static final int SUCCESS_REGISTER =0, UNSUCCSESS_REGISTER=1 ;
 
 
     @SuppressLint("WrongViewCast")
@@ -103,6 +100,7 @@ public class RegisterActivity extends AppCompatActivity {
                         validMail = false;
                         txtEmail.setTextColor(getResources().getColor(R.color.red));
                         Toast.makeText(RegisterActivity.this, "El mail ya está en uso", Toast.LENGTH_LONG ).show();
+                        btnRegister.setEnabled(false);
                     } else{
                         btnRegister.setEnabled(true);
                     }
@@ -124,32 +122,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private boolean validateFields() {
-        if (isStringNull(txtEmail.getText().toString())) {
-            displayMessage("El campo Email es obligatorio");
-            return false;
-        }
-        if(!validMail){
-            displayMessage("El Mail seleccionado ya está en uso");
-            return false;
-        }
-        if (isStringNull(txtPasswd1.getText().toString())&&isStringNull(provider)) {
-            displayMessage("Debes ingresar una contraseña");
-            return false;
-        }
-        if (txtPasswd1.getText().length() < 6 && isStringNull(provider)) {
-            displayMessage("La contraseña debe contener 6 caracteres");
-            txtPasswd1.setText("");
-            txtPasswd2.setText("");
-            return false;
-        }
-        if (isStringNull(txtPasswd2.getText().toString())&&isStringNull(provider)) {
-            displayMessage("Debes ingresar ambas contraseñas");
-            return false;
-        }
-        if (!txtPasswd1.getText().toString().equals(txtPasswd2.getText().toString())&&isStringNull(provider)) {
-            displayMessage("Las contraseñas no coinciden");
-            return false;
-        }
         if (isStringNull(txtName.getText().toString())) {
             displayMessage("El campo Nombre es obligatorio");
             return false;
@@ -158,25 +130,50 @@ public class RegisterActivity extends AppCompatActivity {
             displayMessage("El campo Apellido es obligatorio");
             return false;
         }
-        if (isStringNull(txtBirthdate.getText().toString())) {
-            displayMessage("Debes ingresar una Fecha de Nacimiento");
+        if (isStringNull(txtEmail.getText().toString())) {
+            displayMessage("El campo Email es obligatorio");
+            return false;
+        }
+        if(!validMail){
+            displayMessage("El Mail seleccionado ya está en uso");
             return false;
         }
         if (isStringNull(txtDNI.getText().toString())) {
             displayMessage("Debes ingresar un DNI");
             return false;
         }
-
+        if(isStringNull(spinner.getText().toString())){
+            displayMessage("El campo Sexo es obligatorio");
+            return false;
+        }
+        if (isStringNull(txtBirthdate.getText().toString())) {
+            displayMessage("Debes ingresar una Fecha de Nacimiento");
+            return false;
+        }
         Calendar today = Calendar.getInstance();
         int diff = today.get(Calendar.YEAR) - myCalendar.get(Calendar.YEAR);
         if(diff<14){
             displayMessage("Debes tener al menos 14 años");
             return false;
         }
-       /* if(spinner.getSelectedItemPosition()==0){
-            displayMessage("El campo Sexo es obligatorio");
+        if (isStringNull(txtPasswd1.getText().toString())||isStringNull(provider)) {
+            displayMessage("Debes ingresar una contraseña");
             return false;
-        }*/
+        }
+        if (txtPasswd1.getText().length() < 6 || isStringNull(provider)) {
+            displayMessage("La contraseña debe contener 6 caracteres");
+            txtPasswd1.setText("");
+            txtPasswd2.setText("");
+            return false;
+        }
+        if (isStringNull(txtPasswd2.getText().toString())||isStringNull(provider)) {
+            displayMessage("Debes ingresar ambas contraseñas");
+            return false;
+        }
+        if (!(txtPasswd1.getText().toString().equals(txtPasswd2.getText().toString()))||isStringNull(provider)) {
+            displayMessage("Las contraseñas no coinciden");
+            return false;
+        }
         return true;
     }
 
@@ -202,34 +199,42 @@ public class RegisterActivity extends AppCompatActivity {
     private void register() {
         if (validateFields()) {
             mProgressBar.setVisibility(View.VISIBLE);
-            mLayout.setVisibility(View.GONE);
             if (provider==null) {
-                String email = txtEmail.getText().toString();
-                String passwd = txtPasswd1.getText().toString();
-                mAuth.createUserWithEmailAndPassword(email, passwd)
-                        .addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
+                final String email = txtEmail.getText().toString();
+                final String passwd = txtPasswd1.getText().toString();
+                FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, passwd)
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                FirebaseAuth.getInstance().signInWithEmailAndPassword(email,passwd);
+                                user=task.getResult().getUser();
+                                saveClient();
+                            }
+                        });
+                        /*.addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    Log.d("REGISTER", "Esta pro guardar datos");
-
-                                    boolean saved = saveClient();
-                                    setupFirebaseAuth();
-                                } else {
-                                    Log.w("REGISTER", "createUserWithEmail:Failure", task.getException());
+                                    Log.e("REGISTER", "Esta pro guardar datos");
+                                    //saveClient();
+                                    //setupFirebaseAuth();
+                                }else {
+                                    Log.e("REGISTER", "createUserWithEmail:Failure", task.getException());
                                     Toast.makeText(RegisterActivity.this, "Algo salio mal",
                                             Toast.LENGTH_SHORT).show();
                                 }
                             }
-                        });
+                        })*/
             } else {
-                boolean saved = saveClient();
+                Log.e("REGISTER CHOTO", "Provider !=NULL");
+                saveClient();
             }
+           // logInIntent();
         }
     }
 
     private void createCloset() {
-        Closet closet = new Closet(mAuth.getUid());
+        Closet closet = new Closet(FirebaseAuth.getInstance().getUid());
         final String[] closetId = new String[1];
         FirebaseFirestore.getInstance().collection("closets").add(closet)
                 .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
@@ -241,27 +246,29 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private boolean saveClient() {
-        final boolean[] saved = new boolean[1];
-        createCloset();
-        final Map<String, Object> client = new HashMap<>();
-        client.put("email", txtEmail.getText().toString());
-        client.put("dni", txtDNI.getText().toString());
-        client.put("name", txtName.getText().toString());
-        client.put("surname", txtSurname.getText().toString());
-        client.put("birthday", txtBirthdate.getText().toString());
-        client.put("gender", spinner.getText().toString());
-        client.put("userId", mAuth.getUid());
-        client.put("isPremium", false);
+        final boolean[] saved = {false};
+        createCloset(); //Esto se saca cuando este el closet de Rodri
+        User newUser=new User();
+        newUser.setEmail(txtEmail.getText().toString());
+        newUser.setPremium(false);
+        newUser.setDni( txtDNI.getText().toString());
+        newUser.setName(txtName.getText().toString());
+        newUser.setSurname(txtSurname.getText().toString());
+        newUser.setGender(spinner.getText().toString());
+        newUser.setBirthday(myCalendar.getTimeInMillis());
+        newUser.setUserId(FirebaseAuth.getInstance().getUid());
+        HashMap<String,Object> client = newUser.toMap();
         if(!isStringNull(provider))
             client.put("provider", provider);
         FirebaseFirestore.getInstance().collection("clients")
-                .add(client).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                .add(client)
+                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
-            public void onSuccess(DocumentReference documentReference) {
+            public void onComplete(@NonNull Task<DocumentReference> task) {
                 Log.d("SAVE_CLIENT", "Se guarda client");
                 saved[0] = true;
                 sendEmailVerification();
-                logInIntent();
+
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -285,7 +292,7 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
+            FirebaseAuth.getInstance().removeAuthStateListener(mAuthListener);
         }
     }
 
@@ -295,6 +302,11 @@ public class RegisterActivity extends AppCompatActivity {
         intent.putExtra("confirmation",true);
         startActivity(intent);
         finish();
+
+        /*Intent returnIntent = new Intent();
+        returnIntent.putExtra("email", txtEmail.getText().toString());
+        returnIntent.putExtra("confirmation",true);
+        setResult(SUCCESS_REGISTER,returnIntent);*/
     }
 
     private void setupFirebaseAuth() {
@@ -304,11 +316,9 @@ public class RegisterActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    Intent intent = new Intent(mContext, MyLookActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else {
-
+                    /*Intent intent = new Intent(mContext, MyLookActivity.class);
+                    startActivity(intent);*/
+                    Log.e("---REGISTRO", "Usuario no nulo");
                 }
             }
         };
@@ -320,7 +330,6 @@ public class RegisterActivity extends AppCompatActivity {
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
-        mAuth = FirebaseAuth.getInstance();
         btnRegister = findViewById(R.id.btnRegister);
         mProgressBar =findViewById(R.id.register_progressbar);
         mProgressBar.setVisibility(View.GONE);
@@ -341,7 +350,8 @@ public class RegisterActivity extends AppCompatActivity {
         sexos.add("Femenino");
         sexos.add("Masculino");
         sexos.add("Otro");
-        spinner.setAdapter(new ArrayAdapter<>(RegisterActivity.this,android.R.layout.simple_selectable_list_item, sexos));;
+        adapterSex=new ArrayAdapter<>(RegisterActivity.this,android.R.layout.simple_selectable_list_item, sexos);
+        spinner.setAdapter(adapterSex);
     }
 
     private void initCalendar(){
@@ -367,28 +377,39 @@ public class RegisterActivity extends AppCompatActivity {
     private void sendEmailVerification() {
         // Send verification email
         // [START send_email_verification]
-        user = mAuth.getCurrentUser();
-        user.sendEmailVerification()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // [START_EXCLUDE]
-                        // Re-enable button
-                        if (task.isSuccessful()) {
-                            Log.d("EMAIL_VERIFICATION", "Se verifico mail");
-                            Toast.makeText(RegisterActivity.this,
-                                    "Verifica tu mail y luego inicia sesion ",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.d("EMAIL_VERIFICATION", "No se verifico mail", task.getException());
-                            Log.e("SendEmailVerification", "sendEmailVerification", task.getException());
-                            Toast.makeText(RegisterActivity.this,
-                                    "Failed to send verification email.",
-                                    Toast.LENGTH_SHORT).show();
+        final boolean[] sent = {false};
+        if(user!=null){
+            Log.e("REGISTER", "USER !=NULL CHOTO");
+            user.sendEmailVerification()
+                    .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            // [START_EXCLUDE]
+                            // Re-enable button
+                            if (task.isSuccessful()) {
+                                Log.e("EMAIL_VERIFICATION", "Se verifico mail");
+                                Toast.makeText(RegisterActivity.this,
+                                        "Verifica tu mail y luego inicia sesion ",
+                                        Toast.LENGTH_SHORT).show();
+                                logInIntent();
+
+                            } else {
+                                Log.e("EMAIL_VERIFICATION", "No se verifico mail", task.getException());
+                                sent[0]=false;
+                                Log.e("SendEmailVerification", "sendEmailVerification", task.getException());
+                                Toast.makeText(RegisterActivity.this,
+                                        "Failed to send verification email.",
+                                        Toast.LENGTH_SHORT).show();
+                                logInIntent();
+                            }
+                            // [END_EXCLUDE]
                         }
-                        // [END_EXCLUDE]
-                    }
-                });
-        // [END send_email_verification]
+                    });
+            // [END send_email_verification]
+
+        }else
+        {
+            Log.e("REGISTER", "USER ==NULL CHOTO");
+        }
     }
 }

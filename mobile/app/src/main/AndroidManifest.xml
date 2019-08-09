@@ -59,7 +59,8 @@
             android:grantUriPermissions="true"
             android:launchMode="singleInstance">
         </activity>
-        <activity android:name=".login.RegisterActivity" android:launchMode="singleInstance"/>
+        <activity android:name=".login.RegisterActivity" android:launchMode="singleInstance"
+            android:parentActivityName=".login.LoginActivity"/>
         <activity android:name=".recommend.RecommendActivityAddDesc"
             android:parentActivityName=".recommend.RecommendationsActivity"
             android:grantUriPermissions="true">

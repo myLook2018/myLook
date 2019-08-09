@@ -46,6 +46,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.home.MyLookActivity;
+import com.mylook.mylook.session.Sesion;
 
 
 /**
@@ -53,6 +54,7 @@ import com.mylook.mylook.home.MyLookActivity;
  */
 public class LoginActivity extends AppCompatActivity {
 
+    private static final int SUCCESS_REGISTER =0, REGISTER_REQUEST=3;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -64,7 +66,6 @@ public class LoginActivity extends AppCompatActivity {
     private LinearLayout mLayout;
     private Button btnLogin;
     private String providerLogin;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private SignInButton btnGoogleSign;
     private TextView signUpLink, resetPassword;
     private FirebaseUser user;
@@ -86,11 +87,12 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        Log.e("Login", "Resume act");
         super.onResume();
+        Log.e("Login", "Resume act");
         setupLoginActivity();
         Log.e("Login", "FInish on resume");
     }
+
 
     private void setupLoginActivity() {
         setContentView(R.layout.activity_login);
@@ -236,7 +238,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 user = mAuth.getCurrentUser(); //firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    db.collection("clients").whereEqualTo("email", user.getEmail())
+                    FirebaseFirestore.getInstance().collection("clients").whereEqualTo("email", user.getEmail())
                             .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -248,8 +250,7 @@ public class LoginActivity extends AppCompatActivity {
                                     intent.putExtra("mail", mail);
                                     intent.putExtra("displayName", name);
                                     intent.putExtra("provider", providerLogin);
-                                    startActivity(intent);
-                                    finish();
+                                    //startActivityForResult(intent, REGISTER_REQUEST);
                                 } else {
                                     if (user != null && user.isEmailVerified()) {
                                         Intent intent = new Intent(mContext, MyLookActivity.class);
@@ -260,13 +261,18 @@ public class LoginActivity extends AppCompatActivity {
                                         finish();
                                     } else {
                                         Log.d("[LoginActivity]   ", "eMail no verificado");
-                                        displayMessage("Tu email aún no esta verificado");
+                                        //displayMessage("Tu email aún no esta verificado");
                                         FirebaseAuth.getInstance().signOut();
-                                        onResume();
+                                        try {
+                                            onResume();
+                                        }catch (Exception e){
+                                            Log.e("LOGIN EXCP", e.getMessage());
+                                        }
+
                                     }
                                 }
                             } else {
-                                Log.e("[LoginActivity]   ", task.getException().getMessage());
+                                Log.e("[LoginActivity]   ", "no successful");
                             }
                         }
                     });
@@ -339,6 +345,21 @@ public class LoginActivity extends AppCompatActivity {
                 Log.e("TAG", "Google sign in failed - " + e.getMessage());
                 mProgressBar.setVisibility(View.GONE);
                 // ...
+            }
+        }else
+            if(requestCode==REGISTER_REQUEST){
+                Log.e("Login - Mylook", "requestCode 3 " );
+
+                if(resultCode==SUCCESS_REGISTER ){
+                if(data.hasExtra("email"))
+                mEmail.setText(data.getStringExtra("email"));
+                if (data.getBooleanExtra("confirmation", false)) {
+                    Snackbar mySnackbar = Snackbar.make(layout, "Te envíamos un mail para confirmar el registro", Snackbar.LENGTH_LONG);
+                    mySnackbar.setActionTextColor(getResources().getColor(R.color.accent));
+                    mySnackbar.show();
+
+                }
+                Log.e("ACCOUNT ACTIVITY", "El usuario se registro y se mando mail");
             }
         }
     }
