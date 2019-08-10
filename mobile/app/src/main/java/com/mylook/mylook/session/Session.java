@@ -117,13 +117,13 @@ public class Session {
                     singleton.setUserId(userId);
                 } else {
                     Log.e(TAG,"User not found");
-                    getMailUserId();
+                    // TODO getMailUserId();
                 }
             }).addOnFailureListener(e -> Log.e(TAG, "Failure: "+e.getMessage()));
 
         } else{
             Log.e(TAG,"Current User is null");
-            getMailUserId();
+            // TODO getMailUserId();
         }
     }
 
