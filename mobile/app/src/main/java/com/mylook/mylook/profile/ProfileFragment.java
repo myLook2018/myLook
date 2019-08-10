@@ -1,26 +1,18 @@
 package com.mylook.mylook.profile;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.facebook.FacebookSdk;
-import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,10 +21,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.dialogs.DialogManager;
-import com.mylook.mylook.login.LoginActivity;
 import com.mylook.mylook.premiumUser.PremiumRequestActivity;
 import com.mylook.mylook.premiumUser.PremiumUserProfileActivity;
-import com.mylook.mylook.session.Sesion;
+import com.mylook.mylook.session.Session;
 
 public class ProfileFragment extends Fragment {
 
@@ -54,7 +45,7 @@ public class ProfileFragment extends Fragment {
     private TextView txtHelp;
     private ImageView imageExit;
     private TextView txtExit;
-    private String dbUserId = Sesion.getInstance().getSessionUserId();
+    private String dbUserId = Session.getInstance().getSessionUserId();
     private Context mContext;
     private String clientId;
     private boolean isPremiumUser;
@@ -208,7 +199,7 @@ public class ProfileFragment extends Fragment {
         txtExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogManager dm = DialogManager.getInstance();
+                DialogManager dm = new DialogManager();
 
                 dm.createLogoutDialog(mContext,
                         "Cerrar Sesion",
@@ -221,7 +212,7 @@ public class ProfileFragment extends Fragment {
         imageExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogManager dm = DialogManager.getInstance();
+                DialogManager dm = new DialogManager();
 
                 dm.createLogoutDialog(
                         mContext,

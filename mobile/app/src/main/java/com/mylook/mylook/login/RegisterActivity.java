@@ -5,11 +5,11 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -30,7 +30,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
-import com.mylook.mylook.entities.Closet;
 import com.mylook.mylook.home.MyLookActivity;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
@@ -230,21 +229,8 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    private void createCloset() {
-        Closet closet = new Closet(mAuth.getUid());
-        final String[] closetId = new String[1];
-        dB.collection("closets").add(closet)
-                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                        Log.e("CLOSET ON COMPLET", task.getResult().getId());
-                    }
-                });
-    }
-
     private boolean saveClient() {
         final boolean[] saved = new boolean[1];
-        createCloset();
         final Map<String, Object> client = new HashMap<>();
         client.put("email", txtEmail.getText().toString());
         client.put("dni", txtDNI.getText().toString());

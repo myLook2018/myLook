@@ -38,30 +38,21 @@
         <activity android:name=".home.MyLookActivity" android:theme="@style/SplashTheme"/>
         <activity android:name=".info.ArticleInfoActivity"/>
         <activity android:name=".storeProfile.StoreActivity"/>
-        <activity android:name=".explore.ExploreActivity"
-            android:screenOrientation="portrait" >
-            <meta-data android:name="android.app.default_searchable"
-                android:value=".SearchableActivity" />
-        </activity>
         <activity android:name=".explore.SearchableActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".explore.ExploreActivity">
+            android:parentActivityName=".home.MyLookActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".explore.ExploreActivity" />
+                android:value=".home.MyLookActivity" />
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>
         </activity>
-        <activity android:name=".recommend.RecommendationsActivity"
-            android:grantUriPermissions="true"
-            android:launchMode="singleInstance">
-        </activity>
         <activity android:name=".login.RegisterActivity" android:launchMode="singleInstance"/>
         <activity android:name=".recommend.RecommendActivityAddDesc"
-            android:parentActivityName=".recommend.RecommendationsActivity"
+            android:parentActivityName=".home.MyLookActivity"
             android:grantUriPermissions="true">
         </activity>
         <activity android:name=".recommend.RequestRecommendActivity"/>
@@ -78,11 +69,8 @@
             android:grantUriPermissions="true"/>
         <activity android:name=".premiumUser.PublicationDetail"
             android:parentActivityName=".premiumUser.PremiumUserProfileActivity"/>
-        <activity android:name=".closet.ClosetActivity" android:launchMode="singleInstance"/>
-        <activity android:name=".closet.OutfitActivity"
-            android:parentActivityName=".closet.ClosetActivity"
-            android:launchMode="singleInstance"/>
-        <activity android:name=".closet.ViewOutfitActivity"/>
+        <activity android:name=".closet.OutfitInfoActivity"/>
+        <activity android:name=".closet.OutfitCreateEditActivity"/>
 
         <meta-data android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"
@@ -108,6 +96,7 @@
         </activity>
         <activity android:name=".login.ResetPasswordActivity"
             android:parentActivityName=".login.LoginActivity"/>
+        <activity android:name=".main.MainActivity" />
 
 
         <service android:name=".notifications.MyFirebaseMessagingService">

@@ -2,7 +2,7 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-        <android.support.design.widget.BottomNavigationView
+        <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavViewBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -11,6 +11,6 @@
             app:itemIconTint="@drawable/nav_item_color_state"
             >
 
-        </android.support.design.widget.BottomNavigationView>
+        </com.google.android.material.bottomnavigation.BottomNavigationView>
 
 </merge>

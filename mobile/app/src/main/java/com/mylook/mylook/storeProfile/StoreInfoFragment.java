@@ -3,8 +3,8 @@ package com.mylook.mylook.storeProfile;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,7 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Subscription;
-import com.mylook.mylook.session.Sesion;
+import com.mylook.mylook.session.Session;
 
 @SuppressLint("ValidFragment")
 public class StoreInfoFragment extends Fragment {
@@ -100,7 +100,7 @@ public class StoreInfoFragment extends Fragment {
                             documentId = documentReference.getId();
                             setupButtonSubscribe(true);
                             displayMessage("Ahora estas suscripto a "+storeNameString);
-                            Sesion.getInstance().updateActivitiesStatus(Sesion.HOME_FRAGMENT);
+                            Session.getInstance().updateActivitiesStatus(Session.HOME_FRAGMENT);
 
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -120,7 +120,7 @@ public class StoreInfoFragment extends Fragment {
                                 documentId = "";
                                 Log.e("BUTTON",documentId);
                                 displayMessage("Ya no estás suscripto");
-                                Sesion.getInstance().updateActivitiesStatus(Sesion.HOME_FRAGMENT);
+                                Session.getInstance().updateActivitiesStatus(Session.HOME_FRAGMENT);
                             }
                             btnSubscribe.setEnabled(true);
                         }
