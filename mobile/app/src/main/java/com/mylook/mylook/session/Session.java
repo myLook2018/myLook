@@ -2,20 +2,23 @@ package com.mylook.mylook.session;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.closet.ClosetFragment;
+import com.mylook.mylook.explore.ExploreFragment;
 import com.mylook.mylook.home.HomeFragment;
 import com.mylook.mylook.profile.ProfileFragment;
 import com.mylook.mylook.recommend.RecommendFragment;
 
+/**
+ * Lo defino como un servicio en caso de que en un futuro tengamos que hacer tareas,
+ * pero por ahora se va a manejar como una clase Singleton.
+ */
 public class Session {
 
     private static Session singleton = null;
@@ -24,24 +27,19 @@ public class Session {
     public static final int RECOMEND_FRAGMENT = 3;
     public static final int CLOSET_FRAGMENT = 4;
     public static final int PROFILE_FRAGMENT = 5;
-    public static final String TAG = "Session";
-    public String userId = null;
+    public static final String TAG = "Sesion";
+    public static String userId = null;
     public static boolean isPremium = false;
     public static String name= "";
     public static String mail= "";
     public static String clientId= "";
 
-    public Session() {
-        Log.e(TAG, "Constructor sesion");
-        getUserId();
+    private Session() {
+
     }
 
     public boolean isPremiumUser(){
         return isPremium;
-    }
-
-    public String getSessionUserId(){
-        return singleton.userId;
     }
 
     /**
@@ -79,52 +77,40 @@ public class Session {
      */
     public static Session getInstance() {
         if (singleton == null) {
-            Log.e(TAG, "Singleton is null");
+            Log.e("getInstance", "singleton ==null" );
             singleton = new Session();
         }
         return singleton;
     }
 
-    public void setUserId(String userId) {
-        singleton.userId = userId;
-    }
-
-    private void getMailUserId(){
-        FirebaseFirestore.getInstance().collection("clients").whereEqualTo("email", FirebaseAuth.getInstance().getCurrentUser().getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                Log.e(TAG,"getEmailUser");
-                if (task.isSuccessful()) {
-                    userId = task.getResult().getDocuments().get(0).get("userId").toString();
-                    Log.e(TAG, "userId"+userId);
-                    singleton.setUserId(userId);
-                }
-            }
-        }).addOnFailureListener(e -> Log.e(TAG, "Failure: "+e.getMessage()));
-    }
-
-    private void getUserId() {
-        Log.e(TAG,"getUserId");
-        String id = FirebaseAuth.getInstance().getUid();
-        Log.e(TAG,"id"+id);
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            Log.e(TAG,"User is NOT null");
-            FirebaseFirestore.getInstance().collection("clients").whereEqualTo("userId", id).get().addOnCompleteListener(task -> {
-                Log.e(TAG, "Query ready");
-                if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
-                    userId = task.getResult().getDocuments().get(0).get("userId").toString();
-                    Log.e(TAG, "COmpleted: "+userId);
-                    singleton.setUserId(userId);
-                } else {
-                    Log.e(TAG,"User not found");
-                    // TODO getMailUserId();
-                }
-            }).addOnFailureListener(e -> Log.e(TAG, "Failure: "+e.getMessage()));
-
-        } else{
-            Log.e(TAG,"Current User is null");
-            // TODO getMailUserId();
+    public Task<QuerySnapshot> initializeElements() {
+        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            if(currentUser.isEmailVerified())
+                return FirebaseFirestore.getInstance().collection("clients").whereEqualTo("userId", currentUser.getUid()).get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
+                        DocumentSnapshot document = task.getResult().getDocuments().get(0);
+                        userId = document.get("userId").toString();
+                        isPremium = (Boolean) document.get("isPremium");
+                        name = document.get("name").toString() + " " + document.get("surname").toString();
+                        mail = currentUser.getEmail();
+                        clientId = document.getId();
+                    } else {
+                        FirebaseFirestore.getInstance().collection("clients").whereEqualTo("email", currentUser.getEmail()).get().addOnCompleteListener(task1 -> {
+                            if (task1.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult().getDocuments().get(0);
+                                userId = document.get("userId").toString();
+                                isPremium = (Boolean) document.get("isPremium");
+                                name = document.get("name").toString() + " " + document.get("surname").toString();
+                                mail = currentUser.getEmail();
+                                clientId = document.getId();
+                                //cuando entra aca?
+                            }
+                        });
+                    }
+                });
         }
+        return null;
     }
 
     public static void updateData(){

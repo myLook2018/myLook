@@ -25,6 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Interaction;
+import com.mylook.mylook.session.MainActivity;
 import com.mylook.mylook.storeProfile.StoreActivity;
 import com.mylook.mylook.utils.SlidingImageAdapter;
 import com.viewpagerindicator.CirclePageIndicator;
@@ -37,7 +38,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
     public static final int RESULT_CANCELLED = 2;
 
     private Context mContext = this;
-    private ImageView backArrow, articleImage;
+    private ImageView articleImage;
     private ExpandableListView expandableListView;
     private FloatingActionButton btnCloset;
     private FloatingActionButton btnShare;
@@ -65,33 +66,53 @@ public class ArticleInfoActivity extends AppCompatActivity {
         isArticleInCloset();
     }
 
-    private void getArticleFromIntent() {
+    private void getArticleFromIntent(){
+        //retrieve data from intent
         Intent intent = getIntent();
-        article = (Article) intent.getSerializableExtra("article");
-        if (article.getPicturesArray() != null) {
-            imageArraySlider = new ArrayList<>();
-            imageArraySlider.addAll(article.getPicturesArray());
+        if(intent.hasExtra("article")) {
+            article= (Article) intent.getSerializableExtra("article");
+            articleId=article.getArticleId();
+            fromDeepLink = false;
+            initElements();
+            setDetail();
+            isArticleInCloset();
+        } else{
+            fromDeepLink = true;
+            try {
+                articleId = intent.getData().getQueryParameter("articleId");
+            } catch (Exception e){
+                articleId = intent.getStringExtra("articleId");
+            }
+            getArticleFromId(articleId);
         }
-        tags = intent.getStringArrayListExtra("tags");
+    }
+
+    private void getArticleFromId(String id){
+        dB.collection("articles").document(id).get().addOnCompleteListener(task -> {
+            article = task.getResult().toObject(Article.class);
+            dbUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            downLoadUri=article.getPicture();
+            initElements();
+            setDetail();
+        });
     }
 
     private void initElements() {
-        Toolbar tb = findViewById(R.id.article_info_toolbar);
-        setSupportActionBar(tb);
-        ActionBar ab = getSupportActionBar();
-        if (ab != null) ab.setDisplayHomeAsUpEnabled(true);
+        btnCloset=findViewById(R.id.btnCloset);
+        articleImage=findViewById(R.id.article_image);
+        txtTitle=findViewById(R.id.txtTitle);
+        txtStoreName=findViewById(R.id.txtStoreName);
+        txtMaterial=findViewById(R.id.txtMaterial);
+        txtCost=findViewById(R.id.txtCost);
+        lnlSizes=findViewById(R.id.lnlSizes);
+        lnlColors=findViewById(R.id.lnlColors);
+        btnShare =  findViewById(R.id.btnShare);
+        //Glide.with(mContext).load(downLoadUri).into(articleImage);
 
-        btnCloset = findViewById(R.id.btnCloset);
-        txtTitle = findViewById(R.id.txtTitle);
-        txtStoreName = findViewById(R.id.txtStoreName);
-        txtMaterial = findViewById(R.id.txtMaterial);
-        txtCost = findViewById(R.id.txtCost);
-        lnlSizes = findViewById(R.id.lnlSizes);
-        lnlColors = findViewById(R.id.lnlColors);
         btnCloset.setOnClickListener(v -> changeSavedInCloset());
+        btnShare.setOnClickListener(v -> shareArticle());
         ViewPager articlePager;
         articlePager = findViewById(R.id.view_pager_article);
-
         if (imageArraySlider == null) {
             ArrayList<String> arrayAux = new ArrayList<>();
             arrayAux.add(0, article.getPicture());
@@ -105,6 +126,14 @@ public class ArticleInfoActivity extends AppCompatActivity {
             indicator.setViewPager(articlePager);
             indicator.setRadius(5 * getResources().getDisplayMetrics().density);
         }
+    }
+
+    private void shareArticle(){
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta prenda! https://www.mylook.com/article?articleId="+articleId);
+        sendIntent.setType("text/plain");
+        startActivity(Intent.createChooser(sendIntent, "Share via"));
     }
 
     private void changeSavedInCloset() {
@@ -223,6 +252,16 @@ public class ArticleInfoActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(fromDeepLink){
+            Intent intent= new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
         }
     }
 }

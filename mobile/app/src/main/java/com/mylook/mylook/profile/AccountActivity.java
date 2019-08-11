@@ -161,7 +161,7 @@ public class AccountActivity extends AppCompatActivity {
         txtExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogManager dm = new DialogManager();
+                DialogManager dm = DialogManager.getInstance();
 
                 dm.createLogoutDialog(mContext,
                         "Cerrar Sesion",
@@ -174,7 +174,7 @@ public class AccountActivity extends AppCompatActivity {
         imageExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogManager dm = new DialogManager();
+                DialogManager dm = DialogManager.getInstance();
 
                 dm.createLogoutDialog(
                         mContext,

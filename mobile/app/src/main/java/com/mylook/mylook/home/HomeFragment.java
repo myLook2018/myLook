@@ -203,9 +203,9 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                             }
 
                                             if (createArticleList(task12.getResult())) { //Con esta por la probabilidad de las promos, pero no por fecha
-                                                for (Article art : list) {
+                                                /*for (Article art : list) {
                                                     Log.e(TAG, (art.getArticleId() + " - " + art.getCreationDate() + " - Promo: " + art.getPromotionLevel()));
-                                                }
+                                                }*/
                                                 emptyArticles.setVisibility(View.GONE);
                                                 starImage.setVisibility(View.GONE);
                                                 adapter.notifyDataSetChanged();

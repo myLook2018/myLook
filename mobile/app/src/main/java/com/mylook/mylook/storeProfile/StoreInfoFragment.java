@@ -32,7 +32,6 @@ import com.mylook.mylook.session.Session;
 @SuppressLint("ValidFragment")
 public class StoreInfoFragment extends Fragment {
 
-    private  FirebaseUser user;
     private FirebaseFirestore dB;
     private ImageView storePhoto;
     private Button btnSubscribe,btnMoreInfo;
@@ -46,7 +45,6 @@ public class StoreInfoFragment extends Fragment {
 
     public StoreInfoFragment(Context context,String storeName) {
         dB = FirebaseFirestore.getInstance();
-        user = FirebaseAuth.getInstance().getCurrentUser();
         storeNameString=storeName;
         this.context=context;
         checkFollow();
@@ -62,12 +60,7 @@ public class StoreInfoFragment extends Fragment {
         initElements(rootView);
 
         setOnClickSubscribe();
-        btnMoreInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                StoreActivity.moreInfo();
-            }
-        });
+        btnMoreInfo.setOnClickListener(v -> ((StoreActivity)getActivity()).moreInfo());
 
         return rootView;
     }
@@ -91,7 +84,7 @@ public class StoreInfoFragment extends Fragment {
                 btnSubscribe.setEnabled(false);
                 if (!mSubscribed) {
 
-                    Subscription newSubscription = new Subscription(storeNameString, user.getUid());
+                    Subscription newSubscription = new Subscription(storeNameString, FirebaseAuth.getInstance().getCurrentUser().getUid());
 
                     dB.collection("subscriptions").add(newSubscription).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
@@ -147,7 +140,7 @@ public class StoreInfoFragment extends Fragment {
     public void checkFollow() {
 
         dB.collection("subscriptions")
-                .whereEqualTo("userId", user.getUid())
+                .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .whereEqualTo("storeName", storeNameString)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override

@@ -24,6 +24,7 @@ import android.widget.ProgressBar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -136,7 +137,7 @@ public class RecommendFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
         Log.e(TAG, "getRequestRecommendations");
         dB.collection("requestRecommendations")
-                .whereEqualTo("userId", Session.getInstance().getSessionUserId()).orderBy("limitDate").get()
+                .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid()).orderBy("limitDate").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
@@ -146,11 +147,12 @@ public class RecommendFragment extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 RequestRecommendation requestRecommendation = document.toObject(RequestRecommendation.class);
                                 requestRecommendation.setDocumentId(document.getId());
+                                Log.e("Request", requestRecommendation.getDocumentId());
                                 requestRecommendationsList.add(requestRecommendation);
                             }
                             adapter.notifyDataSetChanged();
-
                         }
+                        adapter.notifyDataSetChanged();
                         progressBar.setVisibility(View.GONE);
                     }
                 });

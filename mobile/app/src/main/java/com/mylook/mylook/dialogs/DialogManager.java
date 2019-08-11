@@ -1,12 +1,10 @@
 package com.mylook.mylook.dialogs;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
-import androidx.core.content.ContextCompat;
-
+import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.mylook.mylook.R;
@@ -15,7 +13,21 @@ import com.mylook.mylook.profile.NewPasswordActivity;
 
 public class DialogManager {
 
-    public DialogManager() {
+    private static DialogManager ourInstance = null;
+
+    /**
+     * Singleton instance of the DialogManager
+     *
+     * @return DialogManager
+     */
+    public static DialogManager getInstance() {
+        if (ourInstance == null) {
+            ourInstance = new DialogManager();
+        }
+        return ourInstance;
+    }
+
+    private DialogManager() {
 
     }
 
@@ -27,13 +39,14 @@ public class DialogManager {
      * @param negativeButton Text shown in the negative button
      * @return AlertDialog dialog
      */
-    public static AlertDialog createLogoutDialog(final Context context, String title, String message, String positiveButton, String negativeButton) {
-        final AlertDialog.Builder dialog = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
+    public android.app.AlertDialog createLogoutDialog(final Context context, String title, String message, String positiveButton, String negativeButton) {
+        final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(context, R.style.AlertDialogTheme);
 
-        final AlertDialog alert = dialog.setTitle(title)
+        final android.app.AlertDialog alert = dialog.setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(positiveButton, (paramDialogInterface, paramInt) -> {
                     FirebaseAuth.getInstance().signOut();
+                    FacebookSdk.sdkInitialize(context);
                     LoginManager.getInstance().logOut();
                     Toast.makeText(context, "Cerraste sesión :(", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(context, LoginActivity.class);
@@ -45,8 +58,8 @@ public class DialogManager {
 
                 }).create();
         alert.setOnShowListener(dialog1 -> {
-            alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(context, R.color.grey));
-            alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(context, R.color.purple));
+            alert.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getResources().getColor(R.color.purple));
+            alert.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(context.getResources().getColor(R.color.purple));
         });
         return alert;
     }

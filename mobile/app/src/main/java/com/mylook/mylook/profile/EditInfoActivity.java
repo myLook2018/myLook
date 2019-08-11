@@ -128,7 +128,7 @@ public class EditInfoActivity extends AppCompatActivity {
         txtChangePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogManager dm = new DialogManager();
+                DialogManager dm = DialogManager.getInstance();
                 dm.createChangePasswordDialog(
                         EditInfoActivity.this,
                         "Cambiar Contraseña",

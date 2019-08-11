@@ -98,7 +98,7 @@ public class NewPasswordActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
                                     mProgressBar.setVisibility(View.INVISIBLE);
-                                    new DialogManager().succesfulChangedPassword(NewPasswordActivity.this,
+                                    DialogManager.getInstance().succesfulChangedPassword(NewPasswordActivity.this,
                                             "Cambiar Contraseña",
                                             "La contraseña se cambió correctamente, debe volver a iniciar sesión para aplicar el cambio",
                                             "Aceptar").show();

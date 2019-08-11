@@ -24,7 +24,6 @@ import in.srain.cube.views.GridViewWithHeaderAndFooter;
 
 public class CatalogFragment extends Fragment {
 
-    private  FirebaseFirestore dB=null;
     private static String storeName;
 
     public CatalogFragment() {
@@ -32,7 +31,6 @@ public class CatalogFragment extends Fragment {
 
     @SuppressLint("ValidFragment")
     public CatalogFragment(String name) {
-        dB = FirebaseFirestore.getInstance();
         storeName=name;
     }
 
@@ -53,7 +51,7 @@ public class CatalogFragment extends Fragment {
 
         Log.d("Store gridView", "setupGridView: Setting up store grid.");
         final ArrayList<Article> storeArticles = new ArrayList<Article>();
-        dB.collection("articles").whereEqualTo("storeName", storeName).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        FirebaseFirestore.getInstance().collection("articles").whereEqualTo("storeName", storeName).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {

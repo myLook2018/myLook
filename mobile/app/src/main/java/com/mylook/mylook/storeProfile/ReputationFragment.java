@@ -31,7 +31,6 @@ public class ReputationFragment extends Fragment {
     private MaterialRatingBar ratingBar;
     private TextView lblCantRecommendations;
     private TextView lblRecommendationsDescr;
-    private FirebaseFirestore dB;
     private String storeName;
     private float ratingSum = 0;
     private int recommendCount = 0;
@@ -43,10 +42,7 @@ public class ReputationFragment extends Fragment {
 
     @SuppressLint("ValidFragment")
     public ReputationFragment(String name) {
-
-        dB = FirebaseFirestore.getInstance();
         this.storeName = name;
-
     }
 
     @Override
@@ -79,7 +75,7 @@ public class ReputationFragment extends Fragment {
     }
 
     public void countRecommendations() {
-        dB.collection("answeredRecommendations").whereEqualTo("storeName", storeName)
+        FirebaseFirestore.getInstance().collection("answeredRecommendations").whereEqualTo("storeName", storeName)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -110,7 +106,7 @@ public class ReputationFragment extends Fragment {
     }
 
     public void countSubscribers() {
-        dB.collection("subscriptions").whereEqualTo("storeName", storeName).get()
+        FirebaseFirestore.getInstance().collection("subscriptions").whereEqualTo("storeName", storeName).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {

@@ -45,7 +45,6 @@ public class ProfileFragment extends Fragment {
     private TextView txtHelp;
     private ImageView imageExit;
     private TextView txtExit;
-    private String dbUserId = Session.getInstance().getSessionUserId();
     private Context mContext;
     private String clientId;
     private boolean isPremiumUser;
@@ -199,7 +198,7 @@ public class ProfileFragment extends Fragment {
         txtExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogManager dm = new DialogManager();
+                DialogManager dm = DialogManager.getInstance();
 
                 dm.createLogoutDialog(mContext,
                         "Cerrar Sesion",
@@ -212,7 +211,7 @@ public class ProfileFragment extends Fragment {
         imageExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogManager dm = new DialogManager();
+                DialogManager dm = DialogManager.getInstance();
 
                 dm.createLogoutDialog(
                         mContext,
@@ -227,25 +226,22 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setUserProfile() {
-        dB.collection("clients").whereEqualTo("userId", dbUserId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                userName = task.getResult().getDocuments().get(0).get("name").toString() + " " + task.getResult().getDocuments().get(0).get("surname").toString();
-                isPremiumUser = (boolean) task.getResult().getDocuments().get(0).get("isPremium");
-                loaded = true;
-                txtName.setText(userName);
-                clientId = task.getResult().getDocuments().get(0).getId();
-                txtEmail.setText(user.getEmail().equals("") ? "" : user.getEmail());
+        dB.collection("clients").whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+            userName = task.getResult().getDocuments().get(0).get("name").toString() + " " + task.getResult().getDocuments().get(0).get("surname").toString();
+            isPremiumUser = (boolean) task.getResult().getDocuments().get(0).get("isPremium");
+            loaded = true;
+            txtName.setText(userName);
+            clientId = task.getResult().getDocuments().get(0).getId();
+            txtEmail.setText(user.getEmail().equals("") ? "" : user.getEmail());
 
-                if (isPremiumUser) {
-                    imageGroup.setVisibility(View.VISIBLE);
-                    txtGroup.setVisibility(View.VISIBLE);
-                    //layoutDifussionGroup.setVisibility(View.VISIBLE);
-                } else {
-                    imageDestacado.setVisibility(View.VISIBLE);
-                    txtDestacado.setVisibility(View.VISIBLE);
-                    //layoutPremiumRequest.setVisibility(View.VISIBLE);
-                }
+            if (isPremiumUser) {
+                imageGroup.setVisibility(View.VISIBLE);
+                txtGroup.setVisibility(View.VISIBLE);
+                //layoutDifussionGroup.setVisibility(View.VISIBLE);
+            } else {
+                imageDestacado.setVisibility(View.VISIBLE);
+                txtDestacado.setVisibility(View.VISIBLE);
+                //layoutPremiumRequest.setVisibility(View.VISIBLE);
             }
         });
 

@@ -26,7 +26,6 @@ import in.srain.cube.views.GridViewWithHeaderAndFooter;
 
 public class ShopwindowFragment extends Fragment {
 
-    private FirebaseFirestore dB=null;
     private static String storeName;
     private static String coverPh;
 
@@ -35,7 +34,6 @@ public class ShopwindowFragment extends Fragment {
 
     @SuppressLint("ValidFragment")
     public ShopwindowFragment(String name, String cover) {
-        dB = FirebaseFirestore.getInstance();
         storeName=name;
         coverPh=cover;
     }
@@ -70,13 +68,13 @@ public class ShopwindowFragment extends Fragment {
         Log.d("Store Catalog gridView", "setupGridView: Setting up store grid.");
         final ArrayList<Article> storeShopWindowArticles = new ArrayList<Article>();
         final String[] documentID = new String[1];
-        dB.collection("storeFronts").whereEqualTo("storeName", storeName).get()
+        FirebaseFirestore.getInstance().collection("storeFronts").whereEqualTo("storeName", storeName).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful() && !task.getResult().getDocuments().isEmpty()) {
                                 documentID[0] = task.getResult().getDocuments().get(0).getId();
-                                dB.collection("storeFronts").document(documentID[0]).collection("storeFronts").get()
+                                FirebaseFirestore.getInstance().collection("storeFronts").document(documentID[0]).collection("storeFronts").get()
                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                             @Override
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    app:layout_collapseMode="pin"
     tools:context=".info.ArticleInfoActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar_more_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,7 +15,7 @@
         android:fitsSystemWindows="false"
         app:layout_anchorGravity="top">
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout
+        <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -23,15 +24,7 @@
             app:expandedTitleMarginStart="40dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-            <ImageView
-                android:id="@+id/article_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:background="@color/greyBackground"
-                android:scaleType="fitCenter" />
-
-            <androidx.appcompat.widget.Toolbar
+            <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar_more_info"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -46,8 +39,8 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="10dp"
                     android:layout_marginStart="10dp"
+                    android:layout_marginLeft="10dp"
                     android:clickable="true"
                     android:src="@drawable/ic_back_arrow"
                     android:tint="@color/white" />
@@ -56,28 +49,40 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="15dp"
                     android:layout_marginStart="15dp"
+                    android:layout_marginLeft="15dp"
                     android:layout_toRightOf="@id/backArrow"
                     android:text="Informacion"
                     android:textSize="20dp" />
-            </androidx.appcompat.widget.Toolbar>
+            </android.support.v7.widget.Toolbar>
 
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
+        </android.support.design.widget.CollapsingToolbarLayout>
 
-    </com.google.android.material.appbar.AppBarLayout>
+    </android.support.design.widget.AppBarLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+
+    <!-- Your Scrollable View : Can be Nested Scroll View or Recycler View-->
+
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/btnCloset"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:src="@drawable/ic_closet_2"
         app:layout_anchor="@id/appbar_more_info"
-        app:layout_anchorGravity="bottom|right" />
+        app:layout_anchorGravity="bottom|right"/>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btnShare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="80dp"
+        android:src="@drawable/ic_share"
+        android:tint="@color/white"
+        app:layout_anchor="@id/appbar_more_info"
+        app:layout_anchorGravity="end|bottom"
+        app:rippleColor="@color/white" />
 
-    <!-- Your Scrollable View : Can be Nested Scroll View or Recycler View-->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
@@ -110,7 +115,7 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <com.google.android.material.button.MaterialButton
+        <android.support.design.button.MaterialButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -119,4 +124,4 @@
             android:textSize="17dp" />
     </RelativeLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</android.support.design.widget.CoordinatorLayout>

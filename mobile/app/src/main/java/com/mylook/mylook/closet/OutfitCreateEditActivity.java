@@ -165,7 +165,7 @@ public class OutfitCreateEditActivity extends AppCompatActivity {
             data.put("name", editText.getText().toString());
             //TODO sacar???
             data.put("category", "");
-            data.put("userID", Session.getInstance().getSessionUserId());
+            data.put("userID", FirebaseAuth.getInstance().getCurrentUser().getUid());
             data.put("favorites", selectedIds);
             FirebaseFirestore.getInstance().collection("outfits").add(data)
                     .addOnSuccessListener(doc -> {
