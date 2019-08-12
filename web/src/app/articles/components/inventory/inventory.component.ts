@@ -196,6 +196,8 @@ export class InventoryComponent implements OnInit, OnDestroy {
     if (article !== undefined) {
       dataToSend = {
         storeName: this.userStore.storeName,
+        storeLatitude: this.userStore.storeLatitude,
+        storeLongitude: this.userStore.storeLongitude,
         title: article.title,
         code: article.code,
         id: article.articleId,
@@ -211,12 +213,15 @@ export class InventoryComponent implements OnInit, OnDestroy {
     } else {
       dataToSend = {
         storeName: this.userStore.storeName,
+        storeLatitude: this.userStore.storeLatitude,
+        storeLongitude: this.userStore.storeLongitude,
         tags: [],
         sizes: [],
         colors: []
       };
     }
 
+    debugger;
     const dialogRef = this.dialog.open(ArticleDialogComponent, {
       maxWidth: '850px',
       maxHeight: 'calc(95vh)',

@@ -21,7 +21,7 @@ export const rootRouterConfig: Routes = [
   { path: '', runGuardsAndResolvers: 'always',
     children: [
       { path: 'Tiendas/:storeName', component: StoreComponent, resolve: { data: UserResolver }},
-      { path: 'Tiendas/:storeName/Inventario', component: InventoryComponent, resolve: { data: UserResolver }},
+      { path: 'Tiendas/:storeName/Catalogo', component: InventoryComponent, resolve: { data: UserResolver }},
       { path: 'Tiendas/:storeName/Estadisticas', component: DashboardComponent, resolve: { data: UserResolver }},
       { path: 'Tiendas/:storeName/Recomendaciones', component: RecomendationsComponent, resolve: { data: UserResolver }},
     ]},
