@@ -1,8 +1,8 @@
 export class Article {
     articleId?: string;
-    title?: string;
-    code?: number;
-    picture?: string;
+    title?: string = '';
+    code?: number = 0;
+    picturesArray: string[] = [];
     cost?: number;
     sizes?: string[];
     material?: string;

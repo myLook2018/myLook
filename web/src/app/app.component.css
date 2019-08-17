@@ -68,3 +68,10 @@
     min-width: 111px;
     padding-left: 1vw;
   }
+
+  .gradient {
+    position: absolute;
+    width: 100%;
+    height: calc(100vh - 48px);
+    background-image: linear-gradient(to top, #ebc0fd 0%, #d9ded8 100%);
+  }
