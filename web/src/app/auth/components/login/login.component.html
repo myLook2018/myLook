@@ -28,7 +28,7 @@
     </div>
     <div style="display: grid;">
         <a class="createAcc" style="text-decoration: none;color: #6a99ff;" [routerLink]="[ '/Registrarse']">Crear cuenta en Mylook</a>
-        <a class="createAcc" style="text-decoration: none;color: #6a99ff;" [routerLink]="[ '/Ingresar']">¿Has olvidado tu contraseña?</a>
+        <a class="createAcc" style="text-decoration: none;color: #6a99ff; cursor: pointer; " (click)="restartPassword()">¿Has olvidado tu contraseña?</a>
       </div>
       <span class="spacer"></span>
     </form>

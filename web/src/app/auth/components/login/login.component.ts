@@ -6,6 +6,7 @@ import {FormControl, FormGroupDirective, NgForm } from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {UserService} from '../../services/user.service';
 import { Subscription } from 'rxjs';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-login',
@@ -27,6 +28,7 @@ export class LoginComponent implements OnDestroy{
   matcher = new MyErrorStateMatcher();
 
   constructor(
+    public snackBar: MatSnackBar,
     public userService: UserService,
     public authService: AuthService,
     private router: Router,
@@ -126,13 +128,36 @@ export class LoginComponent implements OnDestroy{
         message = 'El email ingresado no se encuentra registrado en myLook.';
         break;
       case (error.includes('many unsuccessful login attempts')):
-        message = 'Verifique por favor los datos ingresados. Si lo intentos fallidos continuan, bloquearemos temporalmente su cuenta por seguridad.';
+        // tslint:disable-next-line: max-line-length
+        message = 'Verifica por favor los datos ingresados. Si los intentos fallidos continúan, bloquearemos temporalmente tu cuenta por seguridad.';
+        break;
+      case (error.includes('auth/user-not-found')):
+        message = 'No se ha encontrado usuario registrado con ese email, verifica los datos ingresados.';
+        break;
+      case (error.includes('auth/invalid-email')):
+        message = 'Email ingresado invalido.';
         break;
       default:
         message = error;
         break;
     }
     return message;
+  }
+
+  restartPassword() {
+    this.authService.sendResetPasswordEmail(this.loginForm.get('email').value).then( res => {
+      console.log('res', res);
+      this.openSnackBar('Te hemos enviado un email para reestablecer tu contraseña!', 'cerrar');
+    }).catch(error => {
+      console.log('el error', error);
+      this.openSnackBar(this.translateError(error.code), 'cerrar');
+    });
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 2000
+    });
   }
 }
 
