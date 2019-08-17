@@ -32,6 +32,7 @@
     width: 100%;
     height: calc(100vh - 49px);
     display: flex;
+    // background-image: linear-gradient(to top, #fdcbf11a 0%, #fdcbf125 1%, #e6dee938 100%);
   }
 
   .mat-toolbar-multiple-rows {
@@ -86,6 +87,7 @@
 
 .mat-row:hover {
   background-color:  rgb(193, 85, 212);
+  cursor: pointer;
 }
 
 .highlight{
@@ -117,3 +119,8 @@
   width: calc(12vw);
   min-width: 200px;
 }
+
+mat-header-cell {
+  display:flex;
+  justify-content:center;
+ }

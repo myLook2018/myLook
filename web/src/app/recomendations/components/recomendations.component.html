@@ -69,9 +69,9 @@
           </mat-card-header>
           <img mat-card-image [src]="selectedRequest.requestPhoto" alt="No se adjuntó foto en la solicitud.">
           <mat-card-content style="max-height: calc(30vh); overflow-y: auto;">
-            <p> <b>Categoría:</b> {{selectedRequest.category}}.</p>
-            <p><b>Datos sobre el talle:</b> {{selectedRequest.size}}.</p>
-            <p>{{selectedRequest.description}}.</p>
+            <p *ngIf="selectedRequest.category"> <b>Categoría:</b> {{selectedRequest.category}}.</p>
+            <p *ngIf="selectedRequest.size"><b>Datos sobre el talle:</b> {{selectedRequest.size}}.</p>
+            <p *ngIf="selectedRequest.description">{{selectedRequest.description}}.</p>
           </mat-card-content>
         </mat-card>
       </div>
@@ -85,7 +85,7 @@
               <mat-card-title>Nuestra recomendación!</mat-card-title>
               <mat-card-subtitle>{{userStore.storeName}}</mat-card-subtitle>
             </mat-card-header>
-            <img mat-card-image [src]="selectedArticle.picture">
+            <img mat-card-image [src]="selectedArticle.picturesArray[0]">
             <mat-card-content>
               <mat-form-field class="descriptionArea" style="max-height: calc(25vh); overflow-y: auto;">
                 <textarea style="height: calc(15vh);" matInput placeholder="Agrega una descripción para tu sugerencia, los clientes las aprecian!."
@@ -93,7 +93,7 @@
               </mat-form-field>
             </mat-card-content>
             <mat-card-actions align="end">
-              <button class="sendRecoButton" *ngIf="isRequestSelected" mat-raised-button (click)="sendAnswer()">Enviar
+              <button class="sendRecoButton" [disabled]="disableSendRecomendation" *ngIf="isRequestSelected" mat-raised-button (click)="sendAnswer()">Enviar
                 Recomendación!</button>
             </mat-card-actions>
           </mat-card>
@@ -110,7 +110,7 @@
 
           <ng-container matColumnDef="PrendasCatalogo">
             <mat-header-cell *matHeaderCellDef> Prendas para sugerir </mat-header-cell>
-            <mat-cell *matCellDef="let element; let i = index"><img height="150" width="150" src={{element.picture}}></mat-cell>
+            <mat-cell *matCellDef="let element; let i = index"><img height="150" width="150" src={{element.picturesArray[0]}}></mat-cell>
           </ng-container>
 
           <mat-header-row *matHeaderRowDef="displayedColumnsArticles"></mat-header-row>

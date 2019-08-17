@@ -45,6 +45,8 @@ export class PromoteDialogComponent {
   ];
 
   payMethods = [{ value: 0, viewValue: 'Gratis!' }];
+  isLoading = false;
+  disableButton = false;
   constructor(
     public dialogRef: MatDialogRef<PromoteDialogComponent>,
     private _formBuilder: FormBuilder,
@@ -63,6 +65,7 @@ export class PromoteDialogComponent {
 
   onNoClick(): void {
     this.dialogRef.close();
+    console.log('me cancelaron')
   }
 
   initializePreference() {
@@ -166,7 +169,9 @@ export class PromoteDialogComponent {
   async sendToMP() {
     this.initializePreference();
     console.log('mandando al servicio', this.preferenceMP);
+    this.isLoading = true;
+    this.disableButton = true;
     const res: any = await this.articleService.tryPromoteMP(this.preferenceMP).toPromise();
-    window.open(res.initPoint);
+    window.open(res.initPoint, '_self');
   }
 }
