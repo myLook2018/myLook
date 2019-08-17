@@ -68,7 +68,7 @@ export class LoginComponent implements OnDestroy{
         this.router.navigate(['Tiendas', res]);
         }, err => {
           console.log(err);
-          this.errorMessage = err;
+          this.errorMessage = this.translateError(err);
         });
     });
   }
@@ -81,7 +81,7 @@ export class LoginComponent implements OnDestroy{
         this.router.navigate(['Tiendas', res]);
         }, err => {
           console.log(err);
-          this.errorMessage = err;
+          this.errorMessage = this.translateError(err);
         });
     });
   }
@@ -94,7 +94,7 @@ export class LoginComponent implements OnDestroy{
         this.router.navigate(['Tiendas', res]);
         }, err => {
           console.log(err);
-          this.errorMessage = err;
+          this.errorMessage = this.translateError(err);
         });
     });
   }
@@ -110,12 +110,32 @@ export class LoginComponent implements OnDestroy{
         this.router.navigate(['Tiendas', nombreTienda]);
       });
     }, err => {
-      this.isLoading = false;
       console.log(err);
-      this.errorMessage = err;
+      this.errorMessage = this.translateError(err);
+      this.isLoading = false;
     });
   }
+
+  translateError(error: string) {
+    let message = '';
+    switch (true) {
+      case (error.includes('password is invalid')):
+        message = 'Constraseña incorrecta.';
+        break;
+      case (error.includes('no user record')):
+        message = 'El email ingresado no se encuentra registrado en myLook.';
+        break;
+      case (error.includes('many unsuccessful login attempts')):
+        message = 'Verifique por favor los datos ingresados. Si lo intentos fallidos continuan, bloquearemos temporalmente su cuenta por seguridad.';
+        break;
+      default:
+        message = error;
+        break;
+    }
+    return message;
+  }
 }
+
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {

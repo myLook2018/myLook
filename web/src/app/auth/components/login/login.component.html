@@ -23,7 +23,7 @@
     <label class="error">{{errorMessage}}</label>
   </form>
   <form>
-    <div>
+    <div class="loginButton">
       <button mat-button [ngClass]="{disabledButton: (isLoading || loginForm.invalid)}" [disabled]="isLoading || loginForm.invalid" (click)="tryLogin()" class="acceptButton">Acceder</button>
     </div>
     <div style="display: grid;">
