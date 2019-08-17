@@ -201,7 +201,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
         maxValue = this.popularityXtag[i].count;
       }
     }
-    this.bestTag = this.popularityXtag[indexOfMaxValue].tag;
+    if (this.popularityXtag[indexOfMaxValue]) {
+      this.bestTag = this.popularityXtag[indexOfMaxValue].tag;
+    } else {
+      this.bestTag = 'No Disponible';
+    }
   }
 
 
