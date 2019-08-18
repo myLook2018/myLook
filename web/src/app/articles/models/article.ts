@@ -2,7 +2,7 @@ export class Article {
     articleId?: string;
     title?: string = '';
     code?: number = 0;
-    picturesArray: string[] = [];
+    picturesArray?: string[] = [];
     cost?: number;
     sizes?: string[];
     material?: string;

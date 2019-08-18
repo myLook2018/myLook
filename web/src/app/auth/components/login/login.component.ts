@@ -25,10 +25,10 @@ export class LoginComponent implements OnDestroy{
     Validators.email,
   ]);
 
+  // tslint:disable-next-line: no-use-before-declare
   matcher = new MyErrorStateMatcher();
 
   constructor(
-    public snackBar: MatSnackBar,
     public userService: UserService,
     public authService: AuthService,
     private router: Router,
@@ -39,7 +39,7 @@ export class LoginComponent implements OnDestroy{
 
   ngOnDestroy(): void {
     if(this._subscription){
-      console.log("destruyendo ***************************************************************", this._subscription);
+      console.log('destruyendo ***************************************************************', this._subscription);
       this._subscription.unsubscribe();
     }
    //
@@ -54,10 +54,10 @@ export class LoginComponent implements OnDestroy{
 
   getUserStore(userUID) {
     return new Promise((resolve) => {
-      console.log("la subs ", this._subscription)
+      console.log('la subs ', this._subscription);
       this._subscription = this.userService.getUserInfo(userUID).subscribe(userA => {
-        console.log("que carajo pasa aca ", userA )
-        resolve (userA[0].storeName)
+        console.log('que carajo pasa aca ', userA );
+        resolve (userA[0].storeName);
       })
       });
   }
@@ -70,7 +70,6 @@ export class LoginComponent implements OnDestroy{
         this.router.navigate(['Tiendas', res]);
         }, err => {
           console.log(err);
-          this.errorMessage = this.translateError(err);
         });
     });
   }
@@ -83,7 +82,6 @@ export class LoginComponent implements OnDestroy{
         this.router.navigate(['Tiendas', res]);
         }, err => {
           console.log(err);
-          this.errorMessage = this.translateError(err);
         });
     });
   }
@@ -96,7 +94,6 @@ export class LoginComponent implements OnDestroy{
         this.router.navigate(['Tiendas', res]);
         }, err => {
           console.log(err);
-          this.errorMessage = this.translateError(err);
         });
     });
   }
@@ -113,52 +110,20 @@ export class LoginComponent implements OnDestroy{
       });
     }, err => {
       console.log(err);
-      this.errorMessage = this.translateError(err);
       this.isLoading = false;
     });
   }
 
-  translateError(error: string) {
-    let message = '';
-    switch (true) {
-      case (error.includes('password is invalid')):
-        message = 'Constraseña incorrecta.';
-        break;
-      case (error.includes('no user record')):
-        message = 'El email ingresado no se encuentra registrado en myLook.';
-        break;
-      case (error.includes('many unsuccessful login attempts')):
-        // tslint:disable-next-line: max-line-length
-        message = 'Verifica por favor los datos ingresados. Si los intentos fallidos continúan, bloquearemos temporalmente tu cuenta por seguridad.';
-        break;
-      case (error.includes('auth/user-not-found')):
-        message = 'No se ha encontrado usuario registrado con ese email, verifica los datos ingresados.';
-        break;
-      case (error.includes('auth/invalid-email')):
-        message = 'Email ingresado invalido.';
-        break;
-      default:
-        message = error;
-        break;
-    }
-    return message;
-  }
+
 
   restartPassword() {
     this.authService.sendResetPasswordEmail(this.loginForm.get('email').value).then( res => {
       console.log('res', res);
-      this.openSnackBar('Te hemos enviado un email para reestablecer tu contraseña!', 'cerrar');
     }).catch(error => {
       console.log('el error', error);
-      this.openSnackBar(this.translateError(error.code), 'cerrar');
     });
   }
 
-  openSnackBar(message: string, action: string) {
-    this.snackBar.open(message, action, {
-      duration: 2000
-    });
-  }
 }
 
 

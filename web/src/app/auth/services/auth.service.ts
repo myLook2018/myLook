@@ -2,11 +2,13 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
 import * as firebase from 'firebase';
 import { AngularFirestore } from 'angularfire2/firestore';
+import { MatSnackBar } from '@angular/material';
 
 @Injectable()
 export class AuthService {
 
   constructor(
+    public snackBar: MatSnackBar,
     public afAuth: AngularFireAuth,
     public db: AngularFirestore
   ) { }
@@ -38,6 +40,9 @@ export class AuthService {
           console.log(`ya esta registrado`);
           return reject(`Ya existe un usuario registrado con el mail ingresado.`);
         }
+      }).catch(error => {
+        this.openSnackBar(this.translateError(error.code), 'x');
+        reject();
       });
     });
   }
@@ -89,8 +94,11 @@ export class AuthService {
   sendEmailVerification() {
     const user = firebase.auth().currentUser;
     user.sendEmailVerification().then( () => {
+      // tslint:disable-next-line: max-line-length
+      this.openSnackBar('¡Se ha enviado un email a su correo electrónico! Es necesario que realice la verificación de la cuenta antes de seguir. ', 'x')
       return('¡Se ha enviado un email a su correo electrónico! Es necesario que realice la verificación de la cuenta antes de seguir. ');
     }).catch(function(error) {
+      this.openSnackBar(this.translateError(error.code), 'x');
       return (error);
     });
   }
@@ -126,7 +134,9 @@ export class AuthService {
             reject('no se ha verificado Email');
           }*/
           resolve(res);
-        }, err => reject(err + `error en doLogin`));
+        }, error => {
+          this.openSnackBar(this.translateError(error.code), 'x');
+          reject(''); });
     });
   }
 
@@ -149,11 +159,42 @@ export class AuthService {
     return new Promise((resolve, reject) => {
     firebase.auth().sendPasswordResetEmail(email).then( res => {
       console.log('se envio el email para resetear');
-      resolve(res)
+      this.openSnackBar('Te hemos enviado un email para reestablecer tu contraseña!', 'cerrar');
+      // resolve(res);
     }).catch( error => {
       console.log ('ocurrio un error al intentar mandar mail. ', error);
-      reject(error)
+      this.openSnackBar(this.translateError(error.code), 'x');
+      // reject(error);
     });
   });
+  }
+
+  translateError(error: string) {
+    let message = '';
+    switch (true) {
+      case (error.includes('auth/wrong-password')):
+        message = 'Constraseña incorrecta.';
+        break;
+      case (error.includes('auth/too-many-requests')):
+        // tslint:disable-next-line: max-line-length
+        message = 'Verifica por favor los datos ingresados. Si los intentos fallidos continúan, bloquearemos temporalmente tu cuenta por seguridad.';
+        break;
+      case (error.includes('auth/user-not-found')):
+        message = 'No se ha encontrado usuario registrado con ese email, verifica los datos ingresados.';
+        break;
+      case (error.includes('auth/invalid-email')):
+        message = 'El email ingresado no es válido.';
+        break;
+      default:
+        message = error;
+        break;
+    }
+    return message;
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 5000
+    });
   }
 }

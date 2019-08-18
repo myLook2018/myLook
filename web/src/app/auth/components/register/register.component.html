@@ -245,6 +245,35 @@
               </mat-form-field>
             </div>
 
+            <div class="socialNetworks">
+              <div class="networkContainer" >
+                <img src="/assets/facebookLogo.png" height="20px" width="20px" class="networkIcon">
+                  <mat-form-field id="socialNetwork"
+                    floatLabel="never">
+                    <input
+                    matInput
+                    placeholder="Nombre de usuario"
+                    formControlName="facebookLink"
+                    />
+                    <span matPrefix>. . . https://www.facebook.com/</span>
+                  </mat-form-field>
+              </div>
+
+              <div class="networkContainer">
+                <img src="/assets/instagramLogo.png" height="20px" width="20px" class="networkIcon">
+                  <mat-form-field id="socialNetwork"
+                    floatLabel="never">
+                    <input
+                    matInput
+                    placeholder="Nombre de usuario"
+                    formControlName="instagramLink"
+                    />
+                    <span matPrefix>. . . https://www.instagram.com/</span>
+                  </mat-form-field>
+
+                </div>
+              </div>
+
             <mat-toolbar>
               <mat-toolbar-row style="background-color: white">
                 <button
