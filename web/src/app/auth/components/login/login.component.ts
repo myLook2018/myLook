@@ -53,13 +53,14 @@ export class LoginComponent implements OnDestroy{
   }
 
   getUserStore(userUID) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       console.log('la subs ', this._subscription);
       this._subscription = this.userService.getUserInfo(userUID).subscribe(userA => {
-        console.log('que carajo pasa aca ', userA );
-        resolve (userA[0].storeName);
-      })
+        console.log('que carajo pasa aca ', userA);
+        const result = userA[0] ? userA[0].storeName : null;
+        resolve (result);
       });
+    });
   }
 
   tryFacebookLogin() {
@@ -96,6 +97,18 @@ export class LoginComponent implements OnDestroy{
           console.log(err);
         });
     });
+  }
+
+  async tryLoginWithSocialNetwork(network) {
+    let trylogin;
+    switch (network) {
+      case 'google':
+        trylogin = await this.tryGoogleLogin();
+        break;
+      case 'facebook':
+        trylogin = await this.tryFacebookLogin();
+        break;
+    }
   }
 
   tryLogin() {
