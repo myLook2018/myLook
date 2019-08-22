@@ -77,7 +77,12 @@ export class RegisterComponent implements OnInit {
     private mapsAPILoader: MapsAPILoader,
     private ngZone: NgZone
   ) {
-    this.email = authService.getEmailToRegister().toString();
+    try {
+      this.email = authService.getEmailToRegister().toString();
+    } catch (error) {
+      console.log(error);
+      this.router.navigateByUrl('/Registrarse');
+    }
     this.createForm();
     this.urlsProfile = [];
     this.urlsProfile.push('/assets/noProfilePic.png');

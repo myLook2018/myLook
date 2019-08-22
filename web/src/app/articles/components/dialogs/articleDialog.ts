@@ -130,21 +130,30 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
 */
     this.createForm();
     if (articleData.picture !== undefined) {
-      let articlePicture = (this.isNew = false);
+      const articlePicture = (this.isNew = false);
     } else {
     }
   }
 
   ngOnInit(): void {
-    this._subscription = this.tagsService.getTags().subscribe(tags => {
-      this.allTags = tags[0];
-      this.filteredTags = this.tagsCtrl.valueChanges.pipe(
-        startWith(null),
-        map((tag: string | null) =>
-          tag ? this._filter(tag) : this.allTags.preset.slice()
-        )
-      );
-    });
+    try {
+
+      this._subscription = this.tagsService.getTags().subscribe(tags => {
+        this.allTags = tags[0];
+        this.filteredTags = this.tagsCtrl.valueChanges.pipe(
+          startWith(null),
+          map((tag: string | null) => {
+            if (tag) {
+              return this._filter(tag);
+            } else if ( this.allTags ) {
+              return this.allTags.preset.slice();
+            }
+          }
+          // tag ? this._filter(tag) : this.allTags.preset.slice() el this.allTags venia undefined a veces.
+          )
+        );
+      });
+    } catch (error) { console.log(error); }
   }
 
   ngOnDestroy(): void {
@@ -155,13 +164,17 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
 
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
-    return this.allTags.preset.filter(
-      tags =>
-        tags
-          .toString()
-          .toLowerCase()
-          .indexOf(filterValue) === 0
-    );
+    let result = null;
+    if (this.allTags) {
+      result = this.allTags.preset.filter(
+        tags =>
+          tags
+            .toString()
+            .toLowerCase()
+            .indexOf(filterValue) === 0
+      );
+    }
+    return result;
   }
 
   createForm() {
@@ -204,6 +217,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
   }
 
   startUpload() {
+    this.isUpLoading = true;
     if ( !this.checkImagenLoaded() ) {
       this.snackBar.open('Es necesario que cargue al menos una imagen de la prenda para poder continuar.', '', {
         duration: 3000,
@@ -399,7 +413,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     myReader.onloadend = function(loadEvent: any) {
       image.src = loadEvent.target.result;
       that.cropper.setImage(image);
-      // that.data[that.actualImageId] = image;
+      that.data[that.actualImageId] = image;
     };
     myReader.readAsDataURL(file);
   }

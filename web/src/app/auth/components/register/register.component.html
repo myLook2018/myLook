@@ -5,24 +5,14 @@
 <div class="backgroundColor container mat-typography">
   <div id="cardContainer" class="container" fxLayoutAlign="center center"></div>
   <mat-card id="registerCard">
-    <mat-card-header>
-      <!-- <span class="fill-space"></span> -->
-      <div class="headerImage">
-        <img
-          src="/assets/brandNoBackground.png"
-          class="centerImage bannerImage"
-        />
-      </div>
-    </mat-card-header>
-
     <div>
       <mat-horizontal-stepper
         #stepper
-        [linear]="isLinear"
-        style="    max-height: calc(80vh); overflow: overlay;"
+        [linear]="true"
+        style="max-height: calc(80vh); overflow: overlay;"
       >
         <mat-step [stepControl]="step1">
-          <form [formGroup]="registerStoreFormGroupStep1">
+          <form [formGroup]="registerStoreFormGroupStep1" autocomplete="off">
             <ng-template matStepLabel>Usuario</ng-template>
 
             <div #firstStep style="display: flex; height: 435px;">

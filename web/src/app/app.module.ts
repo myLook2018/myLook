@@ -91,6 +91,7 @@ import {
   LY_THEME
 } from '@alyle/ui';
 import { HttpClientModule} from '@angular/common/http';
+import { SuccessComponent } from './ecommerce/success/success.component';
 
 @NgModule({
   declarations: [
@@ -120,6 +121,7 @@ import { HttpClientModule} from '@angular/common/http';
     HomePageComponent,
     OrchestratorComponent,
     MercadopagoComponent,
+    SuccessComponent,
   ],
   imports: [
     HttpClientModule,

@@ -16,8 +16,8 @@ import { NgModule } from '@angular/core';
 export const rootRouterConfig: Routes = [
  // { path: '', component: HomePageComponent},
 
-  { path: '', pathMatch: 'full' ,redirectTo: '/Inicio'},
-  { path: 'Inicio', component: HomePageComponent},
+  { path: '', pathMatch: 'full' , redirectTo: '/Ingresar'},
+  // { path: 'Inicio', component: HomePageComponent},
   { path: '', runGuardsAndResolvers: 'always',
     children: [
       { path: 'Tiendas/:storeName', component: StoreComponent, resolve: { data: UserResolver }},
@@ -30,7 +30,7 @@ export const rootRouterConfig: Routes = [
   { path: 'user', component: UserComponent, resolve: { data: UserResolver }},
   { path: 'Registrar-Tienda', component: RegisterComponent},
 
-  { path: '**', redirectTo: '/Inicio'},
+  { path: '**', redirectTo: '/Ingresar'},
 ];
 
 @NgModule({

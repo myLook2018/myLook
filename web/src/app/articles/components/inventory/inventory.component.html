@@ -12,7 +12,7 @@
                             (click)="cancelSetting()">Cancelar</button>
                         <button id="uploadArticle" mat-flat-button *ngIf="selectionMode" (click)="setVidriera()">¡Aceptar!</button>
                         <button style="margin-right:5px" id="uploadArticle" mat-flat-button *ngIf="!selectionMode"
-                            (click)="changeMode()">¡Elije tú vidriera!</button>
+                            (click)="changeMode()">¡Elije tu vidriera!</button>
                         <button id="uploadArticle" mat-flat-button [disabled]="selectionMode" *ngIf="!selectionMode"
                             (click)="openArticleDialog()">Subir Prenda</button>
                     </div>
@@ -30,7 +30,7 @@
                             <mat-icon>photo</mat-icon>
                         </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            <img height="100" width="100" src={{element.picture}}> </mat-cell>
+                            <img height="100" width="100" src={{element.picturesArray[0]}}> </mat-cell>
                     </ng-container>
 
                     <!-- title Column -->

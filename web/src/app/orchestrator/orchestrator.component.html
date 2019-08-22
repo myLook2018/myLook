@@ -23,15 +23,14 @@
         [fixedTopGap]="false" [fixedBottomGap]="false" class="mat-elevation-z2">
             <mat-nav-list>
                 <a mat-list-item (click)="goToProfile()">¡Visita tu Perfil!</a>
-                <a mat-list-item (click)="goToInventory()">¡Gestiona tú inventario!</a>
+                <a mat-list-item (click)="goToInventory()">¡Gestiona tu inventario!</a>
                 <a mat-list-item (click)="goToRecomendations()">¡Haz una recomendación!</a>
                 <a mat-list-item (click)="goToAnalytics()">¡Estadisticas!</a>
             </mat-nav-list>
         </mat-sidenav>
 
         <mat-sidenav-content>
-            <ngx-spinner bdOpacity = 1bd bdColor="#fafafa" size="large" color="#9c27b0" type = "ball-grid-pulse" fullScreen = "true">
-            <p style="color: #9c27b0" > MyLook </p>
+            <ngx-spinner bdOpacity = 1bd bdColor="#fafafa" size="large" color="#9c27b0" type = "ball-grid-pulse" fullScreen="true">
             </ngx-spinner>
             <div class="fade"></div>
           <router-outlet class="content" (imReadyToDisplay)="hideSpinner($event)" ></router-outlet>

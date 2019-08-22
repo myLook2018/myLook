@@ -11,7 +11,7 @@
 </div>
 
 <div style="display: table-caption; margin-top: 15px">
-  <form [formGroup]="articleForm" style="display: flex;" #elPrimerForm>
+  <form [formGroup]="articleForm" style="display: flex;" #elPrimerForm autocomplete="off">
     <div
       #secondColumn
       style="display: inline-table;margin-left: 10px; width: 240px"
@@ -411,7 +411,7 @@
 </div>
 
 <div #forthColumn style="margin-left: 10px">
-  <form [formGroup]="articleForm">
+  <form [formGroup]="articleForm" autocomplete="off">
     <mat-form-field style="width: 97.5%" requiered>
       <mat-chip-list #chipList>
         <mat-chip
@@ -454,7 +454,7 @@
       <button
         *ngIf="!isNew"
 
-        [disabled]="articleForm.invalid"
+        [disabled]="articleForm.invalid || isUpLoading"
         style="background-color: #9C27B0; color: white"
         type="button"
         mat-raised-button
@@ -465,7 +465,7 @@
       </button>
       <button
         *ngIf="isNew"
-        [disabled]="articleForm.invalid"
+        [disabled]="articleForm.invalid || isUpLoading"
         class="activatedButton"
         type="button"
 
@@ -477,4 +477,7 @@
       </button>
     </div>
   </form>
+  <div class="proggressBar">
+    <mat-progress-bar *ngIf="isUpLoading" mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>
+  </div>
 </div>

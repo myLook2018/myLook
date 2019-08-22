@@ -1,41 +1,45 @@
-<mat-card id="signUpCard" class="mat-typography">
-  <div class="container">
-    <img src="/assets/brandNoBackground.png" class="img-size">
-    <div class="row">
-      <div class="col-md-6 col-md-offset-3">
-        <form [formGroup]="signupForm">
-          <mat-form-field class="inputForm">
-            <input matInput placeholder="Email" required class="form-control" formControlName="email" [(ngModel)]="email" (change)="clearErrors()">
-          </mat-form-field>
+<div class="gradient">
+
+  <mat-card id="signUpCard" class="mat-typography">
+    <div class="container">
+      <img src="/assets/brandNoBackground.png" class="img-size">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+          <form [formGroup]="signupForm" autocomplete="off">
+            <mat-form-field class="inputForm">
+              <input matInput placeholder="Email" required class="form-control" formControlName="email" [(ngModel)]="email" (change)="clearErrors()">
+            </mat-form-field>
             <mat-error *ngIf="errorMessage">
               {{errorMessage}}
             </mat-error>
-          <div style="display: flex; margin-top: 10px;">
-            <div>
-              Ya tienes cuenta?
-              <a [routerLink]="[ '/Ingresar']"style="text-decoration: none;color: #6a99ff;">Ingresar.</a>
-            </div>
-            <button [disabled]="signupForm.invalid" mat-button type="submit" (click)="checkEmail()" class="registerButton">Registrar</button>
-          </div>
+            <div style="display: flex; margin-top: 10px;">
+                <div>
+                  Ya tienes cuenta?
+                  <a [routerLink]="[ '/Ingresar']"style="text-decoration: none;color: #6a99ff;">Ingresar.</a>
+                </div>
+                <button [disabled]="signupForm.invalid" mat-button type="submit" (click)="checkEmail()" class="registerButton" [ngClass]="{disabledButton: signupForm.invalid}">Registrar</button>
+              </div>
         </form>
       </div>
     </div>
     <mat-divider id="divider"></mat-divider>
     <form style="margin-top: 20px">
+        <div class="row">
+          <div class="col-md-4 col-md-offset-4">
+            <button [ngClass]="{disabledButtonFacebook: true}" [disabled]="true" mat-button class="externalRegisterFacebook" (click)="tryFacebookLogin()">Registrar con Facebook</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 col-md-offset-4">
+            <button [ngClass]="{disabledButtonGoogle: true}" [disabled]="true" mat-button class="externalRegisterGoogle" (click)="tryGoogleLogin()">Registrar con Google</button>
+          </div>
+        </div>
+      </form>
       <div class="row">
         <div class="col-md-4 col-md-offset-4">
-          <button mat-button class="externalRegister" (click)="tryFacebookLogin()" style="background-color: #3b5998">Registrar con Facebook</button>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4 col-md-offset-4">
-          <button mat-button class="externalRegister" (click)="tryGoogleLogin()" style="background-color: #d34836">Registrar con Google</button>
-        </div>
-      </div>
-    </form>
-    <div class="row">
-      <div class="col-md-4 col-md-offset-4">
       </div>
     </div>
-  </div>
-</mat-card>
+  </mat-card>
+
+</div>
