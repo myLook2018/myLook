@@ -1,7 +1,6 @@
 package com.mylook.mylook.explore;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -16,9 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.AnimationSet;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.RotateAnimation;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -168,7 +164,7 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
     }
 
     private void setupLayoutManager() {
-        mLayoutManager = new CardStackLayoutManager(getContext());
+        mLayoutManager = new CardStackLayoutManager(getContext(), this);
         mLayoutManager.setStackFrom(StackFrom.Top);
         mLayoutManager.setVisibleCount(3);
         mLayoutManager.setTranslationInterval(4.0f);
@@ -183,6 +179,7 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
     }
 
     private void likeArticle(boolean liked) {
+        Log.e(TAG, "likeArticle: " + liked);
         Article article = articles.remove(0);
         exploreService.likeArticle(article, liked);
         if (mCardAdapter.getItemCount() == 0) {

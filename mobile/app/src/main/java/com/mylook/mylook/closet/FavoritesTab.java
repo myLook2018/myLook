@@ -144,14 +144,7 @@ public class FavoritesTab extends Fragment {
                 Log.d("tmr", "onActivityResult: " + "result ok");
                 if (data.getBooleanExtra("removed", false)) {
                     Log.d("tmr", "onActivityResult: " + "removed");
-                    closet.removeFavorite(adapter.getPosition(data.getStringExtra("id")))
-                            .addOnSuccessListener(success -> {
-                                Log.d("tmr", "onActivityResult: " + "success");
-                                adapter.notifyDataSetChanged();
-                            })
-                            .addOnFailureListener(fail -> {
-                                Log.d("tmr", "onActivityResult: " + "fail");
-                            });
+                    closet.load();
                 }
             }
         }

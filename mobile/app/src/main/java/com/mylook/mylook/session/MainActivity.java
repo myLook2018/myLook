@@ -17,11 +17,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         if (Session.getInstance() != null) {
             Task<QuerySnapshot> task = Session.getInstance().initializeElements();
-            task.addOnSuccessListener(task1 -> {
-                Intent intent = new Intent(MainActivity.this, MyLookActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            if (task != null) {
+                task.addOnSuccessListener(task1 -> {
+                    Intent intent = new Intent(MainActivity.this, MyLookActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                });
+            } else {
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
-            });
+                try {
+                    finish();
+                } catch (Throwable e) {
+                    Log.e("Current session is null: couldn't finish MainActivity", e.getMessage());
+                }
+            }
         } else {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);

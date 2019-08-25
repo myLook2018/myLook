@@ -1,72 +1,59 @@
 package com.mylook.mylook.storeProfile;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.utils.GridImageAdapter;
 
 import java.util.ArrayList;
 
-import in.srain.cube.views.GridViewWithHeaderAndFooter;
-
 public class CatalogFragment extends Fragment {
-
-    private static String storeName;
 
     public CatalogFragment() {
     }
 
-    @SuppressLint("ValidFragment")
-    public CatalogFragment(String name) {
-        storeName=name;
-    }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_store_catalog, container, false);
-
-        // Obtención del grid view
-        GridViewWithHeaderAndFooter grid = rootView.findViewById(R.id.gridview);
-        // Inicializar el grid view
-        setupGridView(grid);
+        init(rootView);
         return rootView;
     }
 
+    private void init(View rootView) {
+        Bundle args = getArguments();
 
-    private void setupGridView(final GridViewWithHeaderAndFooter grid) {
+        if (args != null) {
+            GridView grid = rootView.findViewById(R.id.gridview);
+            fillGrid(grid, args.getString("name"));
+        }
+    }
 
-        Log.d("Store gridView", "setupGridView: Setting up store grid.");
-        final ArrayList<Article> storeArticles = new ArrayList<Article>();
-        FirebaseFirestore.getInstance().collection("articles").whereEqualTo("storeName", storeName).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (DocumentSnapshot documentReference:task.getResult().getDocuments()){
-                        Article art= documentReference.toObject(Article.class);
-                        art.setArticleId(documentReference.getId());
+    private void fillGrid(final GridView grid, String storeName) {
+        final ArrayList<Article> storeArticles = new ArrayList<>();
+        FirebaseFirestore.getInstance().collection("articles")
+                .whereEqualTo("storeName", storeName)
+                .get()
+                .addOnSuccessListener(result -> {
+                    for (DocumentSnapshot document : result.getDocuments()) {
+                        Article art = document.toObject(Article.class);
+                        art.setArticleId(document.getId());
                         storeArticles.add(art);
                     }
-                    Log.e("CATALOGOOOOO", getActivity().getLocalClassName());
-                    grid.setAdapter(new GridImageAdapter( getActivity(),R.layout.layout_grid_imageview,storeArticles));
-                } else {
-                    Log.e("Firestore task", "onComplete: " + task.getException());
-                }
-            }
-        });
-
+                    grid.setAdapter(new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview, storeArticles));
+                })
+                .addOnFailureListener(err -> Log.e("Firestore task", "onFailure: " + err));
     }
+
 }

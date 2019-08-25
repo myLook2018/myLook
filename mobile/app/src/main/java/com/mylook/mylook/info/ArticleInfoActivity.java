@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Interaction;
@@ -31,6 +32,8 @@ import com.mylook.mylook.utils.SlidingImageAdapter;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ArticleInfoActivity extends AppCompatActivity {
 
@@ -61,9 +64,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
         Toolbar tb = (Toolbar) findViewById(R.id.toolbar_more_info);
         invalidateOptionsMenu();
         getArticleFromIntent();
-        initElements();
-        setDetail();
-        isArticleInCloset();
     }
 
     private void getArticleFromIntent(){
@@ -90,10 +90,12 @@ public class ArticleInfoActivity extends AppCompatActivity {
     private void getArticleFromId(String id){
         dB.collection("articles").document(id).get().addOnCompleteListener(task -> {
             article = task.getResult().toObject(Article.class);
+            article.setArticleId(id);
             dbUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
             downLoadUri=article.getPicture();
             initElements();
             setDetail();
+            isArticleInCloset();
         });
     }
 
@@ -146,7 +148,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         inCloset = !inCloset;
-                        // TODO mal, no deberia guardar interaccion cada vez, ni tampoco sirve que lo hayan sacado. Solo sirve el estado actual (cantidad)
+                        // TODO mal, no deberia guardar interaccion cada vez, ni tampoco sirve que le hayan sacado favorito. Solo sirve el estado actual (cantidad)
                         sendNewInteraction();
                         if (inCloset) {
                             setResult(RESULT_OK, new Intent().putExtra("removed", false)
@@ -156,6 +158,28 @@ public class ArticleInfoActivity extends AppCompatActivity {
                             setResult(RESULT_OK, new Intent().putExtra("removed", true)
                                     .putExtra("id", article.getArticleId()));
                             displayMessage("El artículo se quitó de tu ropero");
+                            FirebaseFirestore.getInstance().collection("outfits")
+                                    .whereArrayContains("favorites", article.getArticleId())
+                                    .get()
+                                    .addOnCompleteListener(task1 -> {
+                                        if (task1.isSuccessful() && task1.getResult() != null && !task1.getResult().isEmpty()) {
+                                            List<String> outfitsToChange = new ArrayList<>();
+                                            outfitsToChange.addAll(task1.getResult().getDocuments().stream().map(doc -> doc.getId()).collect(Collectors.toList()));
+                                            if (outfitsToChange.size() != 0) {
+                                                WriteBatch batch = FirebaseFirestore.getInstance().batch();
+                                                outfitsToChange.forEach(outfitDoc -> batch.update(FirebaseFirestore.getInstance()
+                                                                .collection("outfits").document(outfitDoc),
+                                                        "favorites", FieldValue.arrayRemove(article.getArticleId())));
+                                                batch.commit().addOnCompleteListener(task2 -> {
+                                                    if (task2.isSuccessful()) {
+                                                        displayMessage(outfitsToChange.size() + " conjuntos fueron actualizados");
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
+
+
                         }
                         setFavoriteFabIcon(inCloset);
                     } else {
@@ -193,7 +217,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
         lnl2.setOrientation(LinearLayout.VERTICAL);
         txtStoreName.setOnClickListener(v -> {
             Intent intentVisitStore = new Intent(mContext, StoreActivity.class);
-            intentVisitStore.putExtra("Tienda", article.getStoreName());
+            intentVisitStore.putExtra("store", article.getStoreName());
             mContext.startActivity(intentVisitStore);
         });
     }
