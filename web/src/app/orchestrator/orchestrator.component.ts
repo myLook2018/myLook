@@ -75,6 +75,7 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
     this.dataServide.getStoreInfo().then(store => {
       console.log(store);
       this.userStore = store;
+      if (!this.userStore.profilePh) { this.userStore.profilePh = '/assets/noProfilePic.png'; }
       if (store.firebaseUserId) {
         this.isLogedIn = true;
         this.authGuard.canActivate();

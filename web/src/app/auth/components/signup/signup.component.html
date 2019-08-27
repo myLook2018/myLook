@@ -26,12 +26,12 @@
     <form style="margin-top: 20px">
         <div class="row">
           <div class="col-md-4 col-md-offset-4">
-            <button [ngClass]="{disabledButtonFacebook: false}" [disabled]="false" mat-button class="externalRegisterFacebook" (click)="tryFacebookLogin()">Registrar con Facebook</button>
+            <button [ngClass]="{disabledButtonFacebook: true}" [disabled]="true" mat-button class="externalRegisterFacebook" (click)="tryFacebookLogin()">Registrar con Facebook</button>
           </div>
         </div>
         <div class="row">
           <div class="col-md-4 col-md-offset-4">
-            <button [ngClass]="{disabledButtonGoogle: false}" [disabled]="false" mat-button class="externalRegisterGoogle" (click)="tryGoogleLogin()">Registrar con Google</button>
+            <button [ngClass]="{disabledButtonGoogle: true}" [disabled]="true" mat-button class="externalRegisterGoogle" (click)="tryGoogleLogin()">Registrar con Google</button>
           </div>
         </div>
       </form>

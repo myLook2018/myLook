@@ -86,7 +86,7 @@ export class RegisterComponent implements OnInit {
       this.emailAndProvider = authService.getLoginEmailAndProvider();
       if (this.emailAndProvider) {
         this.normalRegister = false;
-        this.openSnackBar('Es necesario que completes la siguiente información para poder completar tu registro.', 'x');
+        this.openSnackBar('Es necesario que completes la siguiente información para poder terminar tu registro.', 'x');
       }
     } catch (error) {
       console.log(error);
@@ -345,7 +345,7 @@ export class RegisterComponent implements OnInit {
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
-      duration: 5000
+      duration: 7000
     });
   }
 }

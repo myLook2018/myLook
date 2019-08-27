@@ -3,7 +3,7 @@
         <mat-toolbar-row class="mat-elevation-z8 navbar">
             <img id="logo" src="/assets/brandNoBackground.png" />
             <span class="spacer"></span>
-            <button mat-icon-button [matMenuTriggerFor]="menu">
+            <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="userStore.storeName">
                     <mat-icon>more_vert</mat-icon>
                   </button>
                   <mat-menu #menu="matMenu">
