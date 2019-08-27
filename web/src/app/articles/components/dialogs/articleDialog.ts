@@ -263,7 +263,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
       this.articleService.addArticle(this.articleForm.value).then(() => {
         this.isUpLoading = false;
         console.log('prenda guardada');
-        this.openSnackBar('Prenda guardada en MyLook!', 'close');
+        this.openSnackBar('Prenda guardada en MyLook!', 'x');
         this.dialogRef.close();
       });
     });
@@ -315,7 +315,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     };
     this.articleService.refreshArticle(articleUpdated);
     console.log(articleUpdated.tags);
-    this.openSnackBar('Prenda actualizada en MyLook!', 'close');
+    this.openSnackBar('Prenda actualizada en MyLook!', 'x');
   }
 
   isActive(snapshot) {
@@ -411,7 +411,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     const image: any = new Image();
     const file: File = $event.target.files[0];
     if (file.type.split('/')[1] === 'png') {
-      return this.openSnackBar('Tipo de imagen no soportado!', 'close');
+      return this.openSnackBar('Tipo de imagen no soportado!', 'x');
     }
     const myReader: FileReader = new FileReader();
     const that = this;

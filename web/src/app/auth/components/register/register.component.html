@@ -301,6 +301,9 @@
         <mat-step [stepControl]="step3">
           <ng-template matStepLabel>Confirmar Datos</ng-template>
 
+          <div class="normalRegister" *ngIf="normalRegister">
+
+
           <mat-form-field class="full-length">
             <input
               matInput
@@ -326,7 +329,11 @@
           <mat-error *ngIf="errorMessage">
             {{ errorMessage }}
           </mat-error>
-
+        </div>
+        <div class="networkRegister" *ngIf="!normalRegister">
+          <p class="confirmationText"> Se creará la tienda en myLook asociando la información a la cuenta <strong>{{emailAndProvider.email}}</strong> de <strong>{{emailAndProvider.provider}}</strong>. </p>
+          <p class="confirmationText"> Por favor, haz click en el botón de la esquina inferior derecha para continuar. </p>
+        </div>
           <mat-toolbar>
             <mat-toolbar-row style="background-color: white">
               <button

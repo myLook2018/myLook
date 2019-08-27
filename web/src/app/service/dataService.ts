@@ -81,7 +81,7 @@ export class DataService {
   }
 
   public refreshLocalUserInformation() {
-    return new Promise<StoreModel>(resolve => {
+    return new Promise<StoreModel>((resolve, reject) => {
       console.log(`1)Inicializando refresh information`);
       this.userService.getCurrentUser().then(
         user => {
@@ -95,6 +95,9 @@ export class DataService {
               this.storeInfo = storeInfo;
               this.isNewUser = false;
               resolve(this.storeInfo);
+            } else {
+              console.log(' la tienda no existe, a crearla');
+              reject(user.email);
             }
             console.log(5);
           });
@@ -108,11 +111,14 @@ export class DataService {
   }
 
   public getStoreInfo() {
-    return new Promise<StoreModel>(resolve => {
+    return new Promise<StoreModel>((resolve, reject) => {
       if (this.storeInfo.storeName === '') {
         this.refreshLocalUserInformation().then(storeInfo => {
           this.storeInfo = storeInfo;
           resolve(this.storeInfo);
+        }, error => {
+          console.log('hay usuario pero no hay tienda, que cagada macho, a crearla');
+          reject(error);
         });
       } else {
         console.log(`PASAMOS EL USUARIO LOCAL`, this.storeInfo);

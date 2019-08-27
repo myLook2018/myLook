@@ -105,22 +105,30 @@ export class AuthService {
 
   doRegister(formControl) {
     return new Promise<any>((resolve, reject) => {
-      firebase.auth().createUserWithEmailAndPassword(formControl.controls['email'].value, formControl.controls['password'].value)
+      if (firebase.auth().currentUser) {
+        resolve(firebase.auth().currentUser);
+      } else {
+        firebase.auth().createUserWithEmailAndPassword(formControl.controls['email'].value, formControl.controls['password'].value)
         .then(res => {
           console.log(res);
           resolve(res);
         }, err => reject(err));
+      }
     });
   }
 
   doFirstLogin(formControl) {
     return new Promise<any>((resolve, reject) => {
-      firebase.auth().signInWithEmailAndPassword(formControl.controls['email'].value, formControl.controls['password'].value)
+      if (firebase.auth().currentUser) {
+        this.sendEmailVerification();
+      } else {
+        firebase.auth().signInWithEmailAndPassword(formControl.controls['email'].value, formControl.controls['password'].value)
         .then(res => {
           const isLoged = this.sendEmailVerification(); // no aca
           console.log(isLoged);
           resolve(res);
         }, err => reject(err + `error en doLogin`));
+      }
     });
   }
 
@@ -152,6 +160,11 @@ export class AuthService {
   }
 
   getEmailToRegister() {
+    const user = firebase.auth().currentUser;
+    if (user) {
+      console.log('tenemos este usuario para registrar: ', user );
+      this.emailToRegister = user.email;
+    }
     return this.emailToRegister;
   }
 
@@ -167,6 +180,16 @@ export class AuthService {
       // reject(error);
     });
   });
+  }
+
+  getLoginEmailAndProvider() {
+    let info;
+    if (firebase.auth().currentUser) { info = {
+      email: firebase.auth().currentUser.providerData[0].email,
+      provider: firebase.auth().currentUser.providerData[0].providerId.split('.')[0]
+      };
+    } else { info = undefined; }
+    return info;
   }
 
   translateError(error: string) {

@@ -36,9 +36,10 @@ export class AuthGuard implements CanActivate {
               console.log("*********************************** no esta logueado y no va a tienda")
               return resolve(true);
             }
-            
           }
         }
+      }).catch(error => {
+        console.log('aca capturando un error ', error);
       });
     });
   }

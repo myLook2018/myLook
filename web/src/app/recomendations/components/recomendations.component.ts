@@ -145,7 +145,6 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
 // tslint:disable-next-line: max-line-length
        'https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/utils%2Flogo_transparente_50.png?alt=media&token=c72e5b39-3011-4f26-ba4f-4c9f7326c68a';
     }
-    debugger;
     this.selectedArticle.picturesArray.push('/assets/idea.png');
     console.log(row);
   }
@@ -180,7 +179,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
       this.error =
         'Se requiere que selecione una prenda de su catalogo para recomendar';
       console.log(this.error);
-      this.openSnackBar(this.error, 'cerrar');
+      this.openSnackBar(this.error, 'x');
       return this.error;
     } else {
       this.disableSendRecomendation = true;
@@ -212,7 +211,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
             .storeAnswer(this.answerForm.value)
             .then(() => {
               console.log(6);
-              this.openSnackBar('Se ha enviado la sugerencia!', 'cerrar');
+              this.openSnackBar('Se ha enviado la sugerencia!', 'x');
               if(this.recomendationsToAnswer.length > 0) {
                 this.showInformationRequest(this.recomendationsToAnswer[0]);
               }

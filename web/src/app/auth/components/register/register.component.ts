@@ -23,6 +23,7 @@ import {
 } from 'angularfire2/storage';
 import { DataService } from '../../../service/dataService';
 import { MapsAPILoader } from '@agm/core';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-register',
@@ -62,6 +63,8 @@ export class RegisterComponent implements OnInit {
   urlImgShop: string;
   task: AngularFireUploadTask;
   ref: AngularFireStorageReference;
+  normalRegister = true;
+  emailAndProvider;
 
   @ViewChild('search')
   public searchElementRef: ElementRef;
@@ -75,10 +78,16 @@ export class RegisterComponent implements OnInit {
     public dataService: DataService,
     private storage: AngularFireStorage,
     private mapsAPILoader: MapsAPILoader,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    public snackBar: MatSnackBar,
   ) {
     try {
       this.email = authService.getEmailToRegister().toString();
+      this.emailAndProvider = authService.getLoginEmailAndProvider();
+      if (this.emailAndProvider) {
+        this.normalRegister = false;
+        this.openSnackBar('Es necesario que completes la siguiente información para poder completar tu registro.', 'x');
+      }
     } catch (error) {
       console.log(error);
       this.router.navigateByUrl('/Registrarse');
@@ -212,8 +221,8 @@ export class RegisterComponent implements OnInit {
 
   tryRegister() {
     this.isRegistering = true;
-    if (this.password === this.confirmPassword) {
-      if (this.password.length > 6) {
+    if (!this.normalRegister || this.password === this.confirmPassword ) {
+      if ( !this.normalRegister || this.password.length > 6 ) {
         this.userLoginForm.addControl(
           'password',
           new FormControl(this.password, Validators.required)
@@ -332,5 +341,11 @@ export class RegisterComponent implements OnInit {
       values[key] = new FormControl(elements[key]);
     }
     return new FormGroup(values);
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 5000
+    });
   }
 }

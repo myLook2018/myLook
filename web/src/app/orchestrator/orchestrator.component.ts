@@ -71,6 +71,7 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
   }
 
   refreshUserInformation() {
+    console.log('en el orchestrator por pedir el usuario');
     this.dataServide.getStoreInfo().then(store => {
       console.log(store);
       this.userStore = store;
@@ -89,6 +90,9 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
           'Ya validamos -----------------------------------------------------------------------------------------'
         );
       }
+    }).catch( error => {
+      console.log('bueno revento todo, a crear la tienda? ', error);
+      this.router.navigate(['Registrar-Tienda']);
     });
   }
 

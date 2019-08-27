@@ -226,7 +226,6 @@ export class InventoryComponent implements OnInit, OnDestroy {
       };
     }
 
-    debugger;
     const dialogRef = this.dialog.open(ArticleDialogComponent, {
       maxWidth: '850px',
       maxHeight: 'calc(95vh)',
@@ -253,7 +252,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
       this.articleService.refreshVidrieraAttribute(idOfFrontsArticles[i], true);
     }
     this.articlesToGenerateFront = [];
-    this.openSnackBar('Su vidriera ha sido actualizada!', 'close');
+    this.openSnackBar('Su vidriera ha sido actualizada!', 'x');
     this.selectionMode = false;
   }
 
