@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Article implements Serializable, Comparable<Article>, Comparator<Article> {
 
@@ -26,6 +27,8 @@ public class Article implements Serializable, Comparable<Article>, Comparator<Ar
     private int promotionLevel;
     private boolean estaEnVidriera;
     private boolean isStorefront;
+    private double storeLatitude;
+    private double storeLongitude;
 
     public Article() {
     }
@@ -237,5 +240,21 @@ public class Article implements Serializable, Comparable<Article>, Comparator<Ar
 
     public void setIsStorefront(boolean storefront) {
         isStorefront = storefront;
+    }
+
+    public double getStoreLatitude() {
+        return storeLatitude;
+    }
+
+    public void setStoreLatitude(double storeLatitude) {
+        this.storeLatitude = storeLatitude;
+    }
+
+    public double getStoreLongitude() {
+        return storeLongitude;
+    }
+
+    public void setStoreLongitude(double storeLongitude) {
+        this.storeLongitude = storeLongitude;
     }
 }

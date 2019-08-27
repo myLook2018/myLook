@@ -1,12 +1,20 @@
 package com.mylook.mylook.explore;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.widget.SearchView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,7 +31,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.info.ArticleInfoActivity;
-import com.mylook.mylook.services.ExploreService;
 import com.mylook.mylook.utils.CardsExploreAdapter;
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
 import com.yuyakaido.android.cardstackview.CardStackListener;
@@ -40,6 +47,7 @@ import java.util.Objects;
 
 public class ExploreFragment extends Fragment implements CardStackListener, CardsExploreAdapter.ArticleVisitListener {
 
+    private static final int ACCESS_FINE_LOCATION_REQUEST = 1;
     private static String TAG = "ExploreFragment";
 
     private ProgressBar mProgressBar;
@@ -48,12 +56,16 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
     private CardStackView mCardStack;
     private CardStackLayoutManager mLayoutManager;
     private CardsExploreAdapter mCardAdapter;
+
     private List<Article> articles;
+
+    private FloatingActionButton geolocationButton;
 
     @SuppressLint("StaticFieldLeak")
     private static ExploreFragment exploreInstance;
 
     private ExploreService exploreService;
+    private LocationManager locationManager;
 
     @Override
     public void onCardDragging(Direction direction, float ratio) {
@@ -138,6 +150,9 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
         mProgressBar = view.findViewById(R.id.explore_progress_bar);
         mMessage = view.findViewById(R.id.explore_message);
         mCardStack = view.findViewById(R.id.container);
+
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
         setupLayoutManager();
 
         FloatingActionButton dislikeButton = view.findViewById(R.id.fab_dislike_article);
@@ -161,6 +176,47 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
             mLayoutManager.setSwipeAnimationSetting(setting);
             mCardStack.swipe();
         });
+
+        geolocationButton = view.findViewById(R.id.fab_geolocation);
+        geolocationButton.setOnClickListener(v -> detectNearbyArticles());
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == ACCESS_FINE_LOCATION_REQUEST) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                detectNearbyArticles();
+            } else {
+                geolocationButton.setEnabled(false);
+            }
+        }
+    }
+
+    private void detectNearbyArticles() {
+        if (getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // TODO
+            } else {
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_REQUEST);
+            }
+        } else {
+            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                displayMessage("No pudo accederse a tu ubicación");
+            } else {
+                Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                if (location != null) {
+                    mCardAdapter.setLocation(location);
+                    mCardAdapter.notifyDataSetChanged();
+                    double latitude = location.getLatitude();
+                    double longitude = location.getLongitude();
+                    displayMessage(String.valueOf(latitude) + " - " + String.valueOf(longitude));
+                } else {
+                    displayMessage("No pudo encontrarse tu ubicación");
+                }
+            }
+        }
     }
 
     private void setupLayoutManager() {
@@ -287,5 +343,9 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
             Toast.makeText(getContext(), "Todavía tenés artículos para explorar!",
                     Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void displayMessage(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 }

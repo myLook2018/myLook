@@ -1,4 +1,4 @@
-package com.mylook.mylook.services;
+package com.mylook.mylook.explore;
 
 import android.content.Context;
 
