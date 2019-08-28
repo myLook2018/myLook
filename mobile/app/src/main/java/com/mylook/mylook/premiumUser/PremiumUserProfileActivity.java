@@ -3,14 +3,14 @@ package com.mylook.mylook.premiumUser;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
@@ -173,7 +173,7 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
      * @param viewPager Nueva instancia
      */
     private void setupViewPager(ViewPager viewPager) {
-        StoreTabAdapter adapter = new StoreTabAdapter(getSupportFragmentManager(),3);
+        StoreTabAdapter adapter = new StoreTabAdapter(getSupportFragmentManager());
         Log.e("VIEW PAGER","CARGAAAAAAAAAA");
         adapter.addFragment(0,new PremiumPublicationsFragment(premiumUserId),"Publicaciones");
         adapter.addFragment(1,new PublicClosetFragment(premiumUserId),"Ropero");

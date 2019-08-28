@@ -2,8 +2,8 @@ package com.mylook.mylook.premiumUser;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +17,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
-import com.mylook.mylook.entities.Closet;
 import com.mylook.mylook.entities.Favorite;
 import com.mylook.mylook.utils.GridImageAdapter;
 
@@ -29,7 +28,6 @@ public class PublicClosetFragment extends Fragment {
 
     private  FirebaseFirestore dB=null;
     private  String premiumUserId;
-    private Closet closet;
     private ArrayList<Article> favorites;
 
 
@@ -64,7 +62,6 @@ public class PublicClosetFragment extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                closet = document.toObject(Closet.class);
                                 String id = document.getId();
                                 dB.collection("closets").document(id).collection("favorites").get()
                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

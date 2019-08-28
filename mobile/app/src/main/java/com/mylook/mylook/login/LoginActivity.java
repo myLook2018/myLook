@@ -1,14 +1,13 @@
 package com.mylook.mylook.login;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
@@ -330,11 +329,14 @@ public class LoginActivity extends AppCompatActivity {
             Log.e("Login - Mylook", "Data " + data.toString());
             try {
                 Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-                Log.e("Login - Mylook", "Get Signed ACcount" + task.getResult().toString());
+                //Log.e("Login - Mylook", "Get Signed ACcount" + task.getResult().toString());
                 // Google Sign In was successful, authenticate with Firebase
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                firebaseAuthWithGoogle(account);
-            } catch (ApiException e) {
+                task.addOnCompleteListener(task1 -> {
+                    GoogleSignInAccount account = task1.getResult();
+                    firebaseAuthWithGoogle(account);
+                });
+
+            } catch (Exception e) {
                 // Google Sign In failed, update UI appropriately
                 Log.e("TAG", "Google sign in failed - " + e.getMessage());
                 mProgressBar.setVisibility(View.GONE);

@@ -4,10 +4,10 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -27,7 +27,7 @@ import com.google.firebase.firestore.SetOptions;
 import com.mylook.mylook.R;
 import com.mylook.mylook.dialogs.DialogManager;
 import com.mylook.mylook.entities.User;
-import com.mylook.mylook.session.Sesion;
+import com.mylook.mylook.session.Session;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.ArrayList;
@@ -89,7 +89,7 @@ public class EditInfoActivity extends AppCompatActivity {
                     final User newUser = new User ();
 
                     newUser.setBirthday(myCalendar.getTimeInMillis());
-                    newUser.setEmail(Sesion.mail); //cambiar aparte
+                    newUser.setEmail(Session.mail); //cambiar aparte
                     newUser.setDni(txtDNI.getText().toString()); //cambiar aparte
                     newUser.setName(txtName.getText().toString());
                     newUser.setSurname(txtSurname.getText().toString());
@@ -107,7 +107,7 @@ public class EditInfoActivity extends AppCompatActivity {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 Toast.makeText(EditInfoActivity.this, "Tu usuario ha sido actualizado", Toast.LENGTH_LONG).show();
-                                                Sesion.updateData();
+                                                Session.updateData();
                                                 Intent returnIntent = new Intent();
                                                 returnIntent.putExtra("name",txtName.getText());
                                                 returnIntent.putExtra("email","gisigimenez@blabla");
@@ -148,7 +148,7 @@ public class EditInfoActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         this.setTitle("Editar Información");
-        if(Sesion.isPremium){
+        if(Session.isPremium){
             txtChangePhoto=findViewById(R.id.lblChangePhoto);
             txtChangePhoto.setVisibility(View.VISIBLE);
         }
@@ -177,7 +177,7 @@ public class EditInfoActivity extends AppCompatActivity {
     private void setData() {
         Log.e("EDIT INFO ACTIVITY ", "set data");
 
-        FirebaseFirestore.getInstance().collection("clients").document(Sesion.clientId)
+        FirebaseFirestore.getInstance().collection("clients").document(Session.clientId)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {

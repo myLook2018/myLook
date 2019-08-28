@@ -1,20 +1,19 @@
 package com.mylook.mylook.storeProfile;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class StoreTabAdapter extends FragmentPagerAdapter {
-    int mNumOfTabs;
+
     private final List<Fragment> mFragmentList = new ArrayList<>();
     private final List<String> mFragmentTitleList = new ArrayList<>();
 
-    public StoreTabAdapter(FragmentManager fm, int NumOfTabs) {
+    public StoreTabAdapter(FragmentManager fm) {
         super(fm);
-        this.mNumOfTabs = NumOfTabs;
     }
 
     public void addFragment(int index, Fragment fragment, String title) {

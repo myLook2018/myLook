@@ -1,7 +1,7 @@
 package com.mylook.mylook.room;
 
-import android.arch.persistence.room.Entity;
-import android.support.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.annotation.NonNull;
 
 import java.util.Date;
 
