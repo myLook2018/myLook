@@ -1,12 +1,13 @@
 package com.mylook.mylook.utils;
 
+import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,53 +15,66 @@ import com.bumptech.glide.Glide;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 
-public class CardsExploreAdapter extends ArrayAdapter<Article> {
+import java.util.List;
 
-    public CardsExploreAdapter(@NonNull Context context, int resource) {
-        super(context, resource);
+public class CardsExploreAdapter extends RecyclerView.Adapter<CardsExploreAdapter.ViewHolder> {
+
+    private Context context;
+    private List<Article> articles;
+    private ArticleVisitListener listener;
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+
+        TextView name;
+        ImageView image;
+        TextView ad;
+
+        ViewHolder(View view) {
+            super(view);
+            name = view.findViewById(R.id.text_content);
+            image = view.findViewById(R.id.image_content);
+            ad = view.findViewById(R.id.ad_layout);
+        }
+
+    }
+
+    public CardsExploreAdapter(@NonNull Context context, List<Article> articles, ArticleVisitListener listener) {
+        this.context = context;
+        this.articles = articles;
+        this.listener = listener;
     }
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View contentView, @NonNull ViewGroup parent) {
-        /*Article a = getItem(position);
-        ImageView i = contentView.findViewById(R.id.image_content);
-        Glide.with(getContext()).load(a.getPicture()).into(i);
-        TextView t = contentView.findViewById(R.id.text_content);
-        t.setText(a.getStoreName());*/
-
-        ViewHolder holder;
-
-        if (contentView == null) {
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            contentView = inflater.inflate(R.layout.article_card, parent, false);
-            holder = new ViewHolder(contentView);
-            contentView.setTag(holder);
-        } else {
-            holder = (ViewHolder) contentView.getTag();
-        }
-
-        Article a = getItem(position);
-        holder.name.setText(a.getStoreName());
-        Glide.with(getContext()).load(a.getPicture()).into(holder.image);
-
-        if (a.getPromotionLevel() > 1) {
-            contentView.findViewById(R.id.ad_layout).setVisibility(View.VISIBLE);
-        } else {
-            contentView.findViewById(R.id.ad_layout).setVisibility(View.INVISIBLE);
-        }
-
-        return contentView;
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.article_card, parent, false);
+        return new ViewHolder(view);
     }
 
-    private static class ViewHolder {
-        public TextView name;
-        public ImageView image;
-
-        public ViewHolder(View view) {
-            this.name = (TextView) view.findViewById(R.id.text_content);
-            this.image = (ImageView) view.findViewById(R.id.image_content);
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Article article = articles.get(position);
+        if (context instanceof Activity) {
+            Activity activity = (Activity) context;
+            if ( !activity.isFinishing() ) {
+                Glide.with(context).load(article.getPicture()).into(holder.image);
+            }
         }
+        holder.image.setOnClickListener(v -> listener.onArticleClick());
+        holder.name.setText(article.getStoreName());
+        if (article.getPromotionLevel() == 0) {
+            holder.ad.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return articles.size();
+    }
+
+    public interface ArticleVisitListener {
+        void onArticleClick();
     }
 
 }

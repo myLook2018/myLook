@@ -3,19 +3,19 @@ package com.mylook.mylook.profile;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 
 import com.mylook.mylook.R;
 import com.mylook.mylook.dialogs.DialogManager;
 import com.mylook.mylook.premiumUser.PremiumRequestActivity;
-import com.mylook.mylook.session.Sesion;
+import com.mylook.mylook.session.Session;
 
 public class AccountActivity extends AppCompatActivity {
 
@@ -81,7 +81,7 @@ public class AccountActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==1){
             if(resultCode==USER_CHANGED){
-                Sesion.updateData();
+                Session.updateData();
                 txtName.setText(data.getCharSequenceExtra("name"));
                 txtEmail.setText(data.getCharSequenceExtra("email"));
                 Log.e("ACCOUNT ACTIVITY", "El usuario cabio");
@@ -129,7 +129,7 @@ public class AccountActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, PremiumRequestActivity.class);
                 intent.putExtra("clientId", clientId);
-                intent.putExtra("userName", Sesion.name);
+                intent.putExtra("userName", Session.name);
                 startActivity(intent);
 
             }
@@ -139,7 +139,7 @@ public class AccountActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, PremiumRequestActivity.class);
                 intent.putExtra("clientId", clientId);
-                intent.putExtra("userName", Sesion.name);
+                intent.putExtra("userName", Session.name);
                 startActivity(intent);
 
             }
@@ -189,10 +189,10 @@ public class AccountActivity extends AppCompatActivity {
     }
 
     private void setUserProfile() {
-        isPremiumUser= Sesion.isPremium;
-        txtName.setText(Sesion.name);
-        txtEmail.setText(Sesion.mail);
-        clientId = Sesion.clientId;
+        isPremiumUser= Session.isPremium;
+        txtName.setText(Session.name);
+        txtEmail.setText(Session.mail);
+        clientId = Session.clientId;
         if(isPremiumUser){
             imageDestacado.setVisibility(View.GONE);
             txtDestacado.setVisibility(View.GONE);

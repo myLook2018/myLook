@@ -3,11 +3,11 @@ package com.mylook.mylook.login;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
@@ -30,7 +30,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -101,37 +100,21 @@ public class LoginActivity extends AppCompatActivity {
         setupFirebaseAuth();
         setupFacebookAuth();
         getIncomingIntent();
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                login();
-            }
+        btnLogin.setOnClickListener(view -> login());
+        signUpLink.setOnClickListener(view -> {
+            Intent intent = new Intent(mContext, RegisterActivity.class);
+            startActivity(intent);
         });
-        signUpLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(mContext, RegisterActivity.class);
-                startActivity(intent);
-            }
-        });
-        btnGoogleSign.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                googleSignIn();
-            }
-        });
+        btnGoogleSign.setOnClickListener(v -> googleSignIn());
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-        resetPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mContext, ResetPasswordActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        resetPassword.setOnClickListener(v -> {
+            Intent intent = new Intent(mContext, ResetPasswordActivity.class);
+            startActivity(intent);
+            finish();
         });
         Log.e(LOG_LABEL, "Finaliza Setup Activity");
     }
@@ -149,29 +132,25 @@ public class LoginActivity extends AppCompatActivity {
             mProgressBar.setVisibility(View.VISIBLE);
             Log.e(LOG_LABEL, "Login con email y password");
             mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (!task.isSuccessful()) {
-                                        Exception e = task.getException();
-                                        if (e != null) {
-                                            if (task.getException().getMessage().equals("A network error (such as timeout, interrupted connection or unreachable host) has occurred.")) {
-                                                displayMessage("Revisa tu conexión a internet");
-                                            } else if (e instanceof FirebaseAuthInvalidCredentialsException) {
-                                                displayMessage("Contraseña incorrecta");
-                                            } else if (e instanceof FirebaseAuthInvalidUserException) {
-                                                displayMessage("El Email no existe");
-                                            } else {
-                                                displayMessage("Algo salió mal :(");
-                                                Log.e("Login Faild: ", e.getMessage());
-                                            }
-                                            onResume();
-                                        }
-                                    }
-                                    mProgressBar.setVisibility(View.GONE);
+                    .addOnCompleteListener(LoginActivity.this, task -> {
+                        if (!task.isSuccessful()) {
+                            Exception e = task.getException();
+                            if (e != null) {
+                                if (task.getException().getMessage().equals("A network error (such as timeout, interrupted connection or unreachable host) has occurred.")) {
+                                    displayMessage("Revisa tu conexión a internet");
+                                } else if (e instanceof FirebaseAuthInvalidCredentialsException) {
+                                    displayMessage("Contraseña incorrecta");
+                                } else if (e instanceof FirebaseAuthInvalidUserException) {
+                                    displayMessage("El Email no existe");
+                                } else {
+                                    displayMessage("Algo salió mal :(");
+                                    Log.e("Login Faild: ", e.getMessage());
                                 }
-
+                                onResume();
                             }
+                        }
+                        mProgressBar.setVisibility(View.GONE);
+                    }
                     );
         } else {
             Log.e(LOG_LABEL, "Campos no correctos");
@@ -180,13 +159,10 @@ public class LoginActivity extends AppCompatActivity {
                 mProgressBar.setVisibility(View.VISIBLE);
                 AccessToken accessToken = AccessToken.getCurrentAccessToken();
                 mAuth.signInWithCredential(FacebookAuthProvider.getCredential(accessToken.getToken()))
-                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                Log.e(LOG_LABEL, "Login con credentials");
-                                user = mAuth.getCurrentUser();
-                                mProgressBar.setVisibility(View.GONE);
-                            }
+                        .addOnCompleteListener(this, task -> {
+                            Log.e(LOG_LABEL, "Login con credentials");
+                            user = mAuth.getCurrentUser();
+                            mProgressBar.setVisibility(View.GONE);
                         });
             }
         }
@@ -232,16 +208,12 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setupFirebaseAuth() {
         mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                user = mAuth.getCurrentUser(); //firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    Log.e(LOG_LABEL, "Buscando user en Firebase");
-                    FirebaseFirestore.getInstance().collection("clients").whereEqualTo("email", user.getEmail())
-                            .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+        mAuthListener = firebaseAuth -> {
+            user = mAuth.getCurrentUser(); //firebaseAuth.getCurrentUser();
+            if (user != null) {
+                Log.e(LOG_LABEL, "Buscando user en Firebase");
+                FirebaseFirestore.getInstance().collection("clients").whereEqualTo("email", user.getEmail())
+                        .get().addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 if (task.getResult().getDocuments().size() == 0) { //esto deberia pasar a la validacion del mail si existe o no
                                     Intent intent = new Intent(mContext, RegisterActivity.class);
@@ -271,9 +243,7 @@ public class LoginActivity extends AppCompatActivity {
                             } else {
                                 Log.e(LOG_LABEL, "Busqueda en firebase fallo"+ task.getException());
                             }
-                        }
-                    });
-                }
+                        });
             }
         };
     }
@@ -289,12 +259,9 @@ public class LoginActivity extends AppCompatActivity {
             mProgressBar.setVisibility(View.VISIBLE);
             AccessToken accessToken = AccessToken.getCurrentAccessToken();
             mAuth.signInWithCredential(FacebookAuthProvider.getCredential(accessToken.getToken()))
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            user = mAuth.getCurrentUser();
-                            mProgressBar.setVisibility(View.GONE);
-                        }
+                    .addOnCompleteListener(this, task -> {
+                        user = mAuth.getCurrentUser();
+                        mProgressBar.setVisibility(View.GONE);
                     });
         }
         final String TAG = "Facebook";
@@ -334,10 +301,14 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
                 Log.e(LOG_LABEL, "On Activity result, Get Signed account: "+task.getResult().toString());
+
                 // Google Sign In was successful, authenticate with Firebase
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                firebaseAuthWithGoogle(account);
-            } catch (ApiException e) {
+                task.addOnCompleteListener(task1 -> {
+                    GoogleSignInAccount account = task1.getResult();
+                    firebaseAuthWithGoogle(account);
+                });
+
+            } catch (Exception e) {
                 // Google Sign In failed, update UI appropriately
                 Log.e(LOG_LABEL, "On Activity result, Google sign in failed: "+e.getMessage());
                 mProgressBar.setVisibility(View.GONE);
@@ -351,29 +322,26 @@ public class LoginActivity extends AppCompatActivity {
         mProgressBar.setVisibility(View.VISIBLE);
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.e(LOG_LABEL, " Handle Facebook Access Token, Succesfull: " + task.isSuccessful());
+                .addOnCompleteListener(this, task -> {
+                    Log.e(LOG_LABEL, " Handle Facebook Access Token, Succesfull: " + task.isSuccessful());
+                    mProgressBar.setVisibility(View.GONE);
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.e(LOG_LABEL, " Handle Facebook Access Token, " +
+                                "signInWithCredential:success - User " + mAuth.getCurrentUser().getDisplayName());
+                        user = mAuth.getCurrentUser();
                         mProgressBar.setVisibility(View.GONE);
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.e(LOG_LABEL, " Handle Facebook Access Token, " +
-                                    "signInWithCredential:success - User " + mAuth.getCurrentUser().getDisplayName());
-                            user = mAuth.getCurrentUser();
-                            mProgressBar.setVisibility(View.GONE);
 
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.e(LOG_LABEL, " Handle Facebook Access Token, +" +
-                                    "signInWithCredential:failure", task.getException());
-                            displayMessage("Authentication failed.");
-                            if (user != null) {
-                                FirebaseAuth.getInstance().signOut();
-                                finish();
-                            }
-                            mProgressBar.setVisibility(View.GONE);
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.e(LOG_LABEL, " Handle Facebook Access Token, +" +
+                                "signInWithCredential:failure", task.getException());
+                        displayMessage("Authentication failed.");
+                        if (user != null) {
+                            FirebaseAuth.getInstance().signOut();
+                            finish();
                         }
+                        mProgressBar.setVisibility(View.GONE);
                     }
                 });
 
@@ -383,19 +351,16 @@ public class LoginActivity extends AppCompatActivity {
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            user = mAuth.getCurrentUser();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            displayMessage("No se pudo autenticar con Google");
-                            Intent intent = new Intent(mContext, LoginActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        user = mAuth.getCurrentUser();
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        displayMessage("No se pudo autenticar con Google");
+                        Intent intent = new Intent(mContext, LoginActivity.class);
+                        startActivity(intent);
+                        finish();
                     }
                 });
     }

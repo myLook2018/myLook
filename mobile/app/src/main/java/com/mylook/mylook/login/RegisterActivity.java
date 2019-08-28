@@ -5,27 +5,25 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
@@ -232,20 +230,14 @@ public class RegisterActivity extends AppCompatActivity {
             client.put("provider", provider);
         FirebaseFirestore.getInstance().collection("clients")
                 .add(client)
-                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                        Log.d(LOG_LABEL, "Cliente se guardo en firebase");
-                        sendEmailVerification();
+                .addOnCompleteListener(task -> {
+                    Log.d(LOG_LABEL, "Cliente se guardo en firebase");
+                    sendEmailVerification();
 
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d(LOG_LABEL, "Cliente no se guardo en firebase: ", e.getCause());
-                btnRegister.setEnabled(true);
-            }
-        });
+                }).addOnFailureListener(e -> {
+                    Log.d(LOG_LABEL, "Cliente no se guardo en firebase: ", e.getCause());
+                    btnRegister.setEnabled(true);
+                });
     }
 
     @Override
@@ -272,13 +264,10 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void setupFirebaseAuth() {
 
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    Log.d(LOG_LABEL, "FirebaseAuth, user no null");
-                }
+        mAuthListener = firebaseAuth -> {
+            user = firebaseAuth.getCurrentUser();
+            if (user != null) {
+                Log.d(LOG_LABEL, "FirebaseAuth, user no null");
             }
         };
     }
@@ -315,13 +304,9 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void initCalendar() {
 
-        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth) {
-                myCalendar.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
-                txtBirthdate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-            }
+        final DatePickerDialog.OnDateSetListener date = (view, year, monthOfYear, dayOfMonth) -> {
+            myCalendar.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
+            txtBirthdate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
         };
 
         txtBirthdate.setOnClickListener(new View.OnClickListener() {
@@ -339,20 +324,17 @@ public class RegisterActivity extends AppCompatActivity {
         if (user != null) {
             Log.d(LOG_LABEL, "Envio de mail, user != Null");
             user.sendEmailVerification()
-                    .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            // [START_EXCLUDE]
-                            // Re-enable button
-                            if (task.isSuccessful()) {
-                                Log.d(LOG_LABEL, "Envio de mail, se envio mail");
-                                logInIntent();
+                    .addOnCompleteListener(this, task -> {
+                        // [START_EXCLUDE]
+                        // Re-enable button
+                        if (task.isSuccessful()) {
+                            Log.d(LOG_LABEL, "Envio de mail, se envio mail");
+                            logInIntent();
 
-                            } else {
-                                Log.d(LOG_LABEL, "Envio de mail, No se envio mail: " + task.getException());
-                                displayMessage("Fallo al enviar el mail");
-                                //logInIntent();
-                            }
+                        } else {
+                            Log.d(LOG_LABEL, "Envio de mail, No se envio mail: " + task.getException());
+                            displayMessage("Fallo al enviar el mail");
+                            //logInIntent();
                         }
                     });
         } else {
