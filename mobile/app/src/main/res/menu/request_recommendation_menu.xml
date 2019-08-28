@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:id="@+id/close_req"
+        android:title="@string/close_req"
+        android:icon="@drawable/ic_check"
+        app:showAsAction="never"
+        android:iconTint="@color/white"
+        />
+
+    <item android:id="@+id/share_req"
+        android:icon="@drawable/ic_share"
+        android:title="@string/share_req"
+        app:showAsAction="never"
+        />
+
+    <!--<item android:id="@+id/delete_req"-->
+        <!--android:title="@string/delete_req"-->
+        <!--app:showAsAction="never"/>-->
+
+    <item android:id="@+id/help"
+        android:icon="@drawable/ic_help"
+        android:title="@string/help"
+        app:showAsAction=""/>
+</menu>
