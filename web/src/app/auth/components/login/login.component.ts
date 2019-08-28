@@ -67,9 +67,12 @@ export class LoginComponent implements OnDestroy{
   tryFacebookLogin() {
     this.authService.doFacebookLogin()
     .then(res => {
-      this.getUserStore(res.user.uid).then( res => {
+      this.getUserStore(res.user.uid).then( store => {
         this._subscription.unsubscribe();
-        this.router.navigate(['Tiendas', res]);
+        if (!store) { this.router.navigate(['Registrar-Tienda']);
+        } else {
+           this.router.navigate(['Tiendas', res]);
+         }
         }, err => {
           console.log(err);
         });

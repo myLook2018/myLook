@@ -121,6 +121,7 @@ export class AuthService {
     return new Promise<any>((resolve, reject) => {
       if (firebase.auth().currentUser) {
         this.sendEmailVerification();
+        resolve(true);
       } else {
         firebase.auth().signInWithEmailAndPassword(formControl.controls['email'].value, formControl.controls['password'].value)
         .then(res => {

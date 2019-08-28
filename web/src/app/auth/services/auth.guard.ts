@@ -16,7 +16,7 @@ export class AuthGuard implements CanActivate {
 
   canActivate(): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      this.dataService.getStoreInfo().then((user)=> {
+      this.dataService.getStoreInfo(true).then((user) => {
         console.log('firebaseUID:', user.firebaseUID);
         console.log('this.router.url', this.router.url.toString())
         if(user.firebaseUID !== '' && !this.router.url.toString().includes('Tiendas')) {

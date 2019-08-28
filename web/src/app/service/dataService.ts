@@ -13,6 +13,7 @@ export class DataService {
   task: AngularFireUploadTask;
   ref: AngularFireStorageReference;
   public storeInfo: StoreModel = new StoreModel();
+  userFirebase;
   _subscription: Subscription;
   isNewUser = true;
   constructor(
@@ -86,8 +87,8 @@ export class DataService {
       this.userService.getCurrentUser().then(
         user => {
           console.log(`2)obtuvimos un usuario`);
-          this.storeInfo = user;
-          console.log('el usuario ', this.storeInfo);
+          this.userFirebase = user;
+          console.log('el usuario ', this.userFirebase);
           this.getUserStoreInfo(user.uid).then(storeInfo => {
             console.log(`3)obtuvimos una tienda a partir del usuario`);
             if (storeInfo) {
@@ -110,11 +111,11 @@ export class DataService {
     });
   }
 
-  public getStoreInfo() {
+  public getStoreInfo(force: boolean = false) {
     return new Promise<StoreModel>((resolve, reject) => {
-      if (this.storeInfo.storeName === '') {
-        this.refreshLocalUserInformation().then(storeInfo => {
-          this.storeInfo = storeInfo;
+      if (this.storeInfo.storeName || force) {
+        this.refreshLocalUserInformation().then(storeInfoa => {
+          this.storeInfo = storeInfoa;
           resolve(this.storeInfo);
         }, error => {
           console.log('hay usuario pero no hay tienda, que cagada macho, a crearla');

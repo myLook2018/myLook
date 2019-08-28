@@ -47,7 +47,7 @@ export class StoreComponent implements OnInit, OnDestroy {
 		console.log('-+-+-+-+-+-Inicializando Perfil-+-+-+-+-+-');
 		console.log('estamos pidiendo la data del store desde store');
  //   setTimeout(() => {
-          this.dataService.getStoreInfo().then((store) => {
+          this.dataService.getStoreInfo(true).then((store) => {
 						this.userStore = store
 						this.articleService.getFrontArticlesCopado(this.userStore.storeName).then((articles) => {
 							console.log(articles);
@@ -58,7 +58,7 @@ export class StoreComponent implements OnInit, OnDestroy {
 					});
         };
       //  }, 2500);
-      
+
       ngOnDestroy(): void {}
 
 	openMapDialog(): void {

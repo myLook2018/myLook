@@ -261,10 +261,11 @@ export class RegisterComponent implements OnInit {
                       console.log('formFinal', this.registerStoreFormGroup.value);
                       this.userService
                         .addStore(this.registerStoreFormGroup.value.store)
-                        .then(() => {});
+                        .then(() => {
+                          console.log('se registro la tienda');
+                        });
                     })
                     .then(() => {
-                      console.log()
                       this.authService
                         .doFirstLogin(this.userLoginForm)
                         .then(() => {
