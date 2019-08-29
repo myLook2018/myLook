@@ -130,7 +130,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   divideAll() {
-    this.level1Articles = this.level1Articles / 3;
+    this.level1Articles = this.level1Articles / 1;
     this.level2Articles = this.level2Articles / 1;
     this.level3Articles = this.level3Articles / 1;
   }
@@ -250,6 +250,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getAmountOfPromotedInteractions() {
+    debugger;
     for (let i = 0; i < this.interactions.length; i++) {
       switch (this.getLevelOfPromotion(this.interactions[i])) {
         case 1: {

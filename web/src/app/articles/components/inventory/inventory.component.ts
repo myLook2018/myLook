@@ -206,7 +206,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
         title: article.title,
         code: article.code,
         id: article.articleId,
-        picture: article.picturesArray[0],
+        picturesArray: article.picturesArray,
         cost: article.cost,
         sizes: article.sizes,
         material: article.material,

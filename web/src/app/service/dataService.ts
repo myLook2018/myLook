@@ -86,6 +86,7 @@ export class DataService {
       console.log(`1)Inicializando refresh information`);
       this.userService.getCurrentUser().then(
         user => {
+          console.log('current user: ', user);
           console.log(`2)obtuvimos un usuario`);
           this.userFirebase = user;
           console.log('el usuario ', this.userFirebase);
@@ -133,5 +134,9 @@ export class DataService {
     this.isNewUser = true;
     this._subscription.unsubscribe();
     return this.storeInfo;
+  }
+
+  getFirebaseUser() {
+    return this.userFirebase;
   }
 }

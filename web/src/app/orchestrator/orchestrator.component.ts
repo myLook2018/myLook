@@ -134,7 +134,7 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
     this.router.navigate([`/Tiendas/${this.userStore.storeName}/Estadisticas`]);
   }
 
-  editStoreInfo() {
-    alert('not implemented yet, Xdxd');
+  gotToConfiguration() {
+    this.router.navigate([`/Tiendas/${this.userStore.storeName}/Configuracion`]);
   }
 }

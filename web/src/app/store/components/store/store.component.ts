@@ -6,7 +6,6 @@ import { Observable } from '../../../../../node_modules/rxjs';
 import { MatDialog } from '@angular/material';
 import { MapsDialogComponent } from '../../../dialog/maps-dialog/maps-dialog.component';
 import { Article } from '../../../articles/models/article';
-import { Store } from '../../model/store.model';
 import { EditStoreComponent } from '../dialogs/editStore';
 import { DataService } from '../../../service/dataService';
 import { StoreModel } from '../../../auth/models/store.model';

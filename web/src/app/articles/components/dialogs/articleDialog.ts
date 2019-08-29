@@ -6,7 +6,8 @@ import {
   ViewChild,
   ElementRef,
   OnDestroy,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  AfterViewInit
 } from '@angular/core';
 import {
   AngularFireUploadTask,
@@ -56,11 +57,14 @@ const styles = {
   styleUrls: ['./articleDialog.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ArticleDialogComponent implements OnInit, OnDestroy {
+export class ArticleDialogComponent implements OnInit, OnDestroy, AfterViewInit {
   // cropper settings
   classes = this.theme.addStyleSheet(styles);
   croppedImage?: string[] = ['', '', ''];
-  @ViewChild(LyResizingCroppingImages) img: LyResizingCroppingImages;
+  // @ViewChild(LyResizingCroppingImages) img: LyResizingCroppingImages;
+  @ViewChild('cropping0') cropping0: LyResizingCroppingImages;
+  @ViewChild('cropping1') cropping1: LyResizingCroppingImages;
+  @ViewChild('cropping2') cropping2: LyResizingCroppingImages;
   result: string;
   myConfig: ImgCropperConfig = {
     width: 150, // Default `250`
@@ -129,7 +133,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     this.cropperSettings.canvasWidth = 210;
 */
     this.createForm();
-    if (articleData.picture !== undefined) {
+    if (articleData.picturesArray[0]) {
       const articlePicture = (this.isNew = false);
     } else {
     }
@@ -189,6 +193,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     }
     this.tags = this.articleData.tags;
     this.sizes = this.articleData.sizes;
+    this.colors = this.articleData.colors;
     this.articleForm = this.fb.group({
       // completar los datos de la prenda
       title: [this.articleData.title, Validators.nullValidator],
@@ -204,6 +209,11 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
       tags: [this.articleData.tags.map(x => x), Validators.nullValidator],
       storeName: [this.articleData.storeName, Validators.nullValidator]
     });
+    // this.loadImagesToCrop();
+  }
+
+  ngAfterViewInit() {
+    this.loadImagesToCrop();
   }
 
   toggleHover(event: boolean) {
@@ -257,7 +267,8 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
       latitude: this.articleData.storeLatitude,
       longitude: this.articleData.storeLongitude
     };
-    this.articleForm.addControl('storeLocation', new FormControl(storeLocation, Validators.required));
+    this.articleForm.addControl('storeLatitude', new FormControl(storeLocation.latitude, Validators.required));
+    this.articleForm.addControl('storeLongitude', new FormControl(storeLocation.longitude, Validators.required));
     this.uploadPictures(imagesToUpload).then(picturesURL => {
       this.articleForm.get('picturesArray').setValue(picturesURL.map(x => x));
       this.articleService.addArticle(this.articleForm.value).then(() => {
@@ -465,6 +476,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
 
   cropImages(crop1, crop2, crop3) {
     const croppers = [crop1, crop2, crop3];
+    console.log('crops', croppers);
     for (let index = 0; index < this.isLoadedImage.length; index++) {
       if(this.isLoadedImage[index]) {
         try {
@@ -475,6 +487,15 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
       }
     }
     this.startUpload();
+  }
+
+  loadImagesToCrop() {
+    const croppers = [this.cropping0, this.cropping1, this.cropping2];
+    for (let index = 0; index < this.articleData.picturesArray.length; index++) {
+      console.log('cargando indice:', index);
+      croppers[index].setImageUrl(this.articleData.picturesArray[index]);
+      this.isLoadedImage[index] = this.articleData.picturesArray[index];
+    }
   }
 
   checkImagenLoaded() {

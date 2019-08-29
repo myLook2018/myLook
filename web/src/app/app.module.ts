@@ -84,6 +84,8 @@ import { MinimaLight, MinimaDark } from '@alyle/ui/themes/minima';
 import { LyButtonModule } from '@alyle/ui/button';
 import { LyResizingCroppingImageModule } from '@alyle/ui/resizing-cropping-images';
 import { LyIconModule } from '@alyle/ui/icon';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 
 import {
   LyHammerGestureConfig,
@@ -92,6 +94,7 @@ import {
 } from '@alyle/ui';
 import { HttpClientModule} from '@angular/common/http';
 import { SuccessComponent } from './ecommerce/success/success.component';
+import { ConfigurationsComponent } from './store/components/configurations/configurations.component';
 
 @NgModule({
   declarations: [
@@ -122,6 +125,7 @@ import { SuccessComponent } from './ecommerce/success/success.component';
     OrchestratorComponent,
     MercadopagoComponent,
     SuccessComponent,
+    ConfigurationsComponent,
   ],
   imports: [
     HttpClientModule,
@@ -167,6 +171,7 @@ import { SuccessComponent } from './ecommerce/success/success.component';
     LyResizingCroppingImageModule,
     LyButtonModule,
     LyIconModule,
+    FontAwesomeModule,
     LyThemeModule.setTheme('minima-light'),
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyDmuhZx-ew-zpQzQcjiqk2yJu5OonBuSMc',
