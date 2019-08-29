@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/toolbar_relative">
-        <include layout="@layout/layout_top_toolbar_info_article"></include>
+
     </RelativeLayout>
 
     <ScrollView
@@ -32,7 +32,7 @@
                 android:layout_marginBottom="0dp"
                 android:orientation="vertical">
 
-                <android.support.design.widget.FloatingActionButton
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/btnShare"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
                     app:layout_anchorGravity="end|bottom"
                     app:rippleColor="@color/white" />
 
-                <android.support.v4.view.ViewPager
+                <androidx.viewpager.widget.ViewPager
                     android:id="@+id/view_pager_article"
                     android:layout_width="match_parent"
                     android:layout_height="408dp"
@@ -62,13 +62,12 @@
                     app:pageColor="#fff"
                     app:snap="false" />
 
-                <android.support.design.widget.FloatingActionButton
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/btnCloset"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|right|end"
                     android:layout_margin="16dp"
-                    android:src="@drawable/ic_closet_2"
                     app:layout_anchorGravity="bottom|right|end"
                     android:layout_alignBottom="@id/view_pager_article"
                     android:layout_alignParentRight="true"/>
@@ -109,7 +108,7 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <android.support.design.button.MaterialButton
+        <com.google.android.material.button.MaterialButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"

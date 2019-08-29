@@ -1,12 +1,12 @@
 package com.mylook.mylook.explore;
 
-import android.content.Context;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.SearchView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,45 +14,94 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
-import com.mylook.mylook.entities.Interaction;
 import com.mylook.mylook.info.ArticleInfoActivity;
-import com.mylook.mylook.room.AppDatabase;
-import com.mylook.mylook.room.LocalInteraction;
-import com.mylook.mylook.room.LocalInteractionDAO;
+import com.mylook.mylook.services.ExploreService;
 import com.mylook.mylook.utils.CardsExploreAdapter;
+import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
+import com.yuyakaido.android.cardstackview.CardStackListener;
 import com.yuyakaido.android.cardstackview.CardStackView;
-import com.yuyakaido.android.cardstackview.SwipeDirection;
+import com.yuyakaido.android.cardstackview.Direction;
+import com.yuyakaido.android.cardstackview.Duration;
+import com.yuyakaido.android.cardstackview.StackFrom;
+import com.yuyakaido.android.cardstackview.SwipeAnimationSetting;
+import com.yuyakaido.android.cardstackview.SwipeableMethod;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
-import java.util.Random;
+import java.util.Objects;
 
-public class ExploreFragment extends Fragment {
+public class ExploreFragment extends Fragment implements CardStackListener, CardsExploreAdapter.ArticleVisitListener {
 
-    private Context mContext;
-    private List<Article> mDiscoverableArticles;
-    private CardStackView mCardStack;
-    private CardsExploreAdapter mCardAdapter;
-    private ArrayList<Interaction> interactions;
-    private List<LocalInteraction> mLocalInteractions;
+    private static String TAG = "ExploreFragment";
+
     private ProgressBar mProgressBar;
     private TextView mMessage;
-    private LocalInteractionDAO localDAO;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+    private CardStackView mCardStack;
+    private CardStackLayoutManager mLayoutManager;
+    private CardsExploreAdapter mCardAdapter;
+    private List<Article> articles;
+
+    @SuppressLint("StaticFieldLeak")
     private static ExploreFragment exploreInstance;
+
+    private ExploreService exploreService;
+
+    @Override
+    public void onCardDragging(Direction direction, float ratio) {
+
+    }
+
+    @Override
+    public void onCardSwiped(Direction direction) {
+        switch (direction) {
+            case Left:
+                likeArticle(false);
+                break;
+            case Right:
+                likeArticle(true);
+                break;
+        }
+    }
+
+    @Override
+    public void onCardRewound() {
+
+    }
+
+    @Override
+    public void onCardCanceled() {
+
+    }
+
+    @Override
+    public void onCardAppeared(View view, int position) {
+
+    }
+
+    @Override
+    public void onCardDisappeared(View view, int position) {
+
+    }
+
+    @Override
+    public void onArticleClick() {
+        visitArticle();
+    }
+
+    private enum ViewName {
+        PROGRESS_BAR,
+        MESSAGE,
+        CARD_STACK
+    }
 
     public static ExploreFragment getInstance() {
         if (exploreInstance == null) exploreInstance = new ExploreFragment();
@@ -62,234 +111,148 @@ public class ExploreFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        return inflater.inflate(R.layout.fragment_explore, null);
+        return inflater.inflate(R.layout.fragment_explore, container, false); // maybe remove container and add null
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        super.onCreate(savedInstanceState);
 
-        mCardStack = view.findViewById(R.id.container);
-        mCardStack.setVisibility(View.GONE);
-        mProgressBar = view.findViewById(R.id.explore_progress_bar);
-        mProgressBar.setVisibility(View.VISIBLE);
-        mMessage = view.findViewById(R.id.explore_message);
-        mMessage.setVisibility(View.GONE);
-        mContext = getContext();
-        AppDatabase dbSQL = AppDatabase.getDatabase(mContext);
-        localDAO = dbSQL.getLocalInteractionDAO();
-        mLocalInteractions = localDAO.getAllByUser(user.getUid());
+        init(view);
 
-        if (mDiscoverableArticles == null || mDiscoverableArticles.size() == 0) {
-            mCardAdapter = new CardsExploreAdapter(mContext, R.layout.article_card);
-            getDiscoverableArticles();
+        if (exploreService == null) {
+            getArticles();
         } else {
-            mProgressBar.setVisibility(View.GONE);
-            mCardStack.setVisibility(View.VISIBLE);
+            mCardStack.setAdapter(mCardAdapter);
+            viewOnly(ViewName.CARD_STACK);
         }
-        mCardStack.setAdapter(mCardAdapter);
+    }
 
-        interactions = new ArrayList<>();
-        mCardStack.setCardEventListener(new CardStackView.CardEventListener() {
-            @Override
-            public void onCardDragging(float percentX, float percentY) {
-                Log.d("CardStackView", "onCardDragging");
-            }
+    private void init(View view) {
+        mProgressBar = view.findViewById(R.id.explore_progress_bar);
+        mMessage = view.findViewById(R.id.explore_message);
+        mCardStack = view.findViewById(R.id.container);
+        setupLayoutManager();
 
-            @Override
-            public void onCardSwiped(SwipeDirection direction) {
-                Interaction userInteraction = new Interaction();
-                userInteraction.setSavedToCloset(false);
-                userInteraction.setClickOnArticle(false);
-                userInteraction.setPromotionLevel(mDiscoverableArticles.get(0).getPromotionLevel());
-                userInteraction.setLiked(direction.toString().equalsIgnoreCase("right"));
-                userInteraction.setArticleId(mDiscoverableArticles.get(0).getArticleId());
-                userInteraction.setStoreName(mDiscoverableArticles.get(0).getStoreName());
-                userInteraction.setTags(mDiscoverableArticles.get(0).getTags());
-                userInteraction.setUserId(user.getUid());
-                interactions.add(userInteraction);
+        FloatingActionButton dislikeButton = view.findViewById(R.id.fab_dislike_article);
+        dislikeButton.setOnClickListener(v -> {
+            SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
+                    .setDirection(Direction.Right)
+                    .setDuration(Duration.Slow.duration)
+                    .setInterpolator(new AccelerateInterpolator())
+                    .build();
+            mLayoutManager.setSwipeAnimationSetting(setting);
+            mCardStack.swipe();
+        });
 
-                LocalInteraction local = new LocalInteraction();
-                local.setUid(mDiscoverableArticles.get(0).getArticleId());
-                local.setUserId(user.getUid());
-                local.setDate(Calendar.getInstance().getTime());
-                localDAO.insert(local);
+        FloatingActionButton likeButton = view.findViewById(R.id.fab_like_article);
+        likeButton.setOnClickListener(v -> {
+            SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
+                    .setDirection(Direction.Left)
+                    .setDuration(Duration.Slow.duration)
+                    .setInterpolator(new AccelerateInterpolator())
+                    .build();
+            mLayoutManager.setSwipeAnimationSetting(setting);
+            mCardStack.swipe();
+        });
+    }
 
-                mDiscoverableArticles.remove(0);
-                if (mDiscoverableArticles.isEmpty()) {
-                    mDiscoverableArticles = null;
-                    mCardStack.setVisibility(View.GONE);
-                    mMessage.setText("No quedan artículos para explorar.\n Intentá más tarde.");
-                    mMessage.setVisibility(View.VISIBLE);
-                }
-            }
+    private void setupLayoutManager() {
+        mLayoutManager = new CardStackLayoutManager(getContext(), this);
+        mLayoutManager.setStackFrom(StackFrom.Top);
+        mLayoutManager.setVisibleCount(3);
+        mLayoutManager.setTranslationInterval(4.0f);
+        mLayoutManager.setScaleInterval(0.95f);
+        mLayoutManager.setMaxDegree(0.0f);
+        mLayoutManager.setDirections(Direction.HORIZONTAL);
+        mLayoutManager.setSwipeThreshold(0.4f);
+        mLayoutManager.setCanScrollHorizontal(true);
+        mLayoutManager.setCanScrollVertical(true);
+        mLayoutManager.setSwipeableMethod(SwipeableMethod.AutomaticAndManual);
+        mCardStack.setLayoutManager(mLayoutManager);
+    }
 
-            @Override
-            public void onCardReversed() {
-                Log.d("CardStackView", "onCardReversed");
-            }
+    private void likeArticle(boolean liked) {
+        Log.e(TAG, "likeArticle: " + liked);
+        Article article = articles.remove(0);
+        exploreService.likeArticle(article, liked);
+        if (mCardAdapter.getItemCount() == 0) {
+            viewOnly(ExploreFragment.ViewName.MESSAGE);
+        }
+    }
 
-            @Override
-            public void onCardMovedToOrigin() {
-                Log.d("CardStackView", "onCardMovedToOrigin");
-            }
+    private void visitArticle() {
+        Article article = articles.get(0);
+        exploreService.visitArticle(article);
+        Intent intent = new Intent(getContext(), ArticleInfoActivity.class);
+        intent.putExtra("article", article);
+        Objects.requireNonNull(getContext()).startActivity(intent);
+    }
 
-            @Override
-            public void onCardClicked(int index) {
-                Interaction userInteraction = new Interaction();
-                userInteraction.setPromotionLevel(mDiscoverableArticles.get(0).getPromotionLevel());
-                userInteraction.setLiked(false);
-                userInteraction.setClickOnArticle(true);
-                userInteraction.setArticleId(mDiscoverableArticles.get(0).getArticleId());
-                userInteraction.setStoreName(mDiscoverableArticles.get(0).getStoreName());
-                userInteraction.setTags(mDiscoverableArticles.get(0).getTags());
-                userInteraction.setUserId(user.getUid());
-                interactions.add(userInteraction);
+    private void viewOnly(ViewName view) {
+        switch (view) {
+            case PROGRESS_BAR:
+                mProgressBar.setVisibility(View.VISIBLE);
+                mMessage.setVisibility(View.GONE);
+                mCardStack.setVisibility(View.GONE);
+                break;
+            case MESSAGE:
+                mMessage.setVisibility(View.VISIBLE);
+                mProgressBar.setVisibility(View.GONE);
+                mCardStack.setVisibility(View.GONE);
+                break;
+            case CARD_STACK:
+                mCardStack.setVisibility(View.VISIBLE);
+                mProgressBar.setVisibility(View.GONE);
+                mMessage.setVisibility(View.GONE);
+                break;
+        }
+    }
 
-                Intent intent = new Intent(mContext, ArticleInfoActivity.class);
-                Article art = mDiscoverableArticles.get(0);
-                intent.putExtra("article", art);
-                intent.putExtra("tags", userInteraction.getTags());
-                mContext.startActivity(intent);
+    private void getArticles() {
+        viewOnly(ViewName.PROGRESS_BAR);
+        articles = new ArrayList<>();
+        mCardAdapter = new CardsExploreAdapter(Objects.requireNonNull(getContext()), articles, this);
+        exploreService = new ExploreService(getContext());
+        exploreService.getArticles().addOnCompleteListener(task -> {
+            if (!task.isSuccessful() || task.getResult() == null) {
+                viewOnly(ExploreFragment.ViewName.MESSAGE);
+                Log.e(TAG, "getArticles", task.getException());
+            } else if (task.getResult().isEmpty()) {
+                viewOnly(ExploreFragment.ViewName.MESSAGE);
+                Log.d(TAG, "getArticles - No articles found");
+            } else {
+                articles.addAll(exploreService.createExploreArticleList(task.getResult()));
+                Log.d(TAG, "getArticles - Articles found: " + articles.size());
+                mCardStack.setAdapter(mCardAdapter);
+                viewOnly(ExploreFragment.ViewName.CARD_STACK);
             }
         });
     }
 
-    private void getDiscoverableArticles() {
-        //TODO incluir en produccion
-        //Calendar cal = Calendar.getInstance();
-        //cal.add(Calendar.DATE, -14);
-        //Date dateBefore2Weeks = cal.getTime();
-        db.collection("articles")
-                //.whereGreaterThan("creationDate", dateBefore2Weeks) Le saque el filtro para que aparecieran
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        if (task.getResult().isEmpty()) {
-                            mProgressBar.setVisibility(View.GONE);
-                            mMessage.setVisibility(View.VISIBLE);
-                        } else {
-                            if (createArticleList(task.getResult())) {
-                                mCardAdapter.addAll(mDiscoverableArticles);
-                                mProgressBar.setVisibility(View.GONE);
-                                mMessage.setVisibility(View.GONE);
-                                mCardStack.setVisibility(View.VISIBLE);
-                            } else {
-                                mProgressBar.setVisibility(View.GONE);
-                                mMessage.setVisibility(View.VISIBLE);
-                            }
-                        }
-                    } else {
-                        mProgressBar.setVisibility(View.GONE);
-                        mMessage.setVisibility(View.VISIBLE);
-                        Log.w("", task.getException());
-                    }
-                });
-    }
-
-    private boolean createArticleList(QuerySnapshot result) {
-        mDiscoverableArticles = new ArrayList<>();
-        List<Article> promo1 = new ArrayList<>();
-        List<Article> promo2 = new ArrayList<>();
-        List<Article> promo3 = new ArrayList<>();
-        int totalArticles = 0;
-        for (QueryDocumentSnapshot document : result) {
-            if (isNew(document.getId())) {
-                Article art = document.toObject(Article.class);
-                art.setArticleId(document.getId());
-                int pl = art.getPromotionLevel();
-                switch (pl) {
-                    case 1:
-                        promo1.add(art);
-                        break;
-                    case 2:
-                        promo2.add(art);
-                        break;
-                    case 3:
-                        promo3.add(art);
-                        break;
-                }
-                totalArticles++;
-            }
-        }
-        if (totalArticles == 0) return false;
-        if (!promo3.isEmpty()) Collections.shuffle(promo3);
-        if (!promo2.isEmpty()) Collections.shuffle(promo2);
-        if (!promo1.isEmpty()) Collections.shuffle(promo1);
-        Random r = new Random();
-        int v;
-        while (true) {
-            if (!promo3.isEmpty()) {
-                if (!promo2.isEmpty()) {
-                    if (!promo1.isEmpty()) {
-                        v = r.nextInt(100);
-                        if (v > 54) mDiscoverableArticles.add(promo3.remove(0));
-                        else if (v > 21) mDiscoverableArticles.add(promo2.remove(0));
-                        else mDiscoverableArticles.add(promo1.remove(0));
-                    } else {
-                        v = r.nextInt(100);
-                        if (v > 35) mDiscoverableArticles.add(promo3.remove(0));
-                        else mDiscoverableArticles.add(promo2.remove(0));
-                    }
-                } else {
-                    if (!promo1.isEmpty()) {
-                        v = r.nextInt(100);
-                        if (v > 32) mDiscoverableArticles.add(promo3.remove(0));
-                        else mDiscoverableArticles.add(promo1.remove(0));
-                    } else mDiscoverableArticles.add(promo3.remove(0));
-                }
-            } else {
-                if (!promo2.isEmpty()) {
-                    if (!promo1.isEmpty()) {
-                        v = r.nextInt(100);
-                        if (v > 39) mDiscoverableArticles.add(promo2.remove(0));
-                        else mDiscoverableArticles.add(promo1.remove(0));
-                    } else mDiscoverableArticles.add(promo2.remove(0));
-                } else {
-                    if (!promo1.isEmpty()) mDiscoverableArticles.add(promo1.remove(0));
-                    else break;
-                }
-            }
-        }
-        return true;
-    }
-
-    private boolean isNew(String id) {
-        return mLocalInteractions.stream().noneMatch(li -> li.getUid().equals(id));
-    }
-
     @Override
     public void onStop() {
-        uploadInteractions();
+        exploreService.uploadInteractions();
         super.onStop();
-    }
-
-    private void uploadInteractions() {
-        for (Interaction interaction : interactions) {
-            db.collection("interactions").add(interaction);
-        }
-        interactions.clear();
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.search_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
-        MenuItem item = menu.findItem(R.id.btnSearch);
+        MenuItem item = menu.findItem(R.id.search);
         SearchView searchView = (SearchView) item.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 Log.d("SUBMIT", "onQueryTextSubmit: query->" + s);
-                Intent intent = new Intent(mContext, SearchableActivity.class);
+                Intent intent = new Intent(getContext(), SearchableActivity.class);
                 intent.putExtra("query", s);
                 startActivity(intent);
                 return true;
@@ -301,7 +264,28 @@ public class ExploreFragment extends Fragment {
                 return false;
             }
         });
-        Log.e("OPTIONSMENU", "onCreateOptionsMenu: mSearchmenuItem->" + item.getActionView());
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.search:
+                return true;
+            case R.id.refresh:
+                refresh();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void refresh() {
+        exploreService.uploadInteractions();
+        if (mCardAdapter.getItemCount() == 0) {
+            getArticles();
+        } else {
+            Toast.makeText(getContext(), "Todavía tenés artículos para explorar!",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 }

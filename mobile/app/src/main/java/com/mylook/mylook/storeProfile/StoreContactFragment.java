@@ -4,9 +4,9 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,83 +17,100 @@ import com.mylook.mylook.R;
 
 public class StoreContactFragment extends Fragment {
 
-    private LinearLayout lnlFacebook, lnlInstagram, lnlTwitter;
-    private TextView txtFacebook, txtTwitter, txtInstagram;
+    private LinearLayout lnlface,lnlInsta,lnlTw;
+    private TextView storeLocation, storePhone;
+    private TextView txtTwitter, txtInstagram;
+    private TextView txtFacebook;
+
 
     public StoreContactFragment() {
     }
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_contact_store, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_contact_store, container, false);
+        init(rootView);
+        return rootView;
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        TextView storeLocation = view.findViewById(R.id.store_location);
-        storeLocation.setText(getArguments().getString("location"));
-        TextView storePhone = view.findViewById(R.id.store_phone);
-        storePhone.setText(getArguments().getString("phone"));
-        txtFacebook = view.findViewById(R.id.txtFacebook);
-        setOnClickFacebook(getArguments().getString("facebook"));
-        txtTwitter = view.findViewById(R.id.txtTwitter);
-        setOnClickTwitter(getArguments().getString("twitter"));
-        txtInstagram = view.findViewById(R.id.txtInstagram);
-        setOnClickInstagram(getArguments().getString("instagram"));
-        lnlFacebook = view.findViewById(R.id.lnlFace);
-        lnlInstagram = view.findViewById(R.id.lnlInta);
-        lnlTwitter = view.findViewById(R.id.lnlTw);
-    }
+    private void init(View rootView){
+        Bundle args = getArguments();
 
-    //TODO puede simplificarse el codigo bastante aca con parametros
+        if (args != null) {
+            storeLocation = rootView.findViewById(R.id.store_location);
+            setStoreLocation(args.getString("location"));
 
-    public void setOnClickFacebook(String facebook) {
-        txtFacebook.setText(facebook);
-        if (!facebook.equals("")) {
-            final String facebookURL = "https://www.facebook.com/" + facebook;
-            txtFacebook.setOnClickListener(v -> {
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(facebookURL))
-                            .setPackage("com.facebook.android"));
-                } catch (ActivityNotFoundException e) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(facebookURL)));
-                }
-            });
-            lnlFacebook.setVisibility(View.VISIBLE);
+            storePhone = rootView.findViewById(R.id.store_phone);
+            setStorePhone(args.getString("phone"));
+
+            lnlface=rootView.findViewById(R.id.lnlFace);
+            txtFacebook =rootView.findViewById(R.id.txtFacebook);
+            setOnClickFacebook(args.getString("facebook"));
+
+            lnlTw=rootView.findViewById(R.id.lnlTw);
+            txtTwitter =rootView.findViewById(R.id.txtTwitter);
+            setOnClickTwitter(args.getString("twitter"));
+
+            lnlInsta=rootView.findViewById(R.id.lnlInta);
+            txtInstagram =rootView.findViewById(R.id.txtInstagram);
+            setOnClickInstagram(args.getString("instagram"));
         }
     }
 
-    public void setOnClickTwitter(String twitter) {
-        txtTwitter.setText(twitter);
-        if (!twitter.equals("")) {
-            final String twitterURL = "https://twitter.com/" + twitter;
+    private void setStoreLocation(String storeLocation) {
+        this.storeLocation.setText(storeLocation);
+    }
+
+    private void setStorePhone(String storePhone) {
+        this.storePhone.setText(storePhone);
+    }
+
+    private void setOnClickFacebook(String txtFacebook) {
+        if (!txtFacebook.equals("")) {
+            final String finalTxtFacebook = "https://www.facebook.com/"+txtFacebook;
+            this.txtFacebook.setOnClickListener(v -> {
+                Intent intent=new Intent(Intent.ACTION_VIEW, Uri.parse(finalTxtFacebook));
+                intent.setPackage("com.facebook.android");
+                try{
+                    startActivity(intent);
+                }catch (ActivityNotFoundException e){
+                    startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(finalTxtFacebook)));
+                }
+            });
+            lnlface.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void setOnClickTwitter(String txtTwitter) {
+        if (!txtTwitter.equals("")) {
+            final String finalTxtTwitter = "https://twitter.com/"+txtTwitter;
             this.txtTwitter.setOnClickListener(v -> {
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(twitterURL))
-                            .setPackage("com.twitter.android"));
-                } catch (ActivityNotFoundException e) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(twitterURL)));
+                Intent intent=new Intent(Intent.ACTION_VIEW, Uri.parse(finalTxtTwitter));
+                intent.setPackage("com.twitter.android");
+                try{
+                    startActivity(intent);
+                }catch (ActivityNotFoundException e){
+                    startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(finalTxtTwitter)));
                 }
 
             });
-            lnlTwitter.setVisibility(View.VISIBLE);
+            lnlTw.setVisibility(View.VISIBLE);
         }
     }
 
-    public void setOnClickInstagram(String instagram) {
-        txtTwitter.setText(instagram);
-        if (!instagram.equals("")) {
-            final String instagramURL = "https://www.instagram.com/" + instagram;
+    private void setOnClickInstagram(String txtInstagram) {
+        if (!txtInstagram.equals("")) {
+            final String finalTxtInstagram = "https://www.instagram.com/"+txtInstagram;
             this.txtInstagram.setOnClickListener(v -> {
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(instagramURL))
-                            .setPackage("com.instagram.android"));
-                } catch (ActivityNotFoundException e) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(instagramURL)));
+                Intent intent=new Intent(Intent.ACTION_VIEW, Uri.parse(finalTxtInstagram));
+                intent.setPackage("com.instagram.android");
+                try{
+                    startActivity(intent);
+                }catch (ActivityNotFoundException e){
+                    startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(finalTxtInstagram)));
                 }
             });
-            lnlInstagram.setVisibility(View.VISIBLE);
+            lnlInsta.setVisibility(View.VISIBLE);
         }
     }
 }

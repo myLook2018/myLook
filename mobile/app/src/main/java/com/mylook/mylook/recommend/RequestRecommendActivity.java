@@ -5,20 +5,21 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.ShareActionProvider;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.ShareActionProvider;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,9 +29,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.RequestRecommendation;
-import com.mylook.mylook.home.MyLookActivity;
 import com.mylook.mylook.session.MainActivity;
-import com.mylook.mylook.session.Sesion;
+import com.mylook.mylook.session.Session;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -138,14 +138,14 @@ public class RequestRecommendActivity extends AppCompatActivity {
 
 
     private void updateAnswers(){
-            dB.collection("requestRecommendations").document(requestId).update("answers", answers).addOnCompleteListener(
-                    new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            Log.e(TAG, "Respuestas actualizadas");
-                        }
+        dB.collection("requestRecommendations").document(requestId).update("answers", answers).addOnCompleteListener(
+                new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.e(TAG, "Respuestas actualizadas");
                     }
-            );
+                }
+        );
 
     }
 
@@ -165,9 +165,9 @@ public class RequestRecommendActivity extends AppCompatActivity {
                                 newRecommendation = false;
                             }
                         }
-                            if (newRecommendation){
-                                answers.add(remoteAnswer);
-                            }
+                        if (newRecommendation){
+                            answers.add(remoteAnswer);
+                        }
                     }
                 }
                 updateAnswers();
@@ -188,7 +188,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
                         }
                     }
                 });
-        Sesion.getInstance().updateActivitiesStatus(Sesion.RECOMEND_FRAGMENT);
+        Session.getInstance().updateActivitiesStatus(Session.RECOMEND_FRAGMENT);
     }
 
     @Override
@@ -209,7 +209,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
             MenuItem item = menu.findItem(R.id.share_req);
 
             // Fetch and store ShareActionProvider
-           //mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+            //mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
         } else {
 //            menu.getItem(0).setVisible(false);
 //            menu.getItem(1).setVisible(false);
@@ -276,4 +276,3 @@ public class RequestRecommendActivity extends AppCompatActivity {
         return true;
     }
 }
-

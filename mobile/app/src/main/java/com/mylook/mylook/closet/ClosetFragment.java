@@ -2,12 +2,11 @@ package com.mylook.mylook.closet;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPager;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.tabs.TabLayout;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -89,7 +88,7 @@ public class ClosetFragment extends Fragment {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        ClosetTabAdapter adapter = new ClosetTabAdapter(getChildFragmentManager(), 2);
+        ClosetTabAdapter adapter = new ClosetTabAdapter(getChildFragmentManager());
         adapter.addFragment(favoritesTab, "Favoritos");
         adapter.addFragment(outfitsTab, "Conjuntos");
         viewPager.setAdapter(adapter);
