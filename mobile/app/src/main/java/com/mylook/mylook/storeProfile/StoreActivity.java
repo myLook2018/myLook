@@ -131,7 +131,7 @@ public class StoreActivity extends AppCompatActivity {
         bundle.putString("facebook", store.getFacebookLink());
         bundle.putString("twitter", store.getTwitterLink());
         bundle.putString("instagram", store.getInstagramLink());
-        bundle.putLong("phone", store.getStorePhone());
+        bundle.putString("phone", store.getStorePhone());
         bundle.putString("location", store.getStoreAddress() + " " + store.getStoreAddressNumber() +
                 " - " + store.getStoreFloor() + " - " + store.getStoreCity());
         bundle.putString("email", store.getStoreMail());

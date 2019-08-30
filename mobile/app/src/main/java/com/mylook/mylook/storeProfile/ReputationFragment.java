@@ -51,7 +51,7 @@ public class ReputationFragment extends Fragment {
             lblDate = rootView.findViewById(R.id.lblDate);
             Date date=(Date) args.getSerializable("registerDate");
             if (date!=null) setRegisterDate(date);
-            else lblDate.setText("Ale pasame este dato");
+            else lblDate.setText("Ale pasame este dato"); //TODO Ver si se puede tomar del FirebaseUID
 
             lblCant = rootView.findViewById(R.id.lblCant);
             setSubscriptions(store);
