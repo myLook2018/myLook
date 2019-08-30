@@ -49,7 +49,9 @@ public class ReputationFragment extends Fragment {
             TextView lblActiveStore = rootView.findViewById(R.id.lblActiveStore);
 
             lblDate = rootView.findViewById(R.id.lblDate);
-            setRegisterDate((Date) args.getSerializable("registerDate"));
+            Date date=(Date) args.getSerializable("registerDate");
+            if (date!=null) setRegisterDate(date);
+            else lblDate.setText("Ale pasame este dato");
 
             lblCant = rootView.findViewById(R.id.lblCant);
             setSubscriptions(store);
