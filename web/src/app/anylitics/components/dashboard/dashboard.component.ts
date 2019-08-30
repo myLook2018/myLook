@@ -250,7 +250,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getAmountOfPromotedInteractions() {
-    debugger;
     for (let i = 0; i < this.interactions.length; i++) {
       switch (this.getLevelOfPromotion(this.interactions[i])) {
         case 1: {

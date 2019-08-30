@@ -133,7 +133,8 @@ export class ArticleDialogComponent implements OnInit, OnDestroy, AfterViewInit 
     this.cropperSettings.canvasWidth = 210;
 */
     this.createForm();
-    if (articleData.picturesArray[0]) {
+    console.log('article data ', this.articleData);
+    if (this.articleData.picturesArray) {
       const articlePicture = (this.isNew = false);
     } else {
     }
@@ -263,12 +264,9 @@ export class ArticleDialogComponent implements OnInit, OnDestroy, AfterViewInit 
     this.articleForm.get('tags').setValue(this.tags.map(x => x));
     this.articleForm.get('sizes').setValue(this.sizes.map(x => x));
     this.articleForm.get('colors').setValue(this.colors.map(x => x));
-    const storeLocation = {
-      latitude: this.articleData.storeLatitude,
-      longitude: this.articleData.storeLongitude
-    };
-    this.articleForm.addControl('storeLatitude', new FormControl(storeLocation.latitude, Validators.required));
-    this.articleForm.addControl('storeLongitude', new FormControl(storeLocation.longitude, Validators.required));
+
+    this.articleForm.addControl('storeLatitude', new FormControl(this.articleData.storeLatitude, Validators.required));
+    this.articleForm.addControl('storeLongitude', new FormControl(this.articleData.storeLongitude, Validators.required));
     this.uploadPictures(imagesToUpload).then(picturesURL => {
       this.articleForm.get('picturesArray').setValue(picturesURL.map(x => x));
       this.articleService.addArticle(this.articleForm.value).then(() => {
@@ -286,15 +284,25 @@ export class ArticleDialogComponent implements OnInit, OnDestroy, AfterViewInit 
       // tslint:disable-next-line: quotemark
       console.log('items ', items);
 
-      this.dataService.uploadPictureFile(items[0]).then(res0 => {
+      // eliminar fotos que estan vacias
+      const realItems = [];
+      items.forEach(file => {
+        if (file.size > 0) {
+          realItems.push(file);
+        }
+      });
+
+      console.log('realItems', realItems);
+
+      this.dataService.uploadPictureFile(realItems[0]).then(res0 => {
         console.log('res0 ', res0);
         result.push(res0);
-        if (items[1] !== '') {
-          this.dataService.uploadPictureFile(items[1]).then(res1 => {
+        if (realItems[1]) {
+          this.dataService.uploadPictureFile(realItems[1]).then(res1 => {
             console.log('res1', res1);
             result.push(res1);
-            if (items[2] !== '') {
-              this.dataService.uploadPictureFile(items[2]).then(res2 => {
+            if (realItems[2]) {
+              this.dataService.uploadPictureFile(realItems[2]).then(res2 => {
                 console.log('res2', res2);
                 result.push(res2);
                 resolve(result);
@@ -491,10 +499,12 @@ export class ArticleDialogComponent implements OnInit, OnDestroy, AfterViewInit 
 
   loadImagesToCrop() {
     const croppers = [this.cropping0, this.cropping1, this.cropping2];
-    for (let index = 0; index < this.articleData.picturesArray.length; index++) {
-      console.log('cargando indice:', index);
-      croppers[index].setImageUrl(this.articleData.picturesArray[index]);
-      this.isLoadedImage[index] = this.articleData.picturesArray[index];
+    if (this.articleData.picturesArray) {
+      for (let index = 0; index < this.articleData.picturesArray.length; index++) {
+        console.log('cargando indice:', index);
+        croppers[index].setImageUrl(this.articleData.picturesArray[index]);
+        this.isLoadedImage[index] = this.articleData.picturesArray[index];
+      }
     }
   }
 

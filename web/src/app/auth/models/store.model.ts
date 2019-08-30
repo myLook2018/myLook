@@ -20,6 +20,8 @@ export class StoreModel {
   provider: string;
   storeLatitude: number;
   storeLongitude: number;
+  storeTower: string;
+  storeDept: string;
 
   constructor() {
     this.firebaseUID = '';
@@ -43,5 +45,7 @@ export class StoreModel {
     this.provider = '';
     this.storeLatitude = 0;
     this.storeLongitude = 0;
+    this.storeTower = '';
+    this.storeDept = '';
   }
 }

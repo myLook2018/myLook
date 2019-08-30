@@ -1,5 +1,25 @@
 .example-card {
   max-width: 400px;
+  max-height: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+p {
+  text-transform: lowercase;
+}
+
+p::first-letter {
+  text-transform: uppercase;
+}
+
+.firstToUpper::first-letter {
+  text-transform: uppercase;
+}
+
+.elForm {
+  max-width: 0px;
+  padding-left: calc(2.5vw);
 }
 
  /* ------------------------------------------------------------------------------------------- */
@@ -7,7 +27,6 @@
   background-color: red;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-gap: 10px;
   grid-auto-rows: minmax(100px, auto);
 
   .storeInformation{
@@ -23,6 +42,39 @@
       grid-column: 2;
       grid-row: 1;
       background-color: aquamarine;
+
+      .info-card {
+        margin-left: auto;
+        margin-right: auto;
+
+        .container-table {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          grid-gap: 10px;
+          grid-auto-rows: minmax(100px, auto);
+          align-items: center;
+          justify-items: center;
+
+          .first-column {
+            grid-column: 1/2;
+            grid-row: 1;
+            align-self: stretch;
+            width: calc(20vw);
+
+          }
+
+          .second-column {
+            grid-column: 2/3;
+            grid-row: 1;
+            align-self: stretch;
+            width: calc(20vw);
+          }
+
+          .fullWidth {
+            width: 85%;
+          }
+        }
+      }
     }
   }
 

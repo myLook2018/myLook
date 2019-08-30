@@ -175,10 +175,8 @@ export class RegisterComponent implements OnInit {
     this.registerStoreFormGroupStep2 = this.fb.group({
       ownerName: [''],
       storeAddress: [''],
-      storePosition : this.fb.group({
-        latitude: [''],
-        longitude: [''],
-      }),
+      storeLatitude: [''],
+      storeLongitude: [''],
       storeFloor: [''],
       storeDept: [''],
       storeTower: [''],
@@ -323,8 +321,8 @@ export class RegisterComponent implements OnInit {
   }
 
   buildFinalForm() {
-    this.registerStoreFormGroupStep2.get('storePosition').get('latitude').setValue(this.latitude);
-    this.registerStoreFormGroupStep2.get('storePosition').get('longitude').setValue(this.longitude);
+    this.registerStoreFormGroupStep2.get('storeLatitude').setValue(this.latitude);
+    this.registerStoreFormGroupStep2.get('storeLongitude').setValue(this.longitude);
     const newValues = Object.assign(
       {},
       this.registerStoreFormGroupStep1.value,

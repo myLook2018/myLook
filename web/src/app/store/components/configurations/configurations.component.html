@@ -6,32 +6,92 @@
           <mat-card-title>{{actualStore.storeName}}</mat-card-title>
           <mat-card-subtitle>Perfil de Tienda</mat-card-subtitle>
         </mat-card-header>
-        <img mat-card-image src="{{actualStore.profilePh}}" alt="Cargando">
+        <img mat-card-image src="{{actualStore.profilePh}}" alt="Cargando" height="400" width="400">
         <mat-card-content>
-          <p>
-            <strong>Descripción</strong>: {{actualStore.storeDescription}}
+          <p *ngIf="actualStore.storeDescription">
+            <strong>Descripción:</strong> {{actualStore.storeDescription}}
+          </p>
+          <p *ngIf="actualFirebaseUser">
+            <strong>Correo Electrónico:</strong> {{actualFirebaseUser.email}}
+          </p>
+          <p *ngIf="actualFirebaseUser">
+            <strong>En la aplicación desde:</strong> {{actualFirebaseUser.metadata.creationTime | date: 'shortDate'}}
           </p>
         </mat-card-content>
-        <mat-card-actions>
+        <!-- <mat-card-actions>
           <button mat-button>LIKE</button>
           <button mat-button>SHARE</button>
-        </mat-card-actions>
+        </mat-card-actions> -->
       </mat-card>
     </div>
     <div class="extraInformation">
-      <mat-card class="example-card">
+      <mat-card class="info-card">
         <mat-card-header>
-          <div mat-card-avatar class="example-header-image"></div>
-          <mat-card-title>Shiba Inu</mat-card-title>
-          <mat-card-subtitle>Dog Breed</mat-card-subtitle>
+          <mat-card-title>Información de la Cuenta</mat-card-title>
         </mat-card-header>
-        <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">
         <mat-card-content>
-          <p>
-            The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
-            A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
-            bred for hunting.
-          </p>
+          <div class="form" *ngIf="myFormGroup">
+            <form class="elForm" [formGroup]="myFormGroup">
+              <div class="container-table">
+
+              <div class="first-column">
+              <p>
+                <mat-form-field appearance="outline" class="fullWidth">
+                  <mat-label>Dirección</mat-label>
+                  <input matInput placeholder="Ej: Avenida Colón 1234" formControlName="storeAddress">
+                </mat-form-field>
+              </p>
+              <p>
+                <mat-form-field appearance="outline" class="fullWidth">
+                  <mat-label>Torre</mat-label>
+                  <input matInput placeholder="Ejs: 1 ó A ó Torre Vitacura" formControlName="storeTower">
+                </mat-form-field>
+              </p>
+              <p>
+                <mat-form-field appearance="outline" class="fullWidth">
+                  <mat-label>Piso</mat-label>
+                  <input matInput placeholder="Ej: 1 ó 1ro" formControlName="storeFloor">
+                </mat-form-field>
+              </p>
+              <p>
+                <mat-form-field appearance="outline" class="fullWidth">
+                  <mat-label>Departamento</mat-label>
+                  <input matInput placeholder="Ej: 1 ó A" formControlName="storeDept">
+                </mat-form-field>
+              </p>
+
+            </div>
+
+            <div class="second-column">
+              <p>
+                <mat-form-field appearance="outline" class="fullWidth">
+                  <mat-label>Teléfono</mat-label>
+                  <input matInput placeholder="Ej: 012-3456789" formControlName="storePhone">
+                </mat-form-field>
+              </p>
+              <p>
+                <mat-form-field appearance="outline" class="fullWidth">
+                  <mat-label>Facebook</mat-label>
+                  <input matInput placeholder="Ej: myLookApp" formControlName="facebookLink">
+                </mat-form-field>
+              </p>
+              <p>
+                <mat-form-field appearance="outline" class="fullWidth">
+                  <mat-label>Instagram</mat-label>
+                  <input matInput placeholder="Ej: myLookApp" formControlName="instagramLink">
+                </mat-form-field>
+              </p>
+              <p>
+                <mat-form-field appearance="outline" class="fullWidth">
+                  <mat-label>Twitter</mat-label>
+                  <input matInput placeholder="Ej: Avenida Colón 1234" formControlName="twitterLink">
+                </mat-form-field>
+              </p>
+            </div>
+          </div>
+            </form>
+          </div>
+
         </mat-card-content>
         <mat-card-actions>
           <button mat-button>LIKE</button>
