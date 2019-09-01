@@ -66,6 +66,9 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
 
     private ExploreService exploreService;
     private LocationManager locationManager;
+    private boolean detectNearby;
+    private boolean filter;
+    private boolean first = true;
 
     @Override
     public void onCardDragging(Direction direction, float ratio) {
@@ -139,7 +142,7 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
         init(view);
 
         if (exploreService == null) {
-            getArticles();
+            setupExploration();
         } else {
             mCardStack.setAdapter(mCardAdapter);
             viewOnly(ViewName.CARD_STACK);
@@ -178,44 +181,64 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
         });
 
         geolocationButton = view.findViewById(R.id.fab_geolocation);
-        geolocationButton.setOnClickListener(v -> detectNearbyArticles());
+        setupGeolocationFab();
+    }
+
+    private void setupGeolocationFab() {
+        if (detectNearby) {
+            if (filter) {
+                geolocationButton.setImageResource(R.drawable.ic_unfilter_24dp);
+                geolocationButton.setOnClickListener(v -> getArticles());
+            } else {
+                geolocationButton.setImageResource(R.drawable.ic_filter_24dp);
+                geolocationButton.setOnClickListener(v -> getArticles());
+            }
+        } else {
+            geolocationButton.setImageResource(R.drawable.ic_geo_24dp);
+            geolocationButton.setOnClickListener(v -> setupExploration());
+        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.e(TAG, "onRequestPermissionsResult: start");
         if (requestCode == ACCESS_FINE_LOCATION_REQUEST) {
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                detectNearbyArticles();
+            Log.e(TAG, "onRequestPermissionsResult: request");
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.e(TAG, "onRequestPermissionsResult: true");
+                getArticles();
             } else {
-                geolocationButton.setEnabled(false);
+                getArticles(null, false);
             }
         }
     }
 
-    private void detectNearbyArticles() {
+    private void setupExploration() {
         if (getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // TODO
-            } else {
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_REQUEST);
-            }
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_REQUEST);
+        } else if (exploreService == null || articles == null || articles.size() == 0){
+            getArticles();
+        }
+    }
+
+    private void getArticles() {
+        if (getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            displayMessage("No pudo accederse a tu ubicación");
+            getArticles(null, false);
         } else {
-            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                displayMessage("No pudo accederse a tu ubicación");
+            Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if (first) {
+                detectNearby = true;
+                first = false;
+                getArticles(location, false);
             } else {
-                Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                if (location != null) {
-                    mCardAdapter.setLocation(location);
-                    mCardAdapter.notifyDataSetChanged();
-                    double latitude = location.getLatitude();
-                    double longitude = location.getLongitude();
-                    displayMessage(String.valueOf(latitude) + " - " + String.valueOf(longitude));
-                } else {
-                    displayMessage("No pudo encontrarse tu ubicación");
-                }
+                filter = !filter;
+                getArticles(location, filter);
             }
+            setupGeolocationFab();
         }
     }
 
@@ -235,7 +258,6 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
     }
 
     private void likeArticle(boolean liked) {
-        Log.e(TAG, "likeArticle: " + liked);
         Article article = articles.remove(0);
         exploreService.likeArticle(article, liked);
         if (mCardAdapter.getItemCount() == 0) {
@@ -271,7 +293,7 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
         }
     }
 
-    private void getArticles() {
+    private void getArticles(Location location, boolean filter) {
         viewOnly(ViewName.PROGRESS_BAR);
         articles = new ArrayList<>();
         mCardAdapter = new CardsExploreAdapter(Objects.requireNonNull(getContext()), articles, this);
@@ -284,7 +306,7 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
                 viewOnly(ExploreFragment.ViewName.MESSAGE);
                 Log.d(TAG, "getArticles - No articles found");
             } else {
-                articles.addAll(exploreService.createExploreArticleList(task.getResult()));
+                articles.addAll(exploreService.createExploreArticleList(task.getResult(), location, filter));
                 Log.d(TAG, "getArticles - Articles found: " + articles.size());
                 mCardStack.setAdapter(mCardAdapter);
                 viewOnly(ExploreFragment.ViewName.CARD_STACK);
@@ -294,7 +316,9 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
 
     @Override
     public void onStop() {
-        exploreService.uploadInteractions();
+        if (exploreService != null) {
+            exploreService.uploadInteractions();
+        }
         super.onStop();
     }
 
@@ -337,11 +361,17 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
 
     private void refresh() {
         exploreService.uploadInteractions();
-        if (mCardAdapter.getItemCount() == 0) {
-            getArticles();
+        if (getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_REQUEST);
         } else {
-            Toast.makeText(getContext(), "Todavía tenés artículos para explorar!",
-                    Toast.LENGTH_SHORT).show();
+            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                displayMessage("No pudo accederse a tu ubicación");
+                getArticles(null, false);
+            } else {
+                Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                getArticles(location, filter);
+            }
         }
     }
 

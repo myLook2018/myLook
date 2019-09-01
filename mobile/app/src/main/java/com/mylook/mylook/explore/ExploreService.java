@@ -1,6 +1,7 @@
 package com.mylook.mylook.explore;
 
 import android.content.Context;
+import android.location.Location;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -57,7 +58,7 @@ public class ExploreService {
         interactions = new ArrayList<>();
     }
 
-    public List<Article> createExploreArticleList(QuerySnapshot query) {
+    public List<Article> createExploreArticleList(QuerySnapshot query, Location location, boolean filter) {
         List<Article> promo1 = new ArrayList<>();
         List<Article> promo2 = new ArrayList<>();
         List<Article> promo3 = new ArrayList<>();
@@ -67,6 +68,10 @@ public class ExploreService {
             if (isNew(document.getId())) {
                 Article article = document.toObject(Article.class);
                 article.setArticleId(document.getId());
+                article.setNearby(LocationValidator.checkIfNearby(article, location));
+                if (filter && !article.isNearby()) {
+                    continue;
+                }
                 switch (article.getPromotionLevel()) {
                     case 1:
                         promo1.add(article);
@@ -168,6 +173,7 @@ public class ExploreService {
         return db.collection("articles")
                 //.whereGreaterThan("creationDate", dateBefore2Weeks) Le saque el filtro para que aparecieran
                 .get();
+
     }
 
     public void uploadInteractions() {

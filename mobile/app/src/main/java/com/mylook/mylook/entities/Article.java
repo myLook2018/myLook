@@ -29,6 +29,7 @@ public class Article implements Serializable, Comparable<Article>, Comparator<Ar
     private boolean isStorefront;
     private double storeLatitude;
     private double storeLongitude;
+    private boolean nearby;
 
     public Article() {
     }
@@ -183,6 +184,7 @@ public class Article implements Serializable, Comparable<Article>, Comparator<Ar
         this.colors = (ArrayList<String>) map.get("colors");
         this.sizes = (ArrayList<String>) map.get("sizes");
         this.tags = (ArrayList<String>) map.get("tags");
+        this.nearby = (boolean) map.get("nearby");
         return this;
     }
 
@@ -256,5 +258,13 @@ public class Article implements Serializable, Comparable<Article>, Comparator<Ar
 
     public void setStoreLongitude(double storeLongitude) {
         this.storeLongitude = storeLongitude;
+    }
+
+    public boolean isNearby() {
+        return nearby;
+    }
+
+    public void setNearby(boolean nearby) {
+        this.nearby = nearby;
     }
 }

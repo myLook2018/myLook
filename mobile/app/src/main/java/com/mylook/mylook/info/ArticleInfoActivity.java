@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -50,7 +51,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
     private Article article;
     private ArrayList<String> tags, imageArraySlider;
     private LinearLayout lnlSizes, lnlColors;
-    private TextView txtMaterial, txtCost, txtTitle, txtStoreName;
+    private TextView txtMaterial, txtCost, txtTitle, txtStoreName, txtNearby;
     private boolean inCloset;
     private boolean initialInCloset;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -102,6 +103,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
     private void initElements() {
         btnCloset=findViewById(R.id.btnCloset);
         articleImage=findViewById(R.id.article_image);
+        txtNearby = findViewById(R.id.txtNearby);
         txtTitle=findViewById(R.id.txtTitle);
         txtStoreName=findViewById(R.id.txtStoreName);
         txtMaterial=findViewById(R.id.txtMaterial);
@@ -195,6 +197,9 @@ public class ArticleInfoActivity extends AppCompatActivity {
     }
 
     private void setDetail() {
+        if (!article.isNearby()) {
+            txtNearby.setVisibility(View.GONE);
+        }
         txtStoreName.setText(article.getStoreName());
         txtTitle.setText(article.getTitle());
         txtMaterial.setText(article.getMaterial());
