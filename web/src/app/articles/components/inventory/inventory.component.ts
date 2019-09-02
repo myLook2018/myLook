@@ -1,4 +1,5 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Article } from '../../models/article';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ArticleDialogComponent } from '../dialogs/articleDialog';
@@ -43,7 +44,8 @@ export class InventoryComponent implements OnInit, OnDestroy {
     public articleService: ArticleService,
     public dataService: DataService,
     public dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.createForm();
     this.options = fb.group({
@@ -72,6 +74,12 @@ export class InventoryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    if (this.route.snapshot.paramMap.get('collection_status')) {
+      const isAprovedPay = this.route.snapshot.paramMap.get('collection_status');
+      const articleId = this.route.snapshot.paramMap.get('external_reference');
+      console.log('este es el external ID ', articleId);
+      console.log('es aprobado? ', isAprovedPay);
+    }
     console.log('-+-+-+-+-+-Inicializando Inventario-+-+-+-+-+-');
     this.dataSource = [];
     this.dataService.getStoreInfo().then(store => {
@@ -90,7 +98,9 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     console.log('destruyendo subscripciones');
-    this.articlesSubscription.unsubscribe();
+    if (this.articlesSubscription) {
+      this.articlesSubscription.unsubscribe();
+    }
   }
 
   createForm() {
@@ -108,6 +118,25 @@ export class InventoryComponent implements OnInit, OnDestroy {
   }
 
   openPromoteDialog(article): void {
+    const dataToSend = {
+      storeName: this.userStore.storeName,
+      phone: this.userStore.storePhone,
+      phoneArea: '2966',
+      ownerName: this.userStore.ownerName,
+      storeEmail: this.userStore.storeMail,
+      dni: 38773582,
+      title: article.title,
+      code: article.code,
+      id: article.articleId,
+      picture: article.picturesArray[0],
+      cost: article.cost,
+      sizes: article.sizes,
+      material: article.material,
+      colors: article.colors,
+      initial_stock: article.initial_stock,
+      provider: article.provider,
+      tags: article.tags
+    };
     const promoteRef = this.dialog.open(PromoteDialogComponent, {
       width: '400px',
       data: article
@@ -115,7 +144,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     const sub = promoteRef.componentInstance.onAdd.subscribe(res => {
       if (res !== undefined) {
         this.promoteArticle(res, article, this.userStore.firebaseUID);
-        this.RedirectToMercadoPago(res);
+        // this.RedirectToMercadoPago(res);
       }
     });
     promoteRef.afterClosed().subscribe(result => {
@@ -161,6 +190,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
       sub.unsubscribe();
     });
   }
+
   openArticleDialog(article: Article): void {
     let dataToSend = {};
     if (article !== undefined) {
@@ -206,7 +236,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     }
   }
 
-  setVidriera(idOfFrontsArticles: string[]) {
+  setVidriera(idOfFrontsArticles: string[] =  this.selectedIndexes) {
     this.resetSelectedVidriera();
     for (let i = 0; i < idOfFrontsArticles.length; i++) {
       console.log(`ahora ponemos en vidriera a ` + idOfFrontsArticles[i]);
@@ -237,11 +267,13 @@ export class InventoryComponent implements OnInit, OnDestroy {
   }
 
   addIdToSelecteds(row, event) {
-    const index = this.selectedIndexes.indexOf(row, 0);
+    console.log('row',row);
+    console.log('event',event);
+    const index = this.selectedIndexes.indexOf(this.articles[row].articleId, 0);
     if (index > -1) {
       this.selectedIndexes.splice(index, 1);
     } else {
-      this.selectedIndexes.push(row);
+      this.selectedIndexes.push(this.articles[row].articleId);
     }
     console.log(`estado actual ` + this.selectedIndexes);
   }
@@ -274,12 +306,12 @@ export class InventoryComponent implements OnInit, OnDestroy {
     this.selectedIndexes = [];
   }
 
-  RedirectToMercadoPago(promData) {
-    switch (promData.promotionCost) {
-      case 10: {
-        window.open('https://www.mercadopago.com/mla/checkout/start?pref_id=181044052-8b71c605-305a-44b5-8328-e07bb750ea94');
-        break;
-      }
-    }
-  }
+  // RedirectToMercadoPago(promData) {
+  //   switch (promData.promotionCost) {
+  //     case 10: {
+  //       window.open('https://www.mercadopago.com/mla/checkout/start?pref_id=181044052-8b71c605-305a-44b5-8328-e07bb750ea94');
+  //       break;
+  //     }
+  //   }
+  // }
 }

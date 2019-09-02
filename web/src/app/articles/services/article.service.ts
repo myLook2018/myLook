@@ -21,6 +21,7 @@ const httpOptions = {
 
 @Injectable()
 export class ArticleService {
+  mpURL = 'https://us-central1-app-mylook.cloudfunctions.net/postMercadopagoCheckout';
   articleCollection: AngularFirestoreCollection<Article>;
   promoteCollection: AngularFirestoreCollection;
   articles: Observable<Article[]>;
@@ -82,7 +83,7 @@ export class ArticleService {
     // tslint:disable-next-line:no-shadowed-variable
     return new Promise<any>((resolve, reject) => {
       console.log(`estamos preguntando por ` + storeName);
-      const res = this.db.collection(this.collectionPath).where('storeName', '==', storeName).where('estaEnVidriera', '==', true)
+      const res = this.db.collection(this.collectionPath).where('storeName', '==', storeName).where('isStorefront', '==', true)
         .get().then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
             const data = doc.data();
@@ -111,7 +112,7 @@ export class ArticleService {
   refreshVidrieraAttribute(articleUID, newValue: boolean) {
     return new Promise<any> ((resolve) => {
       this.fst.collection(this.collectionPath).doc(articleUID).update({
-        estaEnVidriera: newValue
+        isStorefront: newValue
       }).then(() => resolve(console.log(articleUID + `actualizado a ` + newValue)));
     }).catch(error => reject(error));
   }
@@ -223,5 +224,9 @@ export class ArticleService {
       res.then(ref => console.log(ref.id));
       resolve(res);
     });
+  }
+
+  tryPromoteMP(preferenceMP)  {
+    return this.http.post(this.mpURL, preferenceMP);
   }
 }

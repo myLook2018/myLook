@@ -131,6 +131,7 @@ public class User implements  Comparable<User> {
         map.put("dni", this.getDni());
         map.put("userId", this.getUserId());
         map.put("birthday",this.getBirthday());
+        map.put("isPremium",this.getPremium());
         return map;
     }
 }

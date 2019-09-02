@@ -1,101 +1,70 @@
 <h1 mat-dialog-title style="text-align:center; margin:0">
-  Promociona tú prenda!
+  Promociona tu prenda!
 </h1>
 <div
   class="mat-typography"
   mat-dialog-content
   style="display: inline; margin-left: auto; margin-right: auto; padding: 0"
 >
-  <h3 style="margin:0">{{ data.title }}</h3>
-  <mat-horizontal-stepper #stepper>
-    <mat-step [stepControl]="step1">
-        <ng-template matStepLabel>Preferencias</ng-template>
-        <form [formGroup]="firstFormGroup">
-          <img
-          style="margin-left:auto;margin-right:auto;margin-bottom:10px"
-          height="300"
-          width="300"
-          src="{{ data.picture }}"
-          />
-          <mat-form-field style="width: 100%">
-              <mat-select
-              [ngModelOptions]="{standalone: true}"
-              placeholder="Duración de la promoción."
-              [(ngModel)]="duration"
-              name="dur"
-              >
-              <mat-option
-              *ngFor="let dur of durations"
-              [value]="dur.value"
-              (click)="tryCalculateCost()"
-              >
-              {{ dur.viewValue }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+  <h3 class="articleName">{{ data.title }}</h3>
+  <form [formGroup]="firstFormGroup">
+    <img
+      class="promotionPicture"
+      height="300"
+      width="300"
+      src="{{ data.picturesArray[0] }}"
+    />
+    <mat-form-field style="width: 100%">
+      <mat-select
+        [ngModelOptions]="{ standalone: true }"
+        placeholder="Duración de la promoción."
+        [(ngModel)]="duration"
+        name="dur"
+      >
+        <mat-option
+          *ngFor="let dur of durations"
+          [value]="dur.value"
+          (click)="tryCalculateCost()"
+        >
+          {{ dur.viewValue }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-        <mat-form-field style="width: 100%">
-            <mat-select
-            [ngModelOptions]="{standalone: true}"
-            placeholder="Nivel de Promoción"
-            [(ngModel)]="selectedPromotion"
-            name="prom"
-            >
-            <mat-option
+    <div class="opciones">
+      <mat-form-field style="width: 100%">
+        <mat-select
+          [ngModelOptions]="{ standalone: true }"
+          placeholder="Nivel de Promoción"
+          [(ngModel)]="selectedPromotion"
+          name="prom"
+        >
+          <mat-option
             *ngFor="let prom of promotionsLevels"
             [value]="prom.value"
             (click)="tryCalculateCost()"
-            >
-            {{ prom.viewValue }}
+            >{{ prom.viewValue }}
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <div style="display: grid;">
-          <div style="margin-left: auto">
-            <button mat-mini-fab class="nextButton orangeButton" (click)="trySendDatsToMP(stepper)">
-              <mat-icon>navigate_next</mat-icon>
-            </button>
-          </div>
-        </div>
-    </form>
-    </mat-step>
-    <mat-step>
-      <ng-template matStepLabel>Confirmación</ng-template>
-      <div>
-        {{urlMercadoPago}}
-      </div>
-      <button
-        mat-raised-button
-        style="background-color: #9C27B0 ; color: #ffffff"
-        [mat-dialog-close]="promotionData"
-        cdkFocusInitial
-        (click)="sendToMP()"
-      >
-        Aceptar
-      </button>
-    </mat-step>
-  </mat-horizontal-stepper>
-</div>
-<p
-  *ngIf="duration !== undefined && selectedPromotion !== undefined"
-  style="margin:0"
->
-  ${{ promotionCost | number: '1.0-0' }} final.
-</p>
-<!-- <div mat-dialog-actions align="end">
-  <button
-    mat-raised-button
-    [mat-dialog-close]="false"
-    cdkFocusInitial
-    (click)="onNoClick()"
-  >
-    Cancelar
-  </button>
-  <form action="/procesar-pago" method="POST" #mercadopago>
-    <script
-      src="https://www.mercadopago.com.ar/integrations/v1/web-tokenize-checkout.js"
-      data-public-key="TEST-8d8bca17-0feb-4dc6-b6a2-186de477596f"
-      data-transaction-amount="{{ promotionCost }}"
-    ></script>
+      <p class="finalCost">
+        Costo final: ${{ promotionCost | number: '1.0-0' }}.
+      </p>
+    </div>
   </form>
-</div> -->
+  <div class="mat-dialog-actions">
+    <button
+    class="confirmButton"
+    mat-raised-button
+    cdkFocusInitial
+    (click)="sendToMP()"
+    [ngClass]="{disabledButton: !(duration && selectedPromotion)}"
+    [disabled]="!(duration && selectedPromotion)"
+    >
+    Aceptar
+  </button>
+      <div class="proggressBar">
+        <mat-progress-bar mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>
+      </div>
+</div>
+</div>

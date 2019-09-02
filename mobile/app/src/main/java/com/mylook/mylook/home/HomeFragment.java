@@ -48,7 +48,7 @@ import java.util.Random;
 
 public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private CardsHomeFeedAdapter adapter;
-    private static ArrayList<Article> list;
+    private static List<Object> list;
     private ArrayList<Subscription> subscriptionList;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private ProgressBar mProgressBar;
@@ -244,7 +244,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                         Log.e("ROPERO", documentSnapshot.getId());
                                         // TODO ver esto
                                         PremiumUser premiumUser = documentSnapshot.toObject(PremiumUser.class);
-                                        //list.add(premiumUser);
+                                        list.add(premiumUser);
                                     }
                                     adapter.notifyDataSetChanged();
                                     Log.e("On complete", "Tamaño adapter " + adapter.getItemCount());

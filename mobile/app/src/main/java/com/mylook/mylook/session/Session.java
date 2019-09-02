@@ -91,7 +91,7 @@ public class Session {
                     if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
                         DocumentSnapshot document = task.getResult().getDocuments().get(0);
                         userId = document.get("userId").toString();
-                        isPremium = (Boolean) document.get("isPremium");
+                        isPremium = (boolean) document.get("isPremium");
                         name = document.get("name").toString() + " " + document.get("surname").toString();
                         mail = currentUser.getEmail();
                         clientId = document.getId();

@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist/develop",
+    "public": "dist/myLook",
     "ignore": [
       "firebase.json",
       "**/.*",

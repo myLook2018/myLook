@@ -173,7 +173,6 @@ public class ExploreService {
         return db.collection("articles")
                 //.whereGreaterThan("creationDate", dateBefore2Weeks) Le saque el filtro para que aparecieran
                 .get();
-
     }
 
     public void uploadInteractions() {

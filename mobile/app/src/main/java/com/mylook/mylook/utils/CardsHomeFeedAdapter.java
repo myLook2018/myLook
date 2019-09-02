@@ -96,7 +96,7 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
                 public void onClick(View view) {
                     Intent intent= new Intent(mContext, StoreActivity.class);
                     Log.d("perfil tienda", "onClick: paso por intent la data de la tienda");
-                    intent.putExtra("Tienda", store.getStoreName());
+                    intent.putExtra("store", store.getStoreName());
                     mContext.startActivity(intent);
 
                 }

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class ClosetModel extends ViewModel {
+public class ClosetModel extends ViewModel {
 
     private MutableLiveData<List<Article>> favorites = new MutableLiveData<>();
     private List<Article> favoritesList = new ArrayList<>();

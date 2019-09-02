@@ -62,6 +62,13 @@
     width: 100%;
 }
 
+.coverPh {
+  position: absolute;
+  z-index: -1;
+  width: inherit;
+  height: inherit;
+}
+
 .articlesCard{
     width: 90%;
     min-width: 90%;
@@ -144,10 +151,6 @@
   .img-size {
     max-width: 100px;
     max-height: 50px;
-  }
-
-  .centerImage {
-    margin: auto;
   }
 
   .socialMediaLink{
@@ -235,7 +238,8 @@
       }
 
       .centerImage {
-        margin: 0 auto;
+        margin: auto;
+        margin-top: 2rem;
       }
 
       .actionIcon{
@@ -293,7 +297,7 @@
 
 .profile{
     margin-left: 60px;
-    padding-top: 30px;
+    padding-top: 1.35rem;
     margin-top: 0;
     display: flex;
 }
@@ -322,7 +326,7 @@
 }
 
 .description{
-    width: 350px;
+    width: auto;
     height: 150px;
     overflow: auto;
     margin-left: 40px;
@@ -338,4 +342,13 @@
     text-decoration: none;
     color: #6a99ff;
     font-size: 20px;
+}
+
+.noFrontLoaded {
+  display: grid;
+  font-size: 1rem;
+  text-align: center;
+  width: 1000px;
+  margin-top: 4rem;
+  color: #9c27b0;
 }

@@ -11,7 +11,7 @@
 </div>
 
 <div style="display: table-caption; margin-top: 15px">
-  <form [formGroup]="articleForm" style="display: flex;" #elPrimerForm>
+  <form [formGroup]="articleForm" style="display: flex;" #elPrimerForm autocomplete="off">
     <div
       #secondColumn
       style="display: inline-table;margin-left: 10px; width: 240px"
@@ -114,8 +114,9 @@
                   <button *ngIf="isLoadedImage" (click)="cropping1.fitToScreen()" ly-button>Fit to screen</button>
                   <button *ngIf="isLoadedImage" (click)="cropping1.setScale(1)" ly-button>1:1</button>
                 -->
-              <div style="height: 40px">
+              <div>
                 <button
+                  class="closeIconButton"
                   *ngIf="isLoadedImage[0]"
                   (click)="cropping0.clean()"
                   (click)="doClean(0)"
@@ -188,8 +189,9 @@
                     <button *ngIf="isLoadedImage" (click)="cropping2.fitToScreen()" ly-button>Fit to screen</button>
                     <button *ngIf="isLoadedImage" (click)="cropping2.setScale(1)" ly-button>1:1</button>
                   -->
-              <div style="height: 40px">
+              <div>
                 <button
+                  class="closeIconButton"
                   *ngIf="isLoadedImage[1]"
                   (click)="cropping1.clean()"
                   (click)="doClean(1)"
@@ -261,8 +263,9 @@
                       <button *ngIf="isLoadedImage" (click)="cropping1.fitToScreen()" ly-button>Fit to screen</button>
                       <button *ngIf="isLoadedImage" (click)="cropping1.setScale(1)" ly-button>1:1</button>
                     -->
-              <div style="height: 40px">
+              <div>
                 <button
+                  class="closeIconButton"
                   *ngIf="isLoadedImage[2]"
                   (click)="cropping2.clean()"
                   (click)="doClean(2)"
@@ -408,7 +411,7 @@
 </div>
 
 <div #forthColumn style="margin-left: 10px">
-  <form [formGroup]="articleForm">
+  <form [formGroup]="articleForm" autocomplete="off">
     <mat-form-field style="width: 97.5%" requiered>
       <mat-chip-list #chipList>
         <mat-chip
@@ -451,7 +454,7 @@
       <button
         *ngIf="!isNew"
 
-        [disabled]="articleForm.invalid"
+        [disabled]="articleForm.invalid || isUpLoading"
         style="background-color: #9C27B0; color: white"
         type="button"
         mat-raised-button
@@ -462,7 +465,7 @@
       </button>
       <button
         *ngIf="isNew"
-        [disabled]="articleForm.invalid"
+        [disabled]="articleForm.invalid || isUpLoading"
         class="activatedButton"
         type="button"
 
@@ -474,4 +477,7 @@
       </button>
     </div>
   </form>
+  <div class="proggressBar">
+    <mat-progress-bar *ngIf="isUpLoading" mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>
+  </div>
 </div>
