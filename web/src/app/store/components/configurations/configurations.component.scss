@@ -1,6 +1,6 @@
 .example-card {
-  max-width: 400px;
-  max-height: 600px;
+  max-width: 432px;
+  max-height: 670px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -19,15 +19,38 @@ p::first-letter {
 
 .elForm {
   max-width: 0px;
-  padding-left: calc(2.5vw);
+  padding-left: 2rem;
+  margin-top: 2rem;
 }
 
+.storeMainInformation {
+  max-height: 120px;
+  overflow: auto;
+}
+
+ly-cropping {
+  max-width: 400px;
+  height: 400px;
+}
+
+.cropButton {
+  position: absolute;
+  top: 6.2rem;
+  z-index: 99;
+  left: 23.3rem;
+}
+
+.promotionsTable {
+  padding: 1rem 0 0 0;
+
+}
  /* ------------------------------------------------------------------------------------------- */
 .configuration {
   background-color: red;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-auto-rows: minmax(100px, auto);
+  grid-row-gap: 2rem;
 
   .storeInformation{
     background-color: green;
@@ -74,6 +97,10 @@ p::first-letter {
             width: 85%;
           }
         }
+
+        .extraInformationEdit {
+          text-align: end;
+        }
       }
     }
   }
@@ -83,6 +110,7 @@ p::first-letter {
     grid-column: 1/5;
     grid-row: 2;
   }
+
 }
 
 

@@ -1,7 +1,4 @@
-import {
-  AngularFirestore,
-  AngularFirestoreCollection
-} from 'angularfire2/firestore';
+import { AngularFirestore, AngularFirestoreCollection} from 'angularfire2/firestore';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Article } from '../models/article';
@@ -29,7 +26,7 @@ export class ArticleService {
   // tslint:disable-next-line:no-inferrable-types
   collectionPath: string = 'articles';
   storeFrontPath = 'storeFronts';
-  mercadoPagoPath = 'prueba';
+  mercadoPagoPath = 'promotion';
   promotePath = 'promotions';
   db: any;
   require: any;
