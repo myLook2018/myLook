@@ -46,8 +46,6 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
     @SuppressLint("ResourceAsColor")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder,final int position) {
-        Log.d("ALGO", "onBindViewHolder: called.");
-
         final RequestRecommendation requestRecommendation = requestRecommendationsList.get(position);
 
         Glide.with(mContext).asBitmap().load(requestRecommendation.getRequestPhoto()).into(holder.requestPhoto);
@@ -59,17 +57,13 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
         int daysLeft = (int) TimeUnit.MILLISECONDS.toDays(cal.getTime().getTime() - today.getTime().getTime());
         if(requestRecommendation.getIsClosed()){
             holder.txtDate.setText("Cerrada");
-            holder.txtDate.setTextColor(Color.RED);
         } else {
             if(daysLeft == 0){
                 holder.txtDate.setText("Último día");
-                holder.txtDate.setTextColor(Color.RED);
             } else if (daysLeft > 1) {
                 holder.txtDate.setText("Faltan " + daysLeft + " días");
-                holder.txtDate.setTextColor(Color.BLACK);
             } else {
                 holder.txtDate.setText("Falta " + daysLeft + " día");
-                holder.txtDate.setTextColor(Color.BLACK);
             }
         }
         holder.titleRequest.setText(requestRecommendation.getTitle());
