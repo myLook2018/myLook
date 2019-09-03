@@ -46,6 +46,8 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
     @SuppressLint("ResourceAsColor")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder,final int position) {
+        Log.d("ALGO", "onBindViewHolder: called.");
+
         final RequestRecommendation requestRecommendation = requestRecommendationsList.get(position);
 
         Glide.with(mContext).asBitmap().load(requestRecommendation.getRequestPhoto()).into(holder.requestPhoto);
