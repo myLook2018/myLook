@@ -209,19 +209,21 @@ public class LoginActivity extends AppCompatActivity {
     private void setupFirebaseAuth() {
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = firebaseAuth -> {
-            user = mAuth.getCurrentUser(); //firebaseAuth.getCurrentUser();
+            user = mAuth.getCurrentUser();
             if (user != null) {
                 Log.e(LOG_LABEL, "Buscando user en Firebase");
                 FirebaseFirestore.getInstance().collection("clients").whereEqualTo("email", user.getEmail())
                         .get().addOnCompleteListener(task -> {
+                            Log.e("Succesfull", ""+task.isSuccessful());
                             if (task.isSuccessful()) {
-                                if (task.getResult().getDocuments().size() == 0) { //esto deberia pasar a la validacion del mail si existe o no
+                                if (task.getResult().getDocuments().size() == 0) {
                                     Intent intent = new Intent(mContext, RegisterActivity.class);
                                     CharSequence mail = user.getEmail();
                                     CharSequence name = user.getDisplayName();
                                     intent.putExtra("mail", mail);
                                     intent.putExtra("displayName", name);
                                     intent.putExtra("provider", providerLogin);
+                                    startActivity(intent);
                                 } else {
                                     if (user != null && user.isEmailVerified()) {
                                         Intent intent = new Intent(mContext, MyLookActivity.class);
