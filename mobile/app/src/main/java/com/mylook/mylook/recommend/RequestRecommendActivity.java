@@ -38,7 +38,7 @@ import java.util.HashMap;
 
 public class RequestRecommendActivity extends AppCompatActivity {
 
-    private static final String TAG = "RequestRecommendationA";
+    private static final String TAG = "RequestRecommendation";
     private ImageView imgRequestPhoto;
     private TextView txtDescription;
     private TextView txtTitle;
@@ -81,8 +81,11 @@ public class RequestRecommendActivity extends AppCompatActivity {
     }
 
     private void getIncomingIntent() {
-        Log.d(TAG, "getIncomingIntent: checking for incoming intents.");
         Intent intent = getIntent();
+        Log.e("Extras", intent.getExtras().toString());
+        for (String key:intent.getExtras().keySet()) {
+            Log.e(TAG, intent.getExtras().get(key).toString());
+        }
         if (intent.hasExtra("requestRecommendation")) {
             fromDeepLink = false;
             RequestRecommendation requestRecommendation = (RequestRecommendation) intent.getSerializableExtra("requestRecommendation");
@@ -101,6 +104,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
                     requestId = intent.getStringExtra("requestId");
             }
         }
+        //ACA LLEGA DISTINTO
         Log.e(TAG, "requestId"+requestId);
         dB.collection("requestRecommendations").document(requestId).get().addOnCompleteListener(
                 new OnCompleteListener<DocumentSnapshot>() {
@@ -227,7 +231,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
         if(id == R.id.share_req){
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta recomendación wachin! https://www.mylook.com/recommendation?requestId="+requestId);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "Me podes ayudar con esta recomendación? https://www.mylook.com/recommendation?requestId="+requestId);
             sendIntent.setType("text/plain");
             startActivity(Intent.createChooser(sendIntent, "Share via"));
         }

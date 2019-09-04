@@ -14,6 +14,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.mylook.mylook.R;
 import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.recommend.RequestRecommendActivity;
+import com.mylook.mylook.session.MainActivity;
 import com.mylook.mylook.storeProfile.StoreActivity;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -28,6 +29,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         // Check if message contains a notification payload.
         if (remoteMessage.getData() != null) {
+            for (String key: remoteMessage.getData().keySet()) {
+                Log.e(TAG, key+": "+remoteMessage.getData().get(key));
+            }
+            Log.e(TAG, remoteMessage.getData().toString());
             Log.e(TAG, "Message Notification Body: " + remoteMessage.getData().get("body"));
             notificationTitle = remoteMessage.getData().get("title");
             notificationBody = remoteMessage.getData().get("body");
@@ -49,12 +54,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             }
 
         }
-        for(String data: remoteMessage.getData().keySet()){
-            Log.e(TAG,data+": "+remoteMessage.getData().get(data));
-        }
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
+        Log.e("ID: ", id);
         sendNotification(notificationTitle, notificationBody, id, activity);
     }
 
