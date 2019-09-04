@@ -68,9 +68,9 @@ public class ExploreService {
             if (isNew(document.getId())) {
                 Article article = document.toObject(Article.class);
                 article.setArticleId(document.getId());
-                if (filter && location != null) {
+                if (location != null) {
                     article.setNearby(LocationValidator.checkIfNearby(article, location));
-                    if (!article.isNearby()) {
+                    if (filter && !article.isNearby()) {
                         continue;
                     }
                 }
