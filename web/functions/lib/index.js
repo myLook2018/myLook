@@ -63,6 +63,7 @@ exports.newAnswerNotification = functions.firestore
   .document('requestRecommendations/{docId}')
   .onWrite((snap, context) => {
     const newValue = snap.after.data();
+    const id = snap.before.id
     const previousValue = snap.before.data();
     const newAnswer = newValue.answers;
     const oldAnswer = previousValue.answers;
@@ -76,6 +77,9 @@ exports.newAnswerNotification = functions.firestore
           title: 'Nueva Recomendación para ' + title + ' de ' + storeName,
           body: desc,
           sound: 'default'
+        }, 
+        data: {
+          requestId: id
         }
       };
       const options = {
@@ -100,15 +104,25 @@ exports.newAnswerNotification = functions.firestore
             if (userId == doc.data().userId || userId == doc.id) {
               console.log('Es este Usuario!!! ' + userId);
               const registrationToken = doc.data().installToken;
-              return admin
-                .messaging()
-                .sendToDevice(registrationToken, payload, options)
-                .then(response => {
-                  console.log('Successfully sent message:', response);
-                })
-                .catch(error => {
-                  console.log('Error sending message:', error);
-                });
+                        var message = {
+                            data: {
+                                "title": "Nueva Recomendación para " + title + " de " + storeName,
+                                "deepLink": "www.mylook.com/recommendation",
+                                "body": desc,
+                                "sound": "default",
+                                "requestId": id
+                            },
+                            "token": registrationToken
+                        };
+                        console.log(JSON.stringify(message))
+                        return admin.messaging().send(message)
+                            .then((response) => {
+                                // Response is a message ID string.
+                                console.log('Successfully sent message:', response);
+                            })
+                            .catch((error) => {
+                                console.log('Error sending message:', error);
+                            });
             }
           });
         });
