@@ -18,6 +18,8 @@ export class StoreModel {
   twitterLink: string;
   storeAddress: string;
   provider: string;
+  storeLatitude: number;
+  storeLongitude: number;
 
   constructor() {
     this.firebaseUID = '';
@@ -39,5 +41,7 @@ export class StoreModel {
     this.twitterLink = '';
     this.storeAddress = '';
     this.provider = '';
+    this.storeLatitude = 0;
+    this.storeLongitude = 0;
   }
 }

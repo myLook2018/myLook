@@ -196,6 +196,8 @@ export class InventoryComponent implements OnInit, OnDestroy {
     if (article !== undefined) {
       dataToSend = {
         storeName: this.userStore.storeName,
+        storeLatitude: this.userStore.storeLatitude,
+        storeLongitude: this.userStore.storeLongitude,
         title: article.title,
         code: article.code,
         id: article.articleId,
@@ -211,6 +213,8 @@ export class InventoryComponent implements OnInit, OnDestroy {
     } else {
       dataToSend = {
         storeName: this.userStore.storeName,
+        storeLatitude: this.userStore.storeLatitude,
+        storeLongitude: this.userStore.storeLongitude,
         tags: [],
         sizes: [],
         colors: []
