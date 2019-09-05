@@ -27,17 +27,15 @@
         android:hardwareAccelerated="true"
         android:largeHeap="true">
 
-        <activity android:name=".main.MainActivity">
+        <activity android:name=".session.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".login.LoginActivity">
-        </activity>
-        <activity android:name=".home.MyLookActivity" android:theme="@style/SplashTheme">
-
-        </activity>
+        <activity android:name=".login.LoginActivity"/>
+        <activity android:name=".profile.AccountActivity" android:parentActivityName=".home.MyLookActivity"/>
+        <activity android:name=".home.MyLookActivity" android:theme="@style/SplashTheme"/>
         <activity android:name=".info.ArticleInfoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -62,21 +60,22 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
-        <activity android:name=".explore.ExploreActivity"
-            android:screenOrientation="portrait" >
-            <meta-data android:name="android.app.default_searchable"
-                android:value=".SearchableActivity" />
-        </activity>
         <activity android:name=".explore.SearchableActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:parentActivityName=".home.MyLookActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".home.MyLookActivity" />
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>
         </activity>
-        <activity android:name=".login.RegisterActivity" android:launchMode="singleInstance"/>
+        <activity android:name=".login.RegisterActivity" android:launchMode="singleInstance"
+            android:parentActivityName=".login.LoginActivity"/>
         <activity android:name=".recommend.RecommendActivityAddDesc"
+            android:parentActivityName=".home.MyLookActivity"
             android:grantUriPermissions="true">
         </activity>
         <activity android:name=".recommend.RequestRecommendActivity">
@@ -90,7 +89,6 @@
                     android:host="www.mylook.com"
                     android:scheme="https" />
             </intent-filter>
-
         </activity>
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat"/>
@@ -105,7 +103,8 @@
             android:grantUriPermissions="true"/>
         <activity android:name=".premiumUser.PublicationDetail"
             android:parentActivityName=".premiumUser.PremiumUserProfileActivity"/>
-        <activity android:name=".closet.ViewOutfitActivity"/>
+        <activity android:name=".closet.OutfitInfoActivity"/>
+        <activity android:name=".closet.OutfitCreateEditActivity"/>
 
         <meta-data android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"
@@ -131,8 +130,7 @@
         </activity>
         <activity android:name=".login.ResetPasswordActivity"
             android:parentActivityName=".login.LoginActivity"/>
-        <activity android:name=".closet.OutfitInfoActivity" />
-        <activity android:name=".closet.OutfitCreateEditActivity" />
+
         <service android:name=".notifications.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>

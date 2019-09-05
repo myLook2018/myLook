@@ -197,4 +197,5 @@ export class AuthService {
       duration: 5000
     });
   }
+
 }

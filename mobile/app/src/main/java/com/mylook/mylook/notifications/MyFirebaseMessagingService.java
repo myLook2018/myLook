@@ -6,21 +6,14 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.mylook.mylook.R;
-import com.mylook.mylook.entities.Article;
-import com.mylook.mylook.home.MyLookActivity;
 import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.recommend.RequestRecommendActivity;
-import com.mylook.mylook.session.MainActivity;
 import com.mylook.mylook.storeProfile.StoreActivity;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -98,14 +91,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             NotificationManager mNotificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             mNotificationManager.createNotificationChannel(mChannel);
-             notification = new Notification.Builder(getApplicationContext())
+            notification = new Notification.Builder(getApplicationContext())
                     .setContentTitle(notificationTitle)
                     .setContentText(notificationBody)
                     .setSmallIcon(R.drawable.ic_icon_logo)
-                     .setColor(getResources().getColor(R.color.purple))
-                     .setContentIntent(newIntent)
-                     .setChannelId(CHANNEL_ID)
-                     .setAutoCancel(true)
+                    .setColor(getResources().getColor(R.color.purple))
+                    .setContentIntent(newIntent)
+                    .setChannelId(CHANNEL_ID)
+                    .setAutoCancel(true)
                     .build();
             mNotificationManager.notify(notifyID , notification);
         } else {

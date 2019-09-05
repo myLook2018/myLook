@@ -3,13 +3,14 @@ package com.mylook.mylook.home;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,7 +36,6 @@ import com.mylook.mylook.entities.PremiumUser;
 import com.mylook.mylook.entities.Subscription;
 import com.mylook.mylook.login.LoginActivity;
 import com.mylook.mylook.profile.AccountActivity;
-import com.mylook.mylook.session.Sesion;
 import com.mylook.mylook.utils.CardsHomeFeedAdapter;
 
 import java.util.ArrayList;
@@ -46,24 +46,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private CardsHomeFeedAdapter adapter;
-    private static ArrayList<Article> list;
+    private static List<Object> list;
     private ArrayList<Subscription> subscriptionList;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private ProgressBar mProgressBar;
     private ImageView starImage;
     private TextView emptyArticles;
+    private SwipeRefreshLayout refreshLayout;
     private int totalArticles = 0;
     private Context mContext;
     final static String TAG = "HomeFragment";
-    private Sesion currentSesion = Sesion.getInstance();
-
     private static HomeFragment homeInstance;
 
     public static HomeFragment getInstance() {
         if (homeInstance == null) homeInstance = new HomeFragment();
         return homeInstance;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -88,10 +92,12 @@ public class HomeFragment extends Fragment {
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(mContext, 2);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        mContext = getContext();
-        setupFirebaseAuth();
         recyclerView.setAdapter(adapter);
 
+        refreshLayout = view.findViewById(R.id.refresh_layout_home);
+        refreshLayout.setOnRefreshListener(this);
+
+        setupFirebaseAuth();
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             mProgressBar.setVisibility(View.VISIBLE);
             loadFragment();
@@ -100,31 +106,14 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    /**
-     * Método para cuando haya habido algun cambio y haya que actualizar los objetos
-     */
-    public static void refreshStatus() {
-        if (homeInstance != null) {
-            list = null;
-        }
-    }
-
-
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
     private void loadFragment() {
         readSubscriptions();
         updateInstallationToken();
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.home_menu, menu);
-
     }
 
     @Override
@@ -196,47 +185,47 @@ public class HomeFragment extends Fragment {
                     .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .get()
                     .addOnCompleteListener(task -> {
-                if (task.isSuccessful() && task.getResult() != null) {
-                    if (!task.getResult().isEmpty()) {
-                        subscriptionList = new ArrayList<>();
-                        subscriptionList.addAll(task.getResult().toObjects(Subscription.class));
-                        for (Subscription sub : subscriptionList) {
-                            FirebaseFirestore.getInstance().collection("articles")
-                                    .whereEqualTo("storeName", sub.getStoreName())
-                                    .orderBy("creationDate", Query.Direction.DESCENDING)
-                                    .whereGreaterThan("creationDate", myCalendar.getTime())
-                                    .get().addOnCompleteListener(task12 -> {
-                                if (task12.isSuccessful() && task.getResult() != null) {
-                                    for (QueryDocumentSnapshot documentSnapshot : task12.getResult()) {
-                                        Article art = documentSnapshot.toObject(Article.class);
-                                        art.setArticleId(documentSnapshot.getId());
-                                        //list.add(art); // Si se usa esta lista están ordenados por fecha
-                                    }
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            if (!task.getResult().isEmpty()) {
+                                subscriptionList = new ArrayList<>();
+                                subscriptionList.addAll(task.getResult().toObjects(Subscription.class));
+                                for (Subscription sub : subscriptionList) {
+                                    FirebaseFirestore.getInstance().collection("articles")
+                                            .whereEqualTo("storeName", sub.getStoreName())
+                                            .orderBy("creationDate", Query.Direction.DESCENDING)
+                                            .whereGreaterThan("creationDate", myCalendar.getTime())
+                                            .get().addOnCompleteListener(task12 -> {
+                                        if (task12.isSuccessful() && task.getResult() != null) {
+                                            for (QueryDocumentSnapshot documentSnapshot : task12.getResult()) {
+                                                Article art = documentSnapshot.toObject(Article.class);
+                                                art.setArticleId(documentSnapshot.getId());
+                                                //list.add(art); // Si se usa esta lista están ordenados por fecha
+                                            }
 
-                                    if (createArticleList(task12.getResult())) { //Con esta por la probabilidad de las promos, pero no por fecha
-                                        for (Article art : list) {
-                                            Log.e(TAG, (art.getArticleId() + " - " + art.getCreationDate() + " - Promo: " + art.getPromotionLevel()));
+                                            if (createArticleList(task12.getResult())) { //Con esta por la probabilidad de las promos, pero no por fecha
+                                                /*for (Article art : list) {
+                                                    Log.e(TAG, (art.getArticleId() + " - " + art.getCreationDate() + " - Promo: " + art.getPromotionLevel()));
+                                                }*/
+                                                emptyArticles.setVisibility(View.GONE);
+                                                starImage.setVisibility(View.GONE);
+                                                adapter.notifyDataSetChanged();
+                                            } else {
+                                                emptyArticles.setVisibility(View.VISIBLE);
+                                                starImage.setVisibility(View.VISIBLE);
+                                            }
+                                            mProgressBar.setVisibility(View.GONE);
+                                        } else {
+                                            Log.e("Firestore task", "onComplete: " + task12.getException());
                                         }
-                                        emptyArticles.setVisibility(View.GONE);
-                                        starImage.setVisibility(View.GONE);
-                                        adapter.notifyDataSetChanged();
-                                    } else {
-                                        emptyArticles.setVisibility(View.VISIBLE);
-                                        starImage.setVisibility(View.VISIBLE);
-                                    }
-                                    mProgressBar.setVisibility(View.GONE);
-                                } else {
-                                    Log.e("Firestore task", "onComplete: " + task12.getException());
+                                    });
                                 }
-                            });
+                            } else {
+                                emptyArticles.setVisibility(View.VISIBLE);
+                                starImage.setVisibility(View.VISIBLE);
+                                mProgressBar.setVisibility(View.GONE);
+                            }
                         }
-                    } else {
-                        emptyArticles.setVisibility(View.VISIBLE);
-                        starImage.setVisibility(View.VISIBLE);
-                        mProgressBar.setVisibility(View.GONE);
-                    }
-                }
-            });
+                    });
 
             FirebaseFirestore.getInstance().collection("premiumUsersSubscriptions")
                     .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -255,7 +244,7 @@ public class HomeFragment extends Fragment {
                                         Log.e("ROPERO", documentSnapshot.getId());
                                         // TODO ver esto
                                         PremiumUser premiumUser = documentSnapshot.toObject(PremiumUser.class);
-                                        //list.add(premiumUser);
+                                        list.add(premiumUser);
                                     }
                                     adapter.notifyDataSetChanged();
                                     Log.e("On complete", "Tamaño adapter " + adapter.getItemCount());
@@ -267,6 +256,7 @@ public class HomeFragment extends Fragment {
                         }
                     }
                 }
+                refreshLayout.setRefreshing(false);
             });
         }
     }
@@ -384,4 +374,8 @@ public class HomeFragment extends Fragment {
         return true;
     }
 
+    @Override
+    public void onRefresh() {
+        readSubscriptions();
+    }
 }

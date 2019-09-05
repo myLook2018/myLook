@@ -1,13 +1,13 @@
 package com.mylook.mylook.closet;
 
 import android.app.AlertDialog;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewCompat;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +16,9 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.mylook.mylook.R;
+import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Outfit;
 import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.utils.ArticlesGridAdapter;
@@ -26,13 +28,15 @@ import java.util.stream.Collectors;
 
 public class FavoritesTab extends Fragment {
 
+    public static final int CLOSET_FAVORITE_REQUEST = 1;
+
     private GridView favoritesGridView;
     private ArticlesGridAdapter adapter;
     private static ClosetModel closet;
     private ProgressBar mProgressBar;
 
     public static void refreshStatus() {
-            closet.reloadFavorites();
+        closet.reloadFavorites();
     }
 
     @Override
@@ -45,7 +49,6 @@ public class FavoritesTab extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         return inflater.inflate(R.layout.tab_favourites, container, false);
     }
 
@@ -88,8 +91,8 @@ public class FavoritesTab extends Fragment {
     }
 
     private void showFavorite(int position) {
-        startActivity(new Intent(getContext(), ArticleInfoActivity.class)
-                .putExtra("article", adapter.getItem(position)));
+        startActivityForResult(new Intent(getContext(), ArticleInfoActivity.class)
+                .putExtra("article", adapter.getItem(position)), CLOSET_FAVORITE_REQUEST);
     }
 
     private void confirmDeleteFavorite(int position) {
@@ -112,11 +115,16 @@ public class FavoritesTab extends Fragment {
                             .map(Outfit::getOutfitId).collect(Collectors.toList());
                     if (outfitsToChange.size() != 0) {
                         closet.removeFavoriteFromOutfits(outfitsToChange, idToDelete)
-                                .addOnSuccessListener(success2 ->
-                                        displayToast("Se eliminó de tu ropero y actualizaron conjuntos"))
-                                .addOnFailureListener(fail ->
-                                        displayToast("Se eliminó de tu ropero, pero los conjuntos no se actualizaron"));
+                                .addOnSuccessListener(success2 -> {
+                                    adapter.notifyDataSetChanged();
+                                    displayToast("Se eliminó de tu ropero y actualizaron conjuntos");
+                                })
+                                .addOnFailureListener(fail -> {
+                                    adapter.notifyDataSetChanged();
+                                    displayToast("Se eliminó de tu ropero, pero los conjuntos no se actualizaron");
+                                });
                     } else {
+                        adapter.notifyDataSetChanged();
                         displayToast("Se eliminó de tu ropero");
                     }
                 })
@@ -127,4 +135,18 @@ public class FavoritesTab extends Fragment {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("tmr", "onActivityResult: " + "start");
+        if (requestCode == CLOSET_FAVORITE_REQUEST) {
+            Log.d("tmr", "onActivityResult: " + "request");
+            if (resultCode == ArticleInfoActivity.RESULT_OK) {
+                Log.d("tmr", "onActivityResult: " + "result ok");
+                if (data.getBooleanExtra("removed", false)) {
+                    Log.d("tmr", "onActivityResult: " + "removed");
+                    closet.load();
+                }
+            }
+        }
+    }
 }
