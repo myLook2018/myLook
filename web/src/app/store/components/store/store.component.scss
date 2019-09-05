@@ -60,13 +60,15 @@
     margin-bottom: 15px;
     margin-top: 20px;
     width: 100%;
+    z-index: 1;
 }
 
 .coverPh {
   position: absolute;
-  z-index: -1;
+  z-index: 0;
   width: inherit;
   height: inherit;
+
 }
 
 .articlesCard{
@@ -285,6 +287,7 @@
     height: 30vh;
     height: 292px;
     width: 1000px;
+    z-index: 1;
 }
 
 .profileImg{
@@ -293,6 +296,7 @@
     margin: 8px 0 8px 8px;
     width: 200px;
     height: 200px;
+    z-index: 1;
 }
 
 .profile{
@@ -313,6 +317,7 @@
     margin-left: 50px;
     padding: 20px;
     width: 60%;
+    z-index: 1;
 }
 
 .direction{
@@ -330,6 +335,7 @@
     height: 150px;
     overflow: auto;
     margin-left: 40px;
+    z-index: 1;
 }
 
 .socialNetworks{
@@ -352,3 +358,7 @@
   margin-top: 4rem;
   color: #9c27b0;
 }
+
+// .gradient {
+//   background-image: linear-gradient(to top, #fdcbf11a 0%, #fdcbf125 1%, #e6dee938 100%);
+// }
