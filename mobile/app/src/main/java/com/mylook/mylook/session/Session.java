@@ -1,5 +1,6 @@
 package com.mylook.mylook.session;
 
+import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -12,6 +13,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.closet.ClosetFragment;
 import com.mylook.mylook.explore.ExploreFragment;
 import com.mylook.mylook.home.HomeFragment;
+import com.mylook.mylook.login.RegisterActivity;
 import com.mylook.mylook.profile.ProfileFragment;
 import com.mylook.mylook.recommend.RecommendFragment;
 
@@ -77,7 +79,6 @@ public class Session {
      */
     public static Session getInstance() {
         if (singleton == null) {
-            Log.e("getInstance", "singleton ==null" );
             singleton = new Session();
         }
         return singleton;
@@ -96,15 +97,15 @@ public class Session {
                         mail = currentUser.getEmail();
                         clientId = document.getId();
                     } else {
-                        FirebaseFirestore.getInstance().collection("clients").whereEqualTo("email", currentUser.getEmail()).get().addOnCompleteListener(task1 -> {
-                            if (task1.isSuccessful()) {
+                       FirebaseFirestore.getInstance().collection("clients").whereEqualTo("email", currentUser.getEmail()).get().addOnCompleteListener(task1 -> {
+                            if (task1.isSuccessful() && task1.getResult().getDocuments().size() > 0) {
+                                // El usuario está registrado
                                 DocumentSnapshot document = task.getResult().getDocuments().get(0);
                                 userId = document.get("userId").toString();
                                 isPremium = (Boolean) document.get("isPremium");
                                 name = document.get("name").toString() + " " + document.get("surname").toString();
                                 mail = currentUser.getEmail();
                                 clientId = document.getId();
-                                //cuando entra aca?
                             }
                         });
                     }
