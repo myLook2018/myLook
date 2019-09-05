@@ -19,7 +19,7 @@
                 </mat-toolbar-row>
             </mat-toolbar>
             <div>
-                <mat-table class="table" matSort [dataSource]="dataSource">
+                <mat-table class="table gradient" matSort [dataSource]="dataSource">
 
                     <!--- Note that these columns can be defined in any order.
             The actual rendered columns are set as a property on the row definition" -->
@@ -90,13 +90,17 @@
                     <ng-container matColumnDef="actions">
                         <mat-header-cell *matHeaderCellDef> Acciones </mat-header-cell>
                         <mat-cell *matCellDef="let element; let i = index">
-                            <button *ngIf="!selectionMode" mat-icon-button class="actionIcon" (click)="openConfirmationDialog(element)">
+                            <button *ngIf="!selectionMode" mat-icon-button class="actionIcon_colored" (click)="openConfirmationDialog(element)">
                                 <mat-icon>delete</mat-icon>
                             </button>
-                            <button *ngIf="!selectionMode" mat-icon-button class="actionIcon" (click)="openArticleDialog(element)">
+                            <button *ngIf="!selectionMode" mat-icon-button class="actionIcon_colored" (click)="openArticleDialog(element)">
                                 <mat-icon>edit</mat-icon>
                             </button>
-                            <button *ngIf="!selectionMode" mat-icon-button [ngClass]="(element.promotionLevel==1)?'actionIcon-notPromoted':'actionIcon'" (click)="openPromoteDialog(element)">
+                            <button *ngIf="!selectionMode"
+                                      matTooltip="Prenda Promocionada"
+                                      [matTooltipDisabled]="(element.promotionLevel==1)"
+                                     mat-icon-button
+                                     [ngClass]="(element.promotionLevel==1)?'actionIcon':'actionIcon-Promoted'" (click)="openPromoteDialog(element)">
                                 <mat-icon>whatshot</mat-icon>
                             </button>
                             <mat-checkbox *ngIf="selectionMode" (change)="addIdToSelecteds(i)"></mat-checkbox>

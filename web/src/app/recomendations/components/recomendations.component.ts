@@ -38,7 +38,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
   articleSubscription: Subscription;
   recomendationSubscription: Subscription;
   selectedRequest: RecomendationRequest = new RecomendationRequest();
-  selectedArticle: Article = new Article();
+  selectedArticle: Article;
   selectedRowIndex = -1;
   requestAnswerForm: FormGroup;
   answerForm: FormGroup;
@@ -48,6 +48,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
   selectedAnswer: RecomendationAnswer;
   description = '';
   isRequestSelected = false;
+  disableSendRecomendation = false;
   constructor(
     public snackBar: MatSnackBar,
     public articleService: ArticleService,
@@ -69,6 +70,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
   displayedColumnsArticles: string[] = ['PrendasCatalogo'];
 
   ngOnInit() {
+    this.selectedArticle = new Article();
     console.log('-+-+-+-+-+-Inicializando Recomendaciones-+-+-+-+-+-');
     console.log('-+-+-+-+-+-Inicializando Inventario-+-+-+-+-+-');
     this.dataService.getStoreInfo().then(store => {
@@ -133,6 +135,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
   }
 
   showInformationRequest(row) {
+    this.disableSendRecomendation = false;
     this.requestAnswerForm.get('description').setValue('');
     this.isRequestSelected = true;
     this.selectedRowIndex = row.FirebaseUID;
@@ -142,8 +145,8 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
 // tslint:disable-next-line: max-line-length
        'https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/utils%2Flogo_transparente_50.png?alt=media&token=c72e5b39-3011-4f26-ba4f-4c9f7326c68a';
     }
-    this.selectedArticle = new Article();
-    this.selectedArticle.picture = '/assets/idea.png';
+    debugger;
+    this.selectedArticle.picturesArray.push('/assets/idea.png');
     console.log(row);
   }
 
@@ -156,7 +159,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
     this.selectedAnswer = this.selectedRequest.answers.find(
       answer => answer.storeName === this.userStore.storeName
     );
-    this.selectedArticle.picture = this.selectedAnswer.articlePhoto;
+    this.selectedArticle.picturesArray[0] = this.selectedAnswer.articlePhoto;
     this.requestAnswerForm
       .get('description')
       .setValue(this.selectedAnswer.description);
@@ -177,15 +180,17 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
       this.error =
         'Se requiere que selecione una prenda de su catalogo para recomendar';
       console.log(this.error);
+      this.openSnackBar(this.error, 'cerrar');
       return this.error;
     } else {
+      this.disableSendRecomendation = true;
       this.answeredRequestIndex = this.selectedRowIndex;
       this.requestAnswerForm
         .get('storeName')
         .setValue(this.userStore.storeName);
       this.requestAnswerForm
         .get('articlePhoto')
-        .setValue(this.selectedArticle.picture);
+        .setValue(this.selectedArticle.picturesArray[0]);
       this.requestAnswerForm
         .get('storePhoto')
         .setValue(this.userStore.profilePh);
@@ -208,6 +213,9 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
             .then(() => {
               console.log(6);
               this.openSnackBar('Se ha enviado la sugerencia!', 'cerrar');
+              if(this.recomendationsToAnswer.length > 0) {
+                this.showInformationRequest(this.recomendationsToAnswer[0]);
+              }
             });
         });
     }
@@ -277,7 +285,9 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
       this.newRecos = this.recomendationsToAnswer;
       console.log(this.newRecos);
     }
-    this.dataSourceRequests = new MatTableDataSource(this.newRecos);
+    console.log('this.newRecos', this.newRecos)
+    this.recomendationsRequests = this.newRecos;
+    this.dataSourceRequests = new MatTableDataSource(this.recomendationsRequests);
   }
 
   goToProfile() {
@@ -287,7 +297,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
   }
 
   goToInventory() {
-    this.router.navigate([`/inventory`]);
+    this.router.navigate([`/catalogo`]);
   }
 
   goToRecomendations() {

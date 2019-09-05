@@ -1,5 +1,5 @@
 <h1 mat-dialog-title style="text-align:center; margin:0">
-  Promociona tu prenda!
+  Promocionar tu prenda en MyLook
 </h1>
 <div
   class="mat-typography"
@@ -7,25 +7,28 @@
   style="display: inline; margin-left: auto; margin-right: auto; padding: 0"
 >
   <h3 class="articleName">{{ data.title }}</h3>
-  <form [formGroup]="firstFormGroup">
-    <img
-      class="promotionPicture"
-      height="300"
-      width="300"
-      src="{{ data.picturesArray[0] }}"
-    />
+  <form [formGroup]="firstFormGroup" style="display: inline-flex">
+    <div class="Picture">
+      <img class="promotionPicture" height="300" width="300" src="{{ data.picturesArray[0] }}" />
+    </div>
+    <div class="formArea">
+      <div class="disclaimer mat-typography">
+        Al promocionar una prenda esta alcanzará mayor visibilidad entre los usuarios que utilicen la app. Se asegura un minimo de interacciones mayor al del promedio sin promocion.
+        El impacto de promocionar una prenda es inmediato, puediendose consultar en la seccion de estadisticas de la plataforma.
+        A continuación puede seleccionar diferentes combinaciones de planes de promoción, una vez seleccionado, será redirigido a MercadoPago para realizar la transacción.
+      </div>
+      <div class="inputs">
+
+
     <mat-form-field style="width: 100%">
-      <mat-select
-        [ngModelOptions]="{ standalone: true }"
+      <mat-select [ngModelOptions]="{ standalone: true }"
         placeholder="Duración de la promoción."
         [(ngModel)]="duration"
         name="dur"
       >
-        <mat-option
-          *ngFor="let dur of durations"
+        <mat-option *ngFor="let dur of durations"
           [value]="dur.value"
-          (click)="tryCalculateCost()"
-        >
+          (click)="tryCalculateCost()">
           {{ dur.viewValue }}
         </mat-option>
       </mat-select>
@@ -51,20 +54,29 @@
         Costo final: ${{ promotionCost | number: '1.0-0' }}.
       </p>
     </div>
+  </div>
+</div>
+
+
   </form>
   <div class="mat-dialog-actions">
+    <button mat-class="confirmButton"
+            mat-raised-button
+            (click)="onNoClick()">
+      Cancelar
+    </button>
     <button
     class="confirmButton"
     mat-raised-button
     cdkFocusInitial
     (click)="sendToMP()"
     [ngClass]="{disabledButton: !(duration && selectedPromotion)}"
-    [disabled]="!(duration && selectedPromotion)"
+    [disabled]="!(duration && selectedPromotion) || isLoading"
     >
     Aceptar
   </button>
       <div class="proggressBar">
-        <mat-progress-bar mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>
+        <mat-progress-bar *ngIf="(isLoading)" mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>
       </div>
 </div>
 </div>
