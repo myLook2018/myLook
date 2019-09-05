@@ -159,6 +159,25 @@ export class LoginComponent implements OnDestroy{
       duration: 2000
     });
   }
+
+  translateError(error: string) {
+    let message = '';
+    switch (true) {
+      case (error.includes('password is invalid')):
+        message = 'Constraseña incorrecta.';
+        break;
+      case (error.includes('no user record')):
+        message = 'El email ingresado no se encuentra registrado en myLook.';
+        break;
+      case (error.includes('many unsuccessful login attempts')):
+        message = 'Verifique por favor los datos ingresados. Si lo intentos fallidos continuan, bloquearemos temporalmente su cuenta por seguridad.';
+        break;
+      default:
+        message = error;
+        break;
+    }
+    return message;
+  }
 }
 
 

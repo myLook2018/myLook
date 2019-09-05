@@ -3,10 +3,6 @@ package com.mylook.mylook.closet;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,6 +11,11 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
@@ -26,6 +27,7 @@ import static com.mylook.mylook.closet.OutfitCreateEditActivity.OUTFIT_EDIT_REQU
 
 public class OutfitInfoActivity extends AppCompatActivity {
 
+    static final int ARTICLE_INFO_REQUEST = 3;
     static final int OUTFIT_INFO_REQUEST = 1;
     static final int OUTFIT_DELETED = 1;
     static final int OUTFIT_EDITED = 2;
@@ -135,8 +137,8 @@ public class OutfitInfoActivity extends AppCompatActivity {
     }
 
     private void showFavorite(int position) {
-        startActivity(new Intent(this, ArticleInfoActivity.class)
-                .putExtra("article", adapter.getItem(position)));
+        startActivityForResult(new Intent(this, ArticleInfoActivity.class)
+                .putExtra("article", adapter.getItem(position)), ARTICLE_INFO_REQUEST);
     }
 
     @Override
@@ -154,6 +156,17 @@ public class OutfitInfoActivity extends AppCompatActivity {
                 }
                 setResult(OUTFIT_EDITED, data);
                 progressBar.setVisibility(View.GONE);
+            }
+        } else if (requestCode == ARTICLE_INFO_REQUEST) {
+            // TODO not working
+            if (resultCode == ArticleInfoActivity.RESULT_OK) {
+                if (data.getBooleanExtra("removed", false)) {
+                    String id = data.getStringExtra("id");
+                    if (outfit.getFavorites().remove(id)) {
+                        outfit.getArticles().removeIf(art -> art.getArticleId().equals(id));
+                    }
+                    gridView.setAdapter(new ArticlesGridAdapter(this, outfit.getArticles()));
+                }
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.mylook.mylook.entities;
 
 import java.util.Date;
+import java.util.Map;
 
 public class Store {
 
@@ -16,7 +17,8 @@ public class Store {
     private String storeAddress;
     private String storeAddressNumber;
     private String storeFloor;
-    private String storePosition;
+    private long storeLatitude;
+    private long storeLongiture;
     private String storeDescription;
     private String instagramLink;
     private String twitterLink;
@@ -71,11 +73,6 @@ public class Store {
         return storeCity;
     }
 
-
-    public String getStorePosition() {
-        return storePosition;
-    }
-
     public String getStoreProvince() {
         return storeProvince;
     }
@@ -116,10 +113,6 @@ public class Store {
 
     public void setStoreCity(String storeCity) {
         this.storeCity = storeCity;
-    }
-
-    public void setStorePosition(String storePosition) {
-        this.storePosition = storePosition;
     }
 
     public void setStoreProvince(String storeProvince) {
@@ -180,5 +173,21 @@ public class Store {
 
     public void setTwitterLink(String twitterLink) {
         this.twitterLink = twitterLink;
+    }
+
+    public long getStoreLatitude() {
+        return storeLatitude;
+    }
+
+    public void setStoreLatitude(long storeLatitude) {
+        this.storeLatitude = storeLatitude;
+    }
+
+    public long getStoreLongiture() {
+        return storeLongiture;
+    }
+
+    public void setStoreLongiture(long storeLongiture) {
+        this.storeLongiture = storeLongiture;
     }
 }

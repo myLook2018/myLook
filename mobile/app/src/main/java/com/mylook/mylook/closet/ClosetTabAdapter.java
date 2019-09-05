@@ -1,20 +1,19 @@
 package com.mylook.mylook.closet;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ClosetTabAdapter extends FragmentPagerAdapter {
-    int mNumOfTabs;
+
     private final List<Fragment> mFragmentList = new ArrayList<>();
     private final List<String> mFragmentTitleList = new ArrayList<>();
 
-    ClosetTabAdapter(FragmentManager fm, int NumOfTabs) {
+    ClosetTabAdapter(FragmentManager fm) {
         super(fm);
-        this.mNumOfTabs = NumOfTabs;
     }
 
     void addFragment(Fragment fragment, String title) {

@@ -2,8 +2,8 @@ package com.mylook.mylook.premiumUser;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,8 +26,8 @@ import in.srain.cube.views.GridViewWithHeaderAndFooter;
 
 public class PublicClosetFragment extends Fragment {
 
-    private FirebaseFirestore dB=null;
-    private String premiumUserId;
+    private  FirebaseFirestore dB=null;
+    private  String premiumUserId;
     private ArrayList<Article> favorites;
 
 

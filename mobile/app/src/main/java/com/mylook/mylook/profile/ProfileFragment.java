@@ -3,9 +3,9 @@ package com.mylook.mylook.profile;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,15 +13,23 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.dialogs.DialogManager;
 import com.mylook.mylook.premiumUser.PremiumRequestActivity;
 import com.mylook.mylook.premiumUser.PremiumUserProfileActivity;
+import com.mylook.mylook.session.Session;
 
 public class ProfileFragment extends Fragment {
+
+    public ProfileFragment() {
+
+    }
 
     private TextView txtName;
     private TextView txtEmail;
@@ -43,22 +51,26 @@ public class ProfileFragment extends Fragment {
     private String userName;
     private static boolean loaded = false;
     public final static String TAG = "ProfileFragment";
-    private static ProfileFragment profileInstance = null;
+
+    private static ProfileFragment homeInstance = null;
 
     public static ProfileFragment getInstance() {
-        if (profileInstance == null) {
-            profileInstance = new ProfileFragment();
+        if (homeInstance == null) {
+            homeInstance = new ProfileFragment();
         }
-        return profileInstance;
+        return homeInstance;
     }
 
-    public static void refreshStatus() {
-        if (profileInstance != null) loaded = false;
+    public static void refreshStatus(){
+        if(homeInstance!=null){
+            loaded = false;
+        }
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        Log.e(TAG, "On view Created - is Loaded? " + loaded);
+        Log.e(TAG, "On view Created - is Loaded? "+loaded);
         super.onViewCreated(view, savedInstanceState);
         if (!loaded) {
             initElements(view);
@@ -97,68 +109,120 @@ public class ProfileFragment extends Fragment {
         txtExit = view.findViewById(R.id.txtExit);
     }
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         return inflater.inflate(R.layout.fragment_profile, null);
     }
 
     private void setOnClickListener() {
-        txtAccount.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), EditInfoActivity.class);
-            startActivity(intent);
-        });
-        imageAccount.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), EditInfoActivity.class);
-            startActivity(intent);
-        });
-        imageDestacado.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), PremiumRequestActivity.class);
-            intent.putExtra("clientId", clientId);
-            intent.putExtra("userName", userName);
-            startActivity(intent);
 
+        txtAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), EditInfoActivity.class);
+                startActivity(intent);
+            }
         });
-        txtDestacado.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), PremiumRequestActivity.class);
-            intent.putExtra("clientId", clientId);
-            intent.putExtra("userName", userName);
-            startActivity(intent);
 
+        imageAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), EditInfoActivity.class);
+                startActivity(intent);
+            }
         });
-        imageGroup.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), PremiumUserProfileActivity.class);
-            intent.putExtra("clientId", clientId);
-            startActivity(intent);
+
+
+        imageDestacado.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), PremiumRequestActivity.class);
+                intent.putExtra("clientId", clientId);
+                intent.putExtra("userName", userName);
+                startActivity(intent);
+
+            }
         });
-        txtGroup.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), PremiumUserProfileActivity.class);
-            intent.putExtra("clientId", clientId);
-            startActivity(intent);
+        txtDestacado.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), PremiumRequestActivity.class);
+                intent.putExtra("clientId", clientId);
+                intent.putExtra("userName", userName);
+                startActivity(intent);
+
+            }
         });
-        imageHelp.setOnClickListener(v -> {
-            // TODO ?????
+
+
+        imageGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), PremiumUserProfileActivity.class);
+                intent.putExtra("clientId", clientId);
+                startActivity(intent);
+            }
         });
-        txtHelp.setOnClickListener(v -> {
-            // TODO ?????
+        txtGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), PremiumUserProfileActivity.class);
+                intent.putExtra("clientId", clientId);
+                startActivity(intent);
+            }
         });
-        txtExit.setOnClickListener(v ->
-                DialogManager.createLogoutDialog(mContext,
-                        "Cerrar Session",
+
+
+        imageHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        txtHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        txtExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogManager dm = DialogManager.getInstance();
+
+                dm.createLogoutDialog(mContext,
+                        "Cerrar Sesion",
                         "¿Estas seguro que quieres cerrar sesion?",
                         "Si",
-                        "No").show());
-        imageExit.setOnClickListener(v ->
-                DialogManager.createLogoutDialog(mContext,
-                        "Cerrar Session",
+                        "No").show();
+            }
+        });
+
+        imageExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogManager dm = DialogManager.getInstance();
+
+                dm.createLogoutDialog(
+                        mContext,
+                        "Cerrar Sesion",
                         "¿Estas seguro que quieres cerrar sesion?",
                         "Si",
-                        "No").show());
+                        "No").show();
+            }
+        });
+
+
     }
 
     private void setUserProfile() {
@@ -169,6 +233,7 @@ public class ProfileFragment extends Fragment {
             txtName.setText(userName);
             clientId = task.getResult().getDocuments().get(0).getId();
             txtEmail.setText(user.getEmail().equals("") ? "" : user.getEmail());
+
             if (isPremiumUser) {
                 imageGroup.setVisibility(View.VISIBLE);
                 txtGroup.setVisibility(View.VISIBLE);
@@ -179,6 +244,8 @@ public class ProfileFragment extends Fragment {
                 //layoutPremiumRequest.setVisibility(View.VISIBLE);
             }
         });
+
+
     }
 
 }
