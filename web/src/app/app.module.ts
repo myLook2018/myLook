@@ -86,8 +86,6 @@ import { LyResizingCroppingImageModule } from '@alyle/ui/resizing-cropping-image
 import { LyIconModule } from '@alyle/ui/icon';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { PromotionsService } from './store/components/configurations/service/promotions.service';
-import { registerLocaleData } from '@angular/common';
-import locales from '@angular/common/locales/es-AR';
 
 import {
   LyHammerGestureConfig,
@@ -187,7 +185,6 @@ import { ConfigurationsComponent } from './store/components/configurations/confi
     ArticleService, TagsService, AnyliticService, MatTooltipModule, PromotionsService,
     { provide: LY_THEME, useClass: MinimaLight, multi: true }, // name: `minima-light`
     { provide: LY_THEME, useClass: MinimaDark, multi: true }, // name: `minima-dark`
-    { provide: locales, useValue: 'es'},
     { provide: HAMMER_GESTURE_CONFIG, useClass: LyHammerGestureConfig },
     // ArticleResolver, StoreResolver,
     NewStoreService],
@@ -197,6 +194,3 @@ import { ConfigurationsComponent } from './store/components/configurations/confi
 })
 export class AppModule {
 }
-
-registerLocaleData(locales, 'es');
-
