@@ -64,6 +64,7 @@ exports.newAnswerNotification = functions.firestore
   .onWrite((snap, context) => {
     const newValue = snap.after.data();
     const id = snap.before.id
+    console.log("RequestId "+id)
     const previousValue = snap.before.data();
     const newAnswer = newValue.answers;
     const oldAnswer = previousValue.answers;
@@ -72,37 +73,15 @@ exports.newAnswerNotification = functions.firestore
       let userId = newValue.userId;
       const desc = newAnswer[newAnswer.length - 1].description;
       const storeName = newAnswer[newAnswer.length - 1].storeName;
-      const payload = {
-        notification: {
-          title: 'Nueva Recomendación para ' + title + ' de ' + storeName,
-          body: desc,
-          sound: 'default'
-        }, 
-        data: {
-          requestId: id
-        }
-      };
-      const options = {
-        priority: 'high',
-        timeToLive: 60 * 60 * 24
-      };
       return admin
         .firestore()
         .collection('clients')
         .get()
         .then(snapshot => {
           snapshot.forEach(doc => {
-            console.log(
-              'user',
-              'userId ' +
-                userId +
-                ' - Doc user Id' +
-                doc.data().userId +
-                ' - docId ' +
-                doc.id
-            );
             if (userId == doc.data().userId || userId == doc.id) {
               console.log('Es este Usuario!!! ' + userId);
+              console.log("RequestId "+id)
               const registrationToken = doc.data().installToken;
                         var message = {
                             data: {

@@ -84,7 +84,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Log.e("Extras", intent.getExtras().toString());
         for (String key:intent.getExtras().keySet()) {
-            Log.e(TAG, intent.getExtras().get(key).toString());
+            Log.e(TAG, key+": "+intent.getExtras().get(key).toString());
         }
         if (intent.hasExtra("requestRecommendation")) {
             fromDeepLink = false;

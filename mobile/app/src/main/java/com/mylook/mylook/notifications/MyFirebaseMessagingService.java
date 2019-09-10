@@ -68,14 +68,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private PendingIntent createIntent(String id, Class activity){
-        Intent newIntent = new Intent(getApplicationContext(), activity);
+        Intent newIntent = new Intent(getBaseContext(), activity);
         if (activity == RequestRecommendActivity.class)
             newIntent.putExtra("requestId", id);
         if (activity == StoreActivity.class)
             newIntent.putExtra("storeId", id);
         if (activity == ArticleInfoActivity.class)
             newIntent.putExtra("articleId", id);
-        PendingIntent pendingIntent =  PendingIntent.getActivity(getApplicationContext(), 0, newIntent, 0);
+        PendingIntent pendingIntent =  PendingIntent.getActivity(getApplicationContext(), 0, newIntent,  PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
         return pendingIntent;
     }
 
