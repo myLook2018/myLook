@@ -136,6 +136,6 @@ public class NewPasswordActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        finish();
+        this.finish();
     }
 }

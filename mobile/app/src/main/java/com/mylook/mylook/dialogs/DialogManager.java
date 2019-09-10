@@ -84,7 +84,6 @@ public class DialogManager {
                 .setMessage(message)
                 .setPositiveButton(positiveButton, (paramDialogInterface, paramInt) -> {
                     Intent intent = new Intent(context, NewPasswordActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     context.startActivity(intent);
 
                 })
