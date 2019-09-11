@@ -4,29 +4,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ExpandableListView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
-import com.mylook.mylook.entities.Interaction;
 import com.mylook.mylook.session.MainActivity;
 import com.mylook.mylook.storeProfile.StoreActivity;
 import com.mylook.mylook.utils.SlidingImageAdapter;
@@ -42,43 +35,34 @@ public class ArticleInfoActivity extends AppCompatActivity {
     public static final int RESULT_CANCELLED = 2;
 
     private Context mContext = this;
-    private ImageView articleImage;
-    private ExpandableListView expandableListView;
     private FloatingActionButton btnCloset;
     private FloatingActionButton btnShare;
-    private String articleId,closetId;
-    private String downLoadUri, dbUserId;
     private Article article;
-    private ArrayList<String> tags, imageArraySlider;
     private LinearLayout lnlSizes, lnlColors;
     private TextView txtMaterial, txtCost, txtTitle, txtStoreName, txtNearby;
     private boolean inCloset;
     private boolean initialInCloset;
-    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    private FirebaseFirestore dB = FirebaseFirestore.getInstance();
     private boolean fromDeepLink = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_details);
-        Toolbar tb = (Toolbar) findViewById(R.id.toolbar_more_info);
         invalidateOptionsMenu();
         getArticleFromIntent();
     }
 
     private void getArticleFromIntent(){
-        //retrieve data from intent
         Intent intent = getIntent();
-        if(intent.hasExtra("article")) {
-            article= (Article) intent.getSerializableExtra("article");
-            articleId=article.getArticleId();
+        if (intent.hasExtra("article")) {
+            article = (Article) intent.getSerializableExtra("article");
             fromDeepLink = false;
             initElements();
             setDetail();
             isArticleInCloset();
-        } else{
+        } else {
             fromDeepLink = true;
+            String articleId;
             try {
                 articleId = intent.getData().getQueryParameter("articleId");
             } catch (Exception e){
@@ -89,52 +73,42 @@ public class ArticleInfoActivity extends AppCompatActivity {
     }
 
     private void getArticleFromId(String id){
-        dB.collection("articles").document(id).get().addOnCompleteListener(task -> {
-            article = task.getResult().toObject(Article.class);
-            article.setArticleId(id);
-            dbUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            downLoadUri=article.getPicture();
-            initElements();
-            setDetail();
-            isArticleInCloset();
-        });
+        FirebaseFirestore.getInstance().collection("articles").document(id).get()
+                .addOnCompleteListener(task -> {
+                    article = task.getResult().toObject(Article.class);
+                    article.setArticleId(id);
+                    initElements();
+                    setDetail();
+                    isArticleInCloset();
+                });
     }
 
     private void initElements() {
-        btnCloset=findViewById(R.id.btnCloset);
-        articleImage=findViewById(R.id.article_image);
-        txtTitle=findViewById(R.id.txtTitle);
-        txtStoreName=findViewById(R.id.txtStoreName);
-        txtMaterial=findViewById(R.id.txtMaterial);
-        txtCost=findViewById(R.id.txtCost);
-        lnlSizes=findViewById(R.id.lnlSizes);
-        lnlColors=findViewById(R.id.lnlColors);
+        btnCloset = findViewById(R.id.btnCloset);
+        txtTitle = findViewById(R.id.txtTitle);
+        txtStoreName = findViewById(R.id.txtStoreName);
+        txtMaterial = findViewById(R.id.txtMaterial);
+        txtCost = findViewById(R.id.txtCost);
+        lnlSizes = findViewById(R.id.lnlSizes);
+        lnlColors = findViewById(R.id.lnlColors);
         btnShare =  findViewById(R.id.btnShare);
-        //Glide.with(mContext).load(downLoadUri).into(articleImage);
+        txtNearby = findViewById(R.id.txtNearby);
 
         btnCloset.setOnClickListener(v -> changeSavedInCloset());
         btnShare.setOnClickListener(v -> shareArticle());
-        ViewPager articlePager;
-        articlePager = findViewById(R.id.view_pager_article);
-        if (imageArraySlider == null) {
-            ArrayList<String> arrayAux = new ArrayList<>();
-            arrayAux.add(0, article.getPicture());
-            articlePager.setAdapter(new SlidingImageAdapter(mContext, arrayAux));
-            CirclePageIndicator indicator = findViewById(R.id.circle_page_indicator);
-            indicator.setViewPager(articlePager);
-            indicator.setRadius(5 * getResources().getDisplayMetrics().density);
-        } else {
-            articlePager.setAdapter(new SlidingImageAdapter(mContext, imageArraySlider));
-            CirclePageIndicator indicator = findViewById(R.id.circle_page_indicator);
-            indicator.setViewPager(articlePager);
-            indicator.setRadius(5 * getResources().getDisplayMetrics().density);
-        }
+
+        ViewPager articlePager = findViewById(R.id.view_pager_article);
+        ArrayList<String> arrayAux = new ArrayList<>(article.getPicturesArray());
+        articlePager.setAdapter(new SlidingImageAdapter(mContext, arrayAux));
+        CirclePageIndicator indicator = findViewById(R.id.circle_page_indicator);
+        indicator.setViewPager(articlePager);
+        indicator.setRadius(5 * getResources().getDisplayMetrics().density);
     }
 
     private void shareArticle(){
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta prenda! https://www.mylook.com/article?articleId="+articleId);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta prenda! https://www.mylook.com/article?articleId=" + article.getArticleId());
         sendIntent.setType("text/plain");
         startActivity(Intent.createChooser(sendIntent, "Share via"));
     }
@@ -149,8 +123,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         inCloset = !inCloset;
-                        // TODO mal, no deberia guardar interaccion cada vez, ni tampoco sirve que le hayan sacado favorito. Solo sirve el estado actual (cantidad)
-                        sendNewInteraction();
                         if (inCloset) {
                             setResult(RESULT_OK, new Intent().putExtra("removed", false)
                                     .putExtra("id", article.getArticleId()));
@@ -179,8 +151,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
                                             }
                                         }
                                     });
-
-
                         }
                         setFavoriteFabIcon(inCloset);
                     } else {
@@ -254,20 +224,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
         }
     }
 
-    private void sendNewInteraction() {
-        Interaction userInteraction = new Interaction();
-        Log.e("PROMOTION LEVEL", article.getPromotionLevel() + "");
-        userInteraction.setPromotionLevel(article.getPromotionLevel());
-        userInteraction.setSavedToCloset(true);
-        userInteraction.setLiked(false);
-        userInteraction.setClickOnArticle(false);
-        userInteraction.setArticleId(this.article.getArticleId());
-        userInteraction.setStoreName(this.article.getStoreName());
-        userInteraction.setTags(tags);
-        userInteraction.setUserId(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        FirebaseFirestore.getInstance().collection("interactions").add(userInteraction);
-    }
-
     private void displayMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
@@ -286,7 +242,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if(fromDeepLink){
+        if (fromDeepLink) {
             Intent intent= new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
             finish();

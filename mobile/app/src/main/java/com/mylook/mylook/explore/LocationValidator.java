@@ -7,7 +7,7 @@ import com.mylook.mylook.entities.Article;
 
 public class LocationValidator {
 
-    private static final double NEARBY_RADIUS = 5d;
+    private static final double NEARBY_RADIUS = 3.7d;
 
     private static double getGreatCircleDistance(double latitude1, double longitude1, double latitude2, double longitude2) {
         double x1 = Math.toRadians(latitude1);

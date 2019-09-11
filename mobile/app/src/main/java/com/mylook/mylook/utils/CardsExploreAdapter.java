@@ -61,7 +61,7 @@ public class CardsExploreAdapter extends RecyclerView.Adapter<CardsExploreAdapte
         if (context instanceof Activity) {
             Activity activity = (Activity) context;
             if ( !activity.isFinishing() ) {
-                Glide.with(context).load(article.getPicture()).into(holder.image);
+                Glide.with(context).load(article.getPicturesArray().get(0)).into(holder.image);
             }
         }
         holder.image.setOnClickListener(v -> listener.onArticleClick());

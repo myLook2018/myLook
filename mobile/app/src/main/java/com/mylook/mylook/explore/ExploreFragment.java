@@ -5,7 +5,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
@@ -88,24 +90,16 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
     }
 
     @Override
-    public void onCardRewound() {
-
-    }
+    public void onCardRewound() {}
 
     @Override
-    public void onCardCanceled() {
-
-    }
+    public void onCardCanceled() {}
 
     @Override
-    public void onCardAppeared(View view, int position) {
-
-    }
+    public void onCardAppeared(View view, int position) {}
 
     @Override
-    public void onCardDisappeared(View view, int position) {
-
-    }
+    public void onCardDisappeared(View view, int position) {}
 
     @Override
     public void onArticleClick() {
@@ -229,16 +223,35 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
             displayMessage("No pudo accederse a tu ubicación");
             getArticles(null, false);
         } else {
-            Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            if (first) {
-                detectNearby = true;
-                first = false;
-                getArticles(location, false);
-            } else {
-                filter = !filter;
-                getArticles(location, filter);
-            }
-            setupGeolocationFab();
+            viewOnly(ViewName.PROGRESS_BAR);
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+            locationManager.requestSingleUpdate(criteria, new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    if (location != null) {
+                        if (first) {
+                            detectNearby = true;
+                            first = false;
+                            getArticles(location, false);
+                        } else {
+                            filter = !filter;
+                            getArticles(location, filter);
+                        }
+                        setupGeolocationFab();
+                    } else {
+                        displayMessage("No pudo accederse a tu ubicación");
+                        viewOnly(ViewName.CARD_STACK);
+                        getArticles(null, false);
+                    }
+                }
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {}
+                @Override
+                public void onProviderEnabled(String provider) { }
+                @Override
+                public void onProviderDisabled(String provider) {}
+            }, null);
         }
     }
 
@@ -300,16 +313,16 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
         exploreService = new ExploreService(getContext());
         exploreService.getArticles().addOnCompleteListener(task -> {
             if (!task.isSuccessful() || task.getResult() == null) {
-                viewOnly(ExploreFragment.ViewName.MESSAGE);
+                viewOnly(ViewName.MESSAGE);
                 Log.e(TAG, "getArticles", task.getException());
             } else if (task.getResult().isEmpty()) {
-                viewOnly(ExploreFragment.ViewName.MESSAGE);
+                viewOnly(ViewName.MESSAGE);
                 Log.d(TAG, "getArticles - No articles found");
             } else {
                 articles.addAll(exploreService.createExploreArticleList(task.getResult(), location, filter));
                 Log.d(TAG, "getArticles - Articles found: " + articles.size());
                 mCardStack.setAdapter(mCardAdapter);
-                viewOnly(ExploreFragment.ViewName.CARD_STACK);
+                viewOnly(ViewName.CARD_STACK);
             }
         });
     }
@@ -369,7 +382,7 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
                 displayMessage("No pudo accederse a tu ubicación");
                 getArticles(null, false);
             } else {
-                Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 getArticles(location, filter);
             }
         }
