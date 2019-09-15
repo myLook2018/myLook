@@ -184,7 +184,8 @@ export class RegisterComponent implements OnInit {
       facebookLink: [''],
       instagramLink: [''],
       twitterLink: [''],
-      provider: ['']
+      provider: [''],
+      registerDate: ['']
     });
 
     this.createUserForm();
@@ -323,6 +324,7 @@ export class RegisterComponent implements OnInit {
   buildFinalForm() {
     this.registerStoreFormGroupStep2.get('storeLatitude').setValue(this.latitude);
     this.registerStoreFormGroupStep2.get('storeLongitude').setValue(this.longitude);
+    this.registerStoreFormGroupStep2.get('registerDate').setValue(new Date);
     debugger;
     const floor = this.registerStoreFormGroupStep2.get('storeFloor').value;
     this.registerStoreFormGroupStep2.get('storeFloor').setValue(floor.toString());

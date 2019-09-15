@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { ImgCropperConfig, LyResizingCroppingImages } from '@alyle/ui/resizing-cropping-images';
 import { PromotionsService } from './service/promotions.service';
 import { MatTableDataSource } from '@angular/material';
+
 @Component({
   selector: 'app-configurations',
   templateUrl: './configurations.component.html',
@@ -29,9 +30,10 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit{
   isLoadedImage = [false];
   actualImageId: any;
 
-  displayedColumns = ['Articulo', 'FechaInicio', 'FechaFin', 'NivelPromocion', 'PrecioFinal'];
+  displayedColumns = ['Articulo', 'FechaInicio', 'FechaFin', 'NivelPromocion', 'PrecioFinal', 'Descargar'];
   promotionTableDataSource: any;
   promotionsData;
+  locale: string;
   constructor( private dataService: DataService, private formBuilder: FormBuilder, private promotionsService: PromotionsService) {
    }
 
@@ -119,10 +121,17 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit{
     }
   // ----------------------------------- Fin todo lo de cortar imagenes --------------------------
 
-  getPromotionsDone() {
-    this.promotionsService.getArticlesCopado(this.actualStore.firebaseUID).then( promotions => {
+  async getPromotionsDone() {
+    await this.promotionsService.getPromotions(this.actualStore.firebaseUID).then( promotions => {
       console.log('promotions que me corresponden', promotions);
       this.promotionsData = promotions;
+      this.promotionsData.forEach( promotion => {
+        this.promotionsService.getArticleImage(promotion.articleId).then( data => {
+           promotion.image = data.picture;
+           promotion.title = data.name;
+          });
+      });
+      console.log('promotions que me corresponden luego de agregar image', promotions);
       this.promotionTableDataSource = new MatTableDataSource(this.promotionsData);
     });
   }
@@ -132,6 +141,16 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit{
   }
 
   getPromotionLevel(level) {
-    return (level === 2) ? 'Premium' : 'Estandar';
+    return (level === 3) ? 'Premium' : 'Estandar';
+  }
+
+  getImagesFromPromotion (articleId) {
+
+  }
+
+  downloadPromotion(element) {
+    console.log(element);
+    const data = {promotion: element, store: this.actualStore}
+    this.promotionsService.downloadPromotion(data);
   }
 }

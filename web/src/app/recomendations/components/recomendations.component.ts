@@ -49,6 +49,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
   description = '';
   isRequestSelected = false;
   disableSendRecomendation = false;
+  isAnAnswer: boolean;
   constructor(
     public snackBar: MatSnackBar,
     public articleService: ArticleService,
@@ -142,26 +143,34 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
     this.selectedRequest = row;
     if (!this.selectedRequest.requestPhoto) {
       this.selectedRequest.requestPhoto =
-// tslint:disable-next-line: max-line-length
-       'https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/utils%2Flogo_transparente_50.png?alt=media&token=c72e5b39-3011-4f26-ba4f-4c9f7326c68a';
+      // tslint:disable-next-line: max-line-length
+      'https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/utils%2Flogo_transparente_50.png?alt=media&token=c72e5b39-3011-4f26-ba4f-4c9f7326c68a';
     }
-    this.selectedArticle.picturesArray.push('/assets/idea.png');
+    this.selectedArticle = new Article();
+    this.selectedArticle.picturesArray[0] = '/assets/idea.png';
     console.log(row);
   }
 
-  showInformationAnswer(row) {
-    this.selectedArticle = row;
+  showInformationAnswer(row, isAlreadyRecomended = false) {
+    // this.isAnAnswer = isAlreadyRecomended;
+    console.log('row', row);
+    console.log('selectedArticle', this.selectedArticle);
+    this.selectedArticle = new Article();
+    // this.selectedArticle = row;
+    // console.log('selectedArticle', this.selectedArticle);
     this.selectedArticleRowIndex = -1;
     this.isRequestSelected = false;
     this.selectedRowIndex = row.FirebaseUID;
     this.selectedRequest = row;
     this.selectedAnswer = this.selectedRequest.answers.find(
       answer => answer.storeName === this.userStore.storeName
-    );
-    this.selectedArticle.picturesArray[0] = this.selectedAnswer.articlePhoto;
-    this.requestAnswerForm
+      );
+      this.selectedArticle.picturesArray[0] = this.selectedAnswer.articlePhoto;
+      this.requestAnswerForm
       .get('description')
       .setValue(this.selectedAnswer.description);
+      this.isRequestSelected = true;
+      this.disableSendRecomendation = true;
   }
 
   showInformationArticle(row, index) {

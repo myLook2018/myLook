@@ -296,7 +296,7 @@ exports.getMercadoPagoNotification = functions.https.onRequest((req, res) => {
         // storeName
         const storeName = laData.payer.first_name
 
-        admin.firestore().collection('articles').doc(articleToPromoteId).update({ promotionLevel: articlePromotionLevel }).then(result => {
+        admin.firestore().collection('articles').doc(articleToPromoteId).get({ promotionLevel: articlePromotionLevel }).then(result => {
           admin.firestore().collection('stores').where('storeName', '==', storeName ).get().then(snapshot => {
             snapshot.forEach(doc => {
 

@@ -96,6 +96,12 @@ import { HttpClientModule} from '@angular/common/http';
 import { SuccessComponent } from './ecommerce/success/success.component';
 import { ConfigurationsComponent } from './store/components/configurations/configurations.component';
 
+import { LOCALE_ID } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localeAR from '@angular/common/locales/es-AR';
+
+registerLocaleData(localeAR);
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -186,6 +192,7 @@ import { ConfigurationsComponent } from './store/components/configurations/confi
     { provide: LY_THEME, useClass: MinimaLight, multi: true }, // name: `minima-light`
     { provide: LY_THEME, useClass: MinimaDark, multi: true }, // name: `minima-dark`
     { provide: HAMMER_GESTURE_CONFIG, useClass: LyHammerGestureConfig },
+    { provide: LOCALE_ID, useValue: 'es-AR' },
     // ArticleResolver, StoreResolver,
     NewStoreService],
   entryComponents: [FrontDialogComponent, PromoteDialogComponent, DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent,

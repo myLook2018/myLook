@@ -453,7 +453,7 @@
       <!--<input matInput placeholder="Etiquetas" formControlName="tags" value={{articleData.tags}}>-->
     </mat-form-field>
 
-    <div mat-dialog-actions align="end">
+    <div mat-dialog-actions align="end" *ngIf="!articleData.onlyView">
       <button
         *ngIf="!isNew"
 

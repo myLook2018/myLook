@@ -117,7 +117,8 @@ export class InventoryComponent implements OnInit, OnDestroy {
     this.articleService.deleteArticle(article);
   }
 
-  openPromoteDialog(article): void {
+  openPromoteDialog(article, event): void {
+    event.stopPropagation();
     if (article.promotionLevel !== 1) {
       console.log('pito me voy a abrir');
       return;
@@ -164,7 +165,8 @@ export class InventoryComponent implements OnInit, OnDestroy {
     this.articleService.promoteArticle(data, article, storeUID);
   }
 
-  openConfirmationDialog(article): void {
+  openConfirmationDialog(article, event): void {
+    event.stopPropagation();
     const confirmationRef = this.dialog.open(
       DeleteConfirmationDialogComponent,
       {
@@ -196,7 +198,8 @@ export class InventoryComponent implements OnInit, OnDestroy {
     });
   }
 
-  openArticleDialog(article: Article): void {
+  openArticleDialog(article: Article, event): void {
+    event.stopPropagation();
     let dataToSend = {};
     if (article !== undefined) {
       dataToSend = {
@@ -213,7 +216,9 @@ export class InventoryComponent implements OnInit, OnDestroy {
         colors: article.colors,
         initial_stock: article.initial_stock,
         provider: article.provider,
-        tags: article.tags
+        tags: article.tags,
+        onlyView: false
+
       };
     } else {
       dataToSend = {
@@ -222,7 +227,9 @@ export class InventoryComponent implements OnInit, OnDestroy {
         storeLongitude: this.userStore.storeLongitude,
         tags: [],
         sizes: [],
-        colors: []
+        colors: [],
+        onlyView: false
+
       };
     }
 
@@ -323,4 +330,34 @@ export class InventoryComponent implements OnInit, OnDestroy {
   //     }
   //   }
   // }
+  showInformation(article) {
+    let dataToSend = {};
+    if (article !== undefined) {
+      dataToSend = {
+        storeName: this.userStore.storeName,
+        storeLatitude: this.userStore.storeLatitude,
+        storeLongitude: this.userStore.storeLongitude,
+        title: article.title,
+        code: article.code,
+        id: article.articleId,
+        picturesArray: article.picturesArray,
+        cost: article.cost,
+        sizes: article.sizes,
+        material: article.material,
+        colors: article.colors,
+        initial_stock: article.initial_stock,
+        provider: article.provider,
+        tags: article.tags,
+        onlyView: true
+      };
+    }
+
+    const dialogRef = this.dialog.open(ArticleDialogComponent, {
+      maxWidth: '850px',
+      maxHeight: 'calc(95vh)',
+      data: dataToSend
+    });
+
+    dialogRef.afterClosed().subscribe(result => {});
+  }
 }

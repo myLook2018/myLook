@@ -62,6 +62,7 @@
   <div class="mat-dialog-actions">
     <button mat-class="confirmButton"
             mat-raised-button
+            [disabled]="isLoading"
             (click)="onNoClick()">
       Cancelar
     </button>

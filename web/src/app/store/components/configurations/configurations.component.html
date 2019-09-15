@@ -1,4 +1,4 @@
-<div class="configuration">
+<div class="configuration backgroundColor">
   <div class="storeInformation">
     <div class="resume">
       <mat-card class="example-card">
@@ -36,7 +36,7 @@
                 <i class="material-icons"> add_photo_alternate </i> Añadir Foto
               </ly-cropping>
               <button
-                style="visibility: hidden"
+                style="visibility: hidden; position: absolute"
                 color="accent"
                 (click)="cropping0.crop()"
                 ly-button
@@ -77,16 +77,16 @@
 
 
 
-        <mat-card-content class="storeMainInformation">
+        <mat-card-content class="storeMainInformation" style="height: 10rem;">
           <p *ngIf="actualStore.storeDescription && !isEditMode">
               <strong>Descripción:</strong> {{actualStore.storeDescription}}
           </p>
-          <div class="form" *ngIf="isEditMode">
+          <div class="form" *ngIf="isEditMode" style="overflow: hidden">
               <form class="descriptionInput" [formGroup]="myFormGroup">
-                <p>
-                  <mat-form-field appearance="outline" class="fullWidth" style="width: 23.5rem;">
+                <p style="margin: 0">
+                  <mat-form-field appearance="outline" class="fullWidth" style="width: 25rem; overflow: hidden;">
                     <mat-label>Descripción</mat-label>
-                    <textarea matInput placeholder="{{actualStore.storeName}} te espera" formControlName="storeDescription"></textarea>
+                    <textarea matInput placeholder="{{actualStore.storeName}} te espera" formControlName="storeDescription" style="height: 3.5rem;"></textarea>
                   </mat-form-field>
                   </p>
               </form>
@@ -192,15 +192,16 @@
 
                 <!-- Articulo Column -->
                 <ng-container matColumnDef="Articulo">
-                  <th mat-header-cell *matHeaderCellDef> ID Articulo </th>
-                  <td mat-cell *matCellDef="let element"> {{element.articleId}} </td>
+                  <th mat-header-cell *matHeaderCellDef> Articulo Promocionado </th>
+                  <!-- <td mat-cell *matCellDef="let element"> {{element.articleId}} </td> -->
+                  <td mat-cell *matCellDef="let element"><img height="100" width="100" src={{element.image}}> </td>
                   <td mat-footer-cell *matFooterCellDef> Total </td>
                 </ng-container>
 
                 <!-- Inicio Column -->
                 <ng-container matColumnDef="FechaInicio">
                   <th mat-header-cell *matHeaderCellDef> Fecha Inicio </th>
-                  <td mat-cell *matCellDef="let element"> {{element.startOfPromotion.seconds | date: 'fullDate'}} </td>
+                  <td mat-cell *matCellDef="let element"> {{element.startOfPromotion.toDate() | date: 'fullDate'}} </td>
                   <td mat-footer-cell *matFooterCellDef>  </td>
 
                 </ng-container>
@@ -208,7 +209,7 @@
                 <!-- Fin Column -->
                 <ng-container matColumnDef="FechaFin">
                   <th mat-header-cell *matHeaderCellDef> Fecha Fin </th>
-                  <td mat-cell *matCellDef="let element"> {{ element.endOfPromotion.seconds | date: 'fullDate'}}</td>
+                  <td mat-cell *matCellDef="let element"> {{ element.endOfPromotion.toDate() | date: 'fullDate'}}</td>
                   <td mat-footer-cell *matFooterCellDef>  </td>
 
                 </ng-container>
@@ -218,21 +219,25 @@
                   <th mat-header-cell *matHeaderCellDef> Nivel de Promoción </th>
                   <td mat-cell *matCellDef="let element"> {{getPromotionLevel(element.promotionLevel)}} </td>
                   <td mat-footer-cell *matFooterCellDef> </td>
-
                 </ng-container>
 
                 <!-- Precio Final de promocion Column -->
                 <ng-container matColumnDef="PrecioFinal">
                   <th mat-header-cell *matHeaderCellDef> Precio Final </th>
-                  <td mat-cell *matCellDef="let element"> {{element.promotionCost | currency}} </td>
-                  <td mat-footer-cell *matFooterCellDef> {{ getTotalCost() | currency}} </td>
+                  <td mat-cell *matCellDef="let element"> {{element.promotionCost | currency:'ARS'}} </td>
+                  <td mat-footer-cell *matFooterCellDef> {{ getTotalCost() | currency:'ARS'}} </td>
                 </ng-container>
 
-                <!-- Precio Final de promocion Column
+                <!-- Descargar Column -->
                 <ng-container matColumnDef="Descargar">
                   <th mat-header-cell *matHeaderCellDef> Descargar </th>
-                  <td mat-cell *matCellDef="let element"> ! </td>
-                </ng-container> -->
+                  <td mat-cell *matCellDef="let element">
+                    <button  mat-icon-button (click)="downloadPromotion(element)">
+                        <mat-icon class="myLookPink">cloud_download</mat-icon>
+                    </button>
+                  </td>
+                  <td mat-footer-cell *matFooterCellDef> </td>
+                </ng-container>
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
