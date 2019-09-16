@@ -16,19 +16,19 @@ public class Interaction {
     private Timestamp interactionTime;
     private int promotionLevel;
 
-    public Interaction(){
+    public Interaction() {
         Calendar cal = Calendar.getInstance();
         this.interactionTime = new Timestamp(cal.getTime());
     }
 
-    public Interaction(int promotionLevel,boolean savedToCloset, boolean liked, String articleId, ArrayList<String> tags, String storeName, String userId) {
+    public Interaction(int promotionLevel, boolean savedToCloset, boolean liked, String articleId, ArrayList<String> tags, String storeName, String userId) {
         this.savedToCloset = savedToCloset;
         this.liked = liked;
         this.articleId = articleId;
         this.tags = tags;
         this.storeName = storeName;
         this.userId = userId;
-        this.promotionLevel=promotionLevel;
+        this.promotionLevel = promotionLevel;
     }
 
     public boolean isSavedToCloset() {

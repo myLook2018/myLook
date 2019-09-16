@@ -6,26 +6,27 @@ import java.util.HashMap;
 
 public class RequestRecommendation implements Serializable {
 
-        private String description;
-        private long limitDate;
-        private ArrayList<Double> localization;
-        private String requestPhoto;
-        private boolean isClosed;
-        private String updateDate;
-        private String userId;
-        private String title;
-        private ArrayList<HashMap<String,String>> answers;
-        private String documentId;
-        private String size;
-        private String category;
+    private String description;
+    private long limitDate;
+    private ArrayList<Double> localization;
+    private String requestPhoto;
+    private boolean isClosed;
+    private String updateDate;
+    private String userId;
+    private String title;
+    private ArrayList<HashMap<String, String>> answers;
+    private String documentId;
+    private String size;
+    private String category;
 
-        public RequestRecommendation() {}
+    public RequestRecommendation() {
+    }
 
-    public ArrayList<HashMap<String,String>> getAnswers() {
+    public ArrayList<HashMap<String, String>> getAnswers() {
         return answers;
     }
 
-    public void setAnswers(ArrayList<HashMap<String,String>> answers) {
+    public void setAnswers(ArrayList<HashMap<String, String>> answers) {
         this.answers = answers;
     }
 
@@ -35,7 +36,9 @@ public class RequestRecommendation implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
-    }public String getDescription() {
+    }
+
+    public String getDescription() {
         return description;
     }
 

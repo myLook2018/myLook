@@ -39,8 +39,8 @@ public class ShopwindowFragment extends Fragment {
             ImageView coverPh = rootView.findViewById(R.id.cover_store_photo);
             setCover(coverPh, args.getString("cover"));
 
-            GridView grid = rootView.findViewById(R.id.gridview);
-            fillGrid(grid, args.getString("name"));
+            GridView grid = rootView.findViewById(R.id.gridview_window_store);
+            fillGrid(grid, args.getString("storeName"));
         }
     }
 
@@ -54,7 +54,7 @@ public class ShopwindowFragment extends Fragment {
         final ArrayList<Article> storeShopWindowArticles = new ArrayList<>();
         FirebaseFirestore.getInstance().collection("articles")
                 .whereEqualTo("storeName", storeName)
-                // TODO change name
+                // TODO change name del atributo estaEnVidriera
                 .whereEqualTo("estaEnVidriera", true)
                 .get()
                 .addOnSuccessListener(result -> {
@@ -63,6 +63,7 @@ public class ShopwindowFragment extends Fragment {
                         art.setArticleId(document.getId());
                         storeShopWindowArticles.add(art);
                     }
+                    Log.d("WINDOW GRID", String.format("La lista de articulos en vidriera de la tienda %s tiene un size de %s", storeName, storeShopWindowArticles.size()));
                     grid.setAdapter(new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview, storeShopWindowArticles));
                 })
                 .addOnFailureListener(err -> Log.e("Firestore task", "onFailure: " + err));

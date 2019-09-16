@@ -2,6 +2,7 @@ package com.mylook.mylook.utils;
 
 import android.app.Activity;
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,7 +36,6 @@ public class CardsExploreAdapter extends RecyclerView.Adapter<CardsExploreAdapte
             image = view.findViewById(R.id.image_content);
             ad = view.findViewById(R.id.ad_layout);
         }
-
     }
 
     public CardsExploreAdapter(@NonNull Context context, List<Article> articles, ArticleVisitListener listener) {
@@ -57,7 +57,7 @@ public class CardsExploreAdapter extends RecyclerView.Adapter<CardsExploreAdapte
         Article article = articles.get(position);
         if (context instanceof Activity) {
             Activity activity = (Activity) context;
-            if ( !activity.isFinishing() ) {
+            if (!activity.isFinishing()) {
                 Glide.with(context).load(article.getPicture()).into(holder.image);
             }
         }

@@ -51,6 +51,7 @@ public class CatalogFragment extends Fragment {
                         art.setArticleId(document.getId());
                         storeArticles.add(art);
                     }
+                    Log.d("CATALOG GRID", String.format("La lista de articulos de la tienda con nombre %s tiene un size de ", storeName, storeArticles.size()));
                     grid.setAdapter(new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview, storeArticles));
                 })
                 .addOnFailureListener(err -> Log.e("Firestore task", "onFailure: " + err));

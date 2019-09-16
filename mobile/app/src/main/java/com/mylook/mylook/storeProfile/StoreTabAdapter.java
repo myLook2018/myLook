@@ -17,8 +17,8 @@ public class StoreTabAdapter extends FragmentPagerAdapter {
     }
 
     public void addFragment(int index, Fragment fragment, String title) {
-        mFragmentList.add(index,fragment);
-        mFragmentTitleList.add(index,title);
+        mFragmentList.add(index, fragment);
+        mFragmentTitleList.add(index, title);
     }
 
     @Override

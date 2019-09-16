@@ -16,6 +16,7 @@ import androidx.core.view.MenuItemCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
+import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
@@ -56,67 +57,41 @@ public class StoreActivity extends AppCompatActivity {
         invalidateOptionsMenu();
         String storeName = getIncomingIntent();
 
-        //TODO loadVisit();
-        // visit = new Visit(storeName, FirebaseAuth.getInstance().getCurrentUser().getUid());
         loadStore(storeName);
     }
 
     private void loadStore(String storeName) {
+        System.out.println(String.format("Loading store with name %s", storeName));
         FirebaseFirestore.getInstance().collection("stores")
                 .whereEqualTo("storeName", storeName).get()
                 .addOnCompleteListener(task -> {
-                    Log.d("STORE FOUND", "loadStore: ");
+                    Log.d("STORE FOUND", "Store name: " + storeName);
                     if (task.isSuccessful() && task.getResult() != null) {
-                        List<Store> results = new ArrayList<>(task.getResult().toObjects(Store.class));
-                        store = results.get(0);
+                        store = task.getResult().getDocuments().get(0).toObject(Store.class);
+                        System.out.println("El nombre de la tienda traida desde firebase es " + store.getStoreName());
                         setFragments();
                     }
                 });
     }
 
-    private String getIncomingIntent(){
+    private String getIncomingIntent() {
         Intent intentStore = getIntent();
         if (intentStore.hasExtra("store")) {
             fromDeepLink = false;
             return intentStore.getStringExtra("store");
-        }
-        else {
+        } else {
             try {
                 fromDeepLink = true;
-                if(intentStore.getData().getQueryParameter("storeName")!=null)
+                if (intentStore.getData().getQueryParameter("storeName") != null)
                     return Uri.decode(intentStore.getData().getQueryParameter("storeName"));
                 return "";
-            } catch (Exception e){
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
                 return "";
                 //return Uri.decode(intentStore.getStringExtra("storeName").replace("%20"," "));
             }
         }
     }
-
-
-    /*private void loadVisit() {
-        FirebaseFirestore.getInstance().collection("visits")
-                .whereEqualTo("storeName", nombreTiendaPerfil)
-                .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            if (task.getResult().getDocuments().size() == 0) {
-                                visitId = null;
-                                visit = new Visit(nombreTiendaPerfil, FirebaseAuth.getInstance().getCurrentUser().getUid());
-                                //db.collection("visits").add(visit.toMap());
-                            } else {
-                                Log.e("OLD VISIT", "ID: " + visitId);
-                                visit = task.getResult().getDocuments().get(0).toObject(Visit.class);
-                                visitId = task.getResult().getDocuments().get(0).getId();
-                            }
-
-                        }
-                    }
-                });
-    }*/
 
     private void setFragments() {
         Toolbar tb = findViewById(R.id.toolbar);
@@ -125,21 +100,21 @@ public class StoreActivity extends AppCompatActivity {
         if (ab != null) ab.setTitle(store.getStoreName());
 
         Bundle bundle = new Bundle();
-        bundle.putString("name", store.getStoreName());
+        bundle.putString("storeName", store.getStoreName());
         bundle.putString("photo", store.getProfilePh());
         bundle.putString("description", store.getStoreDescription());
         bundle.putString("facebook", store.getFacebookLink());
         bundle.putString("twitter", store.getTwitterLink());
         bundle.putString("instagram", store.getInstagramLink());
         bundle.putString("phone", store.getStorePhone());
-        bundle.putString("location", store.getStoreAddress() + " " + store.getStoreAddressNumber() +
-                " - " + store.getStoreFloor() + " - " + store.getStoreCity());
+        bundle.putString("location", createLocationInfo());
         bundle.putString("email", store.getStoreMail());
         bundle.putString("cover", store.getCoverPh());
-        bundle.putSerializable("registerDate", store.getRegisterDate());
+        bundle.putSerializable("registerDate", store.getRegisterDate()); //TODO esta info no esta en firebase. No existe como atributo
 
         TabLayout tab = findViewById(R.id.tab);
 
+        //Se crean los fragmentos de info de la tienda
         infoStoreFragment = new StoreInfoFragment();
         infoStoreFragment.setArguments(bundle);
         contactStoreFragment = new StoreContactFragment();
@@ -147,6 +122,7 @@ public class StoreActivity extends AppCompatActivity {
         viewPagerStoreInfo = findViewById(R.id.storeInfoViewPager);
         setupViewPagerInfo(viewPagerStoreInfo);
 
+        //Se crean los fragmentos de Vidriera/Catalogo/Reputacion
         shopwindowFragment = new ShopwindowFragment();
         shopwindowFragment.setArguments(bundle);
         catalogFragment = new CatalogFragment();
@@ -160,9 +136,44 @@ public class StoreActivity extends AppCompatActivity {
         saveVisit();
     }
 
+    private String createLocationInfo() {
+        StringBuilder resultLocationInfo = new StringBuilder();
+        if (!Strings.isNullOrEmpty(store.getStoreAddress())) {
+            resultLocationInfo.append("Direccion: " + store.getStoreAddress());
+        } else {
+            resultLocationInfo.append("Direccion: N/A");
+        }
+
+        if (!Strings.isNullOrEmpty(store.getStoreDept().trim())) {
+            resultLocationInfo.append(" - Dpto: " + store.getStoreDept());
+        } else {
+            resultLocationInfo.append(" - Dpto: N/A");
+        }
+
+        if (!Strings.isNullOrEmpty(store.getStoreFloor().trim())) {
+            resultLocationInfo.append(" - Piso: " + store.getStoreFloor());
+        } else {
+            resultLocationInfo.append(" - Piso: N/A");
+        }
+
+        if (!Strings.isNullOrEmpty(store.getStoreTower())) {
+            resultLocationInfo.append(" - Torre: " + store.getStoreTower());
+        } else {
+            resultLocationInfo.append(" - Torre: N/A");
+        }
+
+        return resultLocationInfo.toString();
+    }
+
     private void saveVisit() {
-        FirebaseFirestore.getInstance().collection("visits")
-                .add(new Visit(store.getStoreName(), FirebaseAuth.getInstance().getCurrentUser().getUid()).toMap());
+        try {
+            FirebaseFirestore.getInstance().collection("visits")
+                    .add(new Visit(store.getStoreName(), FirebaseAuth.getInstance().getCurrentUser().getUid()).toMap());
+            Log.d("SAVE VISIT", "Se guardo la visita para la tienda " + store.getStoreName());
+        } catch (Exception e) {
+            Log.d("SAVE VISIT", String.format("No se pudo agregar la visita a la tienda %s. El error fue: %s", store.getStoreName(), e.getMessage()));
+
+        }
     }
 
     public void moreInfo() {
@@ -205,7 +216,7 @@ public class StoreActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.e("Title","Item selected");
+        Log.e("Title", "Item selected");
         int id = item.getItemId();
         if (id == R.id.share_store) {
             Log.e("Share", "Share store");
@@ -221,8 +232,8 @@ public class StoreActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if (fromDeepLink){
-            Intent intent= new Intent(getApplicationContext(), MainActivity.class);
+        if (fromDeepLink) {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
             finish();
         }

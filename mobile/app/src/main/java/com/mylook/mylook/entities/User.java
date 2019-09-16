@@ -2,7 +2,7 @@ package com.mylook.mylook.entities;
 
 import java.util.HashMap;
 
-public class User implements  Comparable<User> {
+public class User implements Comparable<User> {
     private String name;
     private String surname;
     private String userId;
@@ -18,28 +18,28 @@ public class User implements  Comparable<User> {
 
     @Override
     public int compareTo(User o) {
-        if(!name.equals(o.name)){
+        if (!name.equals(o.name)) {
             return 1;
         }
-        if(!surname.equals(o.surname)){
+        if (!surname.equals(o.surname)) {
             return 1;
         }
-        if(!gender.equals(o.gender)){
+        if (!gender.equals(o.gender)) {
             return 1;
         }
-        if(!email.equals(o.email)){
+        if (!email.equals(o.email)) {
             return 1;
         }
-        if(!dni.equals(o.dni)){
+        if (!dni.equals(o.dni)) {
             return 1;
         }
-        if(birthday!=o.birthday){
+        if (birthday != o.birthday) {
             return 1;
         }
         return 0;
     }
 
-    public User(String name, String surname, String userId, String gender, String email, String dni, long birthday,boolean isPremium) {
+    public User(String name, String surname, String userId, String gender, String email, String dni, long birthday, boolean isPremium) {
         this.name = name;
         this.surname = surname;
         this.userId = userId;
@@ -47,7 +47,7 @@ public class User implements  Comparable<User> {
         this.email = email;
         this.dni = dni;
         this.birthday = birthday;
-        this.isPremium=isPremium;
+        this.isPremium = isPremium;
     }
 
     public boolean getPremium() {
@@ -122,16 +122,16 @@ public class User implements  Comparable<User> {
         this.birthday = birthday;
     }
 
-    public HashMap<String,Object> toMap(){
-        HashMap<String,Object> map = new HashMap<>();
+    public HashMap<String, Object> toMap() {
+        HashMap<String, Object> map = new HashMap<>();
         map.put("name", this.getName());
         map.put("surname", this.getSurname());
         map.put("email", this.getEmail());
         map.put("gender", this.getGender());
         map.put("dni", this.getDni());
         map.put("userId", this.getUserId());
-        map.put("birthday",this.getBirthday());
-        map.put("isPremium",this.getPremium());
+        map.put("birthday", this.getBirthday());
+        map.put("isPremium", this.getPremium());
         return map;
     }
 }

@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class Visit {
 
-    private  Timestamp interactionTime;
+    private Timestamp interactionTime;
     private String storeName;
     private String userId;
 
@@ -50,11 +50,11 @@ public class Visit {
         this.userId = userId;
     }
 
-    public Map<String,Object> toMap(){
-        HashMap<String,Object> map=new HashMap<>();
-        map.put("storeName",storeName);
-        map.put("userId",userId);
-        map.put("interactionTime",interactionTime);
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("storeName", storeName);
+        map.put("userId", userId);
+        map.put("interactionTime", interactionTime);
         return map;
     }
 }

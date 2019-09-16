@@ -11,9 +11,11 @@ public class LocalInteraction {
     public LocalInteraction() {
     }
 
-    private @NonNull String  uid;
+    private @NonNull
+    String uid;
 
-    private @NonNull String userId;
+    private @NonNull
+    String userId;
 
     private Date date;
 

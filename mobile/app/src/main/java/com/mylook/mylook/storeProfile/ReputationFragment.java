@@ -1,6 +1,7 @@
 package com.mylook.mylook.storeProfile;
 
 import android.os.Bundle;
+
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -49,9 +50,10 @@ public class ReputationFragment extends Fragment {
             TextView lblActiveStore = rootView.findViewById(R.id.lblActiveStore);
 
             lblDate = rootView.findViewById(R.id.lblDate);
-            Date date=(Date) args.getSerializable("registerDate");
-            if (date!=null) setRegisterDate(date);
-            else lblDate.setText("Ale pasame este dato"); //TODO Ver si se puede tomar del FirebaseUID
+            Date date = (Date) args.getSerializable("registerDate");
+            if (date != null) setRegisterDate(date);
+            else
+                lblDate.setText("Ale pasame este dato"); //TODO Ver si se puede tomar del FirebaseUID
 
             lblCant = rootView.findViewById(R.id.lblCant);
             setSubscriptions(store);
