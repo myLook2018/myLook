@@ -19,6 +19,8 @@ import com.mylook.mylook.session.Session;
 
 public class AccountActivity extends AppCompatActivity {
 
+    private static final int PREMIUM_REQUEST = 2;
+    private static final int SUCCESS_CODE = 0;
     private int USER_CHANGED=1;
     private TextView txtName;
     private TextView txtEmail;
@@ -49,11 +51,11 @@ public class AccountActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        initElements();
+        Log.e("ACC ACTIVITY","ON RESUME ACCOUNT ACTIVITY");
+        //initElements();
         setUserProfile();
         setOnClickListener();
     }
-
     private void initElements() {
         setContentView(R.layout.activity_account);
         Toolbar tb = findViewById(R.id.toolbar);
@@ -87,113 +89,92 @@ public class AccountActivity extends AppCompatActivity {
                 Log.e("ACCOUNT ACTIVITY", "El usuario cabio");
                 //onResume();
             }
+        }else if(requestCode==2){
+            if (resultCode==SUCCESS_CODE){
+                finish();
+                Log.e("ON ACTIVITY RES", "req 2 success");
+                txtDestacado.setVisibility(View.GONE);
+                imageDestacado.setVisibility(View.GONE);
+            }
         }
+
 
     }
 
 
     private void setOnClickListener() {
 
-        txtAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(getApplicationContext(), EditInfoActivity.class);
-                startActivityForResult(intent,1);
-            }
+        txtAccount.setOnClickListener(v -> {
+            Intent intent=new Intent(getApplicationContext(), EditInfoActivity.class);
+            startActivityForResult(intent,1);
+
         });
 
-        imageAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mContext, EditInfoActivity.class);
-                startActivity(intent);
-            }
+        imageAccount.setOnClickListener(v -> {
+            Intent intent = new Intent(mContext, EditInfoActivity.class);
+            startActivity(intent);
         });
 
-        txtNotifications.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Definir que hacemos con las notis
-            }
+        txtNotifications.setOnClickListener(v -> {
+            //TODO Definir que hacemos con las notis
         });
 
-        imageNotifications.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Definir que hacemos con las notis
-            }
+        imageNotifications.setOnClickListener(v -> {
+            //TODO Definir que hacemos con las notis
         });
 
-        imageDestacado.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mContext, PremiumRequestActivity.class);
-                intent.putExtra("clientId", clientId);
-                intent.putExtra("userName", Session.name);
-                startActivity(intent);
+        imageDestacado.setOnClickListener(v -> {
+            Intent intent = new Intent(mContext, PremiumRequestActivity.class);
+            intent.putExtra("clientId", clientId);
+            intent.putExtra("userName", Session.name);
+            startActivityForResult(intent, PREMIUM_REQUEST);
 
-            }
         });
-        txtDestacado.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mContext, PremiumRequestActivity.class);
-                intent.putExtra("clientId", clientId);
-                intent.putExtra("userName", Session.name);
-                startActivity(intent);
+        txtDestacado.setOnClickListener(v -> {
+            Intent intent = new Intent(mContext, PremiumRequestActivity.class);
+            intent.putExtra("clientId", clientId);
+            intent.putExtra("userName", Session.name);
+            startActivityForResult(intent, PREMIUM_REQUEST);
 
-            }
         });
 
-        imageHelp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Definir help
-            }
+        imageHelp.setOnClickListener(v -> {
+            //TODO Definir help
         });
-        txtHelp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Definir help
-            }
+        txtHelp.setOnClickListener(v -> {
+            //TODO Definir help
         });
 
-        txtExit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogManager dm = DialogManager.getInstance();
+        txtExit.setOnClickListener(v -> {
+            DialogManager dm = DialogManager.getInstance();
 
-                dm.createLogoutDialog(mContext,
-                        "Cerrar Sesion",
-                        "¿Estas seguro que quieres cerrar sesion?",
-                        "Si",
-                        "No").show();
-            }
+            dm.createLogoutDialog(mContext,
+                    "Cerrar Sesion",
+                    "¿Estas seguro que quieres cerrar sesion?",
+                    "Si",
+                    "No").show();
         });
 
-        imageExit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogManager dm = DialogManager.getInstance();
+        imageExit.setOnClickListener(v -> {
+            DialogManager dm = DialogManager.getInstance();
 
-                dm.createLogoutDialog(
-                        mContext,
-                        "Cerrar Sesion",
-                        "¿Estas seguro que quieres cerrar sesion?",
-                        "Si",
-                        "No").show();
-            }
+            dm.createLogoutDialog(
+                    mContext,
+                    "Cerrar Sesion",
+                    "¿Estas seguro que quieres cerrar sesion?",
+                    "Si",
+                    "No").show();
         });
 
 
     }
 
     private void setUserProfile() {
-        isPremiumUser= Session.isPremium;
+        Session.updateData();
         txtName.setText(Session.name);
         txtEmail.setText(Session.mail);
         clientId = Session.clientId;
-        if(isPremiumUser){
+        if(Session.isPremium){
             imageDestacado.setVisibility(View.GONE);
             txtDestacado.setVisibility(View.GONE);
         }else{

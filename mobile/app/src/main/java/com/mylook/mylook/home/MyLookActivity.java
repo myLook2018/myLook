@@ -22,16 +22,14 @@ public class MyLookActivity extends AppCompatActivity implements BottomNavigatio
     Fragment fragment = null;
     private Session currentSesion;
     private static final String TAG = "MyLookActivity";
-    boolean isPremium;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isPremium= Session.getInstance().isPremiumUser();
         loadFragment(HomeFragment.getInstance());
         setContentView(R.layout.activity_mylook_app);
         BottomNavigationView navigation= findViewById(R.id.navigation);
-        if(isPremium)
+        if(Session.getInstance().isPremiumUser())
             navigation.inflateMenu(R.menu.bottom_navigation_menu_premium);
         else
             navigation.inflateMenu(R.menu.bottom_navigation_menu);
@@ -42,6 +40,26 @@ public class MyLookActivity extends AppCompatActivity implements BottomNavigatio
         setTheme(R.style.AppTheme);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadFragment(HomeFragment.getInstance());
+        setContentView(R.layout.activity_mylook_app);
+        BottomNavigationView navigation= findViewById(R.id.navigation);
+        if(Session.getInstance().isPremiumUser())
+            navigation.inflateMenu(R.menu.bottom_navigation_menu_premium);
+        else
+            navigation.inflateMenu(R.menu.bottom_navigation_menu);
+
+        navigation.setOnNavigationItemSelectedListener(MyLookActivity.this);
+        Toolbar toolbar = findViewById(R.id.main_toolbar);
+        setSupportActionBar(toolbar);
+        setTheme(R.style.AppTheme);
+    }
+    public void setPremiumMenu(){
+        BottomNavigationView navigation= findViewById(R.id.navigation);
+        navigation.inflateMenu(R.menu.bottom_navigation_menu);
+    }
     @SuppressLint("NewApi")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
