@@ -63,6 +63,8 @@ exports.newAnswerNotification = functions.firestore
   .document('requestRecommendations/{docId}')
   .onWrite((snap, context) => {
     const newValue = snap.after.data();
+    const id = snap.before.id
+    console.log("RequestId "+id)
     const previousValue = snap.before.data();
     const newAnswer = newValue.answers;
     const oldAnswer = previousValue.answers;
@@ -71,44 +73,35 @@ exports.newAnswerNotification = functions.firestore
       let userId = newValue.userId;
       const desc = newAnswer[newAnswer.length - 1].description;
       const storeName = newAnswer[newAnswer.length - 1].storeName;
-      const payload = {
-        notification: {
-          title: 'Nueva Recomendación para ' + title + ' de ' + storeName,
-          body: desc,
-          sound: 'default'
-        }
-      };
-      const options = {
-        priority: 'high',
-        timeToLive: 60 * 60 * 24
-      };
       return admin
         .firestore()
         .collection('clients')
         .get()
         .then(snapshot => {
           snapshot.forEach(doc => {
-            console.log(
-              'user',
-              'userId ' +
-                userId +
-                ' - Doc user Id' +
-                doc.data().userId +
-                ' - docId ' +
-                doc.id
-            );
             if (userId == doc.data().userId || userId == doc.id) {
               console.log('Es este Usuario!!! ' + userId);
+              console.log("RequestId "+id)
               const registrationToken = doc.data().installToken;
-              return admin
-                .messaging()
-                .sendToDevice(registrationToken, payload, options)
-                .then(response => {
-                  console.log('Successfully sent message:', response);
-                })
-                .catch(error => {
-                  console.log('Error sending message:', error);
-                });
+                        var message = {
+                            data: {
+                                "title": "Nueva Recomendación para " + title + " de " + storeName,
+                                "deepLink": "www.mylook.com/recommendation",
+                                "body": desc,
+                                "sound": "default",
+                                "requestId": id
+                            },
+                            "token": registrationToken
+                        };
+                        console.log(JSON.stringify(message))
+                        return admin.messaging().send(message)
+                            .then((response) => {
+                                // Response is a message ID string.
+                                console.log('Successfully sent message:', response);
+                            })
+                            .catch((error) => {
+                                console.log('Error sending message:', error);
+                            });
             }
           });
         });
