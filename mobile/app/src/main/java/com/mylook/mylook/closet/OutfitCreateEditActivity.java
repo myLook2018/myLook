@@ -2,9 +2,11 @@ package com.mylook.mylook.closet;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,11 +23,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Outfit;
-import com.mylook.mylook.session.Sesion;
+import com.mylook.mylook.session.Session;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class OutfitCreateEditActivity extends AppCompatActivity {
@@ -69,23 +72,18 @@ public class OutfitCreateEditActivity extends AppCompatActivity {
 
     private void getAll() {
         all = new ArrayList<>();
-        FirebaseFirestore.getInstance().collection("closets").whereEqualTo("userID", Sesion.getInstance().getSessionUserId())
-                .get().addOnSuccessListener(task -> {
-                    if (task.getDocuments().size() > 0) {
-                        DocumentSnapshot closet = task.getDocuments().get(0);
-                        closet.getReference().collection("favorites").get().addOnSuccessListener(taskFavorites -> {
-                            if (taskFavorites.getDocuments().size() > 0) {
-                                all.addAll(task.getDocuments().stream().map(document -> {
-                                    Article art = document.toObject(Article.class);
-                                    if (art != null) {
-                                        art.setArticleId(document.getId());
-                                    }
-                                    return art;
-                                }).collect(Collectors.toList()));
-                            }
-                        });
-                    }
+        FirebaseFirestore.getInstance().collection("articles")
+                .whereArrayContains("favorites", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .get()
+                .addOnSuccessListener(task -> {
+                    all.addAll(task.getDocuments().stream().map(document -> {
+                        Article art = document.toObject(Article.class);
+                        Objects.requireNonNull(art).setArticleId(document.getId());
+                        return art;
+                    }).collect(Collectors.toList()));
                     getDataFromIntent();
+                    Log.d("OutfitCreateEditAdapter", "getAll: " + all.size());
+                    Log.d("OutfitCreateEditAdapter", "getSelected: " + selectedIndexes.size());
                     adapter = new OutfitCreateEditAdapter(this, all, selectedIndexes);
                     adapter.getSelected().forEach(art -> Log.d("", "selectForOutfit: selectedIndexes " + art));
                     gridView.setAdapter(adapter);
@@ -167,7 +165,7 @@ public class OutfitCreateEditActivity extends AppCompatActivity {
             data.put("name", editText.getText().toString());
             //TODO sacar???
             data.put("category", "");
-            data.put("userID", Sesion.getInstance().getSessionUserId());
+            data.put("userID", FirebaseAuth.getInstance().getCurrentUser().getUid());
             data.put("favorites", selectedIds);
             FirebaseFirestore.getInstance().collection("outfits").add(data)
                     .addOnSuccessListener(doc -> {

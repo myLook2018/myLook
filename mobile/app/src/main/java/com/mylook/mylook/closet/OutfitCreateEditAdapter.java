@@ -37,24 +37,6 @@ public class OutfitCreateEditAdapter extends BaseAdapter {
         return 0;
     }
 
-    /*public View getView(int position, View convertView, ViewGroup parent) {
-        Log.d("", "getView: rendering grid view item" + position);
-        SelectableArticleGridItemView gridItemView;
-        ImageView imageView;
-        if (convertView == null) {
-            gridItemView = new SelectableArticleGridItemView(context);
-            imageView = gridItemView.getImageView();
-        } else {
-            gridItemView = (SelectableArticleGridItemView) convertView;
-            imageView = gridItemView.getImageView();
-        }
-        Glide.with(context).asBitmap().load(articles.get(position).getPicture())
-                .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA))
-                .into(imageView);
-        gridItemView.display(selected.contains(getItem(position)));
-        return gridItemView;
-    }*/
-
     public View getView(int position, View convertView, ViewGroup parent) {
         Log.d("", "getView: rendering grid view item" + position);
         SelectableImageView imageView;

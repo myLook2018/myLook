@@ -50,6 +50,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
   isRequestSelected = false;
   disableSendRecomendation = false;
   isAnAnswer: boolean;
+
   constructor(
     public snackBar: MatSnackBar,
     public articleService: ArticleService,

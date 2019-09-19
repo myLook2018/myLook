@@ -4,8 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +11,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.mylook.mylook.R;
@@ -58,17 +59,13 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
         int daysLeft = (int) TimeUnit.MILLISECONDS.toDays(cal.getTime().getTime() - today.getTime().getTime());
         if(requestRecommendation.getIsClosed()){
             holder.txtDate.setText("Cerrada");
-            holder.txtDate.setTextColor(Color.RED);
         } else {
             if(daysLeft == 0){
                 holder.txtDate.setText("Último día");
-                holder.txtDate.setTextColor(Color.RED);
             } else if (daysLeft > 1) {
                 holder.txtDate.setText("Faltan " + daysLeft + " días");
-                holder.txtDate.setTextColor(Color.BLACK);
             } else {
                 holder.txtDate.setText("Falta " + daysLeft + " día");
-                holder.txtDate.setTextColor(Color.BLACK);
             }
         }
         holder.titleRequest.setText(requestRecommendation.getTitle());

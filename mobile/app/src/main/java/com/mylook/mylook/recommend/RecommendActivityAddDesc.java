@@ -17,15 +17,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.textfield.TextInputEditText;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
@@ -52,7 +52,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mylook.mylook.R;
-import com.mylook.mylook.session.Sesion;
+import com.mylook.mylook.session.Session;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
@@ -101,6 +101,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request_recommendation_add_desc);
 
+
         initElements();
         Toolbar tb = findViewById(R.id.recomend_toolbar);
         setSupportActionBar(tb);
@@ -108,40 +109,60 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         ab.setDisplayHomeAsUpEnabled(true);
         this.setTitle("Nueva Solicitud");
         setCurrentLocation();
-        btnSend.setOnClickListener(view -> sendToFirebase());
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendToFirebase();
+            }
+        });
         setCategoryRequest();
         initCalendar();
 
-        fabPhoto.setOnClickListener(view -> {
-            if (getCameraAccess()) {
-                try {
-                    startCameraIntent();
-                } catch (Exception e) {
-                    e.printStackTrace();
+        fabPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (getCameraAccess()) {
+                    try {
+                        startCameraIntent();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
 
-        fabGallery.setOnClickListener(view -> {
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            intent.setType("image/*");
-            startActivityForResult(intent, SELECT_FILE);
+        fabGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                intent.setType("image/*");
+                startActivityForResult(intent, SELECT_FILE);
 
+            }
         });
     }
 
     private void initCalendar(){
 
         final Calendar myCalendar = Calendar.getInstance();
-        final DatePickerDialog.OnDateSetListener date = (view, year, monthOfYear, dayOfMonth) -> {
-            myCalendar.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
-            limitDate = new Date();
-            limitDate.setTime(myCalendar.getTimeInMillis());
-            editDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                myCalendar.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
+                limitDate = new Date();
+                limitDate.setTime(myCalendar.getTimeInMillis());
+                editDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+            }
         };
 
-        editDate.setOnClickListener(view -> new DatePickerDialog(RecommendActivityAddDesc.this, date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                myCalendar.get(Calendar.DAY_OF_MONTH)).show());
+        editDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new DatePickerDialog(RecommendActivityAddDesc.this, date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
     }
 
     private void initElements(){
@@ -152,20 +173,23 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         storageRef = FirebaseStorage.getInstance().getReference();
         mProgressBar = findViewById(R.id.progressBar);
         btnSend = findViewById(R.id.btnSend);
-        imgRecommend = findViewById(R.id.imgRecommend);
-        txtDescription = findViewById(R.id.txtDescription);
-        editDate = findViewById(R.id.editDate);
+        imgRecommend = (ImageView) findViewById(R.id.imgRecommend);
+        txtDescription = (TextInputEditText) findViewById(R.id.txtDescription);
+        editDate = (EditText) findViewById(R.id.editDate);
         title = findViewById(R.id.txtTitle);
-        fabMenu = findViewById(R.id.fabMenu);
-        fabPhoto = findViewById(R.id.photoFloating);
-        fabGallery = findViewById(R.id.galleryFloating);
+        fabMenu = (FloatingActionMenu) findViewById(R.id.fabMenu);
+        fabPhoto = (FloatingActionButton) findViewById(R.id.photoFloating);
+        fabGallery = (FloatingActionButton) findViewById(R.id.galleryFloating);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
     }
 
     private void setCategoryRequest() {
-        dB.collection("categories").whereEqualTo("name", "recommendation").get().addOnCompleteListener(task -> {
-            ArrayList<String> categories = (ArrayList<String>) task.getResult().getDocuments().get(0).get("categories");
-            spinner.setAdapter(new ArrayAdapter<>(RecommendActivityAddDesc.this, android.R.layout.simple_selectable_list_item, categories));
+        dB.collection("categories").whereEqualTo("name", "recommendation").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                ArrayList<String> categories = (ArrayList<String>) task.getResult().getDocuments().get(0).get("categories");
+                spinner.setAdapter(new ArrayAdapter<String>(RecommendActivityAddDesc.this, android.R.layout.simple_selectable_list_item, categories));
+            }
         });
     }
 
@@ -207,16 +231,20 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         if (permissionGranted) {
             if (bitmap == null) {
                 uploadTask = storageReference.putFile(selectImageUri);
-                uploadTask.onSuccessTask((SuccessContinuation<UploadTask.TaskSnapshot, Object>) taskSnapshot -> {
-                    uploadTask.getSnapshot().getStorage().getDownloadUrl().onSuccessTask(new SuccessContinuation<Uri, Object>() {
-                        @NonNull
-                        @Override
-                        public Task<Object> then(@Nullable Uri uri) {
-                            downloadUrl = uri;
-                            return (Task) uploadTask;
-                        }
-                    });
-                    return (Task) uploadTask;
+                uploadTask.onSuccessTask(new SuccessContinuation<UploadTask.TaskSnapshot, Object>() {
+                    @NonNull
+                    @Override
+                    public Task<Object> then(@Nullable final UploadTask.TaskSnapshot taskSnapshot) {
+                        uploadTask.getSnapshot().getStorage().getDownloadUrl().onSuccessTask(new SuccessContinuation<Uri, Object>() {
+                            @NonNull
+                            @Override
+                            public Task<Object> then(@Nullable Uri uri) {
+                                downloadUrl = uri;
+                                return (Task) uploadTask;
+                            }
+                        });
+                        return (Task) uploadTask;
+                    }
                 });
 
 
@@ -225,13 +253,21 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] data = baos.toByteArray();
                 uploadTask = storageReference.putBytes(data);
-                uploadTask.onSuccessTask((SuccessContinuation<UploadTask.TaskSnapshot, Object>) taskSnapshot -> {
-                    uploadTask.getSnapshot().getStorage().getDownloadUrl().onSuccessTask((SuccessContinuation<Uri, Object>) uri -> {
-                        downloadUrl = uri;
-                        return (Task) uploadTask;
+                uploadTask.onSuccessTask(new SuccessContinuation<UploadTask.TaskSnapshot, Object>() {
+                    @NonNull
+                    @Override
+                    public Task<Object> then(@Nullable UploadTask.TaskSnapshot taskSnapshot) {
+                        uploadTask.getSnapshot().getStorage().getDownloadUrl().onSuccessTask(new SuccessContinuation<Uri, Object>() {
+                            @NonNull
+                            @Override
+                            public Task<Object> then(@Nullable Uri uri) {
+                                downloadUrl = uri;
+                                return (Task) uploadTask;
 
-                    });
-                    return (Task) uploadTask;
+                            }
+                        });
+                        return (Task) uploadTask;
+                    }
                 });
 
             }
@@ -244,6 +280,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
 
     private boolean writeFirebaseDocument(String uri) {
         if (!enviado) {
+            Session.getInstance().updateActivitiesStatus(Session.RECOMEND_FRAGMENT);
             mProgressBar.setVisibility(View.VISIBLE);
             btnSend.setEnabled(false);
             fabMenu.setVisibility(View.INVISIBLE);
@@ -253,7 +290,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 latLong.add(currentLocation.getLatitude());
                 latLong.add(currentLocation.getLongitude());
                 final Map<String, Object> recommendation = new HashMap<>();
-                recommendation.put("userId", Sesion.getInstance().getSessionUserId() );
+                recommendation.put("userId", user.getUid());
                 recommendation.put("description", txtDescription.getText().toString());
                 recommendation.put("limitDate", limitDate.getTime());
                 recommendation.put("updateDate", "update");
@@ -274,12 +311,16 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                         displayMessage("Tu solicitud de recomendación ha sido enviada");
                         setResult(1);
                         finish();
+
                     }
-                }).addOnFailureListener(e -> {
-                    mProgressBar.setVisibility(View.GONE);
-                    btnSend.setEnabled(true);
-                    fabMenu.setVisibility(View.VISIBLE);
-                    displayMessage("Ha ocurrido un problema con tu recomendacion");
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        mProgressBar.setVisibility(View.GONE);
+                        btnSend.setEnabled(true);
+                        fabMenu.setVisibility(View.VISIBLE);
+                        displayMessage("Ha ocurrido un problema con tu recomendacion");
+                    }
                 });
             } else {
                 mProgressBar.setVisibility(View.GONE);
@@ -318,10 +359,21 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             btnSend.setEnabled(false);
             fabMenu.setVisibility(View.INVISIBLE);
             final UploadTask uptask = saveImage();
-            uptask.addOnCompleteListener(task -> task.getResult().getStorage().getDownloadUrl().addOnCompleteListener(task1 -> {
-                writeFirebaseDocument(task1.getResult().toString());
-            }));
+            uptask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    task.getResult().getStorage().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            writeFirebaseDocument(task.getResult().toString());
+                        }
+                    });
+
+
+                }
+            });
         }
+
     }
 
     private void displayMessage(String message) {
@@ -335,13 +387,18 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         }
 
         @Override
-        public void onStatusChanged(String s, int i, Bundle bundle) { }
+        public void onStatusChanged(String s, int i, Bundle bundle) {
+        }
 
         @Override
-        public void onProviderEnabled(String s) { }
+        public void onProviderEnabled(String s) {
+
+        }
 
         @Override
-        public void onProviderDisabled(String s) { }
+        public void onProviderDisabled(String s) {
+
+        }
 
     }
 
@@ -385,14 +442,24 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                         startActivity(myIntent);
                     }
                 })
-                .setNegativeButton("Aceptar", (paramDialogInterface, paramInt) -> {
+                .setNegativeButton("Aceptar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
 
-                }).setOnDismissListener(dialog1 -> {
+                    }
 
+                }).setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+
+                    }
                 }).create();
-        alert.setOnShowListener(dialog12 -> {
-            alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.purple));
-            alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.purple));
+        alert.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.purple));
+                alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.purple));
+            }
         });
 
         alert.show();
@@ -434,7 +501,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             }
         }
         if (requestCode == PIC_CROP) {
-            bitmap = data.getExtras().getParcelable("data");
+            bitmap = (Bitmap) data.getExtras().getParcelable("data");
             imgRecommend.setImageBitmap(bitmap);
             fabMenu.close(true);
         }

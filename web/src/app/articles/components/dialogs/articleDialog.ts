@@ -264,7 +264,6 @@ export class ArticleDialogComponent implements OnInit, OnDestroy, AfterViewInit 
     this.articleForm.get('tags').setValue(this.tags.map(x => x));
     this.articleForm.get('sizes').setValue(this.sizes.map(x => x));
     this.articleForm.get('colors').setValue(this.colors.map(x => x));
-
     this.articleForm.addControl('storeLatitude', new FormControl(this.articleData.storeLatitude, Validators.required));
     this.articleForm.addControl('storeLongitude', new FormControl(this.articleData.storeLongitude, Validators.required));
     this.uploadPictures(imagesToUpload).then(picturesURL => {
