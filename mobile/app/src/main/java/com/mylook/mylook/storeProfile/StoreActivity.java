@@ -75,30 +75,36 @@ public class StoreActivity extends AppCompatActivity {
     }
 
     private String getIncomingIntent() {
+        String result = "";
         Intent intentStore = getIntent();
         if (intentStore.hasExtra("store")) {
             fromDeepLink = false;
-            return intentStore.getStringExtra("store");
+            result = intentStore.getStringExtra("store");
         } else {
             try {
+                //Esto es para cuando se quiere entrar desde notificaciones
                 fromDeepLink = true;
                 if (intentStore.getData().getQueryParameter("storeName") != null)
-                    return Uri.decode(intentStore.getData().getQueryParameter("storeName"));
-                return "";
+                    result = Uri.decode(intentStore.getData().getQueryParameter("storeName"));
+            } catch (NullPointerException e) {
+                System.out.println("El parametro storeName del deepLink es nulo. El mensaje de error es: " + e.getMessage());
             } catch (Exception e) {
-                System.out.println(e.getMessage());
-                return "";
+                System.out.println("Error obteniendo el parametro storeName desde el deepLink. El error es: " + e.getMessage());
                 //return Uri.decode(intentStore.getStringExtra("storeName").replace("%20"," "));
             }
         }
+        return result;
     }
 
     private void setFragments() {
         Toolbar tb = findViewById(R.id.toolbar);
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
+
+        //Pongo el nombre de la tienda en la action bar
         if (ab != null) ab.setTitle(store.getStoreName());
 
+        //Se crea el Bundle para pasarle info a los fragmentos
         Bundle bundle = new Bundle();
         bundle.putString("storeName", store.getStoreName());
         bundle.putString("photo", store.getProfilePh());
@@ -107,7 +113,11 @@ public class StoreActivity extends AppCompatActivity {
         bundle.putString("twitter", store.getTwitterLink());
         bundle.putString("instagram", store.getInstagramLink());
         bundle.putString("phone", store.getStorePhone());
+        //La key location es el nombre de la direccion
         bundle.putString("location", createLocationInfo());
+        //Paso la latitud y longitud
+        bundle.putDouble("latitude", store.getStoreLatitude());
+        bundle.putDouble("longitude", store.getStoreLongitude());
         bundle.putString("email", store.getStoreMail());
         bundle.putString("cover", store.getCoverPh());
         bundle.putSerializable("registerDate", store.getRegisterDate()); //TODO esta info no esta en firebase. No existe como atributo
@@ -131,6 +141,7 @@ public class StoreActivity extends AppCompatActivity {
         reputationFragment.setArguments(bundle);
         ViewPager viewPagerStoreArticles = findViewById(R.id.storeViewPager);
         setupViewPagerArticles(viewPagerStoreArticles);
+
         tab.setupWithViewPager(viewPagerStoreArticles);
 
         saveVisit();

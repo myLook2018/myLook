@@ -45,7 +45,7 @@ public class StoreInfoFragment extends Fragment {
         Bundle args = getArguments();
 
         if (args != null) {
-            String store = args.getString("name");
+            String store = args.getString("storeName");
 
             storeName = rootView.findViewById(R.id.profile_store_name);
             setStoreName(store);
@@ -80,24 +80,30 @@ public class StoreInfoFragment extends Fragment {
 
     private void checkFollow(String storeName) {
         btnSubscribe.setEnabled(false);
-        FirebaseFirestore.getInstance().collection("subscriptions")
-                .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .whereEqualTo("storeName", storeName)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                        subscriptionDocument = task.getResult().getDocuments().get(0).getId();
-                        mSubscribed = true;
-                    }
-                    setupButtonSubscribe(mSubscribed);
-                    btnSubscribe.setEnabled(true);
-                });
+        try {
+            //Me fijo en base si ya existe en suscripciones el actual usuario
+            FirebaseFirestore.getInstance().collection("subscriptions")
+                    .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .whereEqualTo("storeName", storeName)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                            subscriptionDocument = task.getResult().getDocuments().get(0).getId();
+                            mSubscribed = true;
+                        }
+                        setupButtonSubscribe(mSubscribed);
+                        btnSubscribe.setEnabled(true);
+                    });
+        } catch (Exception e) {
+            System.out.println("Error en el checkeo del follow. El error es: " + e.getMessage());
+        }
     }
 
     private void setOnClickSubscribe(String storeName) {
         btnSubscribe.setOnClickListener(view -> {
             btnSubscribe.setEnabled(false);
             if (!mSubscribed) {
+                //Si no esta subscripto se crea la subscripcion en bd
                 Subscription newSubscription = new Subscription(storeName, FirebaseAuth.getInstance().getCurrentUser().getUid());
                 FirebaseFirestore.getInstance().collection("subscriptions").add(newSubscription).addOnSuccessListener(documentReference -> {
                     Log.d("Firestore task", "DocumentSnapshot written with ID: " + documentReference.getId());
