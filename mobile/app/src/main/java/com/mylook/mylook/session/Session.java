@@ -2,18 +2,13 @@ package com.mylook.mylook.session;
 
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.closet.ClosetFragment;
-import com.mylook.mylook.explore.ExploreFragment;
-import com.mylook.mylook.home.HomeFragment;
-import com.mylook.mylook.home.MyLookActivity;
-import com.mylook.mylook.profile.ProfileFragment;
+import com.mylook.mylook.profile.PremiumOptionsFragment;
 import com.mylook.mylook.recommend.RecommendFragment;
 
 /**
@@ -67,7 +62,7 @@ public class Session {
                     ClosetFragment.getInstance().refreshStatus();
                     break;
                 case PROFILE_FRAGMENT:
-                    ProfileFragment.getInstance().refreshStatus();
+                    PremiumOptionsFragment.getInstance().refreshStatus();
                     break;
             }
         }

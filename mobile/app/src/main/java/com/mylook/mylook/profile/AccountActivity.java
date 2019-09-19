@@ -37,7 +37,7 @@ public class AccountActivity extends AppCompatActivity {
     private Context mContext;
     private String clientId;
     private boolean isPremiumUser;
-    public final static String TAG = "ProfileFragment";
+    public final static String TAG = "PremiumOptionsFragment";
 
 
     @Override

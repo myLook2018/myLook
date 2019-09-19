@@ -13,7 +13,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.mylook.mylook.R;
 import com.mylook.mylook.closet.ClosetFragment;
 import com.mylook.mylook.explore.ExploreFragment;
-import com.mylook.mylook.profile.ProfileFragment;
+import com.mylook.mylook.profile.PremiumOptionsFragment;
 import com.mylook.mylook.recommend.RecommendFragment;
 import com.mylook.mylook.session.Session;
 
@@ -82,7 +82,7 @@ public class MyLookActivity extends AppCompatActivity implements BottomNavigatio
                 break;
             case R.id.ic_profile:
                 ((Toolbar) findViewById(R.id.main_toolbar)).setTitle("Perfil");
-                fragment = ProfileFragment.getInstance();
+                fragment = PremiumOptionsFragment.getInstance();
                 break;
         }
         return loadFragment(fragment);
