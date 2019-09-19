@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -22,6 +23,7 @@ public class StoreContactFragment extends Fragment {
 
     private LinearLayout lnlface, lnlInsta, lnlTw;
     private TextView storeLocation, storePhone, txtTwitter, txtInstagram, txtFacebook;
+    private Button btnReturnStoreInfo;
 
     public StoreContactFragment() {
     }
@@ -39,7 +41,6 @@ public class StoreContactFragment extends Fragment {
         if (args != null) {
             storeLocation = rootView.findViewById(R.id.store_location);
             setOnClickLocation(args.getString("storeName"), args.getDouble("latitude"), args.getDouble("longitude"));
-            //setStoreLocation(args.getString("location"));
 
             storePhone = rootView.findViewById(R.id.store_phone);
             setStorePhone(args.getString("phone"));
@@ -56,6 +57,9 @@ public class StoreContactFragment extends Fragment {
             txtInstagram = rootView.findViewById(R.id.txtInstagram);
             setOnClickInstagram(args.getString("instagram"));
         }
+
+        btnReturnStoreInfo = rootView.findViewById(R.id.btnReturnStoreInfo);
+        btnReturnStoreInfo.setOnClickListener(v -> ((StoreActivity) getActivity()).returnToStoreInfo());
     }
 
     private void setOnClickLocation(String storeName, Double storeLatitude, Double storeLongitude) {
@@ -72,12 +76,9 @@ public class StoreContactFragment extends Fragment {
                 startActivity(mapIntent);
             } catch (ActivityNotFoundException e) {
                 System.out.println("Error al abrir el link a Maps. El error es: " + e.getMessage());
+                startActivity(new Intent(Intent.ACTION_VIEW, gmmIntentUri));
             }
         });
-    }
-
-    private void setStoreLocation(String storeLocation) {
-        this.storeLocation.setText(storeLocation);
     }
 
     private void setStorePhone(String storePhone) {
@@ -94,6 +95,7 @@ public class StoreContactFragment extends Fragment {
                     startActivity(intent);
                 } catch (ActivityNotFoundException e) {
                     System.out.println("Error al abrir el link a Facebook. El error es: " + e.getMessage());
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(finalTxtFacebook)));
                 }
             });
             lnlface.setVisibility(View.VISIBLE);
@@ -110,6 +112,7 @@ public class StoreContactFragment extends Fragment {
                     startActivity(intent);
                 } catch (ActivityNotFoundException e) {
                     System.out.println("Error al abrir el link a Twitter. El error es: " + e.getMessage());
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(finalTxtTwitter)));
                 }
 
             });
@@ -127,6 +130,7 @@ public class StoreContactFragment extends Fragment {
                     startActivity(intent);
                 } catch (ActivityNotFoundException e) {
                     System.out.println("Error al abrir el link a Instagram. El error es: " + e.getMessage());
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(finalTxtInstagram)));
                 }
             });
             lnlInsta.setVisibility(View.VISIBLE);

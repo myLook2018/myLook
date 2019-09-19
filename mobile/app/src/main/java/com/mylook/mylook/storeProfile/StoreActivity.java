@@ -191,6 +191,10 @@ public class StoreActivity extends AppCompatActivity {
         viewPagerStoreInfo.setCurrentItem(1);
     }
 
+    public void returnToStoreInfo() {
+        viewPagerStoreInfo.setCurrentItem(0);
+    }
+
     private void setupViewPagerInfo(ViewPager viewPager) {
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(infoStoreFragment);
