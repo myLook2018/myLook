@@ -240,12 +240,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getPromOfFeedBack() {
+    console.log('haciendo el calculo de las estrellas', this.feedBack);
+    const filteredFeedBack = this.feedBack.filter(feedBack => {
+      return feedBack.feedBack;
+    });
     let sum = 0;
-    for (let i = 0; i < this.feedBack.length; i++) {
-      sum = sum + +this.feedBack[i].feedBack;
+    for (let i = 0; i < filteredFeedBack.length; i++) {
+      // tslint:disable-next-line: radix
+      sum = sum + parseInt(filteredFeedBack[i].feedBack);
       console.log(`sumatoria parcial ` + sum);
     }
-    this.feedBackProm = (sum / this.feedBack.length);
+    this.feedBackProm = (sum / filteredFeedBack.length);
     console.log(`feedBackProm ` + this.feedBackProm);
   }
 

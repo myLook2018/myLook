@@ -35,6 +35,7 @@ export class PromotionsService {
             this.promotions.push(data);
           });
         }).then(() => {
+          console.log('promotions', this.promotions);
           resolve(this.promotions);
         })
         .catch(function (error) {
@@ -83,20 +84,52 @@ export class PromotionsService {
 
   doc.setFontStyle('normal');
   doc.setFontSize(11);
-  doc.text(`Nombre de la tienda: ${data.store.storeName}`, 6, 30);
-  doc.text(`Nombre del articulo: ${data.promotion.title}`, 6, 40);
-  doc.text(`ID del articulo: ${data.promotion.articleId}`, 6, 50);
-  doc.text(`Inicio de promoción: ${formatDate(data.promotion.startOfPromotion.toDate())}`, 6, 60);
-  doc.text(`Finaliación de promoción: ${formatDate(data.promotion.endOfPromotion.toDate())}`, 6, 70);
-  const promocionType = (data.promotion.promotionLevel === 3) ? 'Premium' : 'Estandar';
-  doc.text(`Tipo de promoción: ${promocionType}`, 6, 80);
-  doc.setFontStyle('bold');
-  const payType = data.promotion.payMethod === 'debit_card' ? 'Tarjeta de Débito' : 'Tarjeta de Crédito';
-  doc.text(`Medio de Pago: ${payType}`, 6, 90);
-  doc.text(`Precio Final: $${data.promotion.promotionCost}`, 160, 100);
+  doc.text(`Nombre de la tienda:`, 6, 30);
+  doc.text(`${data.store.storeName}`, 70, 30);
 
-  doc.line(5, 95, 205, 95);
-  doc.line(5, 105, 205, 105);
+  doc.text(`Nombre del articulo:`, 6, 40);
+  doc.text(`${data.promotion.title}`, 70, 40);
+
+  doc.text(`ID del articulo:`, 6, 50);
+  doc.text(`${data.promotion.articleId}`, 70, 50);
+
+  doc.text(`Inicio de promoción:`, 6, 60);
+  doc.text(`${formatDate(data.promotion.startOfPromotion.toDate())}`, 70, 60);
+
+  doc.text(`Finaliación de promoción:`, 6, 70);
+  doc.text(`${formatDate(data.promotion.endOfPromotion.toDate())}`, 70, 70);
+
+  const promocionType = (data.promotion.promotionLevel === 3) ? 'Premium' : 'Estandar';
+  doc.text(`Tipo de promoción:`, 6, 80);
+  doc.text(`${promocionType}`, 70, 80);
+
+  // doc.setFontStyle('bold');
+  const payType = data.promotion.payMethod === 'debit_card' ? 'Tarjeta de Débito' : 'Tarjeta de Crédito';
+  doc.text(`Forma de Pago:`, 6, 90);
+  doc.text(`${payType}`, 70, 90);
+
+  const payMethod = data.promotion.paymentMethod === 'debvisa' ? 'Visa' : 'Master Card';
+  doc.text(`Tipo de tarjeta:`, 6, 100);
+  doc.text(`${payMethod}`, 70, 100);
+
+  const cardOwner = data.promotion.cardOwner ? data.promotion.cardOwner : 'No disponible'
+  doc.text(`Nombre del Titular:`, 6, 110);
+  doc.text(`${cardOwner}`, 70, 110);
+
+  const last4digits = data.promotion.lastFourDigits ? data.promotion.lastFourDigits : 'No disponible';
+  doc.text(`Últimos 4 dígitos:`, 6, 120);
+  doc.text(`${last4digits}`, 70, 120);
+
+  const idMercadoPago = data.promotion.idMercadoPago ? data.promotion.idMercadoPago : 'No disponible';
+  doc.text(`Código de Transacción:`, 6, 130);
+  doc.text(`${idMercadoPago}`, 70, 130);
+
+  doc.setFontStyle('bold');
+  doc.text(`Precio Final: $${data.promotion.promotionCost}`, 160, 140);
+
+  // lineas para rodear el precio final
+  doc.line(5, 135, 205, 135);
+  doc.line(5, 145, 205, 145);
 
   // Footer
   doc.line(5, 285, 205, 285);
