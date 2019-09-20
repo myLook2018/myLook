@@ -6,6 +6,7 @@ import { RegisterComponent } from './auth/components/register/register.component
 import { UserResolver } from './auth/components/user/user.resolver';
 import { AuthGuard } from './auth/services/auth.guard';
 import { InventoryComponent } from './articles/components/inventory/inventory.component';
+import { NewArticleComponent } from './articles/components/new-article/new-article.component';
 import { SignupComponent } from './auth/components/signup/signup.component';
 import { StoreComponent } from './store/components/store/store.component';
 import { RecomendationsComponent } from './recomendations/components/recomendations.component';
@@ -26,6 +27,7 @@ export const rootRouterConfig: Routes = [
       { path: 'Tiendas/:storeName/Estadisticas', component: DashboardComponent, resolve: { data: UserResolver }},
       { path: 'Tiendas/:storeName/Recomendaciones', component: RecomendationsComponent, resolve: { data: UserResolver }},
       { path: 'Tiendas/:storeName/Configuracion', component: ConfigurationsComponent, resolve: { data: UserResolver }},
+      { path: 'Tiendas/:storeName/Nuevo-Articulo', component: NewArticleComponent, resolve: { data: UserResolver }},
     ]},
   { path: 'Ingresar', component: LoginComponent},
   { path: 'Registrarse', component: SignupComponent},

@@ -1,0 +1,82 @@
+input {
+  font-size: 1rem;
+}
+
+.main-container {
+
+  .main-card{
+    position: absolute;
+    width: calc(100% - 4rem);
+    min-width: 1043px;
+    top: 2rem;
+    left: 2rem;
+
+    .article-photos {
+      min-width: 750px;
+      position: absolute;
+      right: 0;
+      margin-right: 1rem;
+      margin-top: 1rem;
+
+      .photos-title {
+        margin: 0;
+        text-align: center;
+      }
+      .photos-subtitle {
+        margin: 0;
+        text-align: center;
+        position: absolute;
+        bottom: 0px;
+        left: 125px;
+      }
+    }
+
+    .inputs {
+      width: calc(100% - 770px);
+      min-width: 15rem;
+    }
+
+    .inputs-pills {
+      width: 100%;
+      min-width: 30rem;
+    }
+
+    .actions {
+      text-align: end;
+      margin-top: 1rem;
+
+      .activatedButton {
+        background-color: #9C27B0; color: white;
+      }
+
+      .buttonDisabled {
+        background-color: grey; color: white;
+      }
+    }
+  }
+}
+
+// -------- los crops
+ly-cropping {
+  max-width: 250px;
+  height: 250px;
+}
+
+.y-cropp-content-i7, .y-cropp-content-i7 > input {
+  border-style: solid;
+  border-color: #E1BEE7;
+}
+
+.resize-image {
+  width: 250px;
+}
+
+.closeIconButton {
+  position: absolute !important;
+  height: 40px !important;
+  margin-left: 210px !important;
+  position: absolute !important;
+  z-index: 500 !important;
+  margin-top: 2px !important;
+}
+

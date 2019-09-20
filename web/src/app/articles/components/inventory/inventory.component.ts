@@ -361,4 +361,9 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {});
   }
+
+  goToAddArticle() {
+    this.router.navigate([`/Tiendas/${this.userStore.storeName}/Nuevo-Articulo`]);
+
+  }
 }

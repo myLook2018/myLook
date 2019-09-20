@@ -72,6 +72,7 @@ import { PolarAreaComponent } from './anylitics/components/polar-area/polar-area
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { TimelineComponent } from './anylitics/components/timeline/timeline.component';
 import { FrontDialogComponent } from './articles/components/dialogs/frontDialog';
+import { NewArticleComponent } from './articles/components/new-article/new-article.component';
 import { RatingModule } from 'primeng/rating';
 import { NewStoreService } from './store/service/store.service';
 import { PromotionsBarComponent } from './anylitics/components/promotions-bar/promotions-bar.component';
@@ -132,6 +133,7 @@ registerLocaleData(localeAR);
     MercadopagoComponent,
     SuccessComponent,
     ConfigurationsComponent,
+    NewArticleComponent
   ],
   imports: [
     HttpClientModule,

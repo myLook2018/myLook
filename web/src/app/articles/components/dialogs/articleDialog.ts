@@ -67,8 +67,8 @@ export class ArticleDialogComponent implements OnInit, OnDestroy, AfterViewInit 
   @ViewChild('cropping2') cropping2: LyResizingCroppingImages;
   result: string;
   myConfig: ImgCropperConfig = {
-    width: 150, // Default `250`
-    height: 150, // Default `200`,
+    width: 250, // Default `250`
+    height: 250, // Default `200`,
     output: {
       width: 500,
       height: 500

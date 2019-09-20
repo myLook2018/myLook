@@ -1,0 +1,310 @@
+<div class="main-container  mat-typography">
+  <div>
+    <form [formGroup]="this.articleForm" autocomplete="off">
+      <mat-card class="main-card">
+        <h1>Carga los Datos de tu Prenda</h1>
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+        <div class="article-photos">
+          <h1 class="photos-title">Selecciona las Fotos</h1>
+            <div style="display:flex">
+                <div lyTheme="minima-light" #PrimeraFoto>
+                  <div class="resize-image">
+                    <br />
+                    <div>
+                      <button
+                        class="closeIconButton"
+                        *ngIf="isLoadedImage[0]"
+                        (click)="cropping0.clean()"
+                        (click)="doClean(0)"
+                        ly-button
+                        appearance="icon"
+                      >
+                        <ly-icon>close</ly-icon>
+                      </button>
+                    </div>
+
+                    <ly-cropping
+                      #cropping0
+                      id="crp0"
+                      [config]="myConfig"
+                      (cropped)="oncropped($event, 0)"
+                      (loaded)="onloaded(0)"
+                      (error)="onerror()"
+                      class="mat-typography"
+                    >
+                      <i class="material-icons">
+                        add_photo_alternate
+                      </i>
+                      Añadir Foto
+                    </ly-cropping>
+                    <button
+                      style="visibility: hidden"
+                      color="accent"
+                      (click)="cropping0.crop()"
+                      ly-button
+                      raised
+                    >
+                      crop
+                    </button>
+
+                    <div lyTheme="minima-light">
+                      <!-- Hidden input -->
+                      <input
+                        #_fileInput0
+                        type="file"
+                        (change)="cropping0.selectInputEvent($event)"
+                        accept="image/*"
+                        hidden
+                      />
+                    </div>
+                  </div>
+                </div>
+                <!-------------------------------------------------------------------------------------------------------------------------------------------------->
+                <div lyTheme="minima-light" #SegundaFoto>
+                  <div class="resize-image">
+                    <br />
+                    <div>
+                      <button
+                        class="closeIconButton"
+                        *ngIf="isLoadedImage[1]"
+                        (click)="cropping1.clean()"
+                        (click)="doClean(1)"
+                        ly-button
+                        appearance="icon"
+                      >
+                        <ly-icon>close</ly-icon>
+                      </button>
+                    </div>
+
+                    <ly-cropping
+                      #cropping1
+                      id="crp1"
+                      [config]="myConfig"
+                      (cropped)="oncropped($event, 1)"
+                      (loaded)="onloaded(1)"
+                      (error)="onerror()"
+                      class="mat-typography"
+                    >
+                      <i class="material-icons">
+                        add_photo_alternate </i
+                      >Añadir Foto
+                    </ly-cropping>
+                    <button
+                      style="visibility: hidden"
+                      color="accent"
+                      (click)="cropping1.crop()"
+                      ly-button
+                      raised
+                    >
+                      crop
+                    </button>
+
+                    <div lyTheme="minima-light">
+                      <!-- Hidden input -->
+                      <input
+                        #_fileInput1
+                        type="file"
+                        (change)="cropping1.selectInputEvent($event)"
+                        accept="image/*"
+                        hidden
+                      />
+                      <!-------------------------------------------------------------------------------------------------------------------------------------------------->
+                    </div>
+                  </div>
+                </div>
+                <div lyTheme="minima-light" #TerceraFoto>
+                  <div class="resize-image">
+                    <br />
+                    <div>
+                      <button
+                        class="closeIconButton"
+                        *ngIf="isLoadedImage[2]"
+                        (click)="cropping2.clean()"
+                        (click)="doClean(2)"
+                        ly-button
+                        appearance="icon"
+                      >
+                        <ly-icon>close</ly-icon>
+                      </button>
+                    </div>
+
+                    <ly-cropping
+                      #cropping2
+                      id="crp2"
+                      [config]="myConfig"
+                      (cropped)="oncropped($event, 2)"
+                      (loaded)="onloaded(2)"
+                      (error)="onerror()"
+                      class="mat-typography"
+                    >
+                      <i class="material-icons">
+                        add_photo_alternate </i
+                      >Añadir Foto
+                    </ly-cropping>
+
+                    <button
+                      style="visibility: hidden"
+                      color="accent"
+                      (click)="cropping2.crop()"
+                      ly-button
+                      raised
+                    >
+                      crop
+                    </button>
+
+                    <div lyTheme="minima-light">
+                      <!-- Hidden input -->
+                      <input
+                        #_fileInput2
+                        type="file"
+                        (change)="cropping2.selectInputEvent($event)"
+                        accept="image/*"
+                        hidden
+                      />
+                      <!-------------------------------------------------------------------------------------------------------------------------------------------------->
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <h4 class="photos-subtitle">(La primera foto será la que se muestre más frecuentemente a los usuarios)</h4>
+            </div>
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+        <div class="article-information">
+          <div class="article-dat">
+            <mat-form-field class="inputs" appearance="outline">
+              <mat-label>Nombre del Artículo</mat-label>
+              <input matInput formControlName="title" required autofocus>
+              <mat-error *ngIf="articleForm.get('title').hasError">Campo obligatorio.</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="article-dat">
+            <mat-form-field class="inputs" appearance="outline">
+              <mat-label>Código de Identificación</mat-label>
+              <input matInput formControlName="code" required>
+              <mat-error *ngIf="articleForm.get('code').hasError">Campo obligatorio.</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="article-dat">
+            <mat-form-field class="inputs" appearance="outline">
+              <mat-label>Proveedor</mat-label>
+              <input matInput formControlName="provider" required>
+              <mat-error *ngIf="articleForm.get('provider').hasError">Campo obligatorio.</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="article-dat">
+            <mat-form-field class="inputs" appearance="outline">
+              <mat-label>Precio ($)</mat-label>
+              <input matInput formControlName="cost" required>
+              <mat-error *ngIf="articleForm.get('cost').hasError">Campo obligatorio.</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="article-dat">
+            <mat-form-field class="inputs" appearance="outline">
+              <mat-label>Stock Inicial</mat-label>
+              <input matInput formControlName="initial_stock" required>
+              <mat-error *ngIf="articleForm.get('initial_stock').hasError">Campo obligatorio.</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="article-dat">
+            <mat-form-field class="inputs-pills" appearance="outline">
+              <mat-label>Materiales</mat-label>
+              <input matInput formControlName="material" required>
+              <mat-error *ngIf="articleForm.get('material').hasError">Campo obligatorio.</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="article-pill">
+            <mat-form-field class="inputs-pills" appearance="outline">
+                <mat-label>Colores Disponibles</mat-label>
+                <mat-chip-list #chipList1>
+                  <mat-chip *ngFor="let color of colors"
+                    [selectable]="true"
+                    [removable]="true"
+                    (removed)="removeElement(color, colors)"
+                  >
+                    {{ color }}
+                    <mat-icon matChipRemove *ngIf="true">cancel</mat-icon>
+                  </mat-chip>
+                  <input
+                    formControlName="colors"
+                    [matChipInputFor]="chipList1"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                    (matChipInputTokenEnd)="addElement($event, colors)"
+                  />
+                </mat-chip-list>
+              <mat-hint align="end">Utiliza 'Coma', 'Enter' o 'Espacio' para agregar el color a la lista</mat-hint>
+            </mat-form-field>
+          </div>
+          <div class="article-pill">
+            <mat-form-field class="inputs-pills" appearance="outline">
+                <mat-label>Talles Disponibles</mat-label>
+                <mat-chip-list #chipList2>
+                  <mat-chip *ngFor="let size of sizes"
+                    [selectable]="true"
+                    [removable]="true"
+                    (removed)="removeElement(size, sizes)"
+                  >
+                    {{ size }}
+                    <mat-icon matChipRemove *ngIf="true">cancel</mat-icon>
+                  </mat-chip>
+                  <input
+                    formControlName="colors"
+                    [matChipInputFor]="chipList2"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                    (matChipInputTokenEnd)="addElement($event, sizes)"
+                  />
+                </mat-chip-list>
+              <mat-hint align="end">Utiliza 'Coma', 'Enter' o 'Espacio' para agregar el talle a la lista</mat-hint>
+            </mat-form-field>
+          </div>
+          <div class="article-pill">
+            <mat-form-field class="inputs-pills" appearance="outline">
+                <mat-label>Etiquetas</mat-label>
+                <mat-chip-list #chipList3>
+                  <mat-chip *ngFor="let tag of tags"
+                    [selectable]="true"
+                    [removable]="true"
+                    (removed)="removeElement(tag, tags)"
+                  >
+                    {{ tag }}
+                    <mat-icon matChipRemove *ngIf="true">cancel</mat-icon>
+                  </mat-chip>
+                  <input
+                    formControlName="colors"
+                    [matChipInputFor]="chipList3"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                    (matChipInputTokenEnd)="addElement($event, tags)"
+                  />
+                </mat-chip-list>
+              <mat-hint align="end">Utiliza 'Coma', 'Enter' o 'Espacio' para agregar la etiqueta a la lista</mat-hint>
+            </mat-form-field>
+          </div>
+        </div>
+        <mat-card-actions class="actions">
+          <button
+            *ngIf="isNew"
+            [disabled]="isUpLoading"
+            type="button"
+
+            [ngClass]="{buttonDisabled: isUpLoading}"
+            mat-raised-button
+            (click)="goToInventory();"
+            >
+              Cancelar
+          </button>
+          <button
+            *ngIf="isNew"
+            [disabled]="articleForm.invalid || isUpLoading"
+            class="activatedButton"
+            type="button"
+
+            [ngClass]="{buttonDisabled: articleForm.invalid}"
+            mat-raised-button
+            (click)="cropImages(cropping0, cropping1, cropping2)"
+            >
+              Agregar Prenda
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </form>
+  </div>
+</div>
