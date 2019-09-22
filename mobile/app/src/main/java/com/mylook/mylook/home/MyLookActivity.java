@@ -3,11 +3,13 @@ package com.mylook.mylook.home;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.mylook.mylook.R;
@@ -17,22 +19,27 @@ import com.mylook.mylook.profile.PremiumOptionsFragment;
 import com.mylook.mylook.recommend.RecommendFragment;
 import com.mylook.mylook.session.Session;
 
+import java.util.List;
+
 public class MyLookActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     Fragment fragment = null;
     private Session currentSesion;
     private static final String TAG = "MyLookActivity";
+    private BottomNavigationView navigation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        HomeFragment.getInstance().readSubscriptions();
         loadFragment(HomeFragment.getInstance());
         setContentView(R.layout.activity_mylook_app);
         BottomNavigationView navigation= findViewById(R.id.navigation);
+        navigation.inflateMenu(R.menu.bottom_navigation_menu_premium);
         if(Session.getInstance().isPremiumUser())
-            navigation.inflateMenu(R.menu.bottom_navigation_menu_premium);
+            navigation.getMenu().findItem(R.id.ic_premium).setVisible(true);
         else
-            navigation.inflateMenu(R.menu.bottom_navigation_menu);
+            navigation.getMenu().findItem(R.id.ic_premium).setVisible(false);
 
         navigation.setOnNavigationItemSelectedListener(MyLookActivity.this);
         Toolbar toolbar = findViewById(R.id.main_toolbar);
@@ -45,11 +52,12 @@ public class MyLookActivity extends AppCompatActivity implements BottomNavigatio
         super.onResume();
         loadFragment(HomeFragment.getInstance());
         setContentView(R.layout.activity_mylook_app);
-        BottomNavigationView navigation= findViewById(R.id.navigation);
+        navigation= findViewById(R.id.navigation);
+        navigation.inflateMenu(R.menu.bottom_navigation_menu_premium);
         if(Session.getInstance().isPremiumUser())
-            navigation.inflateMenu(R.menu.bottom_navigation_menu_premium);
+            navigation.getMenu().findItem(R.id.ic_premium).setVisible(true);
         else
-            navigation.inflateMenu(R.menu.bottom_navigation_menu);
+            navigation.getMenu().findItem(R.id.ic_premium).setVisible(false);
 
         navigation.setOnNavigationItemSelectedListener(MyLookActivity.this);
         Toolbar toolbar = findViewById(R.id.main_toolbar);
@@ -57,8 +65,8 @@ public class MyLookActivity extends AppCompatActivity implements BottomNavigatio
         setTheme(R.style.AppTheme);
     }
     public void setPremiumMenu(){
-        BottomNavigationView navigation= findViewById(R.id.navigation);
-        navigation.inflateMenu(R.menu.bottom_navigation_menu);
+        navigation.getMenu().findItem(R.id.ic_premium).setVisible(true);
+        navigation.setOnNavigationItemSelectedListener(MyLookActivity.this);
     }
     @SuppressLint("NewApi")
     @Override
@@ -80,7 +88,7 @@ public class MyLookActivity extends AppCompatActivity implements BottomNavigatio
                 ((Toolbar) findViewById(R.id.main_toolbar)).setTitle("Ropero");
                 fragment = ClosetFragment.getInstance();
                 break;
-            case R.id.ic_profile:
+            case R.id.ic_premium:
                 ((Toolbar) findViewById(R.id.main_toolbar)).setTitle("Perfil");
                 fragment = PremiumOptionsFragment.getInstance();
                 break;
@@ -98,6 +106,7 @@ public class MyLookActivity extends AppCompatActivity implements BottomNavigatio
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.fragment_container, frag)
+                    .addToBackStack(null)
                     .commit();
             return true;
         }

@@ -108,6 +108,10 @@ public class Session {
         return null;
     }
 
+    public static void setIsPremium(boolean isPremium) {
+        Session.isPremium = isPremium;
+    }
+
     public static void updateData(){
         FirebaseFirestore.getInstance().collection("clients").document(clientId).get()
                 .addOnSuccessListener(document -> {

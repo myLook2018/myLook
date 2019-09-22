@@ -5,62 +5,48 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.ListFragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
-import android.widget.ListView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
-import com.mylook.mylook.entities.PremiumPublication;
-import com.mylook.mylook.entities.RequestRecommendation;
-import com.mylook.mylook.premiumUser.PremiumPublicationsFragment;
+import com.mylook.mylook.premiumUser.NewPublicationActivity;
 import com.mylook.mylook.premiumUser.PremiumUserProfileActivity;
-import com.mylook.mylook.recommend.RequestRecyclerViewAdapter;
+import com.mylook.mylook.session.Session;
 
-import java.util.ArrayList;
-import java.util.List;
+import static com.mylook.mylook.R.drawable.ic_channel;
+import static com.mylook.mylook.R.drawable.ic_new_diffusion;
+import static com.mylook.mylook.R.drawable.ic_premium_profile;
+import static com.mylook.mylook.R.drawable.ic_premium_publication;
 
 public class PremiumOptionsFragment extends ListFragment {
-    private static String[] premiumOptionsList = {"Mi Perfil", "Nuevo Grupo de difusion",
-            "Nueva publicacion en perfil", "Nuevo mensaje para difundir"};
 
     private Context mContext;
-    private ListView listView;
+    private LinearLayout listView;
 
     public PremiumOptionsFragment() {
 
     }
-
-    private FirebaseFirestore dB = FirebaseFirestore.getInstance();
-    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    private boolean isPremiumUser;
-    private String userName;
     private static boolean loaded = false;
     public final static String TAG = "PremiumOptions";
 
-    private static PremiumOptionsFragment homeInstance = null;
+    private static PremiumOptionsFragment premiumOptionsInstance = null;
 
     public static PremiumOptionsFragment getInstance() {
-        if (homeInstance == null) {
-            homeInstance = new PremiumOptionsFragment();
+        if (premiumOptionsInstance == null) {
+            premiumOptionsInstance = new PremiumOptionsFragment();
         }
-        return homeInstance;
+        return premiumOptionsInstance;
     }
 
     public static void refreshStatus() {
-        if (homeInstance != null) {
+        if (premiumOptionsInstance != null) {
             loaded = false;
         }
     }
@@ -69,28 +55,51 @@ public class PremiumOptionsFragment extends ListFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         Log.e(TAG, "On view Created - is Loaded? " + loaded);
+        mContext = view.getContext();
         initElements(view);
     }
 
     private void initElements(View view) {
         mContext = getContext();
-        listView = view.findViewById(R.id.list);
-        listView.setAdapter(new ArrayAdapter(getActivity(), R.layout.layout_list_item_premium_option, premiumOptionsList));
-        listView.setOnItemClickListener((arg0, v, arg2, arg3) -> {
-            switch (arg2){
-                case 0:
-                    startActivity(new Intent(mContext, PremiumUserProfileActivity.class));
-                    break;
-                case 1:
-                    //startActivity(new Intent(mContext, DifussionGroup.class));
-                    break;
-                case 2:
-                    startActivity(new Intent(mContext, PremiumPublication.class));
-                    break;
-                case 3:
-                    //startActivity(new Intent(mContext, NewDifussionMessage.class));
+        listView  = view.findViewById(R.id.list);
 
-            }
+        LinearLayout myProfile =view.findViewById(R.id.incProfile);
+        TextView lblNameOption = (TextView) myProfile.findViewById(R.id.lblNameOption);
+        lblNameOption.setText("Mi Perfil");
+        ImageView imgProfile= myProfile.findViewById(R.id.iconPremiumOption);
+        imgProfile.setImageDrawable(getResources().getDrawable(ic_premium_profile));
+        myProfile.setOnClickListener(v -> {
+            Intent intent= new Intent(mContext, PremiumUserProfileActivity.class);
+            intent.putExtra("clientId", Session.clientId);
+            intent.putExtra("isCurrent",true);
+            startActivity(intent);
+        });
+
+        LinearLayout newPub = view.findViewById(R.id.incNewPublication);
+        TextView lblNewPublication = (TextView) newPub.findViewById(R.id.lblNameOption);
+        lblNewPublication.setText("Nueva Publicacion");
+        ImageView imgNewPublication= newPub.findViewById(R.id.iconPremiumOption);
+        imgNewPublication.setImageDrawable(getResources().getDrawable(ic_premium_publication));
+        newPub.setOnClickListener(v -> {
+            startActivity(new Intent(mContext, NewPublicationActivity.class));
+        });
+
+        LinearLayout newGroup = view.findViewById(R.id.incNewGroup);
+        TextView lblNewGroup = (TextView) newGroup.findViewById(R.id.lblNameOption);
+        lblNewGroup.setText("Nuevo Grupo de difusion");
+        ImageView imgNewGroup= newGroup.findViewById(R.id.iconPremiumOption);
+        imgNewGroup.setImageDrawable(getResources().getDrawable(ic_channel));
+        newGroup.setOnClickListener(v -> {
+            //startActivity(new Intent(mContext, DifussionGroup.class));
+        });
+
+        LinearLayout newMess = view.findViewById(R.id.incNewMess);
+        TextView lblNewMess = (TextView) newMess.findViewById(R.id.lblNameOption);
+        lblNewMess.setText("Enviar Mensaje");
+        ImageView imgNewDiffusion= newMess.findViewById(R.id.iconPremiumOption);
+        imgNewDiffusion.setImageDrawable(getResources().getDrawable(ic_new_diffusion));
+        newMess.setOnClickListener(v -> {
+            //startActivity(new Intent(mContext, NewDifussionMessage.class));
         });
     }
 
@@ -103,7 +112,7 @@ public class PremiumOptionsFragment extends ListFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_premium_func, null);
+        return inflater.inflate(R.layout.fragment_premium_func,null);
     }
 
 }

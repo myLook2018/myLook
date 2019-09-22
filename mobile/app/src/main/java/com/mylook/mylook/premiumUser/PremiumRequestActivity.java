@@ -41,6 +41,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mylook.mylook.R;
+import com.mylook.mylook.home.MyLookActivity;
 import com.mylook.mylook.profile.AccountActivity;
 import com.mylook.mylook.session.Session;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -69,7 +70,6 @@ public class PremiumRequestActivity extends AppCompatActivity {
     private boolean enviado = false;
     private Timestamp premiumDate;
     private String clientId;
-    private FirebaseFirestore dB;
     private String userName;
     private final int READ_EXTERNAL_STORAGE = 1, WRITE_EXTERNAL_STORAGE = 2;
 
@@ -85,7 +85,6 @@ public class PremiumRequestActivity extends AppCompatActivity {
         ab.setDisplayHomeAsUpEnabled(true);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-        dB = FirebaseFirestore.getInstance();
         clientId = getIntent().getStringExtra("clientId");
         userName = getIntent().getStringExtra("userName");
 
@@ -314,13 +313,13 @@ public class PremiumRequestActivity extends AppCompatActivity {
             premiumUser.put("clientId", clientId);
             premiumUser.put("userName", userName);
 
-            dB.collection("premiumUsers")
+            FirebaseFirestore.getInstance().collection("premiumUsers")
                     .add(premiumUser).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                 @Override
                 public void onSuccess(DocumentReference documentReference) {
                     Map<String, Object> client = new HashMap<>();
                     client.put("isPremium", true);
-                    dB.collection("clients").document(clientId).set(client, SetOptions.mergeFields("isPremium")).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    FirebaseFirestore.getInstance().collection("clients").document(clientId).set(client, SetOptions.mergeFields("isPremium")).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             enviado = true;
@@ -328,6 +327,7 @@ public class PremiumRequestActivity extends AppCompatActivity {
                             displayMessage("Ya eres un usuario destacado");
                             setResult(SUCCESS_CODE);
                             Session.updateData();
+                            Session.setIsPremium(true);
                             finish();
                         }
                     });
