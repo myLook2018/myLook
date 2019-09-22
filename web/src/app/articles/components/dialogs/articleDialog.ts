@@ -119,7 +119,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     private dataService: DataService,
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<ArticleDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public articleData: Article
+    @Inject(MAT_DIALOG_DATA) public articleData
   ) {
     /*this.cropperSettings = new CropperSettings();
     this.cropperSettings.noFileInput = true;
@@ -253,6 +253,11 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     this.articleForm.get('tags').setValue(this.tags.map(x => x));
     this.articleForm.get('sizes').setValue(this.sizes.map(x => x));
     this.articleForm.get('colors').setValue(this.colors.map(x => x));
+    const storeLocation = {
+      latitude: this.articleData.storeLatitude,
+      longitude: this.articleData.storeLongitude
+    };
+    this.articleForm.addControl('storeLocation', new FormControl(storeLocation, Validators.required));
     this.uploadPictures(imagesToUpload).then(picturesURL => {
       this.articleForm.get('picturesArray').setValue(picturesURL.map(x => x));
       this.articleService.addArticle(this.articleForm.value).then(() => {

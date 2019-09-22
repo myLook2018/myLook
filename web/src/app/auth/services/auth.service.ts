@@ -145,5 +145,15 @@ export class AuthService {
     return this.emailToRegister;
   }
 
-
+  sendResetPasswordEmail(email) {
+    return new Promise((resolve, reject) => {
+    firebase.auth().sendPasswordResetEmail(email).then( res => {
+      console.log('se envio el email para resetear');
+      resolve(res)
+    }).catch( error => {
+      console.log ('ocurrio un error al intentar mandar mail. ', error);
+      reject(error)
+    });
+  });
+  }
 }

@@ -118,6 +118,10 @@ export class InventoryComponent implements OnInit, OnDestroy {
   }
 
   openPromoteDialog(article): void {
+    if (article.promotionLevel !== 1) {
+      console.log('pito me voy a abrir');
+      return;
+    }
     const dataToSend = {
       storeName: this.userStore.storeName,
       phone: this.userStore.storePhone,
@@ -138,8 +142,9 @@ export class InventoryComponent implements OnInit, OnDestroy {
       tags: article.tags
     };
     const promoteRef = this.dialog.open(PromoteDialogComponent, {
-      width: '400px',
-      data: article
+      width: '750px',
+      data: article,
+      disableClose: true
     });
     const sub = promoteRef.componentInstance.onAdd.subscribe(res => {
       if (res !== undefined) {
@@ -164,7 +169,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
       DeleteConfirmationDialogComponent,
       {
         width: '300px',
-        data: article.picture
+        data: article.picturesArray[0]
       }
     );
     confirmationRef.afterClosed().subscribe(result => {
@@ -196,10 +201,12 @@ export class InventoryComponent implements OnInit, OnDestroy {
     if (article !== undefined) {
       dataToSend = {
         storeName: this.userStore.storeName,
+        storeLatitude: this.userStore.storeLatitude,
+        storeLongitude: this.userStore.storeLongitude,
         title: article.title,
         code: article.code,
         id: article.articleId,
-        picture: article.picture,
+        picture: article.picturesArray[0],
         cost: article.cost,
         sizes: article.sizes,
         material: article.material,
@@ -211,12 +218,15 @@ export class InventoryComponent implements OnInit, OnDestroy {
     } else {
       dataToSend = {
         storeName: this.userStore.storeName,
+        storeLatitude: this.userStore.storeLatitude,
+        storeLongitude: this.userStore.storeLongitude,
         tags: [],
         sizes: [],
         colors: []
       };
     }
 
+    debugger;
     const dialogRef = this.dialog.open(ArticleDialogComponent, {
       maxWidth: '850px',
       maxHeight: 'calc(95vh)',

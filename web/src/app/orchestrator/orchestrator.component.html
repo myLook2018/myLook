@@ -20,10 +20,10 @@
 
     <mat-sidenav-container class="main-content mat-elevation-z2">
         <mat-sidenav *ngIf="isLogedIn" mat-sidenav #sidenav mode="side" opened class="example-sidenav" [fixedInViewport]="false"
-        [fixedTopGap]="false" [fixedBottomGap]="false" class="mat-elevation-z2">
+        [fixedTopGap]="false" [fixedBottomGap]="false" class="mat-elevation-z2" [autoFocus]="true" >
             <mat-nav-list>
                 <a mat-list-item (click)="goToProfile()">¡Visita tu Perfil!</a>
-                <a mat-list-item (click)="goToInventory()">¡Gestiona tu inventario!</a>
+                <a mat-list-item (click)="goToInventory()">¡Gestiona tu catálogo!</a>
                 <a mat-list-item (click)="goToRecomendations()">¡Haz una recomendación!</a>
                 <a mat-list-item (click)="goToAnalytics()">¡Estadisticas!</a>
             </mat-nav-list>

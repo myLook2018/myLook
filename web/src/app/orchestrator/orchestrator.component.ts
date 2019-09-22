@@ -116,7 +116,7 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
   }
 
   goToInventory() {
-    this.router.navigate([`/Tiendas/${this.userStore.storeName}/Inventario`]);
+    this.router.navigate([`/Tiendas/${this.userStore.storeName}/Catalogo`]);
   }
 
   goToRecomendations() {
