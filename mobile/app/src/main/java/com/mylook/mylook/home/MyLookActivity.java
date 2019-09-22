@@ -31,7 +31,6 @@ public class MyLookActivity extends AppCompatActivity implements BottomNavigatio
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        HomeFragment.getInstance().readSubscriptions();
         loadFragment(HomeFragment.getInstance());
         setContentView(R.layout.activity_mylook_app);
         BottomNavigationView navigation= findViewById(R.id.navigation);

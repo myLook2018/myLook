@@ -3,7 +3,6 @@ package com.mylook.mylook.premiumUser;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
@@ -12,15 +11,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.PremiumUser;
 import com.mylook.mylook.storeProfile.StoreTabAdapter;
@@ -32,7 +23,6 @@ import java.util.List;
 public class PremiumUserProfileActivity extends AppCompatActivity {
 
 
-    private FirebaseUser user;
     private PremiumUser premiumUser;
     private TabLayout tab;
     private ViewPager viewPagerUserInfo;
@@ -51,7 +41,6 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store_final);
-        user = FirebaseAuth.getInstance().getCurrentUser();
         tab = findViewById(R.id.tab);
         Toolbar tb =  findViewById(R.id.toolbar);
         fab=findViewById(R.id.fab);
@@ -69,31 +58,6 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
         }
 
         setContentInfo();
-
-
-        /*db.collection("clients").document(clientId).get().addOnCompleteListener(task -> {
-            if(task.isSuccessful()){
-                if(task.getResult().get("userId").toString().equals(user.getUid())){
-                 isCurrentUser=true;
-                 fab.setVisibility(View.VISIBLE);
-
-                }
-                premiumUserId=task.getResult().get("userId").toString();
-            }
-            infoFragment = new PremiumUserInfoFragment(PremiumUserProfileActivity.this, clientId,isCurrentUser);
-            setupViewPagerInfo(viewPagerUserInfo);
-            setContentInfo();
-
-        });*/
-
-        /*fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), NewPublicationActivity.class);
-                intent.putExtra("clientId",clientId);
-                startActivity(intent);
-            }
-        });*/
     }
     private void setContentInfo(){
         FirebaseFirestore.getInstance().collection("premiumUsers")
@@ -106,18 +70,6 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
                             premiumUserId= premiumUser.getUserId();
                             setFragments();
                         }
-
-                        // Log.d("info de firebase", "onComplete: " + task.getResult().toObjects(Store.class));
-                        /*PremiumUser user = task.getResult().getDocuments().get(0).toObject(PremiumUser.class);
-                        infoFragment.setTxtLocalization(user.getLocalization());
-                        infoFragment.setOnClickFacebook(user.getLinkFacebook());
-                        infoFragment.setOnClickInstagram(user.getLinkInstagram());
-                        infoFragment.setPremiumName(user.getUserName());
-                        infoFragment.setProfilePhoto(user.getProfilePhoto());
-                        infoFragment.setTxtEmail(user.getContactMail());
-                        reputationFragment.setRegisterDate(user.getPremiumDate());
-                        setupViewPager(viewPagerUserPublications);
-                        tab.setupWithViewPager(viewPagerUserPublications);*/
                     } else {
                         Log.d("Firestore task", "onComplete: " + task.getException());
                     }
@@ -160,59 +112,9 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
         //saveVisit
 
     }
-
-    /* private void loadVisit() {
-         db.collection("visits").whereEqualTo("storeName", clientId).whereEqualTo("userId",user.getUid()).get()
-                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                     @Override
-                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                         if(task.isSuccessful()){
-                             if(task.getResult().getDocuments().size()==0){
-                                 visitId=null;
-                                 visit=new Visit(clientId,user.getUid(),1);
-                                 //db.collection("visits").add(visit.toMap());
-
-                             }else{
-                                 Log.e("OLD VISIT","ID: " +visitId);
-                                 visit = null;
-                                 visitId=null;
-                                 visit=task.getResult().getDocuments().get(0).toObject(Visit.class);
-                                 visit.toVisit();
-                                 visitId=task.getResult().getDocuments().get(0).getId();
-                             }
-
-                         }
-                     }
-                 });
-
-     }
-     private void saveVisit(){
-         if(visitId!=null){
-             Log.e("VISIT","ID: " +visitId);
-             db.collection("visits").document(visitId).set(visit.toMap(), SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                 @Override
-                 public void onComplete(@NonNull Task<Void> task) {
-                     finish();
-                 }
-             });
-         }else{
-             db.collection("visits").add(visit.toMap()).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                 @Override
-                 public void onComplete(@NonNull Task<DocumentReference> task) {
-                     finish();
-                 }
-             });
-         }
-     }
-     */
     @Override
     protected void onStop() {
         super.onStop();
-        //saveVisit();
-    }
-
-    public void moreInfo(){
-        viewPagerUserInfo.setCurrentItem(1);
     }
 
 
