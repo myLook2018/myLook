@@ -54,21 +54,26 @@ export class LoginComponent implements OnDestroy{
   }
 
   getUserStore(userUID) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       console.log('la subs ', this._subscription);
+      console.log('el firebaseID ', userUID);
       this._subscription = this.userService.getUserInfo(userUID).subscribe(userA => {
-        console.log('que carajo pasa aca ', userA );
-        resolve (userA[0].storeName);
-      })
+        console.log('que carajo pasa aca ', userA);
+        const result = userA[0] ? userA[0].storeName : null;
+        resolve (result);
       });
+    });
   }
 
   tryFacebookLogin() {
     this.authService.doFacebookLogin()
     .then(res => {
-      this.getUserStore(res.user.uid).then( res => {
+      this.getUserStore(res.user.uid).then( store => {
         this._subscription.unsubscribe();
-        this.router.navigate(['Tiendas', res]);
+        if (!store) { this.router.navigate(['Registrar-Tienda']);
+        } else {
+           this.router.navigate(['Tiendas', res]);
+         }
         }, err => {
           console.log(err);
           this.errorMessage = this.translateError(err);
@@ -92,14 +97,29 @@ export class LoginComponent implements OnDestroy{
   tryGoogleLogin() {
     this.authService.doGoogleLogin()
     .then(res => {
-      this.getUserStore(res.user.uid).then( res => {
+      this.getUserStore(res.user.uid).then( store => {
         this._subscription.unsubscribe();
-        this.router.navigate(['Tiendas', res]);
+        if (!store) { this.router.navigate(['Registrar-Tienda']);
+        } else {
+           this.router.navigate(['Tiendas', res]);
+         }
         }, err => {
           console.log(err);
           this.errorMessage = this.translateError(err);
         });
     });
+  }
+
+  async tryLoginWithSocialNetwork(network) {
+    let trylogin;
+    switch (network) {
+      case 'google':
+        trylogin = await this.tryGoogleLogin();
+        break;
+      case 'facebook':
+        trylogin = await this.tryFacebookLogin();
+        break;
+    }
   }
 
   tryLogin() {

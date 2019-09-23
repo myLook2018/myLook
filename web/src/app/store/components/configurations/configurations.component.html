@@ -1,0 +1,258 @@
+<div class="configuration backgroundColor">
+  <div class="storeInformation">
+    <div class="resume">
+      <mat-card class="example-card">
+        <mat-card-header>
+          <mat-card-title>{{actualStore.storeName}}</mat-card-title>
+          <mat-card-subtitle>Perfil de Tienda</mat-card-subtitle>
+        </mat-card-header>
+        <img *ngIf="!isEditMode" mat-card-image src="{{actualStore.profilePh}}" alt="Cargando" height="400" width="400">
+
+        <div *ngIf="isEditMode" lyTheme="minima-light" #PrimeraFoto>
+            <div class="resize-image">
+              <br/>
+              <div>
+                <button
+                  class="cropButton"
+                  *ngIf="isLoadedImage[0]"
+                  (click)="cropping0.clean()"
+                  (click)="doClean(0)"
+                  ly-button
+                  appearance="icon"
+                >
+                  <ly-icon>close</ly-icon>
+                </button>
+              </div>
+
+              <ly-cropping
+                #cropping0
+                id="crp0"
+                [config]="myConfig"
+                (cropped)="oncropped($event, 0)"
+                (loaded)="onloaded(0)"
+                (error)="onerror()"
+                class="mat-typography"
+              >
+                <i class="material-icons"> add_photo_alternate </i> Añadir Foto
+              </ly-cropping>
+              <button
+                style="visibility: hidden; position: absolute"
+                color="accent"
+                (click)="cropping0.crop()"
+                ly-button
+                raised
+              >
+                crop
+              </button>
+
+              <div lyTheme="minima-light">
+
+                <!-- Hidden input -->
+                <input
+                  #_fileInput0
+                  type="file"
+                  (change)="cropping0.selectInputEvent($event)"
+                  accept="image/*"
+                  hidden
+                />
+              </div>
+            </div>
+          </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <mat-card-content class="storeMainInformation" style="height: 10rem;">
+          <p *ngIf="actualStore.storeDescription && !isEditMode">
+              <strong>Descripción:</strong> {{actualStore.storeDescription}}
+          </p>
+          <div class="form" *ngIf="isEditMode" style="overflow: hidden">
+              <form class="descriptionInput" [formGroup]="myFormGroup">
+                <p style="margin: 0">
+                  <mat-form-field appearance="outline" class="fullWidth" style="width: 25rem; overflow: hidden;">
+                    <mat-label>Descripción</mat-label>
+                    <textarea matInput placeholder="{{actualStore.storeName}} te espera" formControlName="storeDescription" style="height: 3.5rem;"></textarea>
+                  </mat-form-field>
+                  </p>
+              </form>
+          </div>
+          <p *ngIf="actualFirebaseUser && !isEditMode ">
+            <strong>Correo Electrónico:</strong> {{actualFirebaseUser.email}}
+          </p>
+          <p *ngIf="actualFirebaseUser && !isEditMode">
+            <strong>En la aplicación desde:</strong> {{actualFirebaseUser.metadata.creationTime | date: 'fullDate'}}
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div class="extraInformation">
+      <mat-card class="info-card">
+        <mat-card-header>
+          <mat-card-title>Información de la Cuenta</mat-card-title>
+        </mat-card-header>
+        <mat-card-content >
+          <div class="form" *ngIf="myFormGroup">
+            <form class="elForm" [formGroup]="myFormGroup">
+              <div class="container-table">
+
+              <div class="first-column">
+              <p>
+                <mat-form-field appearance="outline" class="fullWidth">
+                  <mat-label>Dirección</mat-label>
+                  <input matInput placeholder="Ej: Avenida Colón 1234" formControlName="storeAddress">
+                </mat-form-field>
+              </p>
+              <p>
+                <mat-form-field appearance="outline" class="fullWidth">
+                  <mat-label>Torre</mat-label>
+                  <input matInput placeholder="Ejs: 1 ó A ó Torre Vitacura" formControlName="storeTower">
+                </mat-form-field>
+              </p>
+              <p>
+                <mat-form-field appearance="outline" class="fullWidth">
+                  <mat-label>Piso</mat-label>
+                  <input matInput placeholder="Ej: 1 ó 1ro" formControlName="storeFloor">
+                </mat-form-field>
+              </p>
+              <p>
+                <mat-form-field appearance="outline" class="fullWidth">
+                  <mat-label>Departamento</mat-label>
+                  <input matInput placeholder="Ej: 1 ó A" formControlName="storeDept">
+                </mat-form-field>
+              </p>
+
+            </div>
+
+            <div class="second-column">
+              <p>
+                <mat-form-field appearance="outline" class="fullWidth">
+                  <mat-label>Teléfono</mat-label>
+                  <input matInput placeholder="Ej: 012-3456789" formControlName="storePhone">
+                </mat-form-field>
+              </p>
+              <p>
+                <mat-form-field appearance="outline" class="fullWidth">
+                  <mat-label>Facebook</mat-label>
+                  <input matInput placeholder="Ej: myLookApp" formControlName="facebookLink">
+                </mat-form-field>
+              </p>
+              <p>
+                <mat-form-field appearance="outline" class="fullWidth">
+                  <mat-label>Instagram</mat-label>
+                  <input matInput placeholder="Ej: myLookApp" formControlName="instagramLink">
+                </mat-form-field>
+              </p>
+              <p>
+                <mat-form-field appearance="outline" class="fullWidth">
+                  <mat-label>Twitter</mat-label>
+                  <input matInput placeholder="Ej: myLookTwitter" formControlName="twitterLink">
+                </mat-form-field>
+              </p>
+            </div>
+          </div>
+            </form>
+          </div>
+
+        </mat-card-content>
+        <mat-card-actions class="extraInformationEdit">
+          <button mat-button *ngIf="!isEditMode" (click)="changeMode($event)">Editar Información</button>
+          <button mat-button *ngIf="isEditMode" (click)="changeMode($event)">Cancelar</button>
+          <button mat-button *ngIf="isEditMode" (click)="updateInformation($event)">Confirmar</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+<!-- ---------------------------------------------------------------------------------------------------------------------------------------------- -->
+  <div class="marketingInformation">
+    <mat-card class="promotionsTable">
+      <mat-card-header>
+        <mat-card-title>Información de promociones solicitadas</mat-card-title>
+        <mat-card-subtitle> En la siguiente tabla encontrará Información referida a todas las operaciones de promoción que ha realizado en myLook.</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+
+
+          <div class="example-container mat-elevation-z8" *ngIf="promotionTableDataSource">
+              <table mat-table [dataSource]="promotionTableDataSource" style="width: 100%;">
+
+                <!-- Articulo Column -->
+                <ng-container matColumnDef="Articulo">
+                  <th mat-header-cell *matHeaderCellDef> Articulo Promocionado </th>
+                  <!-- <td mat-cell *matCellDef="let element"> {{element.articleId}} </td> -->
+                  <td mat-cell *matCellDef="let element"><img height="100" width="100" src={{element.image}}> </td>
+                  <td mat-footer-cell *matFooterCellDef> Total </td>
+                </ng-container>
+
+                <!-- Inicio Column -->
+                <ng-container matColumnDef="FechaInicio">
+                  <th mat-header-cell *matHeaderCellDef> Fecha Inicio </th>
+                  <td mat-cell *matCellDef="let element"> {{element.startOfPromotion.toDate() | date: 'fullDate'}} </td>
+                  <td mat-footer-cell *matFooterCellDef>  </td>
+
+                </ng-container>
+
+                <!-- Fin Column -->
+                <ng-container matColumnDef="FechaFin">
+                  <th mat-header-cell *matHeaderCellDef> Fecha Fin </th>
+                  <td mat-cell *matCellDef="let element"> {{ element.endOfPromotion.toDate() | date: 'fullDate'}}</td>
+                  <td mat-footer-cell *matFooterCellDef>  </td>
+
+                </ng-container>
+
+                <!-- Nivle de promocion Column -->
+                <ng-container matColumnDef="NivelPromocion">
+                  <th mat-header-cell *matHeaderCellDef> Nivel de Promoción </th>
+                  <td mat-cell *matCellDef="let element"> {{getPromotionLevel(element.promotionLevel)}} </td>
+                  <td mat-footer-cell *matFooterCellDef> </td>
+                </ng-container>
+
+                <!-- Precio Final de promocion Column -->
+                <ng-container matColumnDef="PrecioFinal">
+                  <th mat-header-cell *matHeaderCellDef> Precio Final </th>
+                  <td mat-cell *matCellDef="let element"> {{element.promotionCost | currency:'ARS'}} </td>
+                  <td mat-footer-cell *matFooterCellDef> {{ getTotalCost() | currency:'ARS'}} </td>
+                </ng-container>
+
+                <!-- Descargar Column -->
+                <ng-container matColumnDef="Descargar">
+                  <th mat-header-cell *matHeaderCellDef> Descargar </th>
+                  <td mat-cell *matCellDef="let element">
+                    <button  mat-icon-button (click)="downloadPromotion(element)">
+                        <mat-icon class="myLookPink">cloud_download</mat-icon>
+                    </button>
+                  </td>
+                  <td mat-footer-cell *matFooterCellDef> </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                <tr mat-footer-row *matFooterRowDef="displayedColumns; sticky: true"></tr>
+
+              </table>
+            </div>
+
+
+
+      </mat-card-content>
+      <!-- <mat-card-actions>
+        <button mat-button>LIKE</button>
+        <button mat-button>SHARE</button>
+      </mat-card-actions> -->
+    </mat-card>
+  </div>
+</div>

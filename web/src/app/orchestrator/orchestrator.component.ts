@@ -71,9 +71,11 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
   }
 
   refreshUserInformation() {
+    console.log('en el orchestrator por pedir el usuario');
     this.dataServide.getStoreInfo().then(store => {
       console.log(store);
       this.userStore = store;
+      if (!this.userStore.profilePh) { this.userStore.profilePh = '/assets/noProfilePic.png'; }
       if (store.firebaseUserId) {
         this.isLogedIn = true;
         this.authGuard.canActivate();
@@ -89,6 +91,9 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
           'Ya validamos -----------------------------------------------------------------------------------------'
         );
       }
+    }).catch( error => {
+      console.log('bueno revento todo, a crear la tienda? ', error);
+      this.router.navigate(['Registrar-Tienda']);
     });
   }
 
@@ -129,7 +134,7 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
     this.router.navigate([`/Tiendas/${this.userStore.storeName}/Estadisticas`]);
   }
 
-  editStoreInfo() {
-    alert('not implemented yet, Xdxd');
+  gotToConfiguration() {
+    this.router.navigate([`/Tiendas/${this.userStore.storeName}/Configuracion`]);
   }
 }

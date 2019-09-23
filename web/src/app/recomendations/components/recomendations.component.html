@@ -1,4 +1,4 @@
-<div class="mat-typography" style="top: 0">
+<div class="mat-typography backgroundColor" style="top: 0">
   <div class="pageContent">
   <!-- Recomendations -->
       <div class="requestList">
@@ -47,7 +47,7 @@
 
           <mat-header-row *matHeaderRowDef="displayedColumnsAnswered"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumnsAnswered;" [ngClass]="{'highlight': row.FirebaseUID === selectedRowIndex}"
-            [ngStyle]="{'background-color': row.FirebaseUID === answeredRequestIndex ? '#ccffcc' : '' }" (click)="showInformationAnswer(row)"></mat-row>
+            [ngStyle]="{'background-color': row.FirebaseUID === answeredRequestIndex ? '#ccffcc' : '' }" (click)="showInformationAnswer(row, true)"></mat-row>
         </mat-table>
       </div>
 
@@ -93,7 +93,7 @@
               </mat-form-field>
             </mat-card-content>
             <mat-card-actions align="end">
-              <button class="sendRecoButton" [disabled]="disableSendRecomendation" *ngIf="isRequestSelected" mat-raised-button (click)="sendAnswer()">Enviar
+              <button class="sendRecoButton" [disabled]="(disableSendRecomendation || selectedArticle.picturesArray[0] == '/assets/idea.png')" *ngIf="isRequestSelected" mat-raised-button (click)="sendAnswer()">Enviar
                 Recomendación!</button>
             </mat-card-actions>
           </mat-card>

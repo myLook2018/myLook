@@ -104,7 +104,7 @@ export class AnyliticService {
     console.log(`geting Feedback`);
     this.answeredRecomendations = [];
     return new Promise<any>((resolve, reject) => {
-      console.log(`estamos preguntando subcripciones de ` + storeName);
+      console.log(`estamos preguntando feedback de ` + storeName);
       const res = this.db.collection(this.answeredRecomPath).where('storeName', '==', storeName)
       .get().then(queryRes => {
         queryRes.forEach(doc => {
@@ -113,6 +113,7 @@ export class AnyliticService {
           this.answeredRecomendations.push(data);
         });
       }).then(() => {
+         console.log('feedback que devolvemos', this.answeredRecomendations);
           resolve(this.answeredRecomendations);
         }).catch(function (error) {
           console.log('Error getting documents: ', error);

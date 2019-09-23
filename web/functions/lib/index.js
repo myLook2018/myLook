@@ -63,8 +63,6 @@ exports.newAnswerNotification = functions.firestore
   .document('requestRecommendations/{docId}')
   .onWrite((snap, context) => {
     const newValue = snap.after.data();
-    const id = snap.before.id
-    console.log("RequestId "+id)
     const previousValue = snap.before.data();
     const newAnswer = newValue.answers;
     const oldAnswer = previousValue.answers;
@@ -73,35 +71,44 @@ exports.newAnswerNotification = functions.firestore
       let userId = newValue.userId;
       const desc = newAnswer[newAnswer.length - 1].description;
       const storeName = newAnswer[newAnswer.length - 1].storeName;
+      const payload = {
+        notification: {
+          title: 'Nueva Recomendación para ' + title + ' de ' + storeName,
+          body: desc,
+          sound: 'default'
+        }
+      };
+      const options = {
+        priority: 'high',
+        timeToLive: 60 * 60 * 24
+      };
       return admin
         .firestore()
         .collection('clients')
         .get()
         .then(snapshot => {
           snapshot.forEach(doc => {
+            console.log(
+              'user',
+              'userId ' +
+                userId +
+                ' - Doc user Id' +
+                doc.data().userId +
+                ' - docId ' +
+                doc.id
+            );
             if (userId == doc.data().userId || userId == doc.id) {
               console.log('Es este Usuario!!! ' + userId);
-              console.log("RequestId "+id)
               const registrationToken = doc.data().installToken;
-                        var message = {
-                            data: {
-                                "title": "Nueva Recomendación para " + title + " de " + storeName,
-                                "deepLink": "www.mylook.com/recommendation",
-                                "body": desc,
-                                "sound": "default",
-                                "requestId": id
-                            },
-                            "token": registrationToken
-                        };
-                        console.log(JSON.stringify(message))
-                        return admin.messaging().send(message)
-                            .then((response) => {
-                                // Response is a message ID string.
-                                console.log('Successfully sent message:', response);
-                            })
-                            .catch((error) => {
-                                console.log('Error sending message:', error);
-                            });
+              return admin
+                .messaging()
+                .sendToDevice(registrationToken, payload, options)
+                .then(response => {
+                  console.log('Successfully sent message:', response);
+                })
+                .catch(error => {
+                  console.log('Error sending message:', error);
+                });
             }
           });
         });
@@ -283,11 +290,23 @@ exports.getMercadoPagoNotification = functions.https.onRequest((req, res) => {
         // La platita que nos ingresó
         const promotionCost = parseInt(laData.transaction_amount);
 
+        // metodo de pago
+        const paymentMethod = laData.payment_method_id
         //forma de pago
         const payMethod = laData.payment_type_id
+        console.log('toda la data', laData);
+        // ultimos cuatro digitos
+        const lastFourDigits = laData.card.last_four_digits
+        // titular de la tarjeta
+        const cardOwner = laData.card.cardholder.name
 
         // storeName
         const storeName = laData.payer.first_name
+
+        //id de la transaccion de mercadopago
+        const idMercadoPago = laData.id
+
+
 
         admin.firestore().collection('articles').doc(articleToPromoteId).update({ promotionLevel: articlePromotionLevel }).then(result => {
           admin.firestore().collection('stores').where('storeName', '==', storeName ).get().then(snapshot => {
@@ -301,9 +320,14 @@ exports.getMercadoPagoNotification = functions.https.onRequest((req, res) => {
                 startOfPromotion: new Date,
                 endOfPromotion: end,
                 storeId: doc.id,
+                storeName: storeName,
                 payMethod: payMethod,
                 promotionLevel: articlePromotionLevel,
                 promotionCost: promotionCost,
+                idMercadoPago: idMercadoPago,
+                paymentMethod: paymentMethod,
+                lastFourDigits: lastFourDigits,
+                cardOwner: cardOwner
               };
 
               admin.firestore().collection('promotions').add(promotion).then((docRef) => {
