@@ -153,3 +153,29 @@ agm-map {
   height: 300px;
   width: auto;
 }
+
+
+.socialNetworks {
+  display: grid;asd
+  .network {
+    display: inline-flex;
+  }
+}
+
+.networkContainer {
+  position: relative;
+}
+
+.networkIcon {
+  position: absolute;
+  top: 15px;
+  z-index: 1;
+}
+
+.linkContainer {
+  margin-left: 22px;
+}
+
+#socialNetwork {
+  width: 100%;
+}

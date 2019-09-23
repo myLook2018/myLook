@@ -52,7 +52,7 @@ export class DataService {
       if (file.type.split('/')[0] !== 'image') {
         return reject('Tipo de imagen no soportado');
       }
-      const path = `article/${new Date().getTime()}_${file.name}`;
+      const path = `articles/${new Date().getTime()}_${file.name}`;
       const customMetadata = { app: 'Mylook!' };
       this.task = this.storage.upload(path, file, { customMetadata });
       this.ref = this.storage.ref(path);
