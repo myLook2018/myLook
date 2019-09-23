@@ -175,8 +175,10 @@ export class RegisterComponent implements OnInit {
     this.registerStoreFormGroupStep2 = this.fb.group({
       ownerName: [''],
       storeAddress: [''],
-      storeLatitude: [''],
-      storeLongitude: [''],
+      storePosition : this.fb.group({
+        latitude: [''],
+        longitude: [''],
+      }),
       storeFloor: [''],
       storeDept: [''],
       storeTower: [''],
