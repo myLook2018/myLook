@@ -114,16 +114,8 @@ export class ArticleService {
     }).catch(error => reject(error));
   }
 
-  refreshArticle(article: Article) {
-    return this.fst.collection(this.collectionPath).doc(`${article.articleId}`).update({
-      cost: article.cost,
-      size: article.sizes,
-      material: article.material,
-      colors: article.colors,
-      initial_stock: article.initial_stock,
-      provider: article.provider,
-      tags: article.tags
-    })
+  refreshArticle(article: Article, articleId) {
+    return this.fst.collection(this.collectionPath).doc(articleId).update(article)
       .then(function () {
         console.log('Document successfully updated!');
       })
@@ -225,5 +217,23 @@ export class ArticleService {
 
   tryPromoteMP(preferenceMP)  {
     return this.http.post(this.mpURL, preferenceMP);
+  }
+
+  getSingleArticle(articleId) {
+    console.log('getting article:', articleId);
+    // tslint:disable-next-line:no-shadowed-variable
+    const docRef = this.db.collection(this.collectionPath).doc(articleId);
+    return new Promise<Article>((resolve, reject) => {
+      docRef.get().then( document => {
+        if (document.exists) {
+          resolve(document.data());
+        } else {
+          reject ('No encontramos documento ' + articleId);
+        }
+        }).catch(function (error) {
+          console.log('Error getting storeFront: ', error);
+          reject(error);
+        });
+    });
   }
 }

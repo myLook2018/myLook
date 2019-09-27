@@ -27,6 +27,8 @@ export const rootRouterConfig: Routes = [
       { path: 'Tiendas/:storeName/Estadisticas', component: DashboardComponent, resolve: { data: UserResolver }},
       { path: 'Tiendas/:storeName/Recomendaciones', component: RecomendationsComponent, resolve: { data: UserResolver }},
       { path: 'Tiendas/:storeName/Configuracion', component: ConfigurationsComponent, resolve: { data: UserResolver }},
+      { path: 'Tiendas/:storeName/Ver-Articulo/:id', component: NewArticleComponent, resolve: { data: UserResolver }},
+      { path: 'Tiendas/:storeName/Editar-Articulo/:id', component: NewArticleComponent, resolve: { data: UserResolver }},
       { path: 'Tiendas/:storeName/Nuevo-Articulo', component: NewArticleComponent, resolve: { data: UserResolver }},
     ]},
   { path: 'Ingresar', component: LoginComponent},

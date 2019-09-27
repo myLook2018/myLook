@@ -2,18 +2,18 @@
   <div>
     <form [formGroup]="this.articleForm" autocomplete="off">
       <mat-card class="main-card">
-        <h1>Carga los Datos de tu Prenda</h1>
+        <h1>{{ this.dashboardTitle }}</h1>
 <!--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
         <div class="article-photos">
           <h1 class="photos-title">Selecciona las Fotos</h1>
             <div style="display:flex">
                 <div lyTheme="minima-light" #PrimeraFoto>
-                  <div class="resize-image">
+                  <div class="resize-image" [ngClass]="{preventMouse: this.viewArticleId !== null}">
                     <br />
                     <div>
                       <button
                         class="closeIconButton"
-                        *ngIf="isLoadedImage[0]"
+                        *ngIf="isLoadedImage[0] && this.viewArticleId === null"
                         (click)="cropping0.clean()"
                         (click)="doClean(0)"
                         ly-button
@@ -32,10 +32,11 @@
                       (error)="onerror()"
                       class="mat-typography"
                     >
-                      <i class="material-icons">
+                      <i class="material-icons" *ngIf="this.viewArticleId === null"
+                      >
                         add_photo_alternate
                       </i>
-                      Añadir Foto
+                      {{ addPhotoLabel }}
                     </ly-cropping>
                     <button
                       style="visibility: hidden"
@@ -61,12 +62,12 @@
                 </div>
                 <!-------------------------------------------------------------------------------------------------------------------------------------------------->
                 <div lyTheme="minima-light" #SegundaFoto>
-                  <div class="resize-image">
+                  <div class="resize-image" [ngClass]="{preventMouse: this.viewArticleId !== null}">
                     <br />
                     <div>
                       <button
                         class="closeIconButton"
-                        *ngIf="isLoadedImage[1]"
+                        *ngIf="isLoadedImage[1] && this.viewArticleId === null"
                         (click)="cropping1.clean()"
                         (click)="doClean(1)"
                         ly-button
@@ -85,9 +86,9 @@
                       (error)="onerror()"
                       class="mat-typography"
                     >
-                      <i class="material-icons">
+                      <i class="material-icons" *ngIf="this.viewArticleId === null">
                         add_photo_alternate </i
-                      >Añadir Foto
+                      > {{ addPhotoLabel }}
                     </ly-cropping>
                     <button
                       style="visibility: hidden"
@@ -113,12 +114,12 @@
                   </div>
                 </div>
                 <div lyTheme="minima-light" #TerceraFoto>
-                  <div class="resize-image">
+                  <div class="resize-image" [ngClass]="{preventMouse: this.viewArticleId !== null}">
                     <br />
                     <div>
                       <button
                         class="closeIconButton"
-                        *ngIf="isLoadedImage[2]"
+                        *ngIf="isLoadedImage[2] && this.viewArticleId === null"
                         (click)="cropping2.clean()"
                         (click)="doClean(2)"
                         ly-button
@@ -137,9 +138,10 @@
                       (error)="onerror()"
                       class="mat-typography"
                     >
-                      <i class="material-icons">
+                      <i class="material-icons" *ngIf="this.viewArticleId === null"
+                      >
                         add_photo_alternate </i
-                      >Añadir Foto
+                      > {{ addPhotoLabel }}
                     </ly-cropping>
 
                     <button
@@ -194,14 +196,18 @@
           <div class="article-dat">
             <mat-form-field class="inputs" appearance="outline">
               <mat-label>Precio ($)</mat-label>
-              <input matInput formControlName="cost" required>
+              <input
+              min='0' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57"
+              matInput formControlName="cost" required>
               <mat-error *ngIf="articleForm.get('cost').hasError">Campo obligatorio.</mat-error>
             </mat-form-field>
           </div>
           <div class="article-dat">
             <mat-form-field class="inputs" appearance="outline">
               <mat-label>Stock Inicial</mat-label>
-              <input matInput formControlName="initial_stock" required>
+              <input
+              min='0' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57"
+              matInput formControlName="initial_stock" required>
               <mat-error *ngIf="articleForm.get('initial_stock').hasError">Campo obligatorio.</mat-error>
             </mat-form-field>
           </div>
@@ -215,67 +221,71 @@
           <div class="article-pill">
             <mat-form-field class="inputs-pills" appearance="outline">
                 <mat-label>Colores Disponibles</mat-label>
-                <mat-chip-list #chipList1>
+                <mat-chip-list #chipList1 [disabled]='this.viewArticleId !== null'>
                   <mat-chip *ngFor="let color of colors"
-                    [selectable]="true"
-                    [removable]="true"
+                    [selectable]="this.viewArticleId === null"
+                    [removable]="this.viewArticleId === null"
                     (removed)="removeElement(color, colors)"
+                    [disabled]='this.viewArticleId !== null'
                   >
                     {{ color }}
-                    <mat-icon matChipRemove *ngIf="true">cancel</mat-icon>
+                    <mat-icon matChipRemove *ngIf="this.viewArticleId === null">cancel</mat-icon>
                   </mat-chip>
                   <input
-                    formControlName="colors"
                     [matChipInputFor]="chipList1"
                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                     (matChipInputTokenEnd)="addElement($event, colors)"
+                    [disabled]='this.viewArticleId !== null'
                   />
                 </mat-chip-list>
-              <mat-hint align="end">Utiliza 'Coma', 'Enter' o 'Espacio' para agregar el color a la lista</mat-hint>
+              <mat-hint align="end">Utiliza 'Coma' o 'Enter' para agregar el color a la lista</mat-hint>
             </mat-form-field>
           </div>
           <div class="article-pill">
             <mat-form-field class="inputs-pills" appearance="outline">
                 <mat-label>Talles Disponibles</mat-label>
-                <mat-chip-list #chipList2>
+                <mat-chip-list #chipList2 [disabled]='this.viewArticleId !== null'>
                   <mat-chip *ngFor="let size of sizes"
-                    [selectable]="true"
-                    [removable]="true"
+                    [selectable]="this.viewArticleId === null"
+                    [removable]="this.viewArticleId === null"
                     (removed)="removeElement(size, sizes)"
+                    [disabled]='this.viewArticleId !== null'
                   >
                     {{ size }}
-                    <mat-icon matChipRemove *ngIf="true">cancel</mat-icon>
+                    <mat-icon matChipRemove *ngIf="this.viewArticleId === null">cancel</mat-icon>
                   </mat-chip>
                   <input
-                    formControlName="colors"
                     [matChipInputFor]="chipList2"
                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                     (matChipInputTokenEnd)="addElement($event, sizes)"
+                    [disabled]='this.viewArticleId !== null'
                   />
                 </mat-chip-list>
-              <mat-hint align="end">Utiliza 'Coma', 'Enter' o 'Espacio' para agregar el talle a la lista</mat-hint>
+              <mat-hint align="end">Utiliza 'Coma' o 'Enter' para agregar el talle a la lista</mat-hint>
             </mat-form-field>
           </div>
           <div class="article-pill">
             <mat-form-field class="inputs-pills" appearance="outline">
                 <mat-label>Etiquetas</mat-label>
-                <mat-chip-list #chipList3>
+                <mat-chip-list #chipList3 [disabled]='this.viewArticleId !== null'
+                >
                   <mat-chip *ngFor="let tag of tags"
-                    [selectable]="true"
-                    [removable]="true"
+                    [selectable]="this.viewArticleId === null"
+                    [removable]="this.viewArticleId === null"
                     (removed)="removeElement(tag, tags)"
+                    [disabled]='this.viewArticleId !== null'
                   >
                     {{ tag }}
-                    <mat-icon matChipRemove *ngIf="true">cancel</mat-icon>
+                    <mat-icon matChipRemove *ngIf="this.viewArticleId === null">cancel</mat-icon>
                   </mat-chip>
                   <input
-                    formControlName="colors"
                     [matChipInputFor]="chipList3"
                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                     (matChipInputTokenEnd)="addElement($event, tags)"
+                    [disabled]='this.viewArticleId !== null'
                   />
                 </mat-chip-list>
-              <mat-hint align="end">Utiliza 'Coma', 'Enter' o 'Espacio' para agregar la etiqueta a la lista</mat-hint>
+              <mat-hint align="end">Utiliza 'Coma' o 'Enter' para agregar la etiqueta a la lista</mat-hint>
             </mat-form-field>
           </div>
         </div>
@@ -292,18 +302,32 @@
               Cancelar
           </button>
           <button
-            *ngIf="isNew"
+            *ngIf="this.viewArticleId !== null"
+            [disabled]="isUpLoading"
+            type="button"
+
+            [ngClass]="{buttonDisabled: isUpLoading}"
+            mat-raised-button
+            (click)="changeToEdit();"
+            >
+              Editar Datos
+          </button>
+          <button
+            *ngIf="this.viewArticleId === null"
             [disabled]="articleForm.invalid || isUpLoading"
             class="activatedButton"
             type="button"
 
-            [ngClass]="{buttonDisabled: articleForm.invalid}"
+            [ngClass]="{buttonDisabled: (articleForm.invalid || isUpLoading)}"
             mat-raised-button
             (click)="cropImages(cropping0, cropping1, cropping2)"
             >
-              Agregar Prenda
+              {{ sendButtonLabel }}
           </button>
         </mat-card-actions>
+        <div class="proggressBar">
+          <mat-progress-bar *ngIf="isUpLoading" mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>
+        </div>
       </mat-card>
     </form>
   </div>

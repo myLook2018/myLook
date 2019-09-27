@@ -2,7 +2,7 @@ import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Article } from '../../models/article';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { ArticleDialogComponent } from '../dialogs/articleDialog';
+import { StoreFrontDialogComponent } from '../dialogs/storeFrontDialog';
 import {
   MatDialog,
   MatTableDataSource,
@@ -198,50 +198,50 @@ export class InventoryComponent implements OnInit, OnDestroy {
     });
   }
 
-  openArticleDialog(article: Article, event): void {
-    event.stopPropagation();
-    let dataToSend = {};
-    if (article !== undefined) {
-      dataToSend = {
-        storeName: this.userStore.storeName,
-        storeLatitude: this.userStore.storeLatitude,
-        storeLongitude: this.userStore.storeLongitude,
-        title: article.title,
-        code: article.code,
-        id: article.articleId,
-        picturesArray: article.picturesArray,
-        cost: article.cost,
-        sizes: article.sizes,
-        material: article.material,
-        colors: article.colors,
-        initial_stock: article.initial_stock,
-        provider: article.provider,
-        tags: article.tags,
-        onlyView: false
+  // openArticleDialog(article: Article, event): void {
+  //   event.stopPropagation();
+  //   let dataToSend = {};
+  //   if (article !== undefined) {
+  //     dataToSend = {
+  //       storeName: this.userStore.storeName,
+  //       storeLatitude: this.userStore.storeLatitude,
+  //       storeLongitude: this.userStore.storeLongitude,
+  //       title: article.title,
+  //       code: article.code,
+  //       id: article.articleId,
+  //       picturesArray: article.picturesArray,
+  //       cost: article.cost,
+  //       sizes: article.sizes,
+  //       material: article.material,
+  //       colors: article.colors,
+  //       initial_stock: article.initial_stock,
+  //       provider: article.provider,
+  //       tags: article.tags,
+  //       onlyView: false
 
-      };
-    } else {
-      dataToSend = {
-        storeName: this.userStore.storeName,
-        storeLatitude: this.userStore.storeLatitude,
-        storeLongitude: this.userStore.storeLongitude,
-        tags: [],
-        sizes: [],
-        colors: [],
-        onlyView: false
+  //     };
+  //   } else {
+  //     dataToSend = {
+  //       storeName: this.userStore.storeName,
+  //       storeLatitude: this.userStore.storeLatitude,
+  //       storeLongitude: this.userStore.storeLongitude,
+  //       tags: [],
+  //       sizes: [],
+  //       colors: [],
+  //       onlyView: false
 
-      };
-    }
+  //     };
+  //   }
 
-    debugger;
-    const dialogRef = this.dialog.open(ArticleDialogComponent, {
-      maxWidth: '850px',
-      maxHeight: 'calc(95vh)',
-      data: dataToSend
-    });
+  //   debugger;
+  //   const dialogRef = this.dialog.open(ArticleDialogComponent, {
+  //     maxWidth: '850px',
+  //     maxHeight: 'calc(95vh)',
+  //     data: dataToSend
+  //   });
 
-    dialogRef.afterClosed().subscribe(result => {});
-  }
+  //   dialogRef.afterClosed().subscribe(result => {});
+  // }
 
   resetSelectedVidriera() {
     for (let i = 0; i < this.articles.length; i++) {
@@ -323,47 +323,41 @@ export class InventoryComponent implements OnInit, OnDestroy {
     this.selectedIndexes = [];
   }
 
-  // RedirectToMercadoPago(promData) {
-  //   switch (promData.promotionCost) {
-  //     case 10: {
-  //       window.open('https://www.mercadopago.com/mla/checkout/start?pref_id=181044052-8b71c605-305a-44b5-8328-e07bb750ea94');
-  //       break;
-  //     }
-  //   }
-  // }
+  stop(event) {
+    event.stopPropagation();
+  }
+
   showInformation(article) {
-    let dataToSend = {};
-    if (article !== undefined) {
-      dataToSend = {
-        storeName: this.userStore.storeName,
-        storeLatitude: this.userStore.storeLatitude,
-        storeLongitude: this.userStore.storeLongitude,
-        title: article.title,
-        code: article.code,
-        id: article.articleId,
-        picturesArray: article.picturesArray,
-        cost: article.cost,
-        sizes: article.sizes,
-        material: article.material,
-        colors: article.colors,
-        initial_stock: article.initial_stock,
-        provider: article.provider,
-        tags: article.tags,
-        onlyView: true
-      };
+    if (this.selectionMode) {
+      return console.log('evite redireccion');
+    }
+    console.log('Yendo a ver articulos', `/Tiendas/${this.userStore.storeName}/Nuevo-Articulo/${article.articleId}`);
+    this.router.navigate([`/Tiendas/${this.userStore.storeName}/Ver-Articulo/${article.articleId}`]);
+  }
+
+  openStoreFrontDialog (article) {
+     const dataToSend = {
+      storeProfilePicture: this.userStore.profilePh,
+      storeBackPhoto: this.userStore.coverPh,
+      articles: this.articles
     }
 
-    const dialogRef = this.dialog.open(ArticleDialogComponent, {
-      maxWidth: '850px',
-      maxHeight: 'calc(95vh)',
+    const dialogRef = this.dialog.open(StoreFrontDialogComponent, {
+      width: '1500px',
+      height: '900px',
       data: dataToSend
     });
 
     dialogRef.afterClosed().subscribe(result => {});
   }
 
-  goToAddArticle() {
-    this.router.navigate([`/Tiendas/${this.userStore.storeName}/Nuevo-Articulo`]);
+  goToEdit(article) {
+    event.stopPropagation();
+    this.router.navigate([`/Tiendas/${this.userStore.storeName}/Editar-Articulo/${article.articleId}`]);
+  }
 
+  goToAddArticle() {
+    console.log('Yendo a ver articulos', `/Tiendas/${this.userStore.storeName}/Nuevo-Articulo/`);
+    this.router.navigate([`/Tiendas/${this.userStore.storeName}/Nuevo-Articulo`]);
   }
 }

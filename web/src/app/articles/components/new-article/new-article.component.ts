@@ -1,4 +1,4 @@
-import { OnInit, OnDestroy, Component, ViewEncapsulation, ViewChild,  } from '@angular/core';
+import { OnInit, OnDestroy, Component, ViewEncapsulation, ViewChild, AfterViewInit,  } from '@angular/core';
 import { FormGroup, FormBuilder, Validators} from '@angular/forms';
 import { SPACE, ENTER, COMMA } from '@angular/cdk/keycodes';
 import { MatChipInputEvent, MatSnackBar } from '@angular/material';
@@ -7,18 +7,19 @@ import { LyTheme2 } from '@alyle/ui';
 import { DataService } from 'src/app/service/dataService';
 import { ArticleService } from '../../services/article.service';
 import { StoreModel } from 'src/app/auth/models/store.model';
-import { Router } from '@angular/router';
+import { Router, Route, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-new-article',
   templateUrl: './new-article.component.html',
   styleUrls: ['./new-article.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  // encapsulation: ViewEncapsulation.None
 })
-export class NewArticleComponent implements OnInit, OnDestroy {
+
+export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
   isNew = true;
   articleForm: FormGroup;
-  separatorKeysCodes: number[] = [ENTER, COMMA, SPACE];
+  separatorKeysCodes: number[] = [ENTER, COMMA];
   colors = [];
   sizes = [];
   tags = [];
@@ -58,6 +59,12 @@ export class NewArticleComponent implements OnInit, OnDestroy {
   };
   isUpLoading: boolean;
   actualStore: StoreModel;
+  viewArticleId: string;
+  dashboardTitle = 'Carga los Datos de tu Prenda';
+  addPhotoLabel = 'Añadir foto';
+  sendButtonLabel = 'Añadir prenda';
+  isFormDisabled = false;
+  isEditMode: boolean;
   // ------ Fin cosas de las imagenes --------
 
   constructor (
@@ -66,14 +73,37 @@ export class NewArticleComponent implements OnInit, OnDestroy {
     private dataService: DataService,
     private articleService: ArticleService,
     private router: Router,
+    private route: ActivatedRoute,
     private theme: LyTheme2 ) {
+      this.viewArticleId = this.route.snapshot.paramMap.get('id');
+      this.isEditMode = this.router.url.includes('Editar');
+      console.log('es editar? ', this.isEditMode);
+      console.log('el id que nos mandan', this.viewArticleId);
+      if (this.viewArticleId) {
+        this.dashboardTitle = 'Datos de tu Prenda';
+        this.addPhotoLabel = '';
+        this.isFormDisabled = true;
+        this.createForm();
+        this.articleService.getSingleArticle(this.viewArticleId).then(articleData => {
+          console.log('el article recibido ', articleData);
+          this.articleForm.patchValue(articleData);
+          this.loadChipsValues(articleData);
+          const pictureArray = articleData.picturesArray;
+          this.loadImagesToCrop(pictureArray);
+          if (this.isEditMode) { this.changeToEdit(); }
+        });
+      } else { this.createForm()}
   }
 
   ngOnInit() {
-    this.createForm();
     this.dataService.getStoreInfo().then(store => {
       this.actualStore = store;
     });
+  }
+
+  ngAfterViewInit() {
+    const pictureArray = this.articleForm.get('picturesArray').value;
+    this.loadImagesToCrop(pictureArray);
   }
 
   ngOnDestroy(): void {
@@ -81,23 +111,33 @@ export class NewArticleComponent implements OnInit, OnDestroy {
 
   createForm() {
     this.articleForm = this.formBuilder.group({
-      code: ['', Validators.required],
-      colors: [[]],
-      cost: ['', Validators.required],
+      code: [{value: '', disabled: this.isFormDisabled}, Validators.required],
+      colors: [{value: [], disabled: this.isFormDisabled}],
+      cost: [{value: '', disabled: this.isFormDisabled}, Validators.required],
       creationDate: [new Date, Validators.required],
       estaEnVidriera: [false],
-      initial_stock: [, Validators.required],
-      material: ['', Validators.required],
+      initial_stock: [{value: null, disabled: this.isFormDisabled}, Validators.required],
+      material: [{value: '', disabled: this.isFormDisabled}, Validators.required],
       picturesArray: [[]],
-      promotionLevel: [1],
-      provider: ['', Validators.required],
-      sizes: [],
+      promotionLevel: [{value: 1, disabled: this.isFormDisabled}],
+      provider: [{value: '', disabled: this.isFormDisabled}, Validators.required],
+      sizes: [{value: [], disabled: this.isFormDisabled}],
       storeLatitude: [],
       storeLongitude: [],
       storeName: [],
-      tags: [[]],
-      title: ['', Validators.required]
+      tags: [{value: [], disabled: this.isFormDisabled}],
+      title: [{value: '', disabled: this.isFormDisabled}, Validators.required],
+      isStoreFront: [{value: false, disabled: this.isFormDisabled}, Validators.required]
     });
+  }
+
+  loadChipsValues(articleData) {
+    this.articleForm.get('tags').setValue('');
+    this.articleForm.get('sizes').setValue('');
+    this.articleForm.get('colors').setValue('');
+    this.tags = articleData.tags;
+    this.sizes = articleData.sizes;
+    this.colors = articleData.colors;
   }
 
   getErrorMessage(error) {
@@ -133,6 +173,19 @@ export class NewArticleComponent implements OnInit, OnDestroy {
 
   goToInventory() {
     this.router.navigate([`/Tiendas/${this.actualStore.storeName}/Catalogo`]);
+  }
+
+  changeToEdit() {
+    this.articleForm.enable();
+    this.viewArticleId = null;
+    this.addPhotoLabel = 'Añadir foto';
+    this.dashboardTitle = 'Carga los Datos de tu Prenda';
+    this.isEditMode = true;
+    this.sendButtonLabel = 'Actualizar prenda';
+  }
+
+  addComa(array) {
+    console.log('tengo que implementar esto');
   }
 
   // ----------- Inician Metodos de cortar imagenes ------------------------
@@ -212,6 +265,18 @@ export class NewArticleComponent implements OnInit, OnDestroy {
     });
     return result;
   }
+
+  loadImagesToCrop(pictureArray) {
+    console.log('loading esto', pictureArray);
+    const croppers = [this.cropping0, this.cropping1, this.cropping2];
+    if (pictureArray) {
+      for (let index = 0; index < pictureArray.length; index++) {
+        console.log('cargando indice:', index);
+          croppers[index].setImageUrl(pictureArray[index]);
+          this.isLoadedImage[index] = pictureArray[index];
+      }
+    }
+  }
   // ----------- Fin Metodos de cortar imagenes  ---------------------------
   // ----------- Inicia el metodo para cargar la prenda  ---------------------------
   startUpload() {
@@ -249,11 +314,19 @@ export class NewArticleComponent implements OnInit, OnDestroy {
     this.articleForm.get('storeLongitude').setValue(this.actualStore.storeLongitude);
     this.uploadPictures(imagesToUpload).then(picturesURL => {
       this.articleForm.get('picturesArray').setValue(picturesURL.map(x => x));
-      this.articleService.addArticle(this.articleForm.value).then(() => {
-        this.isUpLoading = false;
-        console.log('prenda guardada');
-        this.openSnackBar('Prenda guardada en MyLook!', 'x');
-      });
+      if ( this.isEditMode ) {
+        this.articleService.refreshArticle( this.articleForm.value, this.route.snapshot.paramMap.get('id')).then( () => {
+          this.openSnackBar('Prenda actualizada en MyLook!', 'x');
+          this.isUpLoading = false;
+        });
+      } else {
+        this.articleService.addArticle(this.articleForm.value).then(() => {
+          this.isUpLoading = false;
+          console.log('prenda guardada');
+          this.openSnackBar('Prenda guardada en MyLook!', 'x');
+          this.resetForm();
+        });
+      }
     });
   }
 
@@ -297,4 +370,19 @@ export class NewArticleComponent implements OnInit, OnDestroy {
     });
   }
   // ----------- Fin el metodo para cargar la prenda  ------------------------------
+
+  resetForm() {
+    this.createForm();
+    this.sizes = [];
+    this.colors = [];
+    this.tags = [];
+    this.doClean(0);
+    this.doClean(1);
+    this.doClean(2);
+    const croppers = [this.cropping0, this.cropping1, this.cropping2];
+      for (let index = 0; index < croppers.length; index++) {
+        console.log('cargando indice:', index);
+        croppers[index].clean();
+      }
+    }
 }
