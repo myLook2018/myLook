@@ -26,22 +26,6 @@
                 android:background="@drawable/ic_profile"
                 android:backgroundTint="@color/primary_light" />
 
-            <TextView
-                android:id="@+id/lblChangePhoto"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:clickable="true"
-                android:gravity="center|center_horizontal|center_vertical"
-                android:text="Cambiar Foto de Perfil"
-                android:textAlignment="center"
-                android:textColor="@color/primary_dark"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:visibility="gone" />
-
             <EditText
                 android:id="@+id/txtName"
                 android:layout_width="match_parent"

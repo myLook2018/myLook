@@ -38,7 +38,7 @@ public class EditInfoActivity extends AppCompatActivity {
 
     private EditText txtName, txtSurname, txtBirthdate;
     private MaterialBetterSpinner cmbSexo;
-    private TextView txtChangePhoto, txtChangePassword, txtChangeEmail,txtPrivAcc;
+    private TextView txtChangePassword, txtChangeEmail,txtPrivAcc;
     private ImageView btnSaveChanges;
     private Toolbar tb;
     private User oldUser = null;
@@ -148,10 +148,6 @@ public class EditInfoActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         this.setTitle("Editar Información");
-        if(Session.isPremium){
-            txtChangePhoto=findViewById(R.id.lblChangePhoto);
-            txtChangePhoto.setVisibility(View.VISIBLE);
-        }
         txtName = findViewById(R.id.txtName);
         txtSurname = findViewById(R.id.txtSurname);
         txtDNI = findViewById(R.id.txtDNI);

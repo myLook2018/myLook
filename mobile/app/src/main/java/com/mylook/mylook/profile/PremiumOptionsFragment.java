@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.mylook.mylook.R;
 import com.mylook.mylook.premiumUser.NewPublicationActivity;
+import com.mylook.mylook.premiumUser.PremiumRequestActivity;
 import com.mylook.mylook.premiumUser.PremiumUserProfileActivity;
 import com.mylook.mylook.session.Session;
 
@@ -88,11 +89,14 @@ public class PremiumOptionsFragment extends ListFragment {
 
         LinearLayout newGroup = view.findViewById(R.id.incNewGroup);
         TextView lblNewGroup = (TextView) newGroup.findViewById(R.id.lblNameOption);
-        lblNewGroup.setText("Nuevo Grupo de difusion");
+        lblNewGroup.setText("Tus datos publicos");
         ImageView imgNewGroup= newGroup.findViewById(R.id.iconPremiumOption);
         imgNewGroup.setImageDrawable(getResources().getDrawable(ic_channel));
         newGroup.setOnClickListener(v -> {
-            //startActivity(new Intent(mContext, DifussionGroup.class));
+            Intent intent = new Intent(mContext, PremiumRequestActivity.class);
+            intent.putExtra("clientId", Session.clientId);
+            intent.putExtra("isChange",true);
+            startActivity(intent);
         });
 
         LinearLayout newMess = view.findViewById(R.id.incNewMess);
