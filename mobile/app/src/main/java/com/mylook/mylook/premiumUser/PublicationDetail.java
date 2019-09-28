@@ -34,7 +34,6 @@ public class PublicationDetail extends AppCompatActivity{
     private ImageView imgStore;
     private PremiumPublication publication;
     private Toolbar tb;
-    private FirebaseFirestore dB;
     private PremiumUser premiumUser;
     private Article art;
     private Context mContext = PublicationDetail.this;
@@ -44,7 +43,6 @@ public class PublicationDetail extends AppCompatActivity{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_publication_detail);
-        dB = FirebaseFirestore.getInstance();
 
         tb = findViewById(R.id.toolbar);
         tb.setTitle("Editar Información");
@@ -59,13 +57,13 @@ public class PublicationDetail extends AppCompatActivity{
     }
 
     private void loadData() {
-    dB.collection("premiumUsers").whereEqualTo("clientId",publication.getClientId()).get()
+    FirebaseFirestore.getInstance().collection("premiumUsers").whereEqualTo("clientId",publication.getClientId()).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()){
                             premiumUser=(PremiumUser)task.getResult().getDocuments().get(0).toObject(PremiumUser.class);
-                            dB.collection("articles").whereEqualTo("code",publication.getArticleCode()).whereEqualTo("storeName",publication.getStoreName())
+                            FirebaseFirestore.getInstance().collection("articles").whereEqualTo("code",publication.getArticleCode()).whereEqualTo("storeName",publication.getStoreName())
                                     .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {

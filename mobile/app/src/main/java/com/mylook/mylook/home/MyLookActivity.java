@@ -111,4 +111,8 @@ public class MyLookActivity extends AppCompatActivity implements BottomNavigatio
         }
         return false;
     }
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }

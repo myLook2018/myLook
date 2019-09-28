@@ -115,7 +115,7 @@ public class StoreActivity extends AppCompatActivity {
                             if (task.getResult().getDocuments().size() == 0) {
                                 visitId = null;
                                 visit = new Visit(nombreTiendaPerfil, FirebaseAuth.getInstance().getCurrentUser().getUid());
-                                //db.collection("visits").add(visit.toMap());
+                                //FirebaseFirestore.getInstance().collection("visits").add(visit.toMap());
                             } else {
                                 Log.e("OLD VISIT", "ID: " + visitId);
                                 visit = task.getResult().getDocuments().get(0).toObject(Visit.class);

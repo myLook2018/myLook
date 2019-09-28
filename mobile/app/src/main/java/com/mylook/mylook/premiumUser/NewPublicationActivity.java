@@ -62,7 +62,6 @@ public class NewPublicationActivity extends AppCompatActivity {
     private Uri downloadUrl;
     private ProgressBar mProgressBar;
     private boolean enviado = false;
-    private FirebaseFirestore dB;
     private String clientId;
 
 
@@ -78,7 +77,6 @@ public class NewPublicationActivity extends AppCompatActivity {
 
         user= FirebaseAuth.getInstance().getCurrentUser();
         storageRef = FirebaseStorage.getInstance().getReference();
-        dB=FirebaseFirestore.getInstance();
         clientId=getIntent().getStringExtra("clientId");
         initElements();
         setOnclicks();
@@ -275,7 +273,7 @@ public class NewPublicationActivity extends AppCompatActivity {
 
     }
     private Task<QuerySnapshot> validateStore(String store){
-        Task <QuerySnapshot> task = dB.collection("stores").whereEqualTo("storeName",store).get()
+        Task <QuerySnapshot> task = FirebaseFirestore.getInstance().collection("stores").whereEqualTo("storeName",store).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -294,7 +292,7 @@ public class NewPublicationActivity extends AppCompatActivity {
         return task;
     }
     private Task<QuerySnapshot> validateCode(String code,String store){
-        Task<QuerySnapshot> task=dB.collection("articles").whereEqualTo("storeName",store).whereEqualTo("code",code).get()
+        Task<QuerySnapshot> task=FirebaseFirestore.getInstance().collection("articles").whereEqualTo("storeName",store).whereEqualTo("code",code).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -325,7 +323,7 @@ public class NewPublicationActivity extends AppCompatActivity {
             premiumPublication.put("clientId",clientId);
             premiumPublication.put("creationDate",new Timestamp(cal.getTime()));
 
-            dB.collection("premiumPublications")
+            FirebaseFirestore.getInstance().collection("premiumPublications")
                     .add(premiumPublication).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                 @Override
                 public void onSuccess(DocumentReference documentReference) {

@@ -40,7 +40,6 @@ public class RecommendFragment extends Fragment {
     private FloatingActionButton fab;
     private Context mContext;
     private RecyclerView recyclerView;
-    private FirebaseFirestore dB;
     private static List<RequestRecommendation> requestRecommendationsList;
     public final static String TAG = "RecommendFragment";
     public static int NEW_REQUEST = 1;
@@ -54,7 +53,6 @@ public class RecommendFragment extends Fragment {
         Log.e(TAG, "OnViewCreated- savedInstance" + savedInstanceState);
         super.onViewCreated(view, savedInstanceState);
         mContext = view.getContext();
-        this.dB = FirebaseFirestore.getInstance();
         recyclerView = view.findViewById(R.id.recyclerViewRecommend);
         fab = view.findViewById(R.id.fab);
         progressBar = view.findViewById(R.id.progressBar);
@@ -136,7 +134,7 @@ public class RecommendFragment extends Fragment {
     public void getRequestRecommendations() {
         progressBar.setVisibility(View.VISIBLE);
         Log.e(TAG, "getRequestRecommendations");
-        dB.collection("requestRecommendations")
+        FirebaseFirestore.getInstance().collection("requestRecommendations")
                 .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid()).orderBy("limitDate").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @RequiresApi(api = Build.VERSION_CODES.N)

@@ -31,7 +31,6 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
     private ReputationPremiumFragment reputationFragment;
     private PremiumPublicationsFragment publicationsFragment;
     private PublicClosetFragment publicClosetFragment;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private boolean isCurrentUser=false;
     private FloatingActionButton fab;
     private String premiumUserId; //el userUID del usuario destacado NO EL ACTUAL

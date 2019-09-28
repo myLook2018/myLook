@@ -77,7 +77,6 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     private TextInputEditText txtDescription;
     private Date limitDate;
     private EditText editDate;
-    private FirebaseFirestore dB;
     private StorageReference storageRef;
     private TextView title;
     private Uri selectImageUri = null;
@@ -172,7 +171,6 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         spinner = findViewById(R.id.category);
         txtSize = findViewById(R.id.size_input);
         user = FirebaseAuth.getInstance().getCurrentUser();
-        dB = FirebaseFirestore.getInstance();
         storageRef = FirebaseStorage.getInstance().getReference();
         mProgressBar = findViewById(R.id.progressBar);
         btnSend = findViewById(R.id.btnSend);
@@ -187,7 +185,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     }
 
     private void setCategoryRequest() {
-        dB.collection("categories").whereEqualTo("name", "recommendation").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        FirebaseFirestore.getInstance().collection("categories").whereEqualTo("name", "recommendation").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 ArrayList<String> categories = (ArrayList<String>) task.getResult().getDocuments().get(0).get("categories");
@@ -305,7 +303,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 recommendation.put("category", spinner.getText().toString());
                 if (!txtSize.getText().equals(""))
                     recommendation.put("size", txtSize.getText().toString());
-                dB.collection("requestRecommendations")
+                FirebaseFirestore.getInstance().collection("requestRecommendations")
                         .add(recommendation).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
