@@ -6,7 +6,8 @@ import {
   ViewChild,
   ElementRef,
   OnDestroy,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  AfterViewInit
 } from '@angular/core';
 import {
   AngularFireUploadTask,
@@ -56,11 +57,14 @@ const styles = {
   styleUrls: ['./articleDialog.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ArticleDialogComponent implements OnInit, OnDestroy {
+export class ArticleDialogComponent implements OnInit, OnDestroy, AfterViewInit {
   // cropper settings
   classes = this.theme.addStyleSheet(styles);
   croppedImage?: string[] = ['', '', ''];
-  @ViewChild(LyResizingCroppingImages) img: LyResizingCroppingImages;
+  // @ViewChild(LyResizingCroppingImages) img: LyResizingCroppingImages;
+  @ViewChild('cropping0') cropping0: LyResizingCroppingImages;
+  @ViewChild('cropping1') cropping1: LyResizingCroppingImages;
+  @ViewChild('cropping2') cropping2: LyResizingCroppingImages;
   result: string;
   myConfig: ImgCropperConfig = {
     width: 150, // Default `250`
@@ -119,7 +123,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     private dataService: DataService,
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<ArticleDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public articleData: Article
+    @Inject(MAT_DIALOG_DATA) public articleData
   ) {
     /*this.cropperSettings = new CropperSettings();
     this.cropperSettings.noFileInput = true;
@@ -129,7 +133,8 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     this.cropperSettings.canvasWidth = 210;
 */
     this.createForm();
-    if (articleData.picture !== undefined) {
+    console.log('article data ', this.articleData);
+    if (this.articleData.picturesArray) {
       const articlePicture = (this.isNew = false);
     } else {
     }
@@ -189,6 +194,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     }
     this.tags = this.articleData.tags;
     this.sizes = this.articleData.sizes;
+    this.colors = this.articleData.colors;
     this.articleForm = this.fb.group({
       // completar los datos de la prenda
       title: [this.articleData.title, Validators.nullValidator],
@@ -204,6 +210,11 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
       tags: [this.articleData.tags.map(x => x), Validators.nullValidator],
       storeName: [this.articleData.storeName, Validators.nullValidator]
     });
+    // this.loadImagesToCrop();
+  }
+
+  ngAfterViewInit() {
+    this.loadImagesToCrop();
   }
 
   toggleHover(event: boolean) {
@@ -253,12 +264,14 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     this.articleForm.get('tags').setValue(this.tags.map(x => x));
     this.articleForm.get('sizes').setValue(this.sizes.map(x => x));
     this.articleForm.get('colors').setValue(this.colors.map(x => x));
+    this.articleForm.addControl('storeLatitude', new FormControl(this.articleData.storeLatitude, Validators.required));
+    this.articleForm.addControl('storeLongitude', new FormControl(this.articleData.storeLongitude, Validators.required));
     this.uploadPictures(imagesToUpload).then(picturesURL => {
       this.articleForm.get('picturesArray').setValue(picturesURL.map(x => x));
       this.articleService.addArticle(this.articleForm.value).then(() => {
         this.isUpLoading = false;
         console.log('prenda guardada');
-        this.openSnackBar('Prenda guardada en MyLook!', 'close');
+        this.openSnackBar('Prenda guardada en MyLook!', 'x');
         this.dialogRef.close();
       });
     });
@@ -270,15 +283,25 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
       // tslint:disable-next-line: quotemark
       console.log('items ', items);
 
-      this.dataService.uploadPictureFile(items[0]).then(res0 => {
+      // eliminar fotos que estan vacias
+      const realItems = [];
+      items.forEach(file => {
+        if (file.size > 0) {
+          realItems.push(file);
+        }
+      });
+
+      console.log('realItems', realItems);
+
+      this.dataService.uploadPictureFile(realItems[0]).then(res0 => {
         console.log('res0 ', res0);
         result.push(res0);
-        if (items[1] !== '') {
-          this.dataService.uploadPictureFile(items[1]).then(res1 => {
+        if (realItems[1]) {
+          this.dataService.uploadPictureFile(realItems[1]).then(res1 => {
             console.log('res1', res1);
             result.push(res1);
-            if (items[2] !== '') {
-              this.dataService.uploadPictureFile(items[2]).then(res2 => {
+            if (realItems[2]) {
+              this.dataService.uploadPictureFile(realItems[2]).then(res2 => {
                 console.log('res2', res2);
                 result.push(res2);
                 resolve(result);
@@ -310,7 +333,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     };
     this.articleService.refreshArticle(articleUpdated);
     console.log(articleUpdated.tags);
-    this.openSnackBar('Prenda actualizada en MyLook!', 'close');
+    this.openSnackBar('Prenda actualizada en MyLook!', 'x');
   }
 
   isActive(snapshot) {
@@ -406,7 +429,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
     const image: any = new Image();
     const file: File = $event.target.files[0];
     if (file.type.split('/')[1] === 'png') {
-      return this.openSnackBar('Tipo de imagen no soportado!', 'close');
+      return this.openSnackBar('Tipo de imagen no soportado!', 'x');
     }
     const myReader: FileReader = new FileReader();
     const that = this;
@@ -460,6 +483,7 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
 
   cropImages(crop1, crop2, crop3) {
     const croppers = [crop1, crop2, crop3];
+    console.log('crops', croppers);
     for (let index = 0; index < this.isLoadedImage.length; index++) {
       if(this.isLoadedImage[index]) {
         try {
@@ -470,6 +494,17 @@ export class ArticleDialogComponent implements OnInit, OnDestroy {
       }
     }
     this.startUpload();
+  }
+
+  loadImagesToCrop() {
+    const croppers = [this.cropping0, this.cropping1, this.cropping2];
+    if (this.articleData.picturesArray) {
+      for (let index = 0; index < this.articleData.picturesArray.length; index++) {
+        console.log('cargando indice:', index);
+        croppers[index].setImageUrl(this.articleData.picturesArray[index]);
+        this.isLoadedImage[index] = this.articleData.picturesArray[index];
+      }
+    }
   }
 
   checkImagenLoaded() {

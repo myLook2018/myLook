@@ -35,19 +35,19 @@ export class PromotionsBarComponent implements OnInit {
       labels: [`Niveles de promoción`],
       datasets: [
         {
-          label: '3 articulos Sin promoción',
+          label: 'articulos Sin promoción',
           backgroundColor: '#FF6384',
           borderColor: '#1E88E5',
           data: [this.level1Articles]
         },
         {
-          label: '1 articulo Promoción Básica',
+          label: 'articulos con Promoción Básica',
           backgroundColor: '#42A5F5',
           borderColor: '#1E88E5',
           data: [this.level2Articles]
         },
         {
-          label: '1 articulo Promoción Premium',
+          label: 'articulo con Promoción Premium',
           backgroundColor: '#FFCE56',
           borderColor: '#1E88E5',
           data: [this.level3Articles]

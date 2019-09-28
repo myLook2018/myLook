@@ -64,7 +64,6 @@
                 android:id="@+id/outfit_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="NOMBRE"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
 
@@ -73,7 +72,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/outfit_name"
-                android:text="X artículos"
                 android:textSize="14sp" />
 
         </RelativeLayout>

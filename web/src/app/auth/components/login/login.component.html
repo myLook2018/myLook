@@ -23,19 +23,19 @@
     <label class="error">{{errorMessage}}</label>
   </form>
   <form>
-    <div>
+    <div class="loginButton">
       <button mat-button [ngClass]="{disabledButton: (isLoading || loginForm.invalid)}" [disabled]="isLoading || loginForm.invalid" (click)="tryLogin()" class="acceptButton">Acceder</button>
     </div>
     <div style="display: grid;">
         <a class="createAcc" style="text-decoration: none;color: #6a99ff;" [routerLink]="[ '/Registrarse']">Crear cuenta en Mylook</a>
-        <a class="createAcc" style="text-decoration: none;color: #6a99ff;" [routerLink]="[ '/Ingresar']">¿Has olvidado tu contraseña?</a>
+        <a class="createAcc" style="text-decoration: none;color: #6a99ff; cursor: pointer; " (click)="restartPassword()">¿Has olvidado tu contraseña?</a>
       </div>
       <span class="spacer"></span>
     </form>
     <mat-divider id="divider"></mat-divider>
     <form>
-      <button mat-button [disabled]="isLoading || true" class="externalLoginFacebook" (click)="tryFacebookLogin()" [ngClass]="{disabledButtonFacebook: true}">Acceder con Facebook</button>
-      <button mat-button [disabled]="isLoading || true" class="externalLoginGoogle" (click)="tryGoogleLogin()" [ngClass]="{disabledButtonGoogle: true}">Acceder con Google</button>
+      <button mat-button [disabled]="isLoading " class="externalLoginFacebook" (click)="tryLoginWithSocialNetwork('facebook')" [ngClass]="{disabledButtonFacebook: isLoading}">Acceder con Facebook</button>
+      <button mat-button [disabled]="isLoading" class="externalLoginGoogle" (click)="tryLoginWithSocialNetwork('google')" [ngClass]="{disabledButtonGoogle: isLoading}">Acceder con Google</button>
         </form>
         <div class="proggressBar">
           <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>

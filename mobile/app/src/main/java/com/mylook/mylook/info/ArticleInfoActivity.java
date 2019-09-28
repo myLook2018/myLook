@@ -84,13 +84,13 @@ public class ArticleInfoActivity extends AppCompatActivity {
     }
 
     private void initElements() {
-        btnCloset = findViewById(R.id.btnCloset);
-        txtTitle = findViewById(R.id.txtTitle);
-        txtStoreName = findViewById(R.id.txtStoreName);
-        txtMaterial = findViewById(R.id.txtMaterial);
-        txtCost = findViewById(R.id.txtCost);
-        lnlSizes = findViewById(R.id.lnlSizes);
-        lnlColors = findViewById(R.id.lnlColors);
+        btnCloset=findViewById(R.id.btnCloset);
+        txtTitle=findViewById(R.id.txtTitle);
+        txtStoreName=findViewById(R.id.txtStoreName);
+        txtMaterial=findViewById(R.id.txtMaterial);
+        txtCost=findViewById(R.id.txtCost);
+        lnlSizes=findViewById(R.id.lnlSizes);
+        lnlColors=findViewById(R.id.lnlColors);
         btnShare =  findViewById(R.id.btnShare);
         txtNearby = findViewById(R.id.txtNearby);
 

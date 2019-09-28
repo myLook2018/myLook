@@ -84,7 +84,7 @@
                         placeholder="Telefono Personal"
                         formControlName="storePhone"
                         min="0"
-                        type="number"
+                        type="text"
                         onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57"
                       />
                     </mat-form-field>
@@ -245,6 +245,35 @@
               </mat-form-field>
             </div>
 
+            <div class="socialNetworks">
+              <div class="networkContainer" >
+                <img src="/assets/facebookLogo.png" height="20px" width="20px" class="networkIcon">
+                  <mat-form-field id="socialNetwork"
+                    floatLabel="never">
+                    <input
+                    matInput
+                    placeholder="Nombre de usuario"
+                    formControlName="facebookLink"
+                    />
+                    <span matPrefix>. . . https://www.facebook.com/</span>
+                  </mat-form-field>
+              </div>
+
+              <div class="networkContainer">
+                <img src="/assets/instagramLogo.png" height="20px" width="20px" class="networkIcon">
+                  <mat-form-field id="socialNetwork"
+                    floatLabel="never">
+                    <input
+                    matInput
+                    placeholder="Nombre de usuario"
+                    formControlName="instagramLink"
+                    />
+                    <span matPrefix>. . . https://www.instagram.com/</span>
+                  </mat-form-field>
+
+                </div>
+              </div>
+
             <mat-toolbar>
               <mat-toolbar-row style="background-color: white">
                 <button
@@ -272,6 +301,9 @@
         <mat-step [stepControl]="step3">
           <ng-template matStepLabel>Confirmar Datos</ng-template>
 
+          <div class="normalRegister" *ngIf="normalRegister">
+
+
           <mat-form-field class="full-length">
             <input
               matInput
@@ -297,7 +329,11 @@
           <mat-error *ngIf="errorMessage">
             {{ errorMessage }}
           </mat-error>
-
+        </div>
+        <div class="networkRegister" *ngIf="!normalRegister">
+          <p class="confirmationText"> Se creará la tienda en myLook asociando la información a la cuenta <strong>{{emailAndProvider.email}}</strong> de <strong>{{emailAndProvider.provider}}</strong>. </p>
+          <p class="confirmationText"> Por favor, haz click en el botón de la esquina inferior derecha para continuar. </p>
+        </div>
           <mat-toolbar>
             <mat-toolbar-row style="background-color: white">
               <button

@@ -129,6 +129,7 @@
 
               <ly-cropping
                 #cropping0
+                id="crp0"
                 [config]="myConfig"
                 (cropped)="oncropped($event, 0)"
                 (loaded)="onloaded(0)"
@@ -204,6 +205,7 @@
 
               <ly-cropping
                 #cropping1
+                id="crp1"
                 [config]="myConfig"
                 (cropped)="oncropped($event, 1)"
                 (loaded)="onloaded(1)"
@@ -243,7 +245,7 @@
                 <input
                   #_fileInput1
                   type="file"
-                  (change)="cropping2.selectInputEvent($event)"
+                  (change)="cropping1.selectInputEvent($event)"
                   accept="image/*"
                   hidden
                 />
@@ -278,6 +280,7 @@
 
               <ly-cropping
                 #cropping2
+                id="crp2"
                 [config]="myConfig"
                 (cropped)="oncropped($event, 2)"
                 (loaded)="onloaded(2)"
@@ -450,7 +453,7 @@
       <!--<input matInput placeholder="Etiquetas" formControlName="tags" value={{articleData.tags}}>-->
     </mat-form-field>
 
-    <div mat-dialog-actions align="end">
+    <div mat-dialog-actions align="end" *ngIf="!articleData.onlyView">
       <button
         *ngIf="!isNew"
 

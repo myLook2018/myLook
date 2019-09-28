@@ -1,6 +1,5 @@
 import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from 'angularfire2/firestore';
 import { Injectable, Inject } from '@angular/core';
-import { Store } from '../../store/model/store.model';
 import { UserService } from './user.service';
 import { StoreModel } from '../models/store.model';
 
@@ -86,11 +85,12 @@ export class StoreService {
         }
     }
 
-    editStoreInformation(data: Store): Promise<any> {
+    // TODO hay que rehacerlo, ta viejisimo esto, hace un año
+    editStoreInformation(data: StoreModel): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             const ref = this.db.collection('stores').ref;
             let storeRef: DocumentReference;
-            const storeLink = ref.where('userName', '==', data.userName).get().then(result => {
+            const storeLink = ref.where('storeName', '==', data.storeName).get().then(result => {
                 result.forEach(doc => {
                     storeRef = doc.ref;
                 });
@@ -102,7 +102,7 @@ export class StoreService {
                     storeMail: data.storeMail,
                     storePhone: data.storePhone,
                     storePosition: data.storePosition,
-                    userName: data.userName,
+                    // userName: data.storeName,
                     storeAddressNumber: data.storeAddressNumber,
                     facebookLink: data.facebookLink,
                     twitterlink: data.twitterLink,

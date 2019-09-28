@@ -16,7 +16,10 @@ export class UserService {
     public db: AngularFirestore,
     public afAuth: AuthService
   ) {
+    this.getStoresCollection();
+  }
 
+  getStoresCollection() {
     this.storesCollection = this.db.collection('stores', ref => ref.orderBy('storeName', 'asc'));
     this.storeA = this.storesCollection.snapshotChanges().pipe(map(changes => {
       return changes.map(a => {
@@ -25,7 +28,6 @@ export class UserService {
         return data;
       });
     }));
-
   }
 
   addStore(userStore: StoreModel) {
@@ -61,6 +63,7 @@ export class UserService {
   }
 
   getUserInfo(storeUid) {
+    this.getStoresCollection();
     console.log("en el userInfo con ", storeUid);
     return this.storeA.pipe(map(items => items.filter(item => {
       console.log("item.firebaseUserId: "+ item.firebaseUserId + "- " + storeUid)

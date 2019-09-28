@@ -320,7 +320,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void sendEmailVerification() {
         Log.d(LOG_LABEL, "Iniciando envio de mail");
-
         if (user != null) {
             Log.d(LOG_LABEL, "Envio de mail, user != Null");
             user.sendEmailVerification()
@@ -340,6 +339,8 @@ public class RegisterActivity extends AppCompatActivity {
         } else {
             Log.d(LOG_LABEL, "Envio de mail, user == Null");
             btnRegister.setEnabled(true);
+            mProgressBar.setVisibility(View.INVISIBLE);
+            logInIntent();
         }
     }
 }

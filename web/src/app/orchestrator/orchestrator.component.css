@@ -15,7 +15,7 @@
 #logo {
 	width: 92px;
 	height: 36px;
-	padding-left: 10px;
+	margin-left: 1rem
 }
 
 .navbar {
@@ -101,4 +101,8 @@ height: 100%;
 
 .toolbar {
   background-color: transparent;
+}
+
+.myLookPink {
+  color: rgb(189, 132, 199)
 }

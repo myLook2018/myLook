@@ -290,11 +290,23 @@ exports.getMercadoPagoNotification = functions.https.onRequest((req, res) => {
         // La platita que nos ingresó
         const promotionCost = parseInt(laData.transaction_amount);
 
+        // metodo de pago
+        const paymentMethod = laData.payment_method_id
         //forma de pago
         const payMethod = laData.payment_type_id
+        console.log('toda la data', laData);
+        // ultimos cuatro digitos
+        const lastFourDigits = laData.card.last_four_digits
+        // titular de la tarjeta
+        const cardOwner = laData.card.cardholder.name
 
         // storeName
         const storeName = laData.payer.first_name
+
+        //id de la transaccion de mercadopago
+        const idMercadoPago = laData.id
+
+
 
         admin.firestore().collection('articles').doc(articleToPromoteId).update({ promotionLevel: articlePromotionLevel }).then(result => {
           admin.firestore().collection('stores').where('storeName', '==', storeName ).get().then(snapshot => {
@@ -308,9 +320,14 @@ exports.getMercadoPagoNotification = functions.https.onRequest((req, res) => {
                 startOfPromotion: new Date,
                 endOfPromotion: end,
                 storeId: doc.id,
+                storeName: storeName,
                 payMethod: payMethod,
                 promotionLevel: articlePromotionLevel,
                 promotionCost: promotionCost,
+                idMercadoPago: idMercadoPago,
+                paymentMethod: paymentMethod,
+                lastFourDigits: lastFourDigits,
+                cardOwner: cardOwner
               };
 
               admin.firestore().collection('promotions').add(promotion).then((docRef) => {

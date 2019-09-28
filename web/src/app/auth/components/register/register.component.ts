@@ -23,6 +23,7 @@ import {
 } from 'angularfire2/storage';
 import { DataService } from '../../../service/dataService';
 import { MapsAPILoader } from '@agm/core';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-register',
@@ -62,6 +63,8 @@ export class RegisterComponent implements OnInit {
   urlImgShop: string;
   task: AngularFireUploadTask;
   ref: AngularFireStorageReference;
+  normalRegister = true;
+  emailAndProvider;
 
   @ViewChild('search')
   public searchElementRef: ElementRef;
@@ -75,10 +78,16 @@ export class RegisterComponent implements OnInit {
     public dataService: DataService,
     private storage: AngularFireStorage,
     private mapsAPILoader: MapsAPILoader,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    public snackBar: MatSnackBar,
   ) {
     try {
       this.email = authService.getEmailToRegister().toString();
+      this.emailAndProvider = authService.getLoginEmailAndProvider();
+      if (this.emailAndProvider) {
+        this.normalRegister = false;
+        this.openSnackBar('Es necesario que completes la siguiente información para poder terminar tu registro.', 'x');
+      }
     } catch (error) {
       console.log(error);
       this.router.navigateByUrl('/Registrarse');
@@ -166,8 +175,10 @@ export class RegisterComponent implements OnInit {
     this.registerStoreFormGroupStep2 = this.fb.group({
       ownerName: [''],
       storeAddress: [''],
-      storeLatitude: [''],
-      storeLongitude: [''],
+      storePosition : this.fb.group({
+        latitude: [''],
+        longitude: [''],
+      }),
       storeFloor: [''],
       storeDept: [''],
       storeTower: [''],
@@ -175,7 +186,8 @@ export class RegisterComponent implements OnInit {
       facebookLink: [''],
       instagramLink: [''],
       twitterLink: [''],
-      provider: ['']
+      provider: [''],
+      registerDate: ['']
     });
 
     this.createUserForm();
@@ -210,8 +222,8 @@ export class RegisterComponent implements OnInit {
 
   tryRegister() {
     this.isRegistering = true;
-    if (this.password === this.confirmPassword) {
-      if (this.password.length > 6) {
+    if (!this.normalRegister || this.password === this.confirmPassword ) {
+      if ( !this.normalRegister || this.password.length > 6 ) {
         this.userLoginForm.addControl(
           'password',
           new FormControl(this.password, Validators.required)
@@ -250,10 +262,11 @@ export class RegisterComponent implements OnInit {
                       console.log('formFinal', this.registerStoreFormGroup.value);
                       this.userService
                         .addStore(this.registerStoreFormGroup.value.store)
-                        .then(() => {});
+                        .then(() => {
+                          console.log('se registro la tienda');
+                        });
                     })
                     .then(() => {
-                      console.log()
                       this.authService
                         .doFirstLogin(this.userLoginForm)
                         .then(() => {
@@ -313,6 +326,10 @@ export class RegisterComponent implements OnInit {
   buildFinalForm() {
     this.registerStoreFormGroupStep2.get('storeLatitude').setValue(this.latitude);
     this.registerStoreFormGroupStep2.get('storeLongitude').setValue(this.longitude);
+    this.registerStoreFormGroupStep2.get('registerDate').setValue(new Date);
+    debugger;
+    const floor = this.registerStoreFormGroupStep2.get('storeFloor').value;
+    this.registerStoreFormGroupStep2.get('storeFloor').setValue(floor.toString());
     const newValues = Object.assign(
       {},
       this.registerStoreFormGroupStep1.value,
@@ -330,5 +347,11 @@ export class RegisterComponent implements OnInit {
       values[key] = new FormControl(elements[key]);
     }
     return new FormGroup(values);
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 7000
+    });
   }
 }

@@ -12,6 +12,7 @@ import { RecomendationsComponent } from './recomendations/components/recomendati
 import { DashboardComponent } from './anylitics/components/dashboard/dashboard.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { NgModule } from '@angular/core';
+import { ConfigurationsComponent } from './store/components/configurations/configurations.component';
 
 export const rootRouterConfig: Routes = [
  // { path: '', component: HomePageComponent},
@@ -21,9 +22,10 @@ export const rootRouterConfig: Routes = [
   { path: '', runGuardsAndResolvers: 'always',
     children: [
       { path: 'Tiendas/:storeName', component: StoreComponent, resolve: { data: UserResolver }},
-      { path: 'Tiendas/:storeName/Inventario', component: InventoryComponent, resolve: { data: UserResolver }},
+      { path: 'Tiendas/:storeName/Catalogo', component: InventoryComponent, resolve: { data: UserResolver }},
       { path: 'Tiendas/:storeName/Estadisticas', component: DashboardComponent, resolve: { data: UserResolver }},
       { path: 'Tiendas/:storeName/Recomendaciones', component: RecomendationsComponent, resolve: { data: UserResolver }},
+      { path: 'Tiendas/:storeName/Configuracion', component: ConfigurationsComponent, resolve: { data: UserResolver }},
     ]},
   { path: 'Ingresar', component: LoginComponent},
   { path: 'Registrarse', component: SignupComponent},

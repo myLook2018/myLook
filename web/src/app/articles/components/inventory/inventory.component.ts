@@ -117,7 +117,12 @@ export class InventoryComponent implements OnInit, OnDestroy {
     this.articleService.deleteArticle(article);
   }
 
-  openPromoteDialog(article): void {
+  openPromoteDialog(article, event): void {
+    event.stopPropagation();
+    if (article.promotionLevel !== 1) {
+      console.log('pito me voy a abrir');
+      return;
+    }
     const dataToSend = {
       storeName: this.userStore.storeName,
       phone: this.userStore.storePhone,
@@ -138,8 +143,9 @@ export class InventoryComponent implements OnInit, OnDestroy {
       tags: article.tags
     };
     const promoteRef = this.dialog.open(PromoteDialogComponent, {
-      width: '400px',
-      data: article
+      width: '750px',
+      data: article,
+      disableClose: true
     });
     const sub = promoteRef.componentInstance.onAdd.subscribe(res => {
       if (res !== undefined) {
@@ -159,12 +165,13 @@ export class InventoryComponent implements OnInit, OnDestroy {
     this.articleService.promoteArticle(data, article, storeUID);
   }
 
-  openConfirmationDialog(article): void {
+  openConfirmationDialog(article, event): void {
+    event.stopPropagation();
     const confirmationRef = this.dialog.open(
       DeleteConfirmationDialogComponent,
       {
         width: '300px',
-        data: article.picture
+        data: article.picturesArray[0]
       }
     );
     confirmationRef.afterClosed().subscribe(result => {
@@ -191,32 +198,42 @@ export class InventoryComponent implements OnInit, OnDestroy {
     });
   }
 
-  openArticleDialog(article: Article): void {
+  openArticleDialog(article: Article, event): void {
+    event.stopPropagation();
     let dataToSend = {};
     if (article !== undefined) {
       dataToSend = {
         storeName: this.userStore.storeName,
+        storeLatitude: this.userStore.storeLatitude,
+        storeLongitude: this.userStore.storeLongitude,
         title: article.title,
         code: article.code,
         id: article.articleId,
-        picture: article.picture,
+        picturesArray: article.picturesArray,
         cost: article.cost,
         sizes: article.sizes,
         material: article.material,
         colors: article.colors,
         initial_stock: article.initial_stock,
         provider: article.provider,
-        tags: article.tags
+        tags: article.tags,
+        onlyView: false
+
       };
     } else {
       dataToSend = {
         storeName: this.userStore.storeName,
+        storeLatitude: this.userStore.storeLatitude,
+        storeLongitude: this.userStore.storeLongitude,
         tags: [],
         sizes: [],
-        colors: []
+        colors: [],
+        onlyView: false
+
       };
     }
 
+    debugger;
     const dialogRef = this.dialog.open(ArticleDialogComponent, {
       maxWidth: '850px',
       maxHeight: 'calc(95vh)',
@@ -243,7 +260,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
       this.articleService.refreshVidrieraAttribute(idOfFrontsArticles[i], true);
     }
     this.articlesToGenerateFront = [];
-    this.openSnackBar('Su vidriera ha sido actualizada!', 'close');
+    this.openSnackBar('Su vidriera ha sido actualizada!', 'x');
     this.selectionMode = false;
   }
 
@@ -314,4 +331,34 @@ export class InventoryComponent implements OnInit, OnDestroy {
   //     }
   //   }
   // }
+  showInformation(article) {
+    let dataToSend = {};
+    if (article !== undefined) {
+      dataToSend = {
+        storeName: this.userStore.storeName,
+        storeLatitude: this.userStore.storeLatitude,
+        storeLongitude: this.userStore.storeLongitude,
+        title: article.title,
+        code: article.code,
+        id: article.articleId,
+        picturesArray: article.picturesArray,
+        cost: article.cost,
+        sizes: article.sizes,
+        material: article.material,
+        colors: article.colors,
+        initial_stock: article.initial_stock,
+        provider: article.provider,
+        tags: article.tags,
+        onlyView: true
+      };
+    }
+
+    const dialogRef = this.dialog.open(ArticleDialogComponent, {
+      maxWidth: '850px',
+      maxHeight: 'calc(95vh)',
+      data: dataToSend
+    });
+
+    dialogRef.afterClosed().subscribe(result => {});
+  }
 }

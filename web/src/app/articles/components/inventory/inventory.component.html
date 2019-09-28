@@ -1,4 +1,6 @@
-            <mat-toolbar>
+            <div class="backgroundColor">
+
+            <mat-toolbar >
                 <mat-toolbar-row class="stickyNavbar mat-elevation-z2">
                     <span>Lista de Prendas</span>
                     <div style="margin-left: auto">
@@ -19,18 +21,15 @@
                 </mat-toolbar-row>
             </mat-toolbar>
             <div>
-                <mat-table class="table" matSort [dataSource]="dataSource">
+                <mat-table class="table gradient" matSort [dataSource]="dataSource">
 
                     <!--- Note that these columns can be defined in any order.
             The actual rendered columns are set as a property on the row definition" -->
 
                     <!-- Picture Column -->
                     <ng-container matColumnDef="picture">
-                        <mat-header-cell *matHeaderCellDef>
-                            <mat-icon>photo</mat-icon>
-                        </mat-header-cell>
-                        <mat-cell *matCellDef="let element">
-                            <img height="100" width="100" src={{element.picturesArray[0]}}> </mat-cell>
+                        <mat-header-cell *matHeaderCellDef><mat-icon>photo</mat-icon></mat-header-cell>
+                        <mat-cell *matCellDef="let element"><img height="100" width="100" src={{element.picturesArray[0]}}> </mat-cell>
                     </ng-container>
 
                     <!-- title Column -->
@@ -54,7 +53,7 @@
                     <!-- size Column -->
                     <ng-container matColumnDef="size">
                         <mat-header-cell *matHeaderCellDef> Talle </mat-header-cell>
-                        <mat-cell *matCellDef="let element"> {{element.sizes}} </mat-cell>
+                        <mat-cell *matCellDef="let element"> {{element.sizes.toString()}} </mat-cell>
                     </ng-container>
 
                     <!-- material Column -->
@@ -90,13 +89,17 @@
                     <ng-container matColumnDef="actions">
                         <mat-header-cell *matHeaderCellDef> Acciones </mat-header-cell>
                         <mat-cell *matCellDef="let element; let i = index">
-                            <button *ngIf="!selectionMode" mat-icon-button class="actionIcon" (click)="openConfirmationDialog(element)">
+                            <button *ngIf="!selectionMode" mat-icon-button class="actionIcon_colored" (click)="openConfirmationDialog(element, $event)">
                                 <mat-icon>delete</mat-icon>
                             </button>
-                            <button *ngIf="!selectionMode" mat-icon-button class="actionIcon" (click)="openArticleDialog(element)">
+                            <button *ngIf="!selectionMode" mat-icon-button class="actionIcon_colored" (click)="openArticleDialog(element, $event)">
                                 <mat-icon>edit</mat-icon>
                             </button>
-                            <button *ngIf="!selectionMode" mat-icon-button [ngClass]="(element.promotionLevel==1)?'actionIcon-notPromoted':'actionIcon'" (click)="openPromoteDialog(element)">
+                            <button *ngIf="!selectionMode"
+                                      matTooltip="Prenda Promocionada"
+                                      [matTooltipDisabled]="(element.promotionLevel==1)"
+                                     mat-icon-button
+                                     [ngClass]="(element.promotionLevel==1)?'actionIcon':'actionIcon-Promoted'" (click)="openPromoteDialog(element, $event)">
                                 <mat-icon>whatshot</mat-icon>
                             </button>
                             <mat-checkbox *ngIf="selectionMode" (change)="addIdToSelecteds(i)"></mat-checkbox>
@@ -105,6 +108,7 @@
                     </ng-container>
 
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                    <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"></mat-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns; let i = index" (click)="showInformation(row)"></mat-row>
                 </mat-table>
             </div>
+          </div>

@@ -84,6 +84,8 @@ import { MinimaLight, MinimaDark } from '@alyle/ui/themes/minima';
 import { LyButtonModule } from '@alyle/ui/button';
 import { LyResizingCroppingImageModule } from '@alyle/ui/resizing-cropping-images';
 import { LyIconModule } from '@alyle/ui/icon';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { PromotionsService } from './store/components/configurations/service/promotions.service';
 
 import {
   LyHammerGestureConfig,
@@ -92,6 +94,13 @@ import {
 } from '@alyle/ui';
 import { HttpClientModule} from '@angular/common/http';
 import { SuccessComponent } from './ecommerce/success/success.component';
+import { ConfigurationsComponent } from './store/components/configurations/configurations.component';
+
+import { LOCALE_ID } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localeAR from '@angular/common/locales/es-AR';
+
+registerLocaleData(localeAR);
 
 @NgModule({
   declarations: [
@@ -122,6 +131,7 @@ import { SuccessComponent } from './ecommerce/success/success.component';
     OrchestratorComponent,
     MercadopagoComponent,
     SuccessComponent,
+    ConfigurationsComponent,
   ],
   imports: [
     HttpClientModule,
@@ -167,6 +177,7 @@ import { SuccessComponent } from './ecommerce/success/success.component';
     LyResizingCroppingImageModule,
     LyButtonModule,
     LyIconModule,
+    FontAwesomeModule,
     LyThemeModule.setTheme('minima-light'),
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyDmuhZx-ew-zpQzQcjiqk2yJu5OonBuSMc',
@@ -177,14 +188,16 @@ import { SuccessComponent } from './ecommerce/success/success.component';
   exports: [RouterModule],
   providers: [MatDatepickerModule, RecomendationService, DataService, AuthService,
     UserService, UserResolver, AuthGuard, StoreService,
-    ArticleService, TagsService, AnyliticService, MatTooltipModule,
+    ArticleService, TagsService, AnyliticService, MatTooltipModule, PromotionsService,
     { provide: LY_THEME, useClass: MinimaLight, multi: true }, // name: `minima-light`
     { provide: LY_THEME, useClass: MinimaDark, multi: true }, // name: `minima-dark`
     { provide: HAMMER_GESTURE_CONFIG, useClass: LyHammerGestureConfig },
+    { provide: LOCALE_ID, useValue: 'es-AR' },
     // ArticleResolver, StoreResolver,
     NewStoreService],
   entryComponents: [FrontDialogComponent, PromoteDialogComponent, DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent,
     DeleteConfirmationDialogComponent, MapsDialogComponent, EditStoreComponent],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

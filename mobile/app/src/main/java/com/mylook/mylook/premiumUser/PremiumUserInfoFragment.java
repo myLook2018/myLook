@@ -31,10 +31,12 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Subscription;
 
+import java.util.Calendar;
+import java.util.Date;
+
 public class PremiumUserInfoFragment extends Fragment{
     private  boolean isCurrentUser;
     private FirebaseUser user;
-    private FirebaseFirestore dB;
     private ImageView profilePhoto;
     private Button btnSubscribe,btnMoreInfo;
     private TextView premiumName;
@@ -46,13 +48,12 @@ public class PremiumUserInfoFragment extends Fragment{
     private TextView txtLocalization;
     private TextView txtFacebook,txtInstagram;
     private LinearLayout lnlface,lnlInsta;
+    private TextView lblDate;
 
 
     @SuppressLint("ValidFragment")
-    public PremiumUserInfoFragment(Context context, String clientId, boolean isCurrentUser) {
-        dB = FirebaseFirestore.getInstance();
+    public PremiumUserInfoFragment( String clientId, boolean isCurrentUser) {
         user = FirebaseAuth.getInstance().getCurrentUser();
-        this.context=context;
         this.clientId=clientId;
         this.isCurrentUser=isCurrentUser;
 
@@ -111,22 +112,12 @@ public class PremiumUserInfoFragment extends Fragment{
         }
     }
 
-    public void setTxtLocalization(String txtLocalization) {
-        this.txtLocalization.setText(txtLocalization);
-    }
 
     public void setProfilePhoto(String profilePhoto) {
-        Glide.with(context).load(profilePhoto).into(this.profilePhoto);
+        Glide.with(getContext()).load(profilePhoto).into(this.profilePhoto);
     }
 
 
-    public void setPremiumName(String storeName) {
-        this.premiumName.setText(storeName);
-    }
-
-    public void setTxtEmail(String txtEmail) {
-        this.txtEmail.setText(txtEmail);
-    }
     public void setOnClickSubscribe(){
         btnSubscribe.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,7 +127,7 @@ public class PremiumUserInfoFragment extends Fragment{
 
                     Subscription newSubscription = new Subscription(clientId, user.getUid());
 
-                    dB.collection("premiumUsersSubscriptions").add(newSubscription).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    FirebaseFirestore.getInstance().collection("premiumUsersSubscriptions").add(newSubscription).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
                         public void onSuccess(DocumentReference documentReference) {
                             Log.d("Firestore task", "DocumentSnapshot written with ID: " + documentReference.getId());
@@ -153,7 +144,7 @@ public class PremiumUserInfoFragment extends Fragment{
                     });
 
                 } else {
-                    dB.collection("premiumUsersSubscriptions").document(documentId).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    FirebaseFirestore.getInstance().collection("premiumUsersSubscriptions").document(documentId).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
@@ -186,7 +177,7 @@ public class PremiumUserInfoFragment extends Fragment{
     }
     public void checkFollow() {
         btnSubscribe.setVisibility(View.VISIBLE);
-        dB.collection("premiumUsersSubscriptions")
+        FirebaseFirestore.getInstance().collection("premiumUsersSubscriptions")
                 .whereEqualTo("userId", user.getUid())
                 .whereEqualTo("storeName", clientId)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -203,20 +194,32 @@ public class PremiumUserInfoFragment extends Fragment{
             }
         });
     }
-    public void initElements(View rootView){
+    public void initElements(View rootView) {
         profilePhoto = rootView.findViewById(R.id.premium_profile_photo);
-        btnSubscribe =rootView.findViewById(R.id.btn_subscribe);
-        premiumName =rootView.findViewById(R.id.profile_premium_name);
-        txtEmail=rootView.findViewById(R.id.txtEmail);
-        txtLocalization=rootView.findViewById(R.id.txtLocalization);
-        txtInstagram=rootView.findViewById(R.id.txtInstagram);
-        txtFacebook=rootView.findViewById(R.id.txtFacebook);
-        lnlface=rootView.findViewById(R.id.lnlFace);
-        lnlInsta=rootView.findViewById(R.id.lnlInta);
+        btnSubscribe = rootView.findViewById(R.id.btn_subscribe);
+        premiumName = rootView.findViewById(R.id.profile_premium_name);
+        txtEmail = rootView.findViewById(R.id.txtEmail);
+        txtLocalization = rootView.findViewById(R.id.txtLocalization);
+        txtInstagram = rootView.findViewById(R.id.txtInstagram);
+        txtFacebook = rootView.findViewById(R.id.txtFacebook);
+        lnlface = rootView.findViewById(R.id.lnlFace);
+        lnlInsta = rootView.findViewById(R.id.lnlInta);
+        lblDate = rootView.findViewById(R.id.lblDate);
 
+        Bundle args = getArguments();
+        if (args != null) {
+            txtLocalization.setText(args.getString("location"));
+            premiumName.setText(args.getString("name"));
+            setProfilePhoto(args.getString("photo"));
+            txtEmail.setText(args.getString("email"));
+            setOnClickFacebook(args.getString("facebook"));
+            setOnClickInstagram(args.getString("instagram"));
+        }
     }
 
     private void displayMessage(String message) {
         Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
+
+
 }

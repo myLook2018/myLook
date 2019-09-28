@@ -88,55 +88,13 @@
   margin-top: 10px;
 }
 
-.gradient {
-  height: calc(100vh - 146px);
-  background: rgba(252, 236, 252, 0.14);
-  background: -moz-linear-gradient(
-    top,
-    rgba(252, 236, 252, 0.14) 0%,
-    rgba(251, 166, 225, 0.16) 49%,
-    rgba(255, 124, 216, 0.18) 85%,
-    rgba(253, 137, 215, 0.19) 100%
-  );
-  background: -webkit-gradient(
-    left top,
-    left bottom,
-    color-stop(0%, rgba(252, 236, 252, 0.14)),
-    color-stop(49%, rgba(251, 166, 225, 0.16)),
-    color-stop(85%, rgba(255, 124, 216, 0.18)),
-    color-stop(100%, rgba(253, 137, 215, 0.19))
-  );
-  background: -webkit-linear-gradient(
-    top,
-    rgba(252, 236, 252, 0.14) 0%,
-    rgba(251, 166, 225, 0.16) 49%,
-    rgba(255, 124, 216, 0.18) 85%,
-    rgba(253, 137, 215, 0.19) 100%
-  );
-  background: -o-linear-gradient(
-    top,
-    rgba(252, 236, 252, 0.14) 0%,
-    rgba(251, 166, 225, 0.16) 49%,
-    rgba(255, 124, 216, 0.18) 85%,
-    rgba(253, 137, 215, 0.19) 100%
-  );
-  background: -ms-linear-gradient(
-    top,
-    rgba(252, 236, 252, 0.14) 0%,
-    rgba(251, 166, 225, 0.16) 49%,
-    rgba(255, 124, 216, 0.18) 85%,
-    rgba(253, 137, 215, 0.19) 100%
-  );
-  background: linear-gradient(
-    to bottom,
-    rgba(252, 236, 252, 0.14) 0%,
-    rgba(251, 166, 225, 0.16) 49%,
-    rgba(255, 124, 216, 0.18) 85%,
-    rgba(253, 137, 215, 0.19) 100%
-  );
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', endColorstr='#fd89d7', GradientType=0 );
-}
 
+.gradient {
+  position: absolute;
+  width: 100%;
+  height: calc(100vh - 48px);
+  background-image: linear-gradient(to top, #ebc0fd 0%, #d9ded8 100%);
+}
 .disabledButton {
   display: block;
   margin-left: auto;
@@ -174,4 +132,8 @@
   margin-top: 0.5rem;
   color: white;
   background-color: #d3483670;
+}
+
+.loginButton {
+  margin-top: 12px;
 }
