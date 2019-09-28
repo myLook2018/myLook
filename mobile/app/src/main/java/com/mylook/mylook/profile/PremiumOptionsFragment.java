@@ -81,7 +81,9 @@ public class PremiumOptionsFragment extends ListFragment {
         ImageView imgNewPublication= newPub.findViewById(R.id.iconPremiumOption);
         imgNewPublication.setImageDrawable(getResources().getDrawable(ic_premium_publication));
         newPub.setOnClickListener(v -> {
-            startActivity(new Intent(mContext, NewPublicationActivity.class));
+            Intent intent= new Intent(mContext, NewPublicationActivity.class);
+            intent.putExtra("clientId", Session.clientId);
+            startActivity(intent);
         });
 
         LinearLayout newGroup = view.findViewById(R.id.incNewGroup);

@@ -33,7 +33,6 @@ public class MyLookActivity extends AppCompatActivity implements BottomNavigatio
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mylook_app);
         loadFragment(HomeFragment.getInstance());
-
         navigation= findViewById(R.id.navigation);
         navigation.inflateMenu(R.menu.bottom_navigation_menu_premium);
         if(Session.getInstance().isPremiumUser())

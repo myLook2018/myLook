@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
+import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -78,6 +79,8 @@ public class Session {
     public static Session getInstance() {
         if (singleton == null) {
             singleton = new Session();
+        }else{
+            singleton.initializeElements();
         }
         return singleton;
     }
@@ -99,7 +102,7 @@ public class Session {
                                 // El usuario está registrado
                                 DocumentSnapshot document = task.getResult().getDocuments().get(0);
                                 userId = document.get("userId").toString();
-                                isPremium = (Boolean) document.get("isPremium");
+                                isPremium = (boolean) document.get("isPremium");
                                 name = document.get("name").toString() + " " + document.get("surname").toString();
                                 mail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                                 clientId = document.getId();
@@ -115,13 +118,19 @@ public class Session {
         Session.isPremium = isPremium;
     }
 
-    public static void updateData(){
-        FirebaseFirestore.getInstance().collection("clients").document(clientId).get()
-                .addOnSuccessListener(document -> {
-            isPremium = (boolean) document.get("isPremium");
-            Log.e("SESSION","is premium: "+isPremium);
-            name = document.get("name").toString() + " " + document.get("surname").toString();
-            mail = (String) document.get("email");
-        });
+    public static boolean updateData(){
+        Log.e("SESION", "clientId: "+clientId);
+        if (Strings.isNullOrEmpty(clientId)){
+            FirebaseFirestore.getInstance().collection("clients").document(clientId).get()
+                    .addOnSuccessListener(document -> {
+                        isPremium = (boolean) document.get("isPremium");
+                        Log.e("SESSION","is premium: "+isPremium);
+                        name = document.get("name").toString() + " " + document.get("surname").toString();
+                        mail = (String) document.get("email");
+                    });
+            return true;
+        }else{
+            return false;
+        }
     }
 }

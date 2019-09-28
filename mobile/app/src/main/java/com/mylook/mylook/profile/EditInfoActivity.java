@@ -96,7 +96,7 @@ public class EditInfoActivity extends AppCompatActivity {
                     newUser.setGender(cmbSexo.getText().toString());
                     newUser.setUserId(oldUser.getUserId());
                     newUser.setInstallToken(oldUser.getInstallToken());
-                    newUser.setPremium(oldUser.getPremium());
+                    newUser.setPremium(oldUser.isPremium());
                     if (newUser.compareTo(oldUser) != 0) {
                         FirebaseFirestore.getInstance().collection("clients").whereEqualTo("userId", oldUser.getUserId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
@@ -183,6 +183,7 @@ public class EditInfoActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         userInDB =task.getResult().toObject(User.class);
                         if(userInDB !=null){
+                            userInDB.setPremium((boolean)task.getResult().get("isPremium"));
 
                             //txtEmail.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
                             //txtEmail.setEnabled(false);
