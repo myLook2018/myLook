@@ -31,9 +31,10 @@ public class MyLookActivity extends AppCompatActivity implements BottomNavigatio
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        loadFragment(HomeFragment.getInstance());
         setContentView(R.layout.activity_mylook_app);
-        BottomNavigationView navigation= findViewById(R.id.navigation);
+        loadFragment(HomeFragment.getInstance());
+
+        navigation= findViewById(R.id.navigation);
         navigation.inflateMenu(R.menu.bottom_navigation_menu_premium);
         if(Session.getInstance().isPremiumUser())
             navigation.getMenu().findItem(R.id.ic_premium).setVisible(true);
@@ -49,19 +50,6 @@ public class MyLookActivity extends AppCompatActivity implements BottomNavigatio
     @Override
     protected void onResume() {
         super.onResume();
-        loadFragment(HomeFragment.getInstance());
-        setContentView(R.layout.activity_mylook_app);
-        navigation= findViewById(R.id.navigation);
-        navigation.inflateMenu(R.menu.bottom_navigation_menu_premium);
-        if(Session.getInstance().isPremiumUser())
-            navigation.getMenu().findItem(R.id.ic_premium).setVisible(true);
-        else
-            navigation.getMenu().findItem(R.id.ic_premium).setVisible(false);
-
-        navigation.setOnNavigationItemSelectedListener(MyLookActivity.this);
-        Toolbar toolbar = findViewById(R.id.main_toolbar);
-        setSupportActionBar(toolbar);
-        setTheme(R.style.AppTheme);
     }
     public void setPremiumMenu(){
         navigation.getMenu().findItem(R.id.ic_premium).setVisible(true);
