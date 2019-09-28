@@ -41,6 +41,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mylook.mylook.R;
+import com.mylook.mylook.home.MyLookActivity;
+import com.mylook.mylook.profile.AccountActivity;
+import com.mylook.mylook.session.Session;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.InputStream;
@@ -48,9 +51,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class PremiumRequestActivity extends AppCompatActivity {
 
+    private static final int SUCCESS_CODE = 0;
     private final int SELECT_FILE = 0;
     private TextView txtProfilePhoto;
     private ImageView imgProfilePhoto;
@@ -58,7 +63,6 @@ public class PremiumRequestActivity extends AppCompatActivity {
     private AutoCompleteTextView txtIg, txtFacebook;
     private Button btnRequest;
     private Uri selectImageUri = null;
-    private StorageReference storageRef;
     private FirebaseUser user;
     private boolean permissionGranted = true;
     private Uri downloadUrl;
@@ -66,7 +70,6 @@ public class PremiumRequestActivity extends AppCompatActivity {
     private boolean enviado = false;
     private Timestamp premiumDate;
     private String clientId;
-    private FirebaseFirestore dB;
     private String userName;
     private final int READ_EXTERNAL_STORAGE = 1, WRITE_EXTERNAL_STORAGE = 2;
 
@@ -82,8 +85,6 @@ public class PremiumRequestActivity extends AppCompatActivity {
         ab.setDisplayHomeAsUpEnabled(true);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-        storageRef = FirebaseStorage.getInstance().getReference();
-        dB = FirebaseFirestore.getInstance();
         clientId = getIntent().getStringExtra("clientId");
         userName = getIntent().getStringExtra("userName");
 
@@ -201,7 +202,7 @@ public class PremiumRequestActivity extends AppCompatActivity {
     private UploadTask saveImage() {
 
         int permissionCheck = ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.READ_EXTERNAL_STORAGE);
-        final StorageReference storageReference = storageRef.child("profilePremium/" + this.createPhotoName(user.getDisplayName()) + ".jpg");
+        final StorageReference storageReference =  FirebaseStorage.getInstance().getReference().child("profilePremium/" + this.createPhotoName(user.getDisplayName()) + ".jpg");
         final UploadTask uploadTask;
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             permissionGranted = false;
@@ -265,19 +266,12 @@ public class PremiumRequestActivity extends AppCompatActivity {
             mProgressBar.setVisibility(View.VISIBLE);
             btnRequest.setEnabled(false);
             final UploadTask uptask = saveImage();
-            uptask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                    task.getResult().getStorage().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            writeFirebaseDocument(task.getResult().toString());
-                        }
-                    });
-
-
-                }
-            });
+            assert uptask != null;
+            uptask.addOnCompleteListener(task ->
+                    Objects.requireNonNull(task.getResult()).getStorage().getDownloadUrl()
+                            .addOnCompleteListener(task1 -> {
+                                writeFirebaseDocument(task1.getResult().toString());
+                            }));
         }
 
     }
@@ -319,18 +313,21 @@ public class PremiumRequestActivity extends AppCompatActivity {
             premiumUser.put("clientId", clientId);
             premiumUser.put("userName", userName);
 
-            dB.collection("premiumUsers")
+            FirebaseFirestore.getInstance().collection("premiumUsers")
                     .add(premiumUser).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                 @Override
                 public void onSuccess(DocumentReference documentReference) {
                     Map<String, Object> client = new HashMap<>();
                     client.put("isPremium", true);
-                    dB.collection("clients").document(clientId).set(client, SetOptions.mergeFields("isPremium")).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    FirebaseFirestore.getInstance().collection("clients").document(clientId).set(client, SetOptions.mergeFields("isPremium")).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             enviado = true;
                             mProgressBar.setVisibility(View.GONE);
                             displayMessage("Ya eres un usuario destacado");
+                            setResult(SUCCESS_CODE);
+                            Session.updateData();
+                            Session.setIsPremium(true);
                             finish();
                         }
                     });

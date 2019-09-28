@@ -68,8 +68,11 @@ public class StoreActivity extends AppCompatActivity {
                     Log.d("STORE FOUND", "loadStore: ");
                     if (task.isSuccessful() && task.getResult() != null) {
                         List<Store> results = new ArrayList<>(task.getResult().toObjects(Store.class));
-                        store = results.get(0);
-                        setFragments();
+                        if(!results.isEmpty())
+                        {
+                            store = results.get(0);
+                            setFragments();
+                        }
                     }
                 });
     }
