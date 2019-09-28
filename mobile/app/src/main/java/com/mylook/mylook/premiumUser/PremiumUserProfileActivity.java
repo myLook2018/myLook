@@ -14,6 +14,7 @@ import android.util.Log;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.PremiumUser;
+import com.mylook.mylook.session.Session;
 import com.mylook.mylook.storeProfile.StoreTabAdapter;
 import com.mylook.mylook.utils.SectionsPagerAdapter;
 
@@ -31,7 +32,6 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
     private ReputationPremiumFragment reputationFragment;
     private PremiumPublicationsFragment publicationsFragment;
     private PublicClosetFragment publicClosetFragment;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private boolean isCurrentUser=false;
     private FloatingActionButton fab;
     private String premiumUserId; //el userUID del usuario destacado NO EL ACTUAL
@@ -55,6 +55,8 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
         clientId = inconmingIntent.getStringExtra("clientId");
         if(inconmingIntent.hasExtra("isCurrent")){
             isCurrentUser=true;
+        }else{
+            isCurrentUser= Session.clientId.equals(clientId);
         }
 
         setContentInfo();

@@ -15,6 +15,7 @@ import com.mylook.mylook.R;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
@@ -96,7 +97,9 @@ public class ReputationFragment extends Fragment {
                     for (DocumentSnapshot document : result.getDocuments()) {
                         if (document.contains("feedBack")) {
                             try {
-                                ratingSum += Float.parseFloat((String) document.get("feedBack"));
+                                if(document.get("feedBack")!=null){
+                                    ratingSum += Float.parseFloat((String) Objects.requireNonNull(document.get("feedBack")));
+                                }
                             } catch (NumberFormatException e) {
                                 Log.e("ReputationFragment", "setRecommendations: ", e);
                             }

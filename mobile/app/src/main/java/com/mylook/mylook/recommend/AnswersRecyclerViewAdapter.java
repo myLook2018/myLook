@@ -32,7 +32,6 @@ import java.util.List;
 public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecyclerViewAdapter.ViewHolder> {
 
     private static final String TAG = "AnswersRecyclerViewAdapter";
-    private final FirebaseFirestore dB;
     private Context mContext;
     private List<HashMap<String, String>> answersList;
 
@@ -40,7 +39,6 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
     public AnswersRecyclerViewAdapter(Context mContext, List<HashMap<String,String>> answersList) {
         this.mContext = mContext;
         this.answersList = answersList;
-        dB= FirebaseFirestore.getInstance();
     }
 
     @NonNull
@@ -78,7 +76,7 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
             @Override
             public void onClick(View view) {
                 Log.d("AnswerRecyclerViewAdap", "onClick: clicked on: " + position);
-                dB.collection("articles")
+                FirebaseFirestore.getInstance().collection("articles")
                         .document(answer.get("articleUID")).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -99,7 +97,7 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
             @Override
             public void onClick(View view) {
                 Log.d("AnswerRecyclerViewAdap", "onClick: clicked on: " + position);
-                dB.collection("stores")
+                FirebaseFirestore.getInstance().collection("stores")
                         .whereEqualTo("storeName",answer.get("storeName")).get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                    @Override

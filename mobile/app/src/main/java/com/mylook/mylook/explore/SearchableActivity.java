@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SearchableActivity extends AppCompatActivity {
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private List results;
     private CardsHomeFeedAdapter adapter;
     private RecyclerView recyclerView;
@@ -69,7 +68,7 @@ public class SearchableActivity extends AppCompatActivity {
     }
 
     private void doMySearchStorePremium(final String query) {
-        db.collection("premiumUsers")
+        FirebaseFirestore.getInstance().collection("premiumUsers")
                 //.whereEqualTo("storeName",query)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -97,7 +96,7 @@ public class SearchableActivity extends AppCompatActivity {
 
     private void doMySearchStoreNames(final String query) {
         //query = Character.toUpperCase(query.charAt(0)) + query.substring(1, query.length());
-        db.collection("stores")
+        FirebaseFirestore.getInstance().collection("stores")
                 //.whereEqualTo("storeName",query)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -124,7 +123,7 @@ public class SearchableActivity extends AppCompatActivity {
 
     private void doMySearchTitles(final String query) {
         //query = Character.toUpperCase(query.charAt(0)) + query.substring(1, query.length());
-        db.collection("articles")
+        FirebaseFirestore.getInstance().collection("articles")
                 //.whereGreaterThanOrEqualTo("title", query)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -151,7 +150,7 @@ public class SearchableActivity extends AppCompatActivity {
 
     private void doMySearchTags(final String query) {
         //query = Character.toUpperCase(query.charAt(0)) + query.substring(1, query.length());
-        db.collection("articles")
+        FirebaseFirestore.getInstance().collection("articles")
                 //.whereArrayContains("tags", query)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

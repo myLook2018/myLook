@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -19,30 +18,26 @@ import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.SuccessContinuation;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mylook.mylook.R;
-import com.mylook.mylook.home.MyLookActivity;
-import com.mylook.mylook.profile.AccountActivity;
+import com.mylook.mylook.entities.PremiumUser;
 import com.mylook.mylook.session.Session;
 import com.theartofdev.edmodo.cropper.CropImage;
 
@@ -61,7 +56,7 @@ public class PremiumRequestActivity extends AppCompatActivity {
     private ImageView imgProfilePhoto;
     private AutoCompleteTextView txtEmail, txtLocalization;
     private AutoCompleteTextView txtIg, txtFacebook;
-    private Button btnRequest;
+    private ImageButton btnRequest;
     private Uri selectImageUri = null;
     private FirebaseUser user;
     private boolean permissionGranted = true;
@@ -72,6 +67,9 @@ public class PremiumRequestActivity extends AppCompatActivity {
     private String clientId;
     private String userName;
     private final int READ_EXTERNAL_STORAGE = 1, WRITE_EXTERNAL_STORAGE = 2;
+    private boolean isChange=false;
+    private PremiumUser premiumUser;
+    private String documentPath;
 
 
     @Override
@@ -79,42 +77,51 @@ public class PremiumRequestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request_premium_account);
         Toolbar tb = findViewById(R.id.toolbar);
-        tb.setTitle("Cuenta Destacada");
+        initElements();
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        clientId = getIntent().getStringExtra("clientId");
+        userName = getIntent().getStringExtra("userName");
+        if(getIntent().hasExtra("isChange")){
+            isChange= getIntent().getBooleanExtra("isChange",true);
+            tb.setTitle("Edita tus datos publicos");
+            setPremiumUserData();
+        }else{
+            tb.setTitle("Cuenta Destacada");
+        }
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        clientId = getIntent().getStringExtra("clientId");
-        userName = getIntent().getStringExtra("userName");
-
-        initElements();
         setOnclicks();
     }
 
+    private void setPremiumUserData() {
+        FirebaseFirestore.getInstance().collection("premiumUsers").whereEqualTo("clientId",clientId)
+                .get().addOnSuccessListener(queryDocumentSnapshots -> {
+                    if(!queryDocumentSnapshots.getDocuments().isEmpty()){
+                        premiumUser = queryDocumentSnapshots.getDocuments().get(0).toObject(PremiumUser.class);
+                        txtEmail.setText(premiumUser.getContactMail());
+                        txtFacebook.setText(premiumUser.getLinkFacebook());
+                        txtIg.setText(premiumUser.getLinkInstagram());
+                        txtLocalization.setText(premiumUser.getLocalization());
+                        Glide.with(getApplicationContext()).load(premiumUser.getProfilePhoto()).into(this.imgProfilePhoto);
+                        documentPath=queryDocumentSnapshots.getDocuments().get(0).getId();
+                    }
+                });
+    }
+
     private void setOnclicks() {
-        txtProfilePhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                intent.setType("image/*");
-                startActivityForResult(intent, SELECT_FILE);
-            }
+        txtProfilePhoto.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            intent.setType("image/*");
+            startActivityForResult(intent, SELECT_FILE);
         });
-        imgProfilePhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                intent.setType("image/*");
-                startActivityForResult(intent, SELECT_FILE);
-            }
+        imgProfilePhoto.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            intent.setType("image/*");
+            startActivityForResult(intent, SELECT_FILE);
         });
-        btnRequest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendRequest();
-            }
-        });
+        btnRequest.setOnClickListener(v -> sendRequest());
     }
 
     private void sendRequest() {
@@ -156,20 +163,25 @@ public class PremiumRequestActivity extends AppCompatActivity {
 
     private void cropActivity(int resultCode, Intent data){
         CropImage.ActivityResult result = CropImage.getActivityResult(data);
-        selectImageUri = result.getUri();
         if (resultCode == RESULT_OK) {
+            selectImageUri = result.getUri();
            int permissionCheck = ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.READ_EXTERNAL_STORAGE);
 
             if (permissionCheck == PackageManager.PERMISSION_GRANTED)
+            {
                 setImage(selectImageUri);
+            }
+
             else {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                         Manifest.permission.READ_EXTERNAL_STORAGE)) {
                     setImage(selectImageUri);
+
                 } else {
                     ActivityCompat.requestPermissions(this,
                             new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
                     setImage(selectImageUri);
+
                 }
             }
         } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
@@ -217,20 +229,12 @@ public class PremiumRequestActivity extends AppCompatActivity {
         }
         if (permissionGranted) {
             uploadTask = storageReference.putFile(selectImageUri);
-            uploadTask.onSuccessTask(new SuccessContinuation<UploadTask.TaskSnapshot, Object>() {
-                @NonNull
-                @Override
-                public Task<Object> then(@Nullable final UploadTask.TaskSnapshot taskSnapshot) {
-                    uploadTask.getSnapshot().getStorage().getDownloadUrl().onSuccessTask(new SuccessContinuation<Uri, Object>() {
-                        @NonNull
-                        @Override
-                        public Task<Object> then(@Nullable Uri uri) {
-                            downloadUrl = uri;
-                            return (Task) uploadTask;
-                        }
-                    });
+            uploadTask.onSuccessTask((SuccessContinuation<UploadTask.TaskSnapshot, Object>) taskSnapshot -> {
+                uploadTask.getSnapshot().getStorage().getDownloadUrl().onSuccessTask((SuccessContinuation<Uri, Object>) uri -> {
+                    downloadUrl = uri;
                     return (Task) uploadTask;
-                }
+                });
+                return (Task) uploadTask;
             });
 
         } else {
@@ -259,21 +263,37 @@ public class PremiumRequestActivity extends AppCompatActivity {
             return;
         }
 
-        if (selectImageUri == null) {
-            displayMessage("Debe añadir una foto de perfil!");
-            return;
-        } else {
-            mProgressBar.setVisibility(View.VISIBLE);
-            btnRequest.setEnabled(false);
-            final UploadTask uptask = saveImage();
-            assert uptask != null;
-            uptask.addOnCompleteListener(task ->
-                    Objects.requireNonNull(task.getResult()).getStorage().getDownloadUrl()
-                            .addOnCompleteListener(task1 -> {
-                                writeFirebaseDocument(task1.getResult().toString());
-                            }));
-        }
+        if(isChange==false){
 
+            if (selectImageUri == null) {
+                displayMessage("Debe añadir una foto de perfil!");
+                return;
+            } else {
+                mProgressBar.setVisibility(View.VISIBLE);
+                btnRequest.setEnabled(false);
+                final UploadTask uptask = saveImage();
+                assert uptask != null;
+                uptask.addOnCompleteListener(task ->
+                        Objects.requireNonNull(task.getResult()).getStorage().getDownloadUrl()
+                                .addOnCompleteListener(task1 -> {
+                                    writeFirebaseDocument(task1.getResult().toString());
+                                }));
+            }
+        }else{
+            if (selectImageUri != null) {
+                mProgressBar.setVisibility(View.VISIBLE);
+                btnRequest.setEnabled(false);
+                final UploadTask uptask = saveImage();
+                assert uptask != null;
+                uptask.addOnCompleteListener(task ->
+                        Objects.requireNonNull(task.getResult()).getStorage().getDownloadUrl()
+                                .addOnCompleteListener(task1 -> {
+                                    updateFirebaseDocument(task1.getResult().toString());
+                                }));
+            }else{
+                updateFirebaseDocument(premiumUser.getProfilePhoto());
+            }
+        }
     }
 
     @Override
@@ -296,6 +316,39 @@ public class PremiumRequestActivity extends AppCompatActivity {
             }
         }
     }
+    private boolean updateFirebaseDocument(String uri){
+
+        if (!enviado) {
+            mProgressBar.setVisibility(View.VISIBLE);
+            btnRequest.setEnabled(false);
+            setCurrentDate();
+            final Map<String, Object> premiumUser = new HashMap<>();
+            premiumUser.put("profilePhoto", uri);
+            premiumUser.put("localization", txtLocalization.getText().toString());
+            premiumUser.put("contactMail", txtEmail.getText().toString());
+            premiumUser.put("linkInstagram", txtIg.getText().toString());
+            premiumUser.put("linkFacebook", txtFacebook.getText().toString());
+
+
+            FirebaseFirestore.getInstance().collection("premiumUsers").document(documentPath).update(premiumUser)
+                    .addOnSuccessListener(aVoid -> {
+                        enviado = true;
+                        mProgressBar.setVisibility(View.GONE);
+                        displayMessage("Datos Actualizados");
+                        finish();
+                    })
+                .addOnFailureListener(e -> {
+                mProgressBar.setVisibility(View.GONE);
+                btnRequest.setEnabled(true);
+                displayMessage("Ha ocurrido un problema con tu solicitud");
+            });
+        } else {
+            mProgressBar.setVisibility(View.GONE);
+            btnRequest.setEnabled(true);
+            Log.e("WRITE FIREBASE", "no se por que entra aca, ahrrrre");
+        }
+        return enviado;
+    }
 
     private boolean writeFirebaseDocument(String uri) {
         if (!enviado) {
@@ -314,34 +367,26 @@ public class PremiumRequestActivity extends AppCompatActivity {
             premiumUser.put("userName", userName);
 
             FirebaseFirestore.getInstance().collection("premiumUsers")
-                    .add(premiumUser).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                @Override
-                public void onSuccess(DocumentReference documentReference) {
-                    Map<String, Object> client = new HashMap<>();
-                    client.put("isPremium", true);
-                    FirebaseFirestore.getInstance().collection("clients").document(clientId).set(client, SetOptions.mergeFields("isPremium")).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
+                    .add(premiumUser).addOnSuccessListener(documentReference -> {
+                        Map<String, Object> client = new HashMap<>();
+                        client.put("isPremium", true);
+                        FirebaseFirestore.getInstance().collection("clients").document(clientId).set(client, SetOptions.mergeFields("isPremium")).addOnCompleteListener(task -> {
                             enviado = true;
                             mProgressBar.setVisibility(View.GONE);
                             displayMessage("Ya eres un usuario destacado");
                             setResult(SUCCESS_CODE);
+
                             Session.updateData();
                             Session.setIsPremium(true);
                             finish();
-                        }
+                        });
+
+
+                    }).addOnFailureListener(e -> {
+                        mProgressBar.setVisibility(View.GONE);
+                        btnRequest.setEnabled(true);
+                        displayMessage("Ha ocurrido un problema con tu solicitud");
                     });
-
-
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    mProgressBar.setVisibility(View.GONE);
-                    btnRequest.setEnabled(true);
-                    displayMessage("Ha ocurrido un problema con tu solicitud");
-                }
-            });
         } else {
             mProgressBar.setVisibility(View.GONE);
             btnRequest.setEnabled(true);

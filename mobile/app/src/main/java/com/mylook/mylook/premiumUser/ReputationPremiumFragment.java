@@ -26,7 +26,6 @@ public class ReputationPremiumFragment extends Fragment {
 
     private TextView lblDate;
     private TextView lblCant;
-    private  FirebaseFirestore dB;
     private float ratingSum=0;
     private int recommendCount=0;
     private String registerDate;

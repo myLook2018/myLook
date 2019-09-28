@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.common.base.Strings;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
@@ -34,7 +35,6 @@ public class PublicationDetail extends AppCompatActivity{
     private ImageView imgStore;
     private PremiumPublication publication;
     private Toolbar tb;
-    private FirebaseFirestore dB;
     private PremiumUser premiumUser;
     private Article art;
     private Context mContext = PublicationDetail.this;
@@ -44,7 +44,6 @@ public class PublicationDetail extends AppCompatActivity{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_publication_detail);
-        dB = FirebaseFirestore.getInstance();
 
         tb = findViewById(R.id.toolbar);
         tb.setTitle("Editar Información");
@@ -59,33 +58,43 @@ public class PublicationDetail extends AppCompatActivity{
     }
 
     private void loadData() {
-    dB.collection("premiumUsers").whereEqualTo("clientId",publication.getClientId()).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()){
-                            premiumUser=(PremiumUser)task.getResult().getDocuments().get(0).toObject(PremiumUser.class);
-                            dB.collection("articles").whereEqualTo("code",publication.getArticleCode()).whereEqualTo("storeName",publication.getStoreName())
-                                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        if(!(task.getResult().getDocuments().isEmpty())) {
-                                            art = task.getResult().getDocuments().get(0).toObject(Article.class);
-                                            art.setArticleId(task.getResult().getDocuments().get(0).getId());
-                                            if(art!=null)
-                                                initElements();
-                                            else{
-                                                displayMessage("No tiene articulo asociado");
-                                                finish();
+        if(!Strings.isNullOrEmpty(publication.getClientId())){
+            Log.e("Entro", "");
+            FirebaseFirestore.getInstance().collection("premiumUsers").whereEqualTo("clientId",publication.getClientId()).get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()){
+                                if(!task.getResult().getDocuments().isEmpty()) {
+                                    premiumUser = task.getResult().getDocuments().get(0).toObject(PremiumUser.class);
+                                    FirebaseFirestore.getInstance().collection("articles").whereEqualTo("code", publication.getArticleCode()).whereEqualTo("storeName", publication.getStoreName())
+                                            .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                if (!(task.getResult().getDocuments().isEmpty())) {
+                                                    art = task.getResult().getDocuments().get(0).toObject(Article.class);
+                                                    art.setArticleId(task.getResult().getDocuments().get(0).getId());
+                                                    if (art != null)
+                                                        initElements();
+                                                    else {
+                                                        displayMessage("No tiene articulo asociado");
+                                                        finish();
+                                                    }
+                                                }
                                             }
                                         }
-                                    }
-                                }});
+                                    });
+
+                                }
+                            }
                         }
-                    }
-                });
+                    });
+
+        }else{
+            this.finish();
         }
+    }
     private void displayMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }

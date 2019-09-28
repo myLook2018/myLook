@@ -54,7 +54,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
     private boolean inCloset;
     private boolean initialInCloset;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    private FirebaseFirestore dB = FirebaseFirestore.getInstance();
     private boolean fromDeepLink = false;
 
     @Override
@@ -88,7 +87,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
     }
 
     private void getArticleFromId(String id){
-        dB.collection("articles").document(id).get().addOnCompleteListener(task -> {
+        FirebaseFirestore.getInstance().collection("articles").document(id).get().addOnCompleteListener(task -> {
             article = task.getResult().toObject(Article.class);
             article.setArticleId(id);
             dbUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
