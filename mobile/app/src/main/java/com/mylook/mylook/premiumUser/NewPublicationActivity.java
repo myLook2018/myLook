@@ -146,8 +146,9 @@ public class NewPublicationActivity extends AppCompatActivity {
 
     private void cropActivity(int resultCode, Intent data){
         CropImage.ActivityResult result = CropImage.getActivityResult(data);
-        selectImageUri = result.getUri();
+
         if (resultCode == RESULT_OK) {
+            selectImageUri = result.getUri();
             int permissionCheck = ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.READ_EXTERNAL_STORAGE);
 
             if (permissionCheck == PackageManager.PERMISSION_GRANTED)
