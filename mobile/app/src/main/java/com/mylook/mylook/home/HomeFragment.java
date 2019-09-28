@@ -61,9 +61,15 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private static HomeFragment homeInstance;
 
     public static HomeFragment getInstance() {
-        if (homeInstance == null) homeInstance = new HomeFragment();
+        if (homeInstance == null) {
+            homeInstance = new HomeFragment();
+            if (list == null) {
+                list = new ArrayList<>();
+            }
+        }
         return homeInstance;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,9 +91,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         starImage = view.findViewById(R.id.empty_star);
         emptyArticles = view.findViewById(R.id.emptyText);
 
-        if (list == null) {
-            list = new ArrayList<>();
-        }
+
         adapter = new CardsHomeFeedAdapter(mContext, list);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(mContext, 2);
         recyclerView.setLayoutManager(mLayoutManager);
@@ -97,13 +101,14 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         refreshLayout = view.findViewById(R.id.refresh_layout_home);
         refreshLayout.setOnRefreshListener(this);
 
-        setupFirebaseAuth();
+        loadFragment();
+        /*setupFirebaseAuth();
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             mProgressBar.setVisibility(View.VISIBLE);
             loadFragment();
         } else {
             mProgressBar.setVisibility(View.GONE);
-        }
+        }*/
     }
 
     private void loadFragment() {
@@ -121,23 +126,33 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         int id = item.getItemId();
         if (id == R.id.settings_menu) {
             Intent intent = new Intent(getContext(), AccountActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent,1);
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==1){
+            if(resultCode==0){
+                ((MyLookActivity) getContext()).setPremiumMenu();
+            }
+        }
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
-        FirebaseAuth.getInstance().addAuthStateListener(mAuthListener);
+        //FirebaseAuth.getInstance().addAuthStateListener(mAuthListener);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (mAuthListener != null) {
+        /*if (mAuthListener != null) {
             FirebaseAuth.getInstance().removeAuthStateListener(mAuthListener);
-        }
+        }*/
     }
 
     private void checkCurrentUser(FirebaseUser user) {
@@ -174,7 +189,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             });
     }
 
-    private void readSubscriptions() {
+    public void readSubscriptions() {
         //Devuelve los ultimos meses, TODO Cambiar esto para probar en serio
         final Calendar myCalendar = Calendar.getInstance();
         myCalendar.set(Calendar.MONTH, myCalendar.get(Calendar.MONTH) - 7);

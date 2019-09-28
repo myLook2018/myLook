@@ -17,9 +17,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.google.android.material.textfield.TextInputEditText;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.ActionBar;
@@ -142,7 +145,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         });
     }
 
-    private void initCalendar(){
+    private void initCalendar() {
 
         final Calendar myCalendar = Calendar.getInstance();
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
@@ -165,7 +168,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         });
     }
 
-    private void initElements(){
+    private void initElements() {
         spinner = findViewById(R.id.category);
         txtSize = findViewById(R.id.size_input);
         user = FirebaseAuth.getInstance().getCurrentUser();
@@ -299,7 +302,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 recommendation.put("isClosed", false);
                 recommendation.put("title", title.getText().toString());
                 recommendation.put("answers", new ArrayList<ArrayList<String>>());
-                recommendation.put("category",spinner.getText().toString() );
+                recommendation.put("category", spinner.getText().toString());
                 if (!txtSize.getText().equals(""))
                     recommendation.put("size", txtSize.getText().toString());
                 dB.collection("requestRecommendations")
@@ -342,12 +345,17 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             displayMessage("Debe añadir una descripción!");
             return;
         }
-        long days = TimeUnit.MILLISECONDS.toDays(limitDate.getTime() - cal.getTime().getTime());
-        if (days < 7) {
-            displayMessage("La fecha limite debe ser mayor a 7 días!");
+        if (limitDate == null) {
+            displayMessage("Debe ingresar una fecha!");
             return;
+        } else {
+            long days = TimeUnit.MILLISECONDS.toDays(limitDate.getTime() - cal.getTime().getTime());
+            if (days < 7) {
+                displayMessage("La fecha limite debe ser mayor a 7 días!");
+                return;
+            }
         }
-        if(spinner.getText().equals("")){
+        if (spinner.getText().equals("")) {
             displayMessage("Seleccioná una categoría");
         }
 
@@ -482,7 +490,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             if (requestCode == REQUEST_CAMERA) {
                 picUri = data.getData();
                 //picUri = (Uri) data.getExtras().get(Intent.EXTRA_STREAM);
-                    perfromCrop();
+                perfromCrop();
             } else if (requestCode == SELECT_FILE) {
                 selectImageUri = data.getData();
                 CropImage.activity(selectImageUri)

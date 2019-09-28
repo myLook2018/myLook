@@ -3,18 +3,16 @@ package com.mylook.mylook.session;
 import android.content.Intent;
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.closet.ClosetFragment;
+import com.mylook.mylook.profile.PremiumOptionsFragment;
 import com.mylook.mylook.explore.ExploreFragment;
 import com.mylook.mylook.home.HomeFragment;
 import com.mylook.mylook.login.RegisterActivity;
-import com.mylook.mylook.profile.ProfileFragment;
 import com.mylook.mylook.recommend.RecommendFragment;
 
 /**
@@ -31,7 +29,7 @@ public class Session {
     public static final int PROFILE_FRAGMENT = 5;
     public static final String TAG = "Sesion";
     public static String userId = null;
-    public static boolean isPremium = false;
+    public static boolean isPremium;
     public static String name= "";
     public static String mail= "";
     public static String clientId= "";
@@ -68,7 +66,7 @@ public class Session {
                     ClosetFragment.getInstance().refreshStatus();
                     break;
                 case PROFILE_FRAGMENT:
-                    ProfileFragment.getInstance().refreshStatus();
+                    PremiumOptionsFragment.getInstance().refreshStatus();
                     break;
             }
         }
@@ -85,26 +83,25 @@ public class Session {
     }
 
     public Task<QuerySnapshot> initializeElements() {
-        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser != null) {
-            if(currentUser.isEmailVerified())
-                return FirebaseFirestore.getInstance().collection("clients").whereEqualTo("userId", currentUser.getUid()).get().addOnCompleteListener(task -> {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            if(FirebaseAuth.getInstance().getCurrentUser().isEmailVerified())
+                return FirebaseFirestore.getInstance().collection("clients").whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
                         DocumentSnapshot document = task.getResult().getDocuments().get(0);
                         userId = document.get("userId").toString();
                         isPremium = (boolean) document.get("isPremium");
                         name = document.get("name").toString() + " " + document.get("surname").toString();
-                        mail = currentUser.getEmail();
+                        mail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                         clientId = document.getId();
                     } else {
-                       FirebaseFirestore.getInstance().collection("clients").whereEqualTo("email", currentUser.getEmail()).get().addOnCompleteListener(task1 -> {
-                            if (task1.isSuccessful() && task1.getResult().getDocuments().size() > 0) {
+                        FirebaseFirestore.getInstance().collection("clients").whereEqualTo("email", FirebaseAuth.getInstance().getCurrentUser().getEmail()).get().addOnCompleteListener(task1 -> {
+                           if (task1.isSuccessful() && task1.getResult().getDocuments().size() > 0) {
                                 // El usuario está registrado
                                 DocumentSnapshot document = task.getResult().getDocuments().get(0);
                                 userId = document.get("userId").toString();
                                 isPremium = (Boolean) document.get("isPremium");
                                 name = document.get("name").toString() + " " + document.get("surname").toString();
-                                mail = currentUser.getEmail();
+                                mail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                                 clientId = document.getId();
                             }
                         });
@@ -114,14 +111,17 @@ public class Session {
         return null;
     }
 
+    public static void setIsPremium(boolean isPremium) {
+        Session.isPremium = isPremium;
+    }
+
     public static void updateData(){
-        FirebaseFirestore.getInstance().collection("clients").document(clientId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot document) {
-                isPremium = (Boolean) document.get("isPremium");
-                name = document.get("name").toString() + " " + document.get("surname").toString();
-                mail = (String) document.get("email");
-            }
+        FirebaseFirestore.getInstance().collection("clients").document(clientId).get()
+                .addOnSuccessListener(document -> {
+            isPremium = (boolean) document.get("isPremium");
+            Log.e("SESSION","is premium: "+isPremium);
+            name = document.get("name").toString() + " " + document.get("surname").toString();
+            mail = (String) document.get("email");
         });
     }
 }
