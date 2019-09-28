@@ -27,7 +27,7 @@ public class Session {
     public static final int EXPLORE_FRAGMENT = 2;
     public static final int RECOMEND_FRAGMENT = 3;
     public static final int CLOSET_FRAGMENT = 4;
-    public static final int PROFILE_FRAGMENT = 5;
+    public static final int PREMIUM_OPTIONS_FRAGMENT = 5;
     public static final String TAG = "Sesion";
     public static String userId = null;
     public static boolean isPremium;
@@ -66,7 +66,7 @@ public class Session {
                 case CLOSET_FRAGMENT:
                     ClosetFragment.getInstance().refreshStatus();
                     break;
-                case PROFILE_FRAGMENT:
+                case PREMIUM_OPTIONS_FRAGMENT:
                     PremiumOptionsFragment.getInstance().refreshStatus();
                     break;
             }

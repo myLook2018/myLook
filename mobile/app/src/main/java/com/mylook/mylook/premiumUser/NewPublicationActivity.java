@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -54,7 +55,7 @@ public class NewPublicationActivity extends AppCompatActivity {
     private TextView txtPublicationPhoto;
     private ImageView imgPublicationPhoto;
     private AutoCompleteTextView txtStoreName, txtArticleCode;
-    private Button btnSave;
+    private ImageButton btnSave;
     private Uri selectImageUri = null;
     private StorageReference storageRef;
     private FirebaseUser user;

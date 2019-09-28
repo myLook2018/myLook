@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -61,7 +62,7 @@ public class PremiumRequestActivity extends AppCompatActivity {
     private ImageView imgProfilePhoto;
     private AutoCompleteTextView txtEmail, txtLocalization;
     private AutoCompleteTextView txtIg, txtFacebook;
-    private Button btnRequest;
+    private ImageButton btnRequest;
     private Uri selectImageUri = null;
     private FirebaseUser user;
     private boolean permissionGranted = true;

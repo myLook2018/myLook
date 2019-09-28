@@ -75,7 +75,7 @@ public class MyLookActivity extends AppCompatActivity implements BottomNavigatio
                 fragment = ClosetFragment.getInstance();
                 break;
             case R.id.ic_premium:
-                ((Toolbar) findViewById(R.id.main_toolbar)).setTitle("Perfil");
+                ((Toolbar) findViewById(R.id.main_toolbar)).setTitle("Opciones Destacadas");
                 fragment = PremiumOptionsFragment.getInstance();
                 break;
         }
