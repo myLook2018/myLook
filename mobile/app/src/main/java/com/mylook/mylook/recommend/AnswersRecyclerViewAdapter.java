@@ -106,7 +106,7 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                        Store store = (Store) task.getResult().toObjects(Store.class).get(0);
                                                        Intent intent = new Intent(mContext, StoreActivity.class);
-                                                       intent.putExtra("Tienda", store.getStoreName());
+                                                       intent.putExtra("store", store.getStoreName());
                                                        mContext.startActivity(intent);
                                                    }
                                                }

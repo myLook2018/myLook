@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -16,6 +17,7 @@ import androidx.core.view.MenuItemCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
+import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
@@ -62,19 +64,23 @@ public class StoreActivity extends AppCompatActivity {
     }
 
     private void loadStore(String storeName) {
-        FirebaseFirestore.getInstance().collection("stores")
-                .whereEqualTo("storeName", storeName).get()
-                .addOnCompleteListener(task -> {
-                    Log.d("STORE FOUND", "loadStore: ");
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        List<Store> results = new ArrayList<>(task.getResult().toObjects(Store.class));
-                        if(!results.isEmpty())
-                        {
-                            store = results.get(0);
-                            setFragments();
+        if(!storeName.isEmpty()) {
+            FirebaseFirestore.getInstance().collection("stores")
+                    .whereEqualTo("storeName", storeName).get()
+                    .addOnCompleteListener(task -> {
+                        Log.d("STORE FOUND", "loadStore: ");
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            if (task.getResult().getDocuments().get(0) != null) {
+                                store = task.getResult().getDocuments().get(0).toObject(Store.class);
+                                setFragments();
+                            } else {
+                                this.finish();
+                            }
                         }
-                    }
-                });
+                    });
+        }
+        else
+            this.finish();
     }
 
     private String getIncomingIntent(){
@@ -86,8 +92,8 @@ public class StoreActivity extends AppCompatActivity {
         else {
             try {
                 fromDeepLink = true;
-                if(intentStore.getData().getQueryParameter("storeName")!=null)
-                    return Uri.decode(intentStore.getData().getQueryParameter("storeName"));
+                if(intentStore.getData().getQueryParameter("store")!=null)
+                    return Uri.decode(intentStore.getData().getQueryParameter("store"));
                 return "";
             } catch (Exception e){
                 return "";
@@ -135,8 +141,9 @@ public class StoreActivity extends AppCompatActivity {
         bundle.putString("twitter", store.getTwitterLink());
         bundle.putString("instagram", store.getInstagramLink());
         bundle.putString("phone", store.getStorePhone());
-        bundle.putString("location", store.getStoreAddress() + " " + store.getStoreAddressNumber() +
-                " - " + store.getStoreFloor() + " - " + store.getStoreCity());
+        bundle.putString("location", createLocationInfo());
+        bundle.putDouble("latitude", store.getStoreLatitude());
+        bundle.putDouble("longitude", store.getStoreLongitude());
         bundle.putString("email", store.getStoreMail());
         bundle.putString("cover", store.getCoverPh());
         bundle.putSerializable("registerDate", store.getRegisterDate());
@@ -164,8 +171,12 @@ public class StoreActivity extends AppCompatActivity {
     }
 
     private void saveVisit() {
-        FirebaseFirestore.getInstance().collection("visits")
-                .add(new Visit(store.getStoreName(), FirebaseAuth.getInstance().getCurrentUser().getUid()).toMap());
+        try{
+            FirebaseFirestore.getInstance().collection("visits")
+                    .add(new Visit(store.getStoreName(), FirebaseAuth.getInstance().getCurrentUser().getUid()).toMap());
+        }catch(Exception e){
+            Log.d("SAVE VISIT", String.format("No se pudo agregar la visita a la tienda %s. El error fue: %s", store.getStoreName(), e.getMessage()));
+        }
     }
 
     public void moreInfo() {
@@ -230,4 +241,36 @@ public class StoreActivity extends AppCompatActivity {
             finish();
         }
     }
+    private String createLocationInfo() {
+        StringBuilder resultLocationInfo = new StringBuilder();
+        if (!Strings.isNullOrEmpty(store.getStoreAddress())) {
+            resultLocationInfo.append("Direccion: " + store.getStoreAddress());
+        } else {
+            resultLocationInfo.append("Direccion: N/A");
+        }
+
+        if (!Strings.isNullOrEmpty(store.getStoreDept().trim())) {
+            resultLocationInfo.append(" - Dpto: " + store.getStoreDept());
+        } else {
+            resultLocationInfo.append(" - Dpto: N/A");
+        }
+
+        if (!Strings.isNullOrEmpty(store.getStoreFloor().trim())) {
+            resultLocationInfo.append(" - Piso: " + store.getStoreFloor());
+        } else {
+            resultLocationInfo.append(" - Piso: N/A");
+        }
+
+        if (!Strings.isNullOrEmpty(store.getStoreTower())) {
+            resultLocationInfo.append(" - Torre: " + store.getStoreTower());
+        } else {
+            resultLocationInfo.append(" - Torre: N/A");
+        }
+
+        return resultLocationInfo.toString();
+    }
+    public void returnToStoreInfo() {
+        viewPagerStoreInfo.setCurrentItem(0);
+    }
+
 }

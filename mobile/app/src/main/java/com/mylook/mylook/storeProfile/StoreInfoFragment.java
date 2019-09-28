@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,7 +58,7 @@ public class StoreInfoFragment extends Fragment {
             txtDescription.setMovementMethod(new ScrollingMovementMethod());
             setStoreDescription(args.getString("description"));
 
-            Button btnMoreInfo = rootView.findViewById(R.id.btnMasInfo);
+            ImageButton btnMoreInfo = rootView.findViewById(R.id.btnMasInfo);
             btnMoreInfo.setOnClickListener(v -> ((StoreActivity) getActivity()).moreInfo());
 
             btnSubscribe = rootView.findViewById(R.id.btn_subscribe);
@@ -80,18 +81,23 @@ public class StoreInfoFragment extends Fragment {
 
     private void checkFollow(String storeName) {
         btnSubscribe.setEnabled(false);
-        FirebaseFirestore.getInstance().collection("subscriptions")
-                .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .whereEqualTo("storeName", storeName)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                        subscriptionDocument = task.getResult().getDocuments().get(0).getId();
-                        mSubscribed = true;
-                    }
-                    setupButtonSubscribe(mSubscribed);
-                    btnSubscribe.setEnabled(true);
-                });
+        try {
+            FirebaseFirestore.getInstance().collection("subscriptions")
+                    .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .whereEqualTo("storeName", storeName)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                            subscriptionDocument = task.getResult().getDocuments().get(0).getId();
+                            mSubscribed = true;
+                        }
+                        setupButtonSubscribe(mSubscribed);
+                        btnSubscribe.setEnabled(true);
+                    });
+        }catch (Exception e)
+        {
+            Log.e("STORE INFO", "Error en el checkeo del follow");
+        }
     }
 
     private void setOnClickSubscribe(String storeName) {

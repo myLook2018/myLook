@@ -18,13 +18,15 @@ public class Store {
     private String storeAddressNumber;
     private String storeFloor;
     private long storeLatitude;
-    private long storeLongiture;
+    private long storeLongitude;
     private String storeDescription;
     private String instagramLink;
     private String twitterLink;
     private String facebookLink;
     private String provider;
     private Date registerDate;
+    private String storeDept;
+    private String storeTower;
 
     public Store(){}
 
@@ -183,11 +185,27 @@ public class Store {
         this.storeLatitude = storeLatitude;
     }
 
-    public long getStoreLongiture() {
-        return storeLongiture;
+    public long getStoreLongitude() {
+        return storeLongitude;
     }
 
-    public void setStoreLongiture(long storeLongiture) {
-        this.storeLongiture = storeLongiture;
+    public void setStoreLongitude(long storeLongitude) {
+        this.storeLongitude = storeLongitude;
+    }
+
+    public String getStoreDept() {
+        return storeDept;
+    }
+
+    public void setStoreDept(String storeDept) {
+        this.storeDept = storeDept;
+    }
+
+    public String getStoreTower() {
+        return storeTower;
+    }
+
+    public void setStoreTower(String storeTower) {
+        this.storeTower = storeTower;
     }
 }
