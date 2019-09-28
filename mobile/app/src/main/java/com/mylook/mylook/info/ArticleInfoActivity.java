@@ -101,7 +101,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
 
     private void initElements() {
         btnCloset=findViewById(R.id.btnCloset);
-        articleImage=findViewById(R.id.article_image);
+        //articleImage=findViewById(R.id.article_image);
         txtTitle=findViewById(R.id.txtTitle);
         txtStoreName=findViewById(R.id.txtStoreName);
         txtMaterial=findViewById(R.id.txtMaterial);

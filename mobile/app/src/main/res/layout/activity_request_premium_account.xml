@@ -45,6 +45,7 @@
                     android:layout_weight="1"
                     android:padding="10dp"
                     android:text="Añade una foto de perfil"
+                    android:textAlignment="center"
                     android:textColor="@color/black"
                     android:textSize="17sp" />
 
