@@ -35,8 +35,7 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:layout_marginStart="8dp"
-                        android:layout_weight="1"
-                        app:srcCompat="@mipmap/ic_mylook_round" />
+                        android:layout_weight="1" />
 
                     <TextView
                         android:id="@+id/txtStore"

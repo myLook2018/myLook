@@ -55,7 +55,7 @@ public class ShopwindowFragment extends Fragment {
         FirebaseFirestore.getInstance().collection("articles")
                 .whereEqualTo("storeName", storeName)
                 // TODO change name
-                .whereEqualTo("estaEnVidriera", true)
+                .whereEqualTo("isStorefront", true)
                 .get()
                 .addOnSuccessListener(result -> {
                     for (DocumentSnapshot document : result.getDocuments()) {
