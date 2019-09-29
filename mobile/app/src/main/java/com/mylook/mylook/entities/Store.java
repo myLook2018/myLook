@@ -1,34 +1,66 @@
 package com.mylook.mylook.entities;
 
+import com.mylook.mylook.entities.storeFront.StoreFront;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Store {
 
+    private String coverPh;
+    private String facebookLink;
     private String firebaseUserId;
-    private String storeName;
-    private String storeMail;
+    private String instagramLink;
     private String ownerName;
     private String profilePh;
-    private String coverPh;
+    private String provider;
+    private String storeAddress;
+    private String storeDept;
+    private String storeDescription;
+    private String storeFloor;
+    private double storeLatitude;
+    private double storeLongitude;
+    private String storeMail;
+    private String storeName;
     private String storePhone;
+    private String storeTower;
     private String storeProvince;
     private String storeCity;
-    private String storeAddress;
-    private String storeAddressNumber;
-    private String storeFloor;
-    private long storeLatitude;
-    private long storeLongitude;
-    private String storeDescription;
-    private String instagramLink;
+    private String storeAddressNumber; //TODO este atributo no esta en bd
     private String twitterLink;
-    private String facebookLink;
-    private String provider;
-    private Date registerDate;
-    private String storeDept;
-    private String storeTower;
+    private ArrayList<StoreFront> storeFronts; //Este atributo se agrega para permitir las multiples vidrieras
+    private Date registerDate; //TODO este atributo no esta en bd
 
-    public Store(){}
+    public Store() {
+    }
+
+    public Store(String coverPh, String facebookLink, String firebaseUserId, String instagramLink, String ownerName, String profilePh, String provider, String storeAddress, String storeDept, String storeDescription, String storeFloor, double storeLatitude, double storeLongitude, String storeMail, String storeName, String storePhone, String storeTower, String storeProvince, String storeCity, String storeAddressNumber, String twitterLink, ArrayList<StoreFront> storeFronts, Date registerDate) {
+        this.coverPh = coverPh;
+        this.facebookLink = facebookLink;
+        this.firebaseUserId = firebaseUserId;
+        this.instagramLink = instagramLink;
+        this.ownerName = ownerName;
+        this.profilePh = profilePh;
+        this.provider = provider;
+        this.storeAddress = storeAddress;
+        this.storeDept = storeDept;
+        this.storeDescription = storeDescription;
+        this.storeFloor = storeFloor;
+        this.storeLatitude = storeLatitude;
+        this.storeLongitude = storeLongitude;
+        this.storeMail = storeMail;
+        this.storeName = storeName;
+        this.storePhone = storePhone;
+        this.storeTower = storeTower;
+        this.storeProvince = storeProvince;
+        this.storeCity = storeCity;
+        this.storeAddressNumber = storeAddressNumber;
+        this.twitterLink = twitterLink;
+        this.storeFronts = storeFronts;
+        this.registerDate = registerDate;
+    }
 
     public Date getRegisterDate() {
         return registerDate;
@@ -79,7 +111,6 @@ public class Store {
         return storeProvince;
     }
 
-
     public void setStorePhone(String storePhone) {
         this.storePhone = storePhone;
     }
@@ -95,7 +126,6 @@ public class Store {
     public void setStoreFloor(String storeFloor) {
         this.storeFloor = storeFloor;
     }
-
 
     public void setStoreDescription(String storeDescription) {
         this.storeDescription = storeDescription;
@@ -177,7 +207,7 @@ public class Store {
         this.twitterLink = twitterLink;
     }
 
-    public long getStoreLatitude() {
+    public double getStoreLatitude() {
         return storeLatitude;
     }
 
@@ -185,7 +215,7 @@ public class Store {
         this.storeLatitude = storeLatitude;
     }
 
-    public long getStoreLongitude() {
+    public double getStoreLongitude() {
         return storeLongitude;
     }
 
@@ -207,5 +237,13 @@ public class Store {
 
     public void setStoreTower(String storeTower) {
         this.storeTower = storeTower;
+    }
+
+    public ArrayList<StoreFront> getStoreFronts() {
+        return storeFronts;
+    }
+
+    public void setStoreFronts(ArrayList<StoreFront> storeFronts) {
+        this.storeFronts = storeFronts;
     }
 }

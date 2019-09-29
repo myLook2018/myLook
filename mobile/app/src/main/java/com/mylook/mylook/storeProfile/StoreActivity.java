@@ -64,11 +64,11 @@ public class StoreActivity extends AppCompatActivity {
     }
 
     private void loadStore(String storeName) {
-        if(!storeName.isEmpty()) {
+        if (!storeName.isEmpty()) {
             FirebaseFirestore.getInstance().collection("stores")
                     .whereEqualTo("storeName", storeName).get()
                     .addOnCompleteListener(task -> {
-                        Log.d("STORE FOUND", "loadStore: ");
+                        Log.d("STORE FOUND", "La tienda traida de BD es " + storeName);
                         if (task.isSuccessful() && task.getResult() != null) {
                             if (task.getResult().getDocuments().get(0) != null) {
                                 store = task.getResult().getDocuments().get(0).toObject(Store.class);
@@ -78,28 +78,29 @@ public class StoreActivity extends AppCompatActivity {
                             }
                         }
                     });
-        }
-        else
+        } else
             this.finish();
     }
 
-    private String getIncomingIntent(){
+    private String getIncomingIntent() {
+        String result = "";
         Intent intentStore = getIntent();
         if (intentStore.hasExtra("store")) {
             fromDeepLink = false;
-            return intentStore.getStringExtra("store");
-        }
-        else {
+            result = intentStore.getStringExtra("store");
+        } else {
             try {
                 fromDeepLink = true;
-                if(intentStore.getData().getQueryParameter("store")!=null)
-                    return Uri.decode(intentStore.getData().getQueryParameter("store"));
-                return "";
-            } catch (Exception e){
-                return "";
+                if (intentStore.getData().getQueryParameter("store") != null)
+                    result = Uri.decode(intentStore.getData().getQueryParameter("store"));
+            } catch (NullPointerException e) {
+                Log.d("STORE ACTIVITY", String.format("El parametro storeName del deepLink es nulo. El mensaje de error es: %s", e.getMessage()));
+            } catch (Exception e) {
+                Log.d("STORE ACTIVITY", String.format("Error obteniendo el parametro storeName desde el deepLink. El error es: %s", e.getMessage()));
                 //return Uri.decode(intentStore.getStringExtra("storeName").replace("%20"," "));
             }
         }
+        return result;
     }
 
 
@@ -134,7 +135,7 @@ public class StoreActivity extends AppCompatActivity {
         if (ab != null) ab.setTitle(store.getStoreName());
 
         Bundle bundle = new Bundle();
-        bundle.putString("name", store.getStoreName());
+        bundle.putString("storeName", store.getStoreName());
         bundle.putString("photo", store.getProfilePh());
         bundle.putString("description", store.getStoreDescription());
         bundle.putString("facebook", store.getFacebookLink());
@@ -146,7 +147,7 @@ public class StoreActivity extends AppCompatActivity {
         bundle.putDouble("longitude", store.getStoreLongitude());
         bundle.putString("email", store.getStoreMail());
         bundle.putString("cover", store.getCoverPh());
-        bundle.putSerializable("registerDate", store.getRegisterDate());
+        bundle.putSerializable("registerDate", store.getRegisterDate()); //TODO esta data no esta en BD
 
         TabLayout tab = findViewById(R.id.tab);
 
@@ -171,10 +172,10 @@ public class StoreActivity extends AppCompatActivity {
     }
 
     private void saveVisit() {
-        try{
+        try {
             FirebaseFirestore.getInstance().collection("visits")
                     .add(new Visit(store.getStoreName(), FirebaseAuth.getInstance().getCurrentUser().getUid()).toMap());
-        }catch(Exception e){
+        } catch (Exception e) {
             Log.d("SAVE VISIT", String.format("No se pudo agregar la visita a la tienda %s. El error fue: %s", store.getStoreName(), e.getMessage()));
         }
     }
@@ -219,13 +220,13 @@ public class StoreActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.e("Title","Item selected");
+        Log.e("Title", "Item selected");
         int id = item.getItemId();
         if (id == R.id.share_store) {
             Log.e("Share", "Share store");
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta tienda wachin! https://www.mylook.com/store?storeName=" + Uri.encode(store.getStoreName()));
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "Visitá esta tienda! https://www.mylook.com/store?storeName=" + Uri.encode(store.getStoreName()));
             sendIntent.setType("text/plain");
             startActivity(Intent.createChooser(sendIntent, "Share via"));
         }
@@ -235,12 +236,13 @@ public class StoreActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if (fromDeepLink){
-            Intent intent= new Intent(getApplicationContext(), MainActivity.class);
+        if (fromDeepLink) {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
             finish();
         }
     }
+
     private String createLocationInfo() {
         StringBuilder resultLocationInfo = new StringBuilder();
         if (!Strings.isNullOrEmpty(store.getStoreAddress())) {
@@ -269,6 +271,7 @@ public class StoreActivity extends AppCompatActivity {
 
         return resultLocationInfo.toString();
     }
+
     public void returnToStoreInfo() {
         viewPagerStoreInfo.setCurrentItem(0);
     }

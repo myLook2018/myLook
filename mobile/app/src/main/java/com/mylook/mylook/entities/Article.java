@@ -25,11 +25,13 @@ public class Article implements Serializable, Comparable<Article>, Comparator<Ar
     private Date creationDate;
     private int promotionLevel;
     private boolean isStorefront;
+    private double storeLatitude;
+    private double storeLongitude;
 
     public Article() {
     }
 
-    public Article(String articleId, String title, String code, String provider, float cost, int initial_stock, String material, String picture, String storeName, ArrayList<String> colors, ArrayList<String> sizes, ArrayList<String> tags, ArrayList<String> favorites) {
+    public Article(String articleId, String title, String code, String provider, float cost, int initial_stock, String material, String picture, String storeName, ArrayList<String> colors, ArrayList<String> sizes, ArrayList<String> tags, ArrayList<String> picturesArray, ArrayList<String> favorites, Date creationDate, int promotionLevel, boolean isStorefront, double storeLatitude, double storeLongitude) {
         this.articleId = articleId;
         this.title = title;
         this.code = code;
@@ -42,7 +44,13 @@ public class Article implements Serializable, Comparable<Article>, Comparator<Ar
         this.colors = colors;
         this.sizes = sizes;
         this.tags = tags;
+        this.picturesArray = picturesArray;
         this.favorites = favorites;
+        this.creationDate = creationDate;
+        this.promotionLevel = promotionLevel;
+        this.isStorefront = isStorefront;
+        this.storeLatitude = storeLatitude;
+        this.storeLongitude = storeLongitude;
     }
 
     public ArrayList<String> getPicturesArray() {
@@ -115,7 +123,7 @@ public class Article implements Serializable, Comparable<Article>, Comparator<Ar
     }
 
     public void setInitial_stock(int initial_stock) {
-        this.initial_stock=initial_stock;
+        this.initial_stock = initial_stock;
     }
 
     public String getMaterial() {
@@ -150,6 +158,14 @@ public class Article implements Serializable, Comparable<Article>, Comparator<Ar
         this.tags = tags;
     }
 
+    public ArrayList<String> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(ArrayList<String> favorites) {
+        this.favorites = favorites;
+    }
+
     public Date getCreationDate() {
         return creationDate;
     }
@@ -166,19 +182,46 @@ public class Article implements Serializable, Comparable<Article>, Comparator<Ar
         this.promotionLevel = promotionLevel;
     }
 
-    public Article toObject(HashMap<String,Object> map){
+    public boolean isStorefront() {
+        return isStorefront;
+    }
+
+    public void setStorefront(boolean storefront) {
+        isStorefront = storefront;
+    }
+
+    public double getStoreLatitude() {
+        return storeLatitude;
+    }
+
+    public void setStoreLatitude(double storeLatitude) {
+        this.storeLatitude = storeLatitude;
+    }
+
+    public double getStoreLongitude() {
+        return storeLongitude;
+    }
+
+    public void setStoreLongitude(double storeLongitude) {
+        this.storeLongitude = storeLongitude;
+    }
+
+    public Article toObject(HashMap<String, Object> map) {
         this.articleId = (String) map.get("articleId");
         this.title = (String) map.get("title");
         this.code = (String) map.get("code");
         this.provider = (String) map.get("provider");
         this.cost = Float.parseFloat(String.valueOf(map.get("cost")));
-        this.initial_stock =  Integer.parseInt(String.valueOf(map.get("initial_stock")));
+        this.initial_stock = Integer.parseInt(String.valueOf(map.get("initial_stock")));
         this.material = (String) map.get("material");
         this.picture = (String) map.get("picture");
         this.storeName = (String) map.get("storeName");
         this.colors = (ArrayList<String>) map.get("colors");
         this.sizes = (ArrayList<String>) map.get("sizes");
         this.tags = (ArrayList<String>) map.get("tags");
+        this.isStorefront = (boolean) map.get("isStorefront");
+        this.storeLatitude = (double) map.get("storeLatitude");
+        this.storeLongitude = (double) map.get("storeLongitude");
         return this;
     }
 
@@ -201,6 +244,9 @@ public class Article implements Serializable, Comparable<Article>, Comparator<Ar
                 ", favorites=" + favorites +
                 ", creationDate=" + creationDate +
                 ", promotionLevel=" + promotionLevel +
+                ", isStorefront=" + isStorefront +
+                ", storeLatitude=" + storeLatitude +
+                ", storeLongitude=" + storeLongitude +
                 '}';
     }
 
@@ -214,19 +260,4 @@ public class Article implements Serializable, Comparable<Article>, Comparator<Ar
         return o1.getCreationDate().compareTo(o2.getCreationDate());
     }
 
-    public ArrayList<String> getFavorites() {
-        return favorites;
-    }
-
-    public void setFavorites(ArrayList<String> favorites) {
-        this.favorites = favorites;
-    }
-
-    public boolean isIsStorefront() {
-        return isStorefront;
-    }
-
-    public void setIsStorefront(boolean storefront) {
-        isStorefront = storefront;
-    }
 }

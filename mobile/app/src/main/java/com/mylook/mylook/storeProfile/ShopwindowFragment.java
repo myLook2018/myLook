@@ -40,7 +40,7 @@ public class ShopwindowFragment extends Fragment {
             setCover(coverPh, args.getString("cover"));
 
             GridView grid = rootView.findViewById(R.id.gridview);
-            fillGrid(grid, args.getString("name"));
+            fillGrid(grid, args.getString("storeName"));
         }
     }
 
@@ -54,7 +54,7 @@ public class ShopwindowFragment extends Fragment {
         final ArrayList<Article> storeShopWindowArticles = new ArrayList<>();
         FirebaseFirestore.getInstance().collection("articles")
                 .whereEqualTo("storeName", storeName)
-                // TODO change name
+                // TODO change name a isStoreFront
                 .whereEqualTo("isStorefront", true)
                 .get()
                 .addOnSuccessListener(result -> {

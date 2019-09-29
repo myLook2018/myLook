@@ -1,6 +1,7 @@
 package com.mylook.mylook.storeProfile;
 
 import android.os.Bundle;
+
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -44,15 +45,16 @@ public class ReputationFragment extends Fragment {
         Bundle args = getArguments();
 
         if (args != null) {
-            String store = args.getString("name");
+            String store = args.getString("storeName");
 
             // TODO add condition
             TextView lblActiveStore = rootView.findViewById(R.id.lblActiveStore);
 
             lblDate = rootView.findViewById(R.id.lblDate);
-            Date date=(Date) args.getSerializable("registerDate");
-            if (date!=null) setRegisterDate(date);
-            else lblDate.setText("Ale pasame este dato"); //TODO Ver si se puede tomar del FirebaseUID
+            Date date = (Date) args.getSerializable("registerDate");
+            if (date != null) setRegisterDate(date);
+            else
+                lblDate.setText("Ale pasame este dato"); //TODO Ver si se puede tomar del FirebaseUID
 
             lblCant = rootView.findViewById(R.id.lblCant);
             setSubscriptions(store);
@@ -97,7 +99,7 @@ public class ReputationFragment extends Fragment {
                     for (DocumentSnapshot document : result.getDocuments()) {
                         if (document.contains("feedBack")) {
                             try {
-                                if(document.get("feedBack")!=null){
+                                if (document.get("feedBack") != null) {
                                     ratingSum += Float.parseFloat((String) Objects.requireNonNull(document.get("feedBack")));
                                 }
                             } catch (NumberFormatException e) {

@@ -3,13 +3,17 @@ package com.mylook.mylook.info;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
@@ -45,7 +49,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
     private ExpandableListView expandableListView;
     private FloatingActionButton btnCloset;
     private FloatingActionButton btnShare;
-    private String articleId,closetId;
+    private String articleId, closetId;
     private String downLoadUri, dbUserId;
     private Article article;
     private ArrayList<String> tags, imageArraySlider;
@@ -65,33 +69,33 @@ public class ArticleInfoActivity extends AppCompatActivity {
         getArticleFromIntent();
     }
 
-    private void getArticleFromIntent(){
+    private void getArticleFromIntent() {
         //retrieve data from intent
         Intent intent = getIntent();
-        if(intent.hasExtra("article")) {
-            article= (Article) intent.getSerializableExtra("article");
-            articleId=article.getArticleId();
+        if (intent.hasExtra("article")) {
+            article = (Article) intent.getSerializableExtra("article");
+            articleId = article.getArticleId();
             fromDeepLink = false;
             initElements();
             setDetail();
             isArticleInCloset();
-        } else{
+        } else {
             fromDeepLink = true;
             try {
                 articleId = intent.getData().getQueryParameter("articleId");
-            } catch (Exception e){
+            } catch (Exception e) {
                 articleId = intent.getStringExtra("articleId");
             }
             getArticleFromId(articleId);
         }
     }
 
-    private void getArticleFromId(String id){
+    private void getArticleFromId(String id) {
         FirebaseFirestore.getInstance().collection("articles").document(id).get().addOnCompleteListener(task -> {
             article = task.getResult().toObject(Article.class);
             article.setArticleId(id);
             dbUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            downLoadUri=article.getPicture();
+            downLoadUri = article.getPicture();
             initElements();
             setDetail();
             isArticleInCloset();
@@ -99,15 +103,15 @@ public class ArticleInfoActivity extends AppCompatActivity {
     }
 
     private void initElements() {
-        btnCloset=findViewById(R.id.btnCloset);
+        btnCloset = findViewById(R.id.btnCloset);
         //articleImage=findViewById(R.id.article_image);
-        txtTitle=findViewById(R.id.txtTitle);
-        txtStoreName=findViewById(R.id.txtStoreName);
-        txtMaterial=findViewById(R.id.txtMaterial);
-        txtCost=findViewById(R.id.txtCost);
-        lnlSizes=findViewById(R.id.lnlSizes);
-        lnlColors=findViewById(R.id.lnlColors);
-        btnShare =  findViewById(R.id.btnShare);
+        txtTitle = findViewById(R.id.txtTitle);
+        txtStoreName = findViewById(R.id.txtStoreName);
+        txtMaterial = findViewById(R.id.txtMaterial);
+        txtCost = findViewById(R.id.txtCost);
+        lnlSizes = findViewById(R.id.lnlSizes);
+        lnlColors = findViewById(R.id.lnlColors);
+        btnShare = findViewById(R.id.btnShare);
         //Glide.with(mContext).load(downLoadUri).into(articleImage);
 
         btnCloset.setOnClickListener(v -> changeSavedInCloset());
@@ -129,10 +133,10 @@ public class ArticleInfoActivity extends AppCompatActivity {
         }
     }
 
-    private void shareArticle(){
+    private void shareArticle() {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta prenda! https://www.mylook.com/article?articleId="+articleId);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta prenda! https://www.mylook.com/article?articleId=" + articleId);
         sendIntent.setType("text/plain");
         startActivity(Intent.createChooser(sendIntent, "Share via"));
     }
@@ -281,8 +285,8 @@ public class ArticleInfoActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if(fromDeepLink){
-            Intent intent= new Intent(getApplicationContext(), MainActivity.class);
+        if (fromDeepLink) {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
             finish();
         }
