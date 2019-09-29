@@ -61,6 +61,7 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
         holder.txtStore.setText(answer.get("storeName"));
         holder.txtDescription.setText(answer.get("description"));
         if(answer.containsKey("feedBack") && !answer.get("feedBack").equals("")) {
+            holder.ratingBar.setVisibility(View.VISIBLE);
             holder.ratingBar.setRating(Float.parseFloat(answer.get("feedBack")));
             holder.ratingBar.setEnabled(false);
         }
@@ -129,6 +130,7 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
             imgArticle = itemView.findViewById(R.id.imgArticle);
             txtStore = itemView.findViewById(R.id.txtStore);
             ratingBar = itemView.findViewById(R.id.ratingBar);
+            ratingBar.setVisibility(View.VISIBLE);
             txtDescription= itemView.findViewById(R.id.txtDescription);
             parentLayout=itemView.findViewById(R.id.parentLayout);
             imgStore=itemView.findViewById(R.id.imgStore);

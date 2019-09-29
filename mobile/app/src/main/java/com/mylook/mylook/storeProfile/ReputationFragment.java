@@ -108,6 +108,7 @@ public class ReputationFragment extends Fragment {
                     }
                     if (ratingSum != 0 && recommendCount != 0) {
                         float prom = ratingSum / recommendCount;
+                        ratingBar.setVisibility(View.VISIBLE);
                         ratingBar.setRating(prom);
                         ratingBar.setEnabled(false);
                         if (recommendCount == 1)

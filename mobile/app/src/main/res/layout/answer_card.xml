@@ -73,9 +73,10 @@
                     android:layout_height="wrap_content"
                     android:maxHeight="24dp"
                     android:minHeight="24dp"
-                    android:paddingBottom="8dp"
+                    android:paddingStart="8dp"
                     android:paddingEnd="8dp"
-                    android:paddingStart="8dp" />
+                    android:paddingBottom="8dp"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
