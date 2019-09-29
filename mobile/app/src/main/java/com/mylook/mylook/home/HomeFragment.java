@@ -51,7 +51,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private static List<Object> list;
     private ArrayList<Subscription> subscriptionList;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private ProgressBar mProgressBar;
     private ImageView starImage;
     private TextView emptyArticles;
     private SwipeRefreshLayout refreshLayout;
@@ -87,7 +86,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         setHasOptionsMenu(true);
         mContext = getContext();
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view_content);
-        mProgressBar = view.findViewById(R.id.home_progress_bar);
         starImage = view.findViewById(R.id.empty_star);
         emptyArticles = view.findViewById(R.id.emptyText);
 
@@ -102,17 +100,10 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         refreshLayout.setOnRefreshListener(this);
 
         loadFragment();
-        /*setupFirebaseAuth();
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            mProgressBar.setVisibility(View.VISIBLE);
-            loadFragment();
-        } else {
-            mProgressBar.setVisibility(View.GONE);
-        }*/
     }
 
     private void loadFragment() {
-        readSubscriptions();
+        readSubscriptions(false);
         updateInstallationToken();
     }
 
@@ -144,15 +135,12 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onStart() {
         super.onStart();
-        //FirebaseAuth.getInstance().addAuthStateListener(mAuthListener);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        /*if (mAuthListener != null) {
-            FirebaseAuth.getInstance().removeAuthStateListener(mAuthListener);
-        }*/
+
     }
 
     private void checkCurrentUser(FirebaseUser user) {
@@ -183,19 +171,21 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                         Map<String, Object> update = new HashMap<>();
                         update.put("installToken", mToken);
                         FirebaseFirestore.getInstance().collection("clients").document(task.getResult().getDocuments().get(0).getId()).set(update, SetOptions.merge());
-                        mProgressBar.setVisibility(View.GONE);
                     }
                 });
             });
     }
 
-    public void readSubscriptions() {
+    public void readSubscriptions(boolean isRefresh) {
         //Devuelve los ultimos meses, TODO Cambiar esto para probar en serio
         final Calendar myCalendar = Calendar.getInstance();
         myCalendar.set(Calendar.MONTH, myCalendar.get(Calendar.MONTH) - 7);
         Log.e(TAG, list.toString());
         Log.e(TAG, "Begin read Subscriptions- Uid:" + FirebaseAuth.getInstance().getCurrentUser());
-        if (list.size() == 0) {
+        if(isRefresh){
+            list.clear();
+        }
+        if (list.size() == 0 ) {
             FirebaseFirestore.getInstance().collection("subscriptions")
                     .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .get()
@@ -210,12 +200,12 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                             .orderBy("creationDate", Query.Direction.DESCENDING)
                                             .whereGreaterThan("creationDate", myCalendar.getTime())
                                             .get().addOnCompleteListener(task12 -> {
-                                        if (task12.isSuccessful() && task.getResult() != null) {
-                                            for (QueryDocumentSnapshot documentSnapshot : task12.getResult()) {
+                                        if (task12.isSuccessful() && task.getResult() != null) {// Si se usa esta lista están ordenados por fecha
+                                            /*for (QueryDocumentSnapshot documentSnapshot : task12.getResult()) {
                                                 Article art = documentSnapshot.toObject(Article.class);
                                                 art.setArticleId(documentSnapshot.getId());
-                                                //list.add(art); // Si se usa esta lista están ordenados por fecha
-                                            }
+                                                list.add(art);
+                                            }*/
 
                                             if (createArticleList(task12.getResult())) { //Con esta por la probabilidad de las promos, pero no por fecha
                                                 /*for (Article art : list) {
@@ -228,7 +218,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                                 emptyArticles.setVisibility(View.VISIBLE);
                                                 starImage.setVisibility(View.VISIBLE);
                                             }
-                                            mProgressBar.setVisibility(View.GONE);
                                         } else {
                                             Log.e("Firestore task", "onComplete: " + task12.getException());
                                         }
@@ -237,7 +226,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                             } else {
                                 emptyArticles.setVisibility(View.VISIBLE);
                                 starImage.setVisibility(View.VISIBLE);
-                                mProgressBar.setVisibility(View.GONE);
                             }
                         }
                     });
@@ -260,6 +248,13 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                         // TODO ver esto
                                         PremiumUser premiumUser = documentSnapshot.toObject(PremiumUser.class);
                                         list.add(premiumUser);
+                                    }
+                                    if(list.isEmpty()){
+                                        emptyArticles.setVisibility(View.VISIBLE);
+                                        starImage.setVisibility(View.VISIBLE);
+                                    } else {
+                                        emptyArticles.setVisibility(View.GONE);
+                                        starImage.setVisibility(View.GONE);
                                     }
                                     adapter.notifyDataSetChanged();
                                     Log.e("On complete", "Tamaño adapter " + adapter.getItemCount());
@@ -391,6 +386,12 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onRefresh() {
-        readSubscriptions();
+        try{
+            readSubscriptions(true);
+        }catch (Exception e)
+        {
+            list.clear();
+            Log.e(TAG, "Problema refrescando");
+        }
     }
 }
