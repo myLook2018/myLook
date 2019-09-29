@@ -91,7 +91,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
         FirebaseFirestore.getInstance().collection("articles").document(id).get().addOnCompleteListener(task -> {
             article = task.getResult().toObject(Article.class);
             article.setArticleId(id);
-            downLoadUri=article.getPicture();
             initElements();
             setDetail();
             isArticleInCloset();
@@ -112,21 +111,13 @@ public class ArticleInfoActivity extends AppCompatActivity {
 
         btnCloset.setOnClickListener(v -> changeSavedInCloset());
         btnShare.setOnClickListener(v -> shareArticle());
-        ViewPager articlePager;
-        articlePager = findViewById(R.id.view_pager_article);
-        if (imageArraySlider == null) {
-            ArrayList<String> arrayAux = new ArrayList<>();
-            arrayAux.add(0, article.getPicture());
-            articlePager.setAdapter(new SlidingImageAdapter(mContext, arrayAux));
-            CirclePageIndicator indicator = findViewById(R.id.circle_page_indicator);
-            indicator.setViewPager(articlePager);
-            indicator.setRadius(5 * getResources().getDisplayMetrics().density);
-        } else {
-            articlePager.setAdapter(new SlidingImageAdapter(mContext, imageArraySlider));
-            CirclePageIndicator indicator = findViewById(R.id.circle_page_indicator);
-            indicator.setViewPager(articlePager);
-            indicator.setRadius(5 * getResources().getDisplayMetrics().density);
-        }
+
+        ViewPager articlePager = findViewById(R.id.view_pager_article);
+        ArrayList<String> arrayAux = new ArrayList<>(article.getPicturesArray());
+        articlePager.setAdapter(new SlidingImageAdapter(mContext, arrayAux));
+        CirclePageIndicator indicator = findViewById(R.id.circle_page_indicator);
+        indicator.setViewPager(articlePager);
+        indicator.setRadius(5 * getResources().getDisplayMetrics().density);
     }
 
     private void shareArticle(){
@@ -260,7 +251,11 @@ public class ArticleInfoActivity extends AppCompatActivity {
         userInteraction.setStoreName(this.article.getStoreName());
         userInteraction.setTags(tags);
         userInteraction.setUserId(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        FirebaseFirestore.getInstance().collection("interactions").add(userInteraction);
+        try{
+            FirebaseFirestore.getInstance().collection("interactions").add(userInteraction);
+        }catch(Exception e){
+            Log.e("INFO ARTIVCLE","Fallo envio de interaccion");
+        }
     }
 
     private void displayMessage(String message) {
