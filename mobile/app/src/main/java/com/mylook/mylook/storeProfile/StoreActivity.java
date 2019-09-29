@@ -175,6 +175,7 @@ public class StoreActivity extends AppCompatActivity {
         try {
             FirebaseFirestore.getInstance().collection("visits")
                     .add(new Visit(store.getStoreName(), FirebaseAuth.getInstance().getCurrentUser().getUid()).toMap());
+            Log.d("SAVE VISIT", "Se guardo la visita para la tienda " + store.getStoreName());
         } catch (Exception e) {
             Log.d("SAVE VISIT", String.format("No se pudo agregar la visita a la tienda %s. El error fue: %s", store.getStoreName(), e.getMessage()));
         }

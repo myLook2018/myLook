@@ -133,7 +133,7 @@ public class StoreContactFragment extends Fragment {
         Log.e("CLICK LOCATION", String.format("Latitud: %s , Longitud: %s", latitude, longitude));
         Uri gmmIntentUri;
         if (!Strings.isNullOrEmpty(storeName)) {
-            gmmIntentUri = Uri.parse("geo:" + latitude + "," + longitude + "?z=10&q=" + latitude + "," + longitude + "(" + storeName + ")");
+            gmmIntentUri = Uri.parse("geo:" + latitude + "," + longitude + "?z=14&q=" + latitude + "," + longitude + "(" + storeName + ")");
         } else {
             gmmIntentUri = Uri.parse("geo:" + latitude + "," + longitude + "?z=14&q=" + latitude + "," + longitude);
         }

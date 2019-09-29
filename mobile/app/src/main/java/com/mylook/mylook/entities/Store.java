@@ -20,8 +20,8 @@ public class Store {
     private String storeDept;
     private String storeDescription;
     private String storeFloor;
-    private double storeLatitude;
-    private double storeLongitude;
+    private Double storeLatitude;
+    private Double storeLongitude;
     private String storeMail;
     private String storeName;
     private String storePhone;
@@ -36,7 +36,7 @@ public class Store {
     public Store() {
     }
 
-    public Store(String coverPh, String facebookLink, String firebaseUserId, String instagramLink, String ownerName, String profilePh, String provider, String storeAddress, String storeDept, String storeDescription, String storeFloor, double storeLatitude, double storeLongitude, String storeMail, String storeName, String storePhone, String storeTower, String storeProvince, String storeCity, String storeAddressNumber, String twitterLink, ArrayList<StoreFront> storeFronts, Date registerDate) {
+    public Store(String coverPh, String facebookLink, String firebaseUserId, String instagramLink, String ownerName, String profilePh, String provider, String storeAddress, String storeDept, String storeDescription, String storeFloor, Double storeLatitude, Double storeLongitude, String storeMail, String storeName, String storePhone, String storeTower, String storeProvince, String storeCity, String storeAddressNumber, String twitterLink, ArrayList<StoreFront> storeFronts, Date registerDate) {
         this.coverPh = coverPh;
         this.facebookLink = facebookLink;
         this.firebaseUserId = firebaseUserId;
@@ -207,19 +207,19 @@ public class Store {
         this.twitterLink = twitterLink;
     }
 
-    public double getStoreLatitude() {
+    public Double getStoreLatitude() {
         return storeLatitude;
     }
 
-    public void setStoreLatitude(long storeLatitude) {
+    public void setStoreLatitude(Double storeLatitude) {
         this.storeLatitude = storeLatitude;
     }
 
-    public double getStoreLongitude() {
+    public Double getStoreLongitude() {
         return storeLongitude;
     }
 
-    public void setStoreLongitude(long storeLongitude) {
+    public void setStoreLongitude(Double storeLongitude) {
         this.storeLongitude = storeLongitude;
     }
 
