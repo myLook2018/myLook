@@ -35,7 +35,7 @@ public class CatalogFragment extends Fragment {
         Bundle args = getArguments();
 
         if (args != null) {
-            GridView grid = rootView.findViewById(R.id.gridview);
+            GridView grid = rootView.findViewById(R.id.gridview_store_catalog);
             fillGrid(grid, args.getString("storeName"));
         }
     }

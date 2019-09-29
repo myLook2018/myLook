@@ -41,7 +41,7 @@ public class PremiumPublicationsFragment extends Fragment {
         Bundle args =getArguments();
 
         if(args !=null){
-            GridView grid = rootView.findViewById(R.id.gridview);
+            GridView grid = rootView.findViewById(R.id.gridview_store_catalog);
             setupPublicationsGridView(grid);
         }
         return rootView;

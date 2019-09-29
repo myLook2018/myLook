@@ -13,6 +13,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.google.common.base.Strings;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
@@ -21,9 +22,9 @@ import com.mylook.mylook.utils.GridImageAdapter;
 
 import java.util.ArrayList;
 
-public class ShopwindowFragment extends Fragment {
+public class StoreWindowFragment extends Fragment {
 
-    public ShopwindowFragment() {
+    public StoreWindowFragment() {
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -39,19 +40,19 @@ public class ShopwindowFragment extends Fragment {
             ImageView coverPh = rootView.findViewById(R.id.cover_store_photo);
             setCover(coverPh, args.getString("cover"));
 
-            GridView grid = rootView.findViewById(R.id.gridview);
+            GridView grid = rootView.findViewById(R.id.gridview_store_window);
             fillGrid(grid, args.getString("storeName"));
         }
     }
 
     private void setCover(ImageView view, String cover) {
-        if (cover != null && !cover.equals("")) {
+        if (!Strings.isNullOrEmpty(cover)) {
             Glide.with(view.getContext()).load(cover).into(view);
         }
     }
 
     private void fillGrid(final GridView grid, String storeName) {
-        final ArrayList<Article> storeShopWindowArticles = new ArrayList<>();
+        final ArrayList<Article> finalStoreWindowArticles = new ArrayList<>();
         FirebaseFirestore.getInstance().collection("articles")
                 .whereEqualTo("storeName", storeName)
                 // TODO change name a isStoreFront
@@ -59,15 +60,18 @@ public class ShopwindowFragment extends Fragment {
                 .get()
                 .addOnSuccessListener(result -> {
                     for (DocumentSnapshot document : result.getDocuments()) {
-                        Article art = document.toObject(Article.class);
-                        art.setArticleId(document.getId());
-                        storeShopWindowArticles.add(art);
+                        try {
+                            Article art = document.toObject(Article.class);
+                            art.setArticleId(document.getId());
+                            finalStoreWindowArticles.add(art);
+                        } catch (Exception e) {
+                            Log.d("FILL STORE WINDOW", String.format("Error al obtener el articulo con id %s para la vidriera de la tienda %s", document.getId(), storeName));
+                        }
                     }
-                    grid.setAdapter(new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview, storeShopWindowArticles));
+                    grid.setAdapter(new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview, finalStoreWindowArticles));
                 })
                 .addOnFailureListener(err -> Log.e("Firestore task", "onFailure: " + err));
     }
-
 }
 
 

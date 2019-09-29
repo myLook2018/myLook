@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -26,9 +25,6 @@ import com.mylook.mylook.entities.Visit;
 import com.mylook.mylook.session.MainActivity;
 import com.mylook.mylook.utils.SectionsPagerAdapter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class StoreActivity extends AppCompatActivity {
 
     private ViewPager viewPagerStoreInfo;
@@ -38,7 +34,7 @@ public class StoreActivity extends AppCompatActivity {
     private ReputationFragment reputationFragment;
     private ShareActionProvider mShareActionProvider;
     private boolean fromDeepLink;
-    private ShopwindowFragment shopwindowFragment;
+    private StoreWindowFragment storeWindowFragment;
     private CatalogFragment catalogFragment;
 
     @Override
@@ -158,8 +154,8 @@ public class StoreActivity extends AppCompatActivity {
         viewPagerStoreInfo = findViewById(R.id.storeInfoViewPager);
         setupViewPagerInfo(viewPagerStoreInfo);
 
-        shopwindowFragment = new ShopwindowFragment();
-        shopwindowFragment.setArguments(bundle);
+        storeWindowFragment = new StoreWindowFragment();
+        storeWindowFragment.setArguments(bundle);
         catalogFragment = new CatalogFragment();
         catalogFragment.setArguments(bundle);
         reputationFragment = new ReputationFragment();
@@ -195,7 +191,7 @@ public class StoreActivity extends AppCompatActivity {
 
     private void setupViewPagerArticles(ViewPager viewPager) {
         StoreTabAdapter adapter = new StoreTabAdapter(getSupportFragmentManager());
-        adapter.addFragment(0, shopwindowFragment, "Vidriera");
+        adapter.addFragment(0, storeWindowFragment, "Vidriera");
         adapter.addFragment(1, catalogFragment, "Catálogo");
         adapter.addFragment(2, reputationFragment, "Reputación");
         viewPager.setAdapter(adapter);

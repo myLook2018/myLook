@@ -2,8 +2,10 @@ package com.mylook.mylook.premiumUser;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +29,7 @@ import in.srain.cube.views.GridViewWithHeaderAndFooter;
 
 public class PublicClosetFragment extends Fragment {
 
-    private  String premiumUserId;
+    private String premiumUserId;
 
 
     public PublicClosetFragment() {
@@ -35,7 +37,7 @@ public class PublicClosetFragment extends Fragment {
 
     @SuppressLint("ValidFragment")
     public PublicClosetFragment(String premiumUserId) {
-        this.premiumUserId=premiumUserId;
+        this.premiumUserId = premiumUserId;
     }
 
     @Override
@@ -46,7 +48,7 @@ public class PublicClosetFragment extends Fragment {
         Bundle args = getArguments();
 
         if (args != null) {
-            GridView grid = rootView.findViewById(R.id.gridview);
+            GridView grid = rootView.findViewById(R.id.gridview_store_catalog);
             setupGridView(grid);
         }
         return rootView;

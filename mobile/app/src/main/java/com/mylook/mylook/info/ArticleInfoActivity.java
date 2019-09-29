@@ -116,21 +116,13 @@ public class ArticleInfoActivity extends AppCompatActivity {
 
         btnCloset.setOnClickListener(v -> changeSavedInCloset());
         btnShare.setOnClickListener(v -> shareArticle());
-        ViewPager articlePager;
-        articlePager = findViewById(R.id.view_pager_article);
-        if (imageArraySlider == null) {
-            ArrayList<String> arrayAux = new ArrayList<>();
-            arrayAux.add(0, article.getPicture());
-            articlePager.setAdapter(new SlidingImageAdapter(mContext, arrayAux));
-            CirclePageIndicator indicator = findViewById(R.id.circle_page_indicator);
-            indicator.setViewPager(articlePager);
-            indicator.setRadius(5 * getResources().getDisplayMetrics().density);
-        } else {
-            articlePager.setAdapter(new SlidingImageAdapter(mContext, imageArraySlider));
-            CirclePageIndicator indicator = findViewById(R.id.circle_page_indicator);
-            indicator.setViewPager(articlePager);
-            indicator.setRadius(5 * getResources().getDisplayMetrics().density);
-        }
+
+        ViewPager articlePager = findViewById(R.id.view_pager_article);
+        ArrayList<String> arrayAux = new ArrayList<>(article.getPicturesArray());
+        articlePager.setAdapter(new SlidingImageAdapter(mContext, arrayAux));
+        CirclePageIndicator indicator = findViewById(R.id.circle_page_indicator);
+        indicator.setViewPager(articlePager);
+        indicator.setRadius(5 * getResources().getDisplayMetrics().density);
     }
 
     private void shareArticle() {
