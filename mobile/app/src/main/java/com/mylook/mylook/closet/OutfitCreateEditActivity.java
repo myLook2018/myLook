@@ -157,7 +157,10 @@ public class OutfitCreateEditActivity extends AppCompatActivity {
     }
 
     private void createOutfit() {
-        if (editText.getText().toString().equals("")) {
+        if(selectedIds.isEmpty()){
+            displayToast("El conjunto esta vacio!");
+            return;
+        }else if (editText.getText().toString().equals("")) {
             displayToast("Ingrese un nombre para el conjunto");
         } else {
             progressBar.setVisibility(View.VISIBLE);
