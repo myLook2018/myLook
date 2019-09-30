@@ -394,4 +394,8 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             Log.e(TAG, "Problema refrescando");
         }
     }
+
+    public void clear() {
+        list.clear();
+    }
 }

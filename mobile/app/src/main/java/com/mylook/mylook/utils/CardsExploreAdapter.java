@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ public class CardsExploreAdapter extends RecyclerView.Adapter<CardsExploreAdapte
             name = view.findViewById(R.id.text_content);
             image = view.findViewById(R.id.image_content);
             ad = view.findViewById(R.id.ad_layout);
+            ad.setVisibility(View.INVISIBLE);
         }
 
     }
@@ -63,8 +65,12 @@ public class CardsExploreAdapter extends RecyclerView.Adapter<CardsExploreAdapte
         }
         holder.image.setOnClickListener(v -> listener.onArticleClick());
         holder.name.setText(article.getStoreName());
-        if (article.getPromotionLevel() == 0) {
-            holder.ad.setVisibility(View.GONE);
+        if (article.getPromotionLevel() > 0) {
+            Log.e("PROMOCION: ",String.valueOf(article.getPromotionLevel()));
+            holder.ad.setVisibility(View.VISIBLE);
+        }else
+        {
+            holder.ad.setVisibility(View.INVISIBLE);
         }
     }
 
