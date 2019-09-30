@@ -35,7 +35,7 @@
         </activity>
         <activity android:name=".login.LoginActivity"/>
         <activity android:name=".profile.AccountActivity" android:parentActivityName=".home.MyLookActivity"/>
-        <activity android:name=".home.MyLookActivity" android:theme="@style/SplashTheme"/>
+        <activity android:name=".home.MyLookActivity"  android:windowSoftInputMode="adjustPan" android:theme="@style/SplashTheme"/>
         <activity android:name=".info.ArticleInfoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

@@ -2,8 +2,10 @@ package com.mylook.mylook.utils;
 
 import android.content.Context;
 import android.content.Intent;
+
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,10 +36,10 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
 
         MyViewHolder(View view) {
             super(view);
-            articleCardView =  view.findViewById(R.id.article_card_view);
-            nameStore =  view.findViewById(R.id.store_name);
-            articleImage =  view.findViewById(R.id.article_image_feed);
-            txtTitle= view.findViewById(R.id.txtTitle);
+            articleCardView = view.findViewById(R.id.article_card_view);
+            nameStore = view.findViewById(R.id.store_name);
+            articleImage = view.findViewById(R.id.article_image_feed);
+            txtTitle = view.findViewById(R.id.txtTitle);
         }
     }
 
@@ -57,17 +59,17 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        if(articlesAndStoresList.get(position).getClass()==Article.class){
-            final Article article =(Article) articlesAndStoresList.get(position);
+        if (articlesAndStoresList.get(position).getClass() == Article.class) {
+            final Article article = (Article) articlesAndStoresList.get(position);
             holder.nameStore.setText(article.getStoreName());
             holder.txtTitle.setText(article.getTitle());
             // loading article image using Glide library
-            Glide.with(mContext).load(article.getPicture()).into(holder.articleImage);
+            Glide.with(mContext).load(article.getPicturesArray().get(0)).into(holder.articleImage);
 
             holder.articleCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent= new Intent(mContext, ArticleInfoActivity.class);
+                    Intent intent = new Intent(mContext, ArticleInfoActivity.class);
                     Log.d("info del articulo", "onClick: paso por intent la data del articulo");
                     intent.putExtra("article", article);
                     mContext.startActivity(intent);
@@ -77,15 +79,14 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
             holder.articleImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent= new Intent(mContext, ArticleInfoActivity.class);
+                    Intent intent = new Intent(mContext, ArticleInfoActivity.class);
                     Log.d("info del articulo", "onClick: paso por intent la data del articulo");
                     intent.putExtra("article", article);
                     mContext.startActivity(intent);
                 }
             });
-        }else
-        if(articlesAndStoresList.get(position).getClass()== Store.class){
-            final Store store =(Store) articlesAndStoresList.get(position);
+        } else if (articlesAndStoresList.get(position).getClass() == Store.class) {
+            final Store store = (Store) articlesAndStoresList.get(position);
             holder.txtTitle.setText(store.getStoreName());
             holder.nameStore.setText("Ver Tienda");
             // loading article image using Glide library
@@ -94,7 +95,7 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
             holder.articleCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent= new Intent(mContext, StoreActivity.class);
+                    Intent intent = new Intent(mContext, StoreActivity.class);
                     Log.d("perfil tienda", "onClick: paso por intent la data de la tienda");
                     intent.putExtra("store", store.getStoreName());
                     mContext.startActivity(intent);
@@ -104,15 +105,15 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
             holder.articleImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent= new Intent(mContext, StoreActivity.class);
+                    Intent intent = new Intent(mContext, StoreActivity.class);
                     Log.d("perfil tienda", "onClick: paso por intent la data del articulo");
                     intent.putExtra("store", store.getStoreName());
                     mContext.startActivity(intent);
                 }
             });
 
-        }else{
-            final PremiumUser premiumUser =(PremiumUser) articlesAndStoresList.get(position);
+        } else {
+            final PremiumUser premiumUser = (PremiumUser) articlesAndStoresList.get(position);
             holder.txtTitle.setText(premiumUser.getUserName());
             holder.nameStore.setText("Ver Usuario destacado");
             // loading article image using Glide library
@@ -121,7 +122,7 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
             holder.articleCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent= new Intent(mContext, PremiumUserProfileActivity.class);
+                    Intent intent = new Intent(mContext, PremiumUserProfileActivity.class);
                     Log.d("perfil usuario", "onClick: paso por intent la data del card");
                     intent.putExtra("clientId", premiumUser.getClientId());
                     mContext.startActivity(intent);
@@ -131,7 +132,7 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
             holder.articleImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent= new Intent(mContext, PremiumUserProfileActivity.class);
+                    Intent intent = new Intent(mContext, PremiumUserProfileActivity.class);
                     Log.d("perfil usuario", "onClick: paso por intent la data del card");
                     intent.putExtra("clientId", premiumUser.getClientId());
                     mContext.startActivity(intent);

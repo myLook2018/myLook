@@ -3,7 +3,10 @@ package com.mylook.mylook.explore;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -32,6 +35,7 @@ public class SearchableActivity extends AppCompatActivity {
     private List results;
     private CardsHomeFeedAdapter adapter;
     private RecyclerView recyclerView;
+    private ProgressBar progressBar;
     private ImageView backArrow;
 
 
@@ -45,6 +49,7 @@ public class SearchableActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         recyclerView = findViewById(R.id.recycler_view_content);
+        progressBar = findViewById(R.id.home_progress_bar);
 
         results = new ArrayList();
         adapter = new CardsHomeFeedAdapter(this, results);
@@ -64,6 +69,7 @@ public class SearchableActivity extends AppCompatActivity {
             doMySearchTitles(query);
             doMySearchStoreNames(query);
             doMySearchStorePremium(query);
+            progressBar.setVisibility(View.GONE);
         }
     }
 
@@ -131,7 +137,7 @@ public class SearchableActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                                if(documentSnapshot.get("title").toString().toLowerCase().contains(query.toLowerCase())) {
+                                if (documentSnapshot.get("title").toString().toLowerCase().contains(query.toLowerCase())) {
                                     Article art = documentSnapshot.toObject(Article.class);
                                     art.setArticleId(documentSnapshot.getId());
                                     if (!results.contains(art))
@@ -160,7 +166,7 @@ public class SearchableActivity extends AppCompatActivity {
                             for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                 Article art = documentSnapshot.toObject(Article.class);
                                 for (String tag : art.getTags()) {
-                                    if(tag.toLowerCase().contains(query.toLowerCase())){
+                                    if (tag.toLowerCase().contains(query.toLowerCase())) {
                                         art.setArticleId(documentSnapshot.getId());
                                         if (!results.contains(art))
                                             results.add(art);
@@ -180,8 +186,9 @@ public class SearchableActivity extends AppCompatActivity {
     private void displayMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
+
     @Override
-    public boolean onSupportNavigateUp(){
+    public boolean onSupportNavigateUp() {
         finish();
         return true;
     }

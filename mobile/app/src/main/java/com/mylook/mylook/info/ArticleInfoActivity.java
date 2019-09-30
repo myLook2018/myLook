@@ -64,7 +64,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_details);
-        Toolbar tb = (Toolbar) findViewById(R.id.toolbar_more_info);
         invalidateOptionsMenu();
         getArticleFromIntent();
     }
