@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.mylook.mylook.R;
+import com.mylook.mylook.premiumUser.NewDiffusionMessage;
 import com.mylook.mylook.premiumUser.NewPublicationActivity;
 import com.mylook.mylook.premiumUser.PremiumRequestActivity;
 import com.mylook.mylook.premiumUser.PremiumUserProfileActivity;
@@ -105,7 +106,7 @@ public class PremiumOptionsFragment extends ListFragment {
         ImageView imgNewDiffusion= newMess.findViewById(R.id.iconPremiumOption);
         imgNewDiffusion.setImageDrawable(getResources().getDrawable(ic_new_diffusion));
         newMess.setOnClickListener(v -> {
-            //startActivity(new Intent(mContext, NewDifussionMessage.class));
+            startActivity(new Intent(mContext, NewDiffusionMessage.class));
         });
     }
 
