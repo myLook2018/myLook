@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.ActionBar;
@@ -33,7 +32,6 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
     private PremiumPublicationsFragment publicationsFragment;
     private PublicClosetFragment publicClosetFragment;
     private boolean isCurrentUser=false;
-    private FloatingActionButton fab;
     private String premiumUserId; //el userUID del usuario destacado NO EL ACTUAL
 
     @SuppressLint("RestrictedApi")
@@ -43,7 +41,6 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_store_final);
         tab = findViewById(R.id.tab);
         Toolbar tb =  findViewById(R.id.toolbar);
-        fab=findViewById(R.id.fab);
         tb.setTitle("Usuario Destacado");
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();

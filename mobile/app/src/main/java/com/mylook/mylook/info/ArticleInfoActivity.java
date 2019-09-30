@@ -5,15 +5,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.core.content.ContextCompat;
-import androidx.viewpager.widget.ViewPager;
+
 import androidx.appcompat.app.ActionBar;
+import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.ExpandableListView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,26 +39,29 @@ public class ArticleInfoActivity extends AppCompatActivity {
     public static final int RESULT_CANCELLED = 2;
 
     private Context mContext = this;
-    private ImageView articleImage;
-    private ExpandableListView expandableListView;
     private FloatingActionButton btnCloset;
     private FloatingActionButton btnShare;
-    private String articleId,closetId;
-    private String downLoadUri, dbUserId;
+    private String articleId;
+    private String downLoadUri;
     private Article article;
     private ArrayList<String> tags, imageArraySlider;
     private LinearLayout lnlSizes, lnlColors;
     private TextView txtMaterial, txtCost, txtTitle, txtStoreName;
     private boolean inCloset;
     private boolean initialInCloset;
-    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private boolean fromDeepLink = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_details);
-        Toolbar tb = (Toolbar) findViewById(R.id.toolbar_more_info);
+        Toolbar tb = findViewById(R.id.toolbar);
+        tb.setTitle("Detalle del Articulo");
+        setSupportActionBar(tb);
+        ActionBar ab = getSupportActionBar();
+        if(ab !=null){
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
         invalidateOptionsMenu();
         getArticleFromIntent();
     }
@@ -90,8 +91,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
         FirebaseFirestore.getInstance().collection("articles").document(id).get().addOnCompleteListener(task -> {
             article = task.getResult().toObject(Article.class);
             article.setArticleId(id);
-            dbUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            downLoadUri=article.getPicture();
             initElements();
             setDetail();
             isArticleInCloset();
@@ -112,21 +111,13 @@ public class ArticleInfoActivity extends AppCompatActivity {
 
         btnCloset.setOnClickListener(v -> changeSavedInCloset());
         btnShare.setOnClickListener(v -> shareArticle());
-        ViewPager articlePager;
-        articlePager = findViewById(R.id.view_pager_article);
-        if (imageArraySlider == null) {
-            ArrayList<String> arrayAux = new ArrayList<>();
-            arrayAux.add(0, article.getPicture());
-            articlePager.setAdapter(new SlidingImageAdapter(mContext, arrayAux));
-            CirclePageIndicator indicator = findViewById(R.id.circle_page_indicator);
-            indicator.setViewPager(articlePager);
-            indicator.setRadius(5 * getResources().getDisplayMetrics().density);
-        } else {
-            articlePager.setAdapter(new SlidingImageAdapter(mContext, imageArraySlider));
-            CirclePageIndicator indicator = findViewById(R.id.circle_page_indicator);
-            indicator.setViewPager(articlePager);
-            indicator.setRadius(5 * getResources().getDisplayMetrics().density);
-        }
+
+        ViewPager articlePager = findViewById(R.id.view_pager_article);
+        ArrayList<String> arrayAux = new ArrayList<>(article.getPicturesArray());
+        articlePager.setAdapter(new SlidingImageAdapter(mContext, arrayAux));
+        CirclePageIndicator indicator = findViewById(R.id.circle_page_indicator);
+        indicator.setViewPager(articlePager);
+        indicator.setRadius(5 * getResources().getDisplayMetrics().density);
     }
 
     private void shareArticle(){
@@ -260,7 +251,11 @@ public class ArticleInfoActivity extends AppCompatActivity {
         userInteraction.setStoreName(this.article.getStoreName());
         userInteraction.setTags(tags);
         userInteraction.setUserId(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        FirebaseFirestore.getInstance().collection("interactions").add(userInteraction);
+        try{
+            FirebaseFirestore.getInstance().collection("interactions").add(userInteraction);
+        }catch(Exception e){
+            Log.e("INFO ARTIVCLE","Fallo envio de interaccion");
+        }
     }
 
     private void displayMessage(String message) {

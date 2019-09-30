@@ -52,7 +52,7 @@ public class ReputationFragment extends Fragment {
             lblDate = rootView.findViewById(R.id.lblDate);
             Date date=(Date) args.getSerializable("registerDate");
             if (date!=null) setRegisterDate(date);
-            else lblDate.setText("Ale pasame este dato"); //TODO Ver si se puede tomar del FirebaseUID
+            else lblDate.setText("Ale pasame este dato");
 
             lblCant = rootView.findViewById(R.id.lblCant);
             setSubscriptions(store);
@@ -108,6 +108,7 @@ public class ReputationFragment extends Fragment {
                     }
                     if (ratingSum != 0 && recommendCount != 0) {
                         float prom = ratingSum / recommendCount;
+                        ratingBar.setVisibility(View.VISIBLE);
                         ratingBar.setRating(prom);
                         ratingBar.setEnabled(false);
                         if (recommendCount == 1)

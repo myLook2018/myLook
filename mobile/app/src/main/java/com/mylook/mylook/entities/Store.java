@@ -17,8 +17,8 @@ public class Store {
     private String storeAddress;
     private String storeAddressNumber;
     private String storeFloor;
-    private long storeLatitude;
-    private long storeLongitude;
+    private double storeLatitude;
+    private double storeLongitude;
     private String storeDescription;
     private String instagramLink;
     private String twitterLink;
@@ -177,19 +177,19 @@ public class Store {
         this.twitterLink = twitterLink;
     }
 
-    public long getStoreLatitude() {
+    public double getStoreLatitude() {
         return storeLatitude;
     }
 
-    public void setStoreLatitude(long storeLatitude) {
+    public void setStoreLatitude(double storeLatitude) {
         this.storeLatitude = storeLatitude;
     }
 
-    public long getStoreLongitude() {
+    public double getStoreLongitude() {
         return storeLongitude;
     }
 
-    public void setStoreLongitude(long storeLongitude) {
+    public void setStoreLongitude(double storeLongitude) {
         this.storeLongitude = storeLongitude;
     }
 

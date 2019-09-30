@@ -64,8 +64,10 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
                 holder.txtDate.setText("Último día");
             } else if (daysLeft > 1) {
                 holder.txtDate.setText("Faltan " + daysLeft + " días");
-            } else {
-                holder.txtDate.setText("Falta " + daysLeft + " día");
+            } else if(daysLeft<0){  // si no se cerro desde la cloud function
+                holder.txtDate.setText("Cerrada");
+            }else {
+                holder.txtDate.setText("Faltan " + daysLeft + " días");
             }
         }
         holder.titleRequest.setText(requestRecommendation.getTitle());
