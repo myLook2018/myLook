@@ -38,7 +38,6 @@ public class ShopwindowFragment extends Fragment {
         if (args != null) {
             ImageView coverPh = rootView.findViewById(R.id.cover_store_photo);
             setCover(coverPh, args.getString("cover"));
-
             GridView grid = rootView.findViewById(R.id.gridview);
             fillGrid(grid, args.getString("name"));
         }
@@ -62,6 +61,7 @@ public class ShopwindowFragment extends Fragment {
                         Article art = document.toObject(Article.class);
                         art.setArticleId(document.getId());
                         storeShopWindowArticles.add(art);
+                        Log.e("VIDRIERA", "Encontro articulo");
                     }
                     grid.setAdapter(new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview, storeShopWindowArticles));
                 })
