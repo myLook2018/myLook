@@ -245,27 +245,18 @@ public class StoreActivity extends AppCompatActivity {
     private String createLocationInfo() {
         StringBuilder resultLocationInfo = new StringBuilder();
         if (!Strings.isNullOrEmpty(store.getStoreAddress())) {
-            resultLocationInfo.append("Direccion: " + store.getStoreAddress());
-        } else {
-            resultLocationInfo.append("Direccion: N/A");
+            resultLocationInfo.append(store.getStoreAddress());
         }
-
         if (!Strings.isNullOrEmpty(store.getStoreDept().trim())) {
-            resultLocationInfo.append(" - Dpto: " + store.getStoreDept());
-        } else {
-            resultLocationInfo.append(" - Dpto: N/A");
+            resultLocationInfo.append(" " + store.getStoreDept());
         }
 
         if (!Strings.isNullOrEmpty(store.getStoreFloor().trim())) {
-            resultLocationInfo.append(" - Piso: " + store.getStoreFloor());
-        } else {
-            resultLocationInfo.append(" - Piso: N/A");
-        }
+            resultLocationInfo.append(" - " + store.getStoreFloor());
+        } else
 
         if (!Strings.isNullOrEmpty(store.getStoreTower())) {
-            resultLocationInfo.append(" - Torre: " + store.getStoreTower());
-        } else {
-            resultLocationInfo.append(" - Torre: N/A");
+            resultLocationInfo.append(" - " + store.getStoreTower());
         }
 
         return resultLocationInfo.toString();
