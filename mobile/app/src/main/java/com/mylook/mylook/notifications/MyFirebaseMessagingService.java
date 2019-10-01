@@ -9,6 +9,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.mylook.mylook.R;
@@ -39,6 +42,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
         String id = "";
         Class activity = null;
+        com.mylook.mylook.entities.Notification notif = new com.mylook.mylook.entities.Notification();
         if (!remoteMessage.getData().isEmpty()) {
             if(remoteMessage.getData().containsKey("requestId")) {
                 id = remoteMessage.getData().get("requestId");
@@ -52,12 +56,24 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 id = remoteMessage.getData().get("storeId");
                 activity = StoreActivity.class;
             }
+            if(remoteMessage.getData().containsKey("topic")){
+                activity = NotificationCenter.class;
+                notif.setMessage(notificationBody);
+                notif.setTopic(remoteMessage.getData().get("topic"));
+                notif.setCreationDate(((com.google.firebase.Timestamp)(Object) remoteMessage.getData().get("creationDate")));
+                notif.setOpenedNotification(false);
+                notif.setImageUrl(remoteMessage.getData().get("imageUrl"));
+                notif.setPremiumUserName(remoteMessage.getData().get("premiumUserName"));
+                notif.setUserPhotoUrl(remoteMessage.getData().get("userImage"));
+                notif.setUserId(FirebaseAuth.getInstance().getUid());
+                FirebaseFirestore.getInstance().collection("notifications").add(notif);
+            }
 
         }
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
-        Log.e("ID: ", id);
+
         sendNotification(notificationTitle, notificationBody, id, activity);
     }
 
@@ -119,6 +135,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             manager.notify( 123, notification);
         }
+
     }
 
 

@@ -116,20 +116,26 @@ public class NewDiffusionMessage extends Activity {
 
     private void sendMessage(){
         if(validateMessage()) {
-            DiffusionMessage newDiffusion = new DiffusionMessage();
-            newDiffusion.setTopic(topic);
-            newDiffusion.setMessage(newMessage.getText().toString());
-            newDiffusion.setUserId(FirebaseAuth.getInstance().getUid());
-            newDiffusion.setCreationDate(Timestamp.now());
+            dB.collection("premiumUsers")
+                    .whereEqualTo("userId", FirebaseAuth.getInstance().getUid())
+                    .get().addOnSuccessListener(vClient -> {
+                        String profilePhoto = (String) vClient.getDocuments().get(0).get("profilePhoto");
+                        String userName = (String) vClient.getDocuments().get(0).get("userName");
+                    DiffusionMessage newDiffusion = new DiffusionMessage();
+                    newDiffusion.setTopic(topic);
+                    newDiffusion.setMessage(newMessage.getText().toString());
+                    newDiffusion.setUserId(FirebaseAuth.getInstance().getUid());
+                    newDiffusion.setCreationDate(Timestamp.now());
+                    newDiffusion.setUserPhotoUrl(profilePhoto);
+                    newDiffusion.setPremiumUserName(userName);
+                    dB.collection("diffusionMessages").add(newDiffusion)
+                            .addOnSuccessListener(v -> {
+                                newMessage.setText("");
+                                getOldMessages();
+                            })
+                            .addOnFailureListener(v -> Log.e("ESHOR", v.getMessage()));
+            });
 
-
-
-            dB.collection("diffusionMessages").add(newDiffusion)
-                    .addOnSuccessListener(v -> {
-                        newMessage.setText("");
-                        getOldMessages();
-                    })
-                    .addOnFailureListener(v -> Log.e("ESHOR", v.getMessage()));
         }
     }
 

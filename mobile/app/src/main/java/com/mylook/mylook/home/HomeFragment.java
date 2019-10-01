@@ -35,6 +35,7 @@ import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.PremiumUser;
 import com.mylook.mylook.entities.Subscription;
 import com.mylook.mylook.login.LoginActivity;
+import com.mylook.mylook.notifications.NotificationCenter;
 import com.mylook.mylook.profile.AccountActivity;
 import com.mylook.mylook.utils.CardsHomeFeedAdapter;
 
@@ -127,6 +128,9 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         if (id == R.id.settings_menu) {
             Intent intent = new Intent(getContext(), AccountActivity.class);
             startActivityForResult(intent,1);
+        } else if (id == R.id.notifications_menu){
+            Intent intent = new Intent(getContext(), NotificationCenter.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }

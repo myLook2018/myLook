@@ -31,30 +31,22 @@ admin.initializeApp(functions.config().firebase);
  * @param snap.after.data() JSON del documento posterior al cambio
  */
 exports.premiumUserBroadcast = functions.firestore
-  .document('premiumPublications/{docId}')
+  .document('diffusionMessages/{docId}')
   .onWrite((snap, context) => {
     const newPublication = snap.after.data();
     const topic = newPublication.topic
+    console.log(JSON.stringify(newPublication))
     return admin.firestore().doc('clients/'+newPublication.clientId).get().then( snapshot => {
-        
-      const payload = {
-        notification: {
-          title: storeName+' publicó en su canal!',
-          body: desc,
-          sound: 'default',
-
-        }
-      };
-      const options = {
-        priority: 'high',
-        timeToLive: 60 * 60 * 24
-      };
+      console.log(newPublication.creationDate.seconds)
       const message = {
         data:{
-          "title": userName+' publicó en su canal!', 
+          "title": newPublication.premiumUserName+' publicó en su canal!', 
           "deepLink": "www.mylook.com/diffusionChannel",
-          "chanel": "aver",
-          "sound": "default"
+          "sound": "default", 
+          "topic": topic, 
+          "userImage": newPublication.userPhotoUrl,
+          "body": newPublication.message,
+          "premiumUserName": newPublication.premiumUserName
         },
         "topic": topic
       }

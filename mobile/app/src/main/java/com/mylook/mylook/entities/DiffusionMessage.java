@@ -11,6 +11,24 @@ public class DiffusionMessage {
     private String articleId;
     private String documentId;
     private String topic;
+    private String userPhotoUrl;
+    private String premiumUserName;
+
+    public String getPremiumUserName() {
+        return premiumUserName;
+    }
+
+    public void setPremiumUserName(String premiumUserName) {
+        this.premiumUserName = premiumUserName;
+    }
+
+    public String getUserPhotoUrl() {
+        return userPhotoUrl;
+    }
+
+    public void setUserPhotoUrl(String userPhotoUrl) {
+        this.userPhotoUrl = userPhotoUrl;
+    }
 
     public String getTopic() {
         return topic;
