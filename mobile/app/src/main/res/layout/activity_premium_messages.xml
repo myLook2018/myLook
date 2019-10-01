@@ -10,25 +10,36 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/sent_premium_messages"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
         android:orientation="vertical"
         android:textAlignment="textEnd"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.522"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/include2"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
+        app:layout_constraintVertical_bias="1.0"
         app:reverseLayout="false"
         app:stackFromEnd="false">
 
     </androidx.recyclerview.widget.RecyclerView>
 
-    <include
-        android:id="@+id/include2"
-        layout="@layout/layout_top_toolbar"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <include
+            android:id="@+id/include2"
+            layout="@layout/layout_top_toolbar"
+            android:layout_width="409dp"
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteX="1dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -42,6 +53,7 @@
             android:id="@+id/send_new_message"
             android:layout_width="53dp"
             android:layout_height="59dp"
+            android:layout_marginEnd="4dp"
             android:layout_weight="1"
             android:backgroundTint="@color/colorAccent"
             android:foreground="@drawable/ic_send"
@@ -59,6 +71,8 @@
             android:id="@+id/new_message_text"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
             android:background="@android:color/transparent"
             android:ems="10"
             android:gravity="start|top"

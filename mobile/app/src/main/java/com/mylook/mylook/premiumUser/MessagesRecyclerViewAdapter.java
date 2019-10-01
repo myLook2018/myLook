@@ -75,7 +75,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
 
         Calendar messageCalendar = Calendar.getInstance();
         messageCalendar.setTime(time.toDate());
-        int dayDifference = nowCalendar.get(Calendar.DAY_OF_MONTH) - messageCalendar.get(Calendar.DAY_OF_MONTH);
+        int dayDifference = nowCalendar.get(Calendar.DAY_OF_YEAR) - messageCalendar.get(Calendar.DAY_OF_YEAR);
         int monthDifference = nowCalendar.get(Calendar.MONTH) - messageCalendar.get(Calendar.MONTH);
         int hourDifference = nowCalendar.get(Calendar.HOUR_OF_DAY) - messageCalendar.get(Calendar.HOUR_OF_DAY);
         int minuteDifference = nowCalendar.get(Calendar.MINUTE) - messageCalendar.get(Calendar.MINUTE);
@@ -86,8 +86,8 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
         Log.e("hour", ""+hourDifference);
         Log.e("minute", ""+minuteDifference);
         Log.e("second", ""+secondDifference);
-        if(monthDifference > 0){
-            return monthDifference > 1? "Hace "+monthDifference+" meses": "Hace 1 mes";
+        if(dayDifference >= 30){
+            return dayDifference >= 60? "Hace "+monthDifference+" meses": "Hace 1 mes";
         } else if (dayDifference > 1) {
             return (dayDifference > 1) ?"Hace "+dayDifference+" días" : "Hace 1 día";
         } else if (hourDifference > 0){
