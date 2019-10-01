@@ -14,7 +14,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:elevation="10dp"
-        app:cardCornerRadius="5dp">
+        android:layout_weight="1">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayoutPremiumOptions"

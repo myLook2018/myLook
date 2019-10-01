@@ -10,6 +10,8 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
+
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.PremiumUser;
@@ -102,7 +104,7 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
         publicClosetFragment=new PublicClosetFragment(premiumUserId);
         publicClosetFragment.setArguments(bundle);
 
-        reputationFragment=new ReputationPremiumFragment(clientId);
+        reputationFragment=new ReputationPremiumFragment(FirebaseAuth.getInstance().getUid());
         reputationFragment.setArguments(bundle);
 
         ViewPager viewPagerUserPublications = findViewById(R.id.storeViewPager);
@@ -127,7 +129,7 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
         StoreTabAdapter adapter = new StoreTabAdapter(getSupportFragmentManager());
         Log.e("VIEW PAGER","CARGAAAAAAAAAA");
         adapter.addFragment(0,publicationsFragment,"Publicaciones");
-        adapter.addFragment(1,publicClosetFragment,"Ropero");
+        adapter.addFragment(1,publicClosetFragment,"Difusiones");
         adapter.addFragment(2,reputationFragment,"Reputación");
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(0);

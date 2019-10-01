@@ -11,6 +11,7 @@ import com.mylook.mylook.R;
 import com.mylook.mylook.home.HomeFragment;
 import com.mylook.mylook.login.LoginActivity;
 import com.mylook.mylook.profile.NewPasswordActivity;
+import com.mylook.mylook.session.Session;
 
 public class DialogManager {
 
@@ -51,6 +52,7 @@ public class DialogManager {
                     LoginManager.getInstance().logOut();
                     Toast.makeText(context, "Cerraste sesión :(", Toast.LENGTH_LONG).show();
                     HomeFragment.getInstance().clear();
+                    Session.clear();
                     Intent intent = new Intent(context, LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     context.startActivity(intent);

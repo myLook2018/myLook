@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -84,10 +85,15 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
                         if(task.isSuccessful())
                         {
                             Article art= task.getResult().toObject(Article.class);
-                            art.setArticleId(answer.get("articleUID"));
-                            Intent intent = new Intent(mContext, ArticleInfoActivity.class);
-                            intent.putExtra("article", art);
-                            mContext.startActivity(intent);
+                            if(art!=null){
+                                art.setArticleId(answer.get("articleUID"));
+                                Intent intent = new Intent(mContext, ArticleInfoActivity.class);
+                                intent.putExtra("article", art);
+                                mContext.startActivity(intent);
+                            }
+                            else {
+                                Toast.makeText(mContext, "Esta articulo ya no existe :(", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                 });

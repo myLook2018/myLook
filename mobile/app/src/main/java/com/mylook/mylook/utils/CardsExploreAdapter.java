@@ -65,7 +65,7 @@ public class CardsExploreAdapter extends RecyclerView.Adapter<CardsExploreAdapte
         }
         holder.image.setOnClickListener(v -> listener.onArticleClick());
         holder.name.setText(article.getStoreName());
-        if (article.getPromotionLevel() > 0) {
+        if (article.getPromotionLevel() > 1) {
             Log.e("PROMOCION: ",String.valueOf(article.getPromotionLevel()));
             holder.ad.setVisibility(View.VISIBLE);
         }else

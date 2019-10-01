@@ -28,6 +28,7 @@ public class ReputationFragment extends Fragment {
     private TextView lblRecommendationsDescr;
     private float ratingSum = 0;
     private int recommendCount = 0;
+    private int promCount=0;
 
     public ReputationFragment() {
     }
@@ -99,6 +100,7 @@ public class ReputationFragment extends Fragment {
                             try {
                                 if(document.get("feedBack")!=null){
                                     ratingSum += Float.parseFloat((String) Objects.requireNonNull(document.get("feedBack")));
+                                    promCount++;
                                 }
                             } catch (NumberFormatException e) {
                                 Log.e("ReputationFragment", "setRecommendations: ", e);
@@ -106,8 +108,8 @@ public class ReputationFragment extends Fragment {
                             recommendCount++;
                         }
                     }
-                    if (ratingSum != 0 && recommendCount != 0) {
-                        float prom = ratingSum / recommendCount;
+                    if (ratingSum != 0 && promCount != 0) {
+                        float prom = ratingSum / promCount;
                         ratingBar.setVisibility(View.VISIBLE);
                         ratingBar.setRating(prom);
                         ratingBar.setEnabled(false);
