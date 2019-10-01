@@ -26,6 +26,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
@@ -33,6 +34,7 @@ import com.mylook.mylook.entities.RequestRecommendation;
 import com.mylook.mylook.session.Session;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class RecommendFragment extends Fragment {
@@ -135,7 +137,9 @@ public class RecommendFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
         Log.e(TAG, "getRequestRecommendations");
         FirebaseFirestore.getInstance().collection("requestRecommendations")
-                .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid()).orderBy("limitDate").get()
+                .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .orderBy("isClosed", Query.Direction.ASCENDING)
+                .orderBy("limitDate").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
@@ -145,8 +149,15 @@ public class RecommendFragment extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 RequestRecommendation requestRecommendation = document.toObject(RequestRecommendation.class);
                                 requestRecommendation.setDocumentId(document.getId());
-                                Log.e("Request", requestRecommendation.getDocumentId());
-                                requestRecommendationsList.add(requestRecommendation);
+                                Calendar cal = Calendar.getInstance();
+                                cal.setTimeInMillis(requestRecommendation.getLimitDate());
+                                Calendar calNow = Calendar.getInstance();
+                                int daysDiff = cal.get(Calendar.DAY_OF_YEAR) - calNow.get(Calendar.DAY_OF_YEAR);
+                                Log.e("Days diff", ""+daysDiff);
+                                if ( (!requestRecommendation.getIsClosed() && cal.getTimeInMillis() > calNow.getTimeInMillis())
+                                        || ( daysDiff >= -7)) {
+                                    requestRecommendationsList.add(requestRecommendation);
+                                }
                             }
                             adapter.notifyDataSetChanged();
                         }

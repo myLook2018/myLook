@@ -44,9 +44,12 @@
             android:layout_height="59dp"
             android:layout_weight="1"
             android:backgroundTint="@color/colorAccent"
+            android:foreground="@drawable/ic_send"
+            android:foregroundGravity="center"
             android:foregroundTint="#FFFFFF"
             android:textAlignment="viewEnd"
-            app:icon="@drawable/ic_send"
+            android:textSize="10sp"
+            app:cornerRadius="8dp"
             app:iconTint="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -55,15 +58,17 @@
         <EditText
             android:id="@+id/new_message_text"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:background="@android:color/transparent"
             android:ems="10"
             android:gravity="start|top"
+            android:hint="Escribí tu nuevo mensaje de difusión"
             android:inputType="textMultiLine"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/send_new_message"
             app:layout_constraintEnd_toStartOf="@+id/send_new_message"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/send_new_message" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

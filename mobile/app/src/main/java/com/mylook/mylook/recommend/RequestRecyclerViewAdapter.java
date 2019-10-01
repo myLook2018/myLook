@@ -57,7 +57,7 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
         final String dateFormat = cal.get(Calendar.DAY_OF_MONTH) + "/" + mes + "/" + cal.get(Calendar.YEAR);
         Calendar today = Calendar.getInstance();
         int daysLeft = (int) TimeUnit.MILLISECONDS.toDays(cal.getTime().getTime() - today.getTime().getTime());
-        if(requestRecommendation.getIsClosed()){
+        if(requestRecommendation.getIsClosed() || daysLeft < 0){
             holder.txtDate.setText("Cerrada");
         } else {
             if(daysLeft == 0){

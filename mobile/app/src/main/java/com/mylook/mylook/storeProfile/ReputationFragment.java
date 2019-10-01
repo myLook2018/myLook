@@ -99,11 +99,11 @@ public class ReputationFragment extends Fragment {
                             try {
                                 if(document.get("feedBack")!=null){
                                     ratingSum += Float.parseFloat((String) Objects.requireNonNull(document.get("feedBack")));
+                                    recommendCount++;
                                 }
                             } catch (NumberFormatException e) {
                                 Log.e("ReputationFragment", "setRecommendations: ", e);
                             }
-                            recommendCount++;
                         }
                     }
                     if (ratingSum != 0 && recommendCount != 0) {
