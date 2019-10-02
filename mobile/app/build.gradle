@@ -68,6 +68,7 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:4.42.0'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.github.JakeWharton:ViewPagerIndicator:2.4.1'
+    implementation 'com.github.nikartm:image-support:1.0.5'
 }
 
 apply plugin: 'com.google.gms.google-services'

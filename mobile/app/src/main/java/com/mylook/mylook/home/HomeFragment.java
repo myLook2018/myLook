@@ -2,9 +2,12 @@ package com.mylook.mylook.home;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.ActionProvider;
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -24,6 +27,7 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -32,6 +36,7 @@ import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
+import com.mylook.mylook.entities.Notification;
 import com.mylook.mylook.entities.PremiumUser;
 import com.mylook.mylook.entities.Subscription;
 import com.mylook.mylook.login.LoginActivity;
@@ -47,6 +52,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import ru.nikartm.support.BadgePosition;
+import ru.nikartm.support.ImageBadgeView;
+
 public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private CardsHomeFeedAdapter adapter;
     private static List<Object> list;
@@ -60,7 +68,11 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private Context mContext;
     final static String TAG = "HomeFragment";
     private static HomeFragment homeInstance;
-
+    private TextView textCartItemCount;
+    private int notificationCount = 0;
+    private ImageBadgeView notificationItem;
+    private View notifications;
+    private TextView txtViewCount;
     public static HomeFragment getInstance() {
         if (homeInstance == null) {
             homeInstance = new HomeFragment();
@@ -101,7 +113,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         refreshLayout = view.findViewById(R.id.refresh_layout_home);
         refreshLayout.setOnRefreshListener(this);
-
         loadFragment();
         /*setupFirebaseAuth();
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
@@ -113,13 +124,61 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     private void loadFragment() {
+
         readSubscriptions();
         updateInstallationToken();
+    }
+
+    private void countNotifications(){
+
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.home_menu, menu);
+        notifications = menu.findItem(R.id.notifications_menu).getActionView();
+        notifications.setOnClickListener(l -> {
+            Intent intent = new Intent(getContext(), NotificationCenter.class);
+            startActivity(intent);
+        });
+        txtViewCount = (TextView) notifications.findViewById(R.id.txtCount);
+        txtViewCount.setOnClickListener(l -> {
+            Intent intent = new Intent(getContext(), NotificationCenter.class);
+            startActivity(intent);
+        });
+        FirebaseFirestore.getInstance().collection("notifications")
+                .whereEqualTo("userId", FirebaseAuth.getInstance().getUid())
+                .whereEqualTo("openedNotification", false)
+                .orderBy("creationDate", Query.Direction.DESCENDING)
+                .get().addOnSuccessListener(v -> {
+            notificationCount = v.getDocuments().size();
+            if (notificationCount > 0){
+                txtViewCount.setVisibility(View.VISIBLE);
+                Log.e("Notifications", ""+v.getDocuments().size());
+                txtViewCount.setText(String.valueOf(notificationCount));
+            } else {
+                txtViewCount.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        FirebaseFirestore.getInstance().collection("notifications")
+                .whereEqualTo("userId", FirebaseAuth.getInstance().getUid())
+                .whereEqualTo("openedNotification", false)
+                .orderBy("creationDate", Query.Direction.DESCENDING)
+                .get().addOnSuccessListener(v -> {
+            notificationCount = v.getDocuments().size();
+            if (notificationCount > 0){
+                txtViewCount.setVisibility(View.VISIBLE);
+                Log.e("Notifications", ""+v.getDocuments().size());
+                txtViewCount.setText(String.valueOf(notificationCount));
+            } else {
+                txtViewCount.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override

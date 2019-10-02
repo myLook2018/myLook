@@ -45,7 +45,8 @@ public class NotificationCenter extends Activity {
         setContentView(R.layout.activity_notification_center);
         recyclerView = findViewById(R.id.notification_recycler);
         tb = findViewById(R.id.toolbar);
-        tb.setTitle("Notificationes");
+        tb.setTitle("Notificaciones");
+        updateNotifications();
         getNotifications();
     }
 
@@ -75,6 +76,19 @@ public class NotificationCenter extends Activity {
                         Log.e("Notifications", ""+notifications.size());
                         adapter.notifyDataSetChanged();
                     }
+        });
+    }
+
+    private void updateNotifications(){
+        FirebaseFirestore.getInstance().collection("notifications")
+                .whereEqualTo("userId", FirebaseAuth.getInstance().getUid())
+                .whereEqualTo("openedNotification", false)
+                .orderBy("creationDate", Query.Direction.DESCENDING)
+                .get().addOnSuccessListener(v -> {
+            for(DocumentSnapshot doc: v.getDocuments()){
+                FirebaseFirestore.getInstance().collection("notifications").document(doc.getId())
+                        .update("openedNotification", true);
+            }
         });
     }
 }
