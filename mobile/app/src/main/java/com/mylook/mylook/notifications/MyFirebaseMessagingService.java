@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -60,7 +61,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 activity = NotificationCenter.class;
                 notif.setMessage(notificationBody);
                 notif.setTopic(remoteMessage.getData().get("topic"));
-                notif.setCreationDate(((com.google.firebase.Timestamp)(Object) remoteMessage.getData().get("creationDate")));
+                notif.setCreationDate(Timestamp.now());
                 notif.setOpenedNotification(false);
                 notif.setImageUrl(remoteMessage.getData().get("imageUrl"));
                 notif.setPremiumUserName(remoteMessage.getData().get("premiumUserName"));

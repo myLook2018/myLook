@@ -11,7 +11,8 @@
     android:paddingRight="4dp"
     android:paddingBottom="4dp">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
+
         android:id="@+id/leftPhoto"
         android:layout_width="70dp"
         android:layout_height="67dp"
@@ -19,28 +20,41 @@
         app:layout_constraintCircleRadius="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/mylogo" />
+        app:srcCompat="@drawable/logo_solomy"
+        />
 
     <ImageView
         android:id="@+id/rightPhoto"
         android:layout_width="68dp"
         android:layout_height="66dp"
+        android:adjustViewBounds="false"
+        android:cropToPadding="false"
         app:layout_constraintBottom_toBottomOf="@+id/notificationMessage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
+        android:id="@+id/notificationName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/notificationMessage"
+        app:layout_constraintStart_toStartOf="@+id/notificationMessage" />
+
+    <TextView
         android:id="@+id/notificationMessage"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="246dp"
+        android:layout_height="47dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:gravity="start"
         android:text="TextView"
+        android:textAlignment="textStart"
         app:layout_constraintBottom_toBottomOf="@+id/leftPhoto"
         app:layout_constraintEnd_toStartOf="@+id/rightPhoto"
-        app:layout_constraintStart_toEndOf="@+id/leftPhoto"
-        app:layout_constraintTop_toTopOf="@+id/leftPhoto" />
+        app:layout_constraintStart_toEndOf="@+id/leftPhoto" />
 
     <TextView
         android:id="@+id/dayMessage"
@@ -51,4 +65,5 @@
         app:layout_constraintBottom_toBottomOf="@+id/leftPhoto"
         app:layout_constraintStart_toStartOf="@+id/leftPhoto"
         app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

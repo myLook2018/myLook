@@ -44,6 +44,7 @@ public class NotificationRecyclerViewAdapter extends RecyclerView.Adapter<Notifi
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Notification notif = items.get(position);
         holder.notificationMessage.setText(notif.getMessage());
+        holder.notificationName.setText(notif.getPremiumUserName());
         Glide.with(mContext).asBitmap().load(notif.getUserPhotoUrl()).into(holder.leftPhoto);
         if(notif.getImageUrl() !=  null && !notif.getImageUrl().isEmpty())
             Glide.with(mContext).asBitmap().load(notif.getImageUrl()).into(holder.rigthPhoto);
@@ -54,13 +55,15 @@ public class NotificationRecyclerViewAdapter extends RecyclerView.Adapter<Notifi
         TextView notificationMessage;
         TextView dayMessage;
         ImageView rigthPhoto;
+        TextView notificationName;
 
         public ViewHolder(View itemView) {
             super(itemView);
             leftPhoto = itemView.findViewById(R.id.leftPhoto);
             rigthPhoto= itemView.findViewById(R.id.rightPhoto);
-            notificationMessage = itemView.findViewById(R.id.notificationMessage);
             dayMessage = itemView.findViewById(R.id.dayMessage);
+            notificationMessage = itemView.findViewById(R.id.notificationMessage);
+            notificationName = itemView.findViewById(R.id.notificationName);
 
 
         }

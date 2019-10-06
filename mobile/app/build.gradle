@@ -69,6 +69,7 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.github.JakeWharton:ViewPagerIndicator:2.4.1'
     implementation 'com.github.nikartm:image-support:1.0.5'
+    implementation 'de.hdodenhof:circleimageview:3.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
