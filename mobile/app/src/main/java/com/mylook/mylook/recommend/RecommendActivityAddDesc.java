@@ -14,6 +14,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -29,6 +30,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
@@ -114,7 +116,13 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendToFirebase();
+                try{
+                    sendToFirebase();
+                }catch (Exception e)
+                {
+                    displayMessage("Algo salio mal :(");
+                    Log.e("Recommendations exc ->", e.getMessage());
+                }
             }
         });
         setCategoryRequest();
@@ -507,9 +515,11 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             }
         }
         if (requestCode == PIC_CROP) {
-            bitmap = (Bitmap) data.getExtras().getParcelable("data");
-            imgRecommend.setImageBitmap(bitmap);
-            fabMenu.close(true);
+            if(data.getExtras()!=null){
+                bitmap = (Bitmap) data.getExtras().getParcelable("data");
+                imgRecommend.setImageBitmap(bitmap);
+                fabMenu.close(true);
+            }
         }
     }
 

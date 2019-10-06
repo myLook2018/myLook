@@ -88,15 +88,15 @@ public class OutfitListAdapter extends RecyclerView.Adapter<OutfitListAdapter.Ou
         switch (count > 3 ? 3 : count) {
             case 3:
                 Glide.with(context).asDrawable()
-                        .load(outfit.getArticles().get(2).getPicture())
+                        .load(outfit.getArticles().get(2).getPicturesArray().get(0))
                         .into(outfitViewHolder.image3);
             case 2:
                 Glide.with(context).asDrawable()
-                        .load(outfit.getArticles().get(1).getPicture())
+                        .load(outfit.getArticles().get(1).getPicturesArray().get(0))
                         .into(outfitViewHolder.image2);
             case 1:
                 Glide.with(context).asDrawable()
-                        .load(outfit.getArticles().get(0).getPicture())
+                        .load(outfit.getArticles().get(0).getPicturesArray().get(0))
                         .into(outfitViewHolder.image1);
         }
     }

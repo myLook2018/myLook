@@ -65,7 +65,7 @@ public class ArticlesGridAdapter extends BaseAdapter {
         }
 
         final Article art = getItem(position);
-        Glide.with(context).asBitmap().load(art.getPicture())
+        Glide.with(context).asBitmap().load(art.getPicturesArray().get(0))
                 .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA))
                 .into(viewHolder.imageView);
 

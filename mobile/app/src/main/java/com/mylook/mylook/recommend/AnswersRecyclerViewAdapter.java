@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -61,6 +62,7 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
         holder.txtStore.setText(answer.get("storeName"));
         holder.txtDescription.setText(answer.get("description"));
         if(answer.containsKey("feedBack") && !answer.get("feedBack").equals("")) {
+            holder.ratingBar.setVisibility(View.VISIBLE);
             holder.ratingBar.setRating(Float.parseFloat(answer.get("feedBack")));
             holder.ratingBar.setEnabled(false);
         }
@@ -83,10 +85,15 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
                         if(task.isSuccessful())
                         {
                             Article art= task.getResult().toObject(Article.class);
-                            art.setArticleId(answer.get("articleUID"));
-                            Intent intent = new Intent(mContext, ArticleInfoActivity.class);
-                            intent.putExtra("article", art);
-                            mContext.startActivity(intent);
+                            if(art!=null){
+                                art.setArticleId(answer.get("articleUID"));
+                                Intent intent = new Intent(mContext, ArticleInfoActivity.class);
+                                intent.putExtra("article", art);
+                                mContext.startActivity(intent);
+                            }
+                            else {
+                                Toast.makeText(mContext, "Esta articulo ya no existe :(", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                 });
@@ -129,6 +136,7 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
             imgArticle = itemView.findViewById(R.id.imgArticle);
             txtStore = itemView.findViewById(R.id.txtStore);
             ratingBar = itemView.findViewById(R.id.ratingBar);
+            ratingBar.setVisibility(View.VISIBLE);
             txtDescription= itemView.findViewById(R.id.txtDescription);
             parentLayout=itemView.findViewById(R.id.parentLayout);
             imgStore=itemView.findViewById(R.id.imgStore);

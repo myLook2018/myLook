@@ -59,7 +59,6 @@ public class PremiumUserInfoFragment extends Fragment {
     @SuppressLint("ValidFragment")
     public PremiumUserInfoFragment(String clientId, boolean isCurrentUser) {
         user = FirebaseAuth.getInstance().getCurrentUser();
-        this.clientId = clientId;
         Log.e("ClientId", clientId);
         Log.e("FRAGMENT INFO ", String.valueOf(isCurrentUser));
         this.isCurrentUser = isCurrentUser;
@@ -174,7 +173,7 @@ public class PremiumUserInfoFragment extends Fragment {
                 btnSubscribe.setEnabled(false);
                 if (!mSubscribed) {
 
-                    Subscription newSubscription = new Subscription(clientId, user.getUid());
+                    Subscription newSubscription = new Subscription(clientId, FirebaseAuth.getInstance().getCurrentUser().getUid());
 
                     db.collection("premiumUsersSubscriptions").add(newSubscription).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
@@ -227,7 +226,7 @@ public class PremiumUserInfoFragment extends Fragment {
     public void checkFollow() {
         btnSubscribe.setVisibility(View.VISIBLE);
         FirebaseFirestore.getInstance().collection("premiumUsersSubscriptions")
-                .whereEqualTo("userId", user.getUid())
+                .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .whereEqualTo("storeName", clientId)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override

@@ -3,6 +3,7 @@ package com.mylook.mylook.premiumUser;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,14 +30,14 @@ public class ReputationPremiumFragment extends Fragment {
     private float ratingSum=0;
     private int recommendCount=0;
     private String registerDate;
-    private String clientId;
+    private String userId;
 
     public ReputationPremiumFragment() {
     }
 
     @SuppressLint("ValidFragment")
-    public ReputationPremiumFragment(String clientId) {
-        this.clientId=clientId;
+    public ReputationPremiumFragment(String userId) {
+        this.userId=userId;
     }
 
     @Override
@@ -52,6 +53,8 @@ public class ReputationPremiumFragment extends Fragment {
         lblMylookUser.setText("Es Usuario Destacado desde");
         TextView lblActiveStore = rootView.findViewById(R.id.lblActiveStore);
         lblActiveStore.setText("Es un Usuario Activo!");
+        CardView carRecomm= rootView.findViewById(R.id.cardRecommendations);
+        carRecomm.setVisibility(View.GONE);
         lblDate=rootView.findViewById(R.id.lblDate);
         lblDate.setVisibility(View.VISIBLE);
         lblCant=rootView.findViewById(R.id.lblCant);
@@ -79,7 +82,7 @@ public class ReputationPremiumFragment extends Fragment {
 
     public void countSubscribers() {
         FirebaseFirestore.getInstance().collection("premiumUsersSubscriptions")
-                .whereEqualTo("clientId", clientId).get()
+                .whereEqualTo("userId", userId).get()
                 .addOnCompleteListener(task -> {
                     int cant=task.getResult().getDocuments().size();
                     if(cant==0)

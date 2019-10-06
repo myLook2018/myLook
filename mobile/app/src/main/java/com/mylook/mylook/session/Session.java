@@ -36,7 +36,6 @@ public class Session {
     public static String clientId= "";
 
     private Session() {
-
     }
 
     public boolean isPremiumUser(){
@@ -132,5 +131,9 @@ public class Session {
         }else{
             return false;
         }
+    }
+
+    public static void clear(){
+        singleton=null;
     }
 }

@@ -12,3 +12,5 @@ mobile/.externalNativeBuild
 
 web/firebase-debug.log
 web/functions/package-lock.json
+
+*.apk
