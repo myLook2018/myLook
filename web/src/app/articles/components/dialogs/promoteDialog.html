@@ -1,83 +1,54 @@
 <h1 mat-dialog-title style="text-align:center; margin:0">
-  Promocionar tu prenda en MyLook
+    Promocionar tu prenda en MyLook
 </h1>
-<div
-  class="mat-typography"
-  mat-dialog-content
-  style="display: inline; margin-left: auto; margin-right: auto; padding: 0"
->
-  <h3 class="articleName">{{ data.title }}</h3>
-  <form [formGroup]="firstFormGroup" style="display: inline-flex">
-    <div class="Picture">
-      <img class="promotionPicture" height="300" width="300" src="{{ data.picturesArray[0] }}" />
-    </div>
-    <div class="formArea">
-      <div class="disclaimer mat-typography">
-        Al promocionar una prenda esta alcanzará mayor visibilidad entre los usuarios que utilicen la app. Se asegura un minimo de interacciones mayor al del promedio sin promocion.
-        El impacto de promocionar una prenda es inmediato, puediendose consultar en la seccion de estadisticas de la plataforma.
-        A continuación puede seleccionar diferentes combinaciones de planes de promoción, una vez seleccionado, será redirigido a MercadoPago para realizar la transacción.
-      </div>
-      <div class="inputs">
+<div class="mat-typography" mat-dialog-content style="display: inline; margin-left: auto; margin-right: auto; padding: 0">
+    <h3 class="articleName">{{ data.title }}</h3>
+    <form [formGroup]="firstFormGroup" style="display: inline-flex">
+        <div class="Picture">
+            <img class="promotionPicture" height="300" width="300" src="{{ data.picturesArray[0] }}" />
+        </div>
+        <div class="formArea">
+            <div class="disclaimer mat-typography">
+                El impacto de promocionar una prenda es inmediato. Una prenda promocionada tendrá mayor alcance entre los usuarios de myLook. Podés consultar cuantas interacciones tienen las prendas promocionadas accediendo a Promociones. Seleccioná la duración y el
+                plan de promoción que prefieras.
+            </div>
+            <span style="color: red; font-weight: bold">Una vez concluida la transacción, no se podrá reembolsar el dinero.</span>
+            <div class="inputs">
 
 
-    <mat-form-field style="width: 100%">
-      <mat-select [ngModelOptions]="{ standalone: true }"
-        placeholder="Duración de la promoción."
-        [(ngModel)]="duration"
-        name="dur"
-      >
-        <mat-option *ngFor="let dur of durations"
-          [value]="dur.value"
-          (click)="tryCalculateCost()">
-          {{ dur.viewValue }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+                <mat-form-field style="width: 100%">
+                    <mat-select [ngModelOptions]="{ standalone: true }" placeholder="Duración" [(ngModel)]="duration" name="dur">
+                        <mat-option *ngFor="let dur of durations" [value]="dur.value" (click)="tryCalculateCost()">
+                            {{ dur.viewValue }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
 
-    <div class="opciones">
-      <mat-form-field style="width: 100%">
-        <mat-select
-          [ngModelOptions]="{ standalone: true }"
-          placeholder="Nivel de Promoción"
-          [(ngModel)]="selectedPromotion"
-          name="prom"
-        >
-          <mat-option
-            *ngFor="let prom of promotionsLevels"
-            [value]="prom.value"
-            (click)="tryCalculateCost()"
-            >{{ prom.viewValue }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <p class="finalCost">
-        Costo final: ${{ promotionCost | number: '1.0-0' }}.
-      </p>
-    </div>
-  </div>
-</div>
+                <div class="opciones">
+                    <mat-form-field style="width: 100%">
+                        <mat-select [ngModelOptions]="{ standalone: true }" placeholder="Nivel" [(ngModel)]="selectedPromotion" name="prom">
+                            <mat-option *ngFor="let prom of promotionsLevels" [value]="prom.value" (click)="tryCalculateCost()">{{ prom.viewValue }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <p class="finalCost">
+                        Costo final: ${{ promotionCost | number: '1.0-0' }}.
+                    </p>
+                </div>
+            </div>
+        </div>
 
 
-  </form>
-  <div class="mat-dialog-actions">
-    <button mat-class="confirmButton"
-            mat-raised-button
-            [disabled]="isLoading"
-            (click)="onNoClick()">
+    </form>
+    <div class="mat-dialog-actions">
+        <button mat-class="confirmButton" mat-raised-button [disabled]="isLoading" (click)="onNoClick()">
       Cancelar
     </button>
-    <button
-    class="confirmButton"
-    mat-raised-button
-    cdkFocusInitial
-    (click)="sendToMP()"
-    [ngClass]="{disabledButton: !(duration && selectedPromotion)}"
-    [disabled]="!(duration && selectedPromotion) || isLoading"
-    >
-    Aceptar
+        <button class="confirmButton" style="background-color: #009ee3; color: white" mat-raised-button cdkFocusInitial (click)="sendToMP()" [ngClass]="{disabledButton: !(duration && selectedPromotion)}" [disabled]="!(duration && selectedPromotion) || isLoading">
+    Pagar con MercadoPago
   </button>
-      <div class="proggressBar">
-        <mat-progress-bar *ngIf="(isLoading)" mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>
-      </div>
-</div>
+        <div class="proggressBar">
+            <mat-progress-bar *ngIf="(isLoading)" mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>
+        </div>
+    </div>
 </div>

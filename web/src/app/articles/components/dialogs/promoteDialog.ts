@@ -30,8 +30,8 @@ export class PromoteDialogComponent {
   isDisabled = true;
 
   promotionsLevels = [
-    { value: 2, viewValue: 'Promoción Básica' },
-    { value: 3, viewValue: 'Promoción Premium' }
+    { value: 2, viewValue: 'Promoción Básica (doble alcance)' },
+    { value: 3, viewValue: 'Promoción Premium (triple alcance)' }
   ];
 
   durations = [
@@ -40,7 +40,7 @@ export class PromoteDialogComponent {
     { value: 3, viewValue: '3 dias de promoción' },
     { value: 5, viewValue: '5 dias de promoción' },
     { value: 7, viewValue: '1 semana de promoción' },
-    { value: 14, viewValue: '2 semana de promoción' },
+    { value: 14, viewValue: '2 semanas de promoción' },
     { value: 28, viewValue: '1 mes de promoción' }
   ];
 
