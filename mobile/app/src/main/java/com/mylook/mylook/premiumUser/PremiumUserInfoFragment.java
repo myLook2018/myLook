@@ -60,6 +60,7 @@ public class PremiumUserInfoFragment extends Fragment {
     public PremiumUserInfoFragment(String clientId, boolean isCurrentUser) {
         user = FirebaseAuth.getInstance().getCurrentUser();
         Log.e("ClientId", clientId);
+        this.clientId = clientId;
         Log.e("FRAGMENT INFO ", String.valueOf(isCurrentUser));
         this.isCurrentUser = isCurrentUser;
 
