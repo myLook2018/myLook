@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,7 +23,7 @@ import com.mylook.mylook.premiumUser.NewDiffusionMessage;
 
 import java.util.ArrayList;
 
-public class NotificationCenter extends Activity {
+public class NotificationCenter extends AppCompatActivity {
     private ArrayList<Notification> notifications;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
@@ -32,20 +34,23 @@ public class NotificationCenter extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        setContentView(R.layout.activity_notification_center);
+        recyclerView = findViewById(R.id.notification_recycler);
+        tb = findViewById(R.id.toolbar);
+        setSupportActionBar(tb);
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+        tb.setTitle("Notificaciones");
         initElements();
     }
 
     private void initElements(){
-        setContentView(R.layout.activity_notification_center);
-        recyclerView = findViewById(R.id.notification_recycler);
-        tb = findViewById(R.id.toolbar);
-        tb.setTitle("Notificaciones");
+
         updateNotifications();
         getNotifications();
     }
@@ -90,5 +95,11 @@ public class NotificationCenter extends Activity {
                         .update("openedNotification", true);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

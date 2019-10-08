@@ -16,10 +16,10 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <include
-            layout="@layout/layout_top_toolbar"
+            android:id="@+id/toolbar"
+            layout="@layout/notification_toolbar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView

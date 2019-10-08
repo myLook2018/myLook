@@ -130,7 +130,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".premiumUser.NewDiffusionMessage"/>
-        <activity android:name=".notifications.NotificationCenter"/>
+        <activity android:name=".notifications.NotificationCenter"
+            android:parentActivityName=".session.MainActivity"/>
         <activity android:name=".login.ResetPasswordActivity"
             android:parentActivityName=".login.LoginActivity"/>
 
