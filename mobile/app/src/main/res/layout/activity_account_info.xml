@@ -124,6 +124,19 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/txtEmail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:clickable="true"
+                android:padding="10dp"
+                android:text="Cambiar email"
+                android:textAlignment="viewStart"
+                android:textColor="@color/black"
+                android:textSize="17dp" />
+
+            <TextView
                 android:id="@+id/txtPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -136,19 +149,6 @@
                 android:textColor="@color/black"
                 android:textSize="17dp"
                 android:visibility="visible" />
-
-            <TextView
-                android:id="@+id/txtEmail"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:clickable="true"
-                android:padding="10dp"
-                android:text="Cambiar email"
-                android:textAlignment="viewStart"
-                android:textColor="@color/black"
-                android:textSize="17dp" />
 
         </LinearLayout>
     </ScrollView>

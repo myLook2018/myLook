@@ -12,6 +12,15 @@ public class User implements  Comparable<User> {
     private long birthday;
     private String installToken;
     private boolean isPremium;
+    private String provider;
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
 
     public boolean isPremium() {
         return isPremium;

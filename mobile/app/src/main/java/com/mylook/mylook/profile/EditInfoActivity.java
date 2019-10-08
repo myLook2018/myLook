@@ -124,20 +124,20 @@ public class EditInfoActivity extends AppCompatActivity {
                 }
             }
         });
+            txtChangePassword.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DialogManager dm = DialogManager.getInstance();
+                    dm.createChangePasswordDialog(
+                            EditInfoActivity.this,
+                            "Cambiar Contraseña",
+                            "¿Estas seguro que quieres cambiar tu contraseña?",
+                            "Si",
+                            "No").show();
 
-        txtChangePassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogManager dm = DialogManager.getInstance();
-                dm.createChangePasswordDialog(
-                        EditInfoActivity.this,
-                        "Cambiar Contraseña",
-                        "¿Estas seguro que quieres cambiar tu contraseña?",
-                        "Si",
-                        "No").show();
+                }
+            });
 
-            }
-        });
 
     }
 
@@ -193,6 +193,10 @@ public class EditInfoActivity extends AppCompatActivity {
                             cmbSexo.setText(userInDB.getGender());
                             oldUser = userInDB;
                             mProgressBar.setVisibility(View.GONE);
+                            if(userInDB.getProvider() != null){
+                                txtChangePassword.setEnabled(false);
+                                txtChangePassword.setVisibility(View.GONE);
+                            }
                     }
 
                 }});
