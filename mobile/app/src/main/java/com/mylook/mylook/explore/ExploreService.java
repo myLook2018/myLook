@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-public class ExploreService {
+class ExploreService {
 
     /**
      * LCM of 9, 7, 5, 3:
@@ -50,7 +50,7 @@ public class ExploreService {
     private List<LocalInteraction> allLocalInteractions;
     private List<LocalInteraction> currentLocalInteractions;
 
-    public ExploreService(Context context) {
+    ExploreService(Context context) {
         userUid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         localDAO = AppDatabase.getDatabase(context).getLocalInteractionDAO();
         allLocalInteractions = localDAO.getAllByUser(userUid);
@@ -58,7 +58,7 @@ public class ExploreService {
         interactions = new ArrayList<>();
     }
 
-    public List<Article> createExploreArticleList(QuerySnapshot query, Location location, boolean filter) {
+    List<Article> createExploreArticleList(QuerySnapshot query, Location location, double distance) {
         List<Article> promo1 = new ArrayList<>();
         List<Article> promo2 = new ArrayList<>();
         List<Article> promo3 = new ArrayList<>();
@@ -69,8 +69,8 @@ public class ExploreService {
                 Article article = document.toObject(Article.class);
                 article.setArticleId(document.getId());
                 if (location != null) {
-                    article.setNearby(LocationValidator.checkIfNearby(article, location));
-                    if (filter && !article.isNearby()) {
+                    article.setNearby(LocationValidator.checkIfNearby(article, location, distance));
+                    if (!article.isNearby()) {
                         continue;
                     }
                 }
@@ -136,7 +136,7 @@ public class ExploreService {
         return true;
     }
 
-    public void likeArticle(Article article, boolean liked) {
+    void likeArticle(Article article, boolean liked) {
         Interaction userInteraction = new Interaction();
         userInteraction.setSavedToCloset(false);
         userInteraction.setClickOnArticle(false);
@@ -155,7 +155,7 @@ public class ExploreService {
         currentLocalInteractions.add(local);
     }
 
-    public void visitArticle(Article article) {
+    void visitArticle(Article article) {
         Interaction userInteraction = new Interaction();
         userInteraction.setPromotionLevel(article.getPromotionLevel());
         userInteraction.setLiked(false);
@@ -167,7 +167,7 @@ public class ExploreService {
         interactions.add(userInteraction);
     }
 
-    public Task<QuerySnapshot> getArticles() {
+    Task<QuerySnapshot> getArticles() {
         //TODO incluir en produccion
         //Calendar cal = Calendar.getInstance();
         //cal.add(Calendar.DATE, -14);
@@ -177,13 +177,14 @@ public class ExploreService {
                 .get();
     }
 
-    public void uploadInteractions() {
+    void uploadInteractions() {
         for (Interaction interaction : interactions) {
             db.collection("interactions").add(interaction);
         }
         interactions.clear();
         for (LocalInteraction localInteraction : currentLocalInteractions) {
-            localDAO.insert(localInteraction);
+            // TODO aplicar en producción
+            //localDAO.insert(localInteraction);
         }
         currentLocalInteractions.clear();
     }

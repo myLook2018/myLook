@@ -1,6 +1,8 @@
 package com.mylook.mylook.explore;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +15,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.widget.SearchView;
 
@@ -25,7 +26,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,24 +62,21 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
     private CardStackView mCardStack;
     private CardStackLayoutManager mLayoutManager;
     private CardsExploreAdapter mCardAdapter;
+    private LinearLayout buttonsLayout;
+    private FrameLayout sliderLayout;
 
     private List<Article> articles;
-
-    private FloatingActionButton geolocationButton;
 
     @SuppressLint("StaticFieldLeak")
     private static ExploreFragment exploreInstance;
 
     private ExploreService exploreService;
     private LocationManager locationManager;
-    private boolean detectNearby;
-    private boolean filter;
-    private boolean first = true;
+
+    private double distance;
 
     @Override
-    public void onCardDragging(Direction direction, float ratio) {
-
-    }
+    public void onCardDragging(Direction direction, float ratio) {}
 
     @Override
     public void onCardSwiped(Direction direction) {
@@ -109,6 +110,7 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
     private enum ViewName {
         PROGRESS_BAR,
         MESSAGE,
+        MESSAGE_LOCATION,
         CARD_STACK
     }
 
@@ -135,22 +137,24 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
 
         init(view);
 
-        if (exploreService == null) {
-            setupExploration();
-        } else {
-            mCardStack.setAdapter(mCardAdapter);
-            viewOnly(ViewName.CARD_STACK);
-        }
+        viewOnly(ViewName.PROGRESS_BAR);
+        exploreService = new ExploreService(getContext());
+        getArticles(null);
     }
 
     private void init(View view) {
-        mProgressBar = view.findViewById(R.id.explore_progress_bar);
-        mMessage = view.findViewById(R.id.explore_message);
-        mCardStack = view.findViewById(R.id.container);
-
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
+        mProgressBar = view.findViewById(R.id.explore_progress_bar);
+        mMessage = view.findViewById(R.id.explore_message);
+
+        mCardStack = view.findViewById(R.id.explore_card_stack);
+        mLayoutManager = new CardStackLayoutManager(getContext(), this);
         setupLayoutManager();
+        mCardStack.setLayoutManager(mLayoutManager);
+        articles = new ArrayList<>();
+        mCardAdapter = new CardsExploreAdapter(Objects.requireNonNull(getContext()), articles, this);
+        mCardStack.setAdapter(mCardAdapter);
 
         FloatingActionButton dislikeButton = view.findViewById(R.id.fab_dislike_article);
         dislikeButton.setOnClickListener(v -> {
@@ -174,55 +178,120 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
             mCardStack.swipe();
         });
 
-        geolocationButton = view.findViewById(R.id.fab_geolocation);
-        setupGeolocationFab();
+        buttonsLayout = view.findViewById(R.id.explore_buttons_layout);
+        buttonsLayout.bringToFront();
+        sliderLayout = view.findViewById(R.id.explore_slider_layout);
+
+        FloatingActionButton geolocationButton = view.findViewById(R.id.fab_geolocation);
+        geolocationButton.setOnClickListener(v -> setGeolocation());
+
+        TextView distanceLabel = view.findViewById(R.id.explore_label);
+
+        SeekBar distanceSlider = view.findViewById(R.id.explore_slider);
+        distanceSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                distance = progress;
+                distanceLabel.setText(progress == 0 ? "Desactivado" : "< " + progress + " metros");
+                if (progress == 0) {
+                    seekBar.setThumb(getResources().getDrawable(R.drawable.slider_thumb_disabled, null));
+                    distanceLabel.setTextColor(getResources().getColor(R.color.red, null));
+                } else {
+                    seekBar.setThumb(getResources().getDrawable(R.drawable.slider_thumb_enabled, null));
+                    distanceLabel.setTextColor(getResources().getColor(R.color.primary_text, null));
+                }
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                confirmGeolocation();
+            }
+        });
+
+        distance = distanceSlider.getProgress();
+        if (distance == 0) {
+            distanceLabel.setText("Desactivado");
+        } else {
+            distanceLabel.setText(String.format("< %d metros", distanceSlider.getProgress()));
+        }
     }
 
-    private void setupGeolocationFab() {
-        if (detectNearby) {
-            if (filter) {
-                geolocationButton.setImageResource(R.drawable.ic_unfilter_24dp);
-                geolocationButton.setOnClickListener(v -> getArticles());
-            } else {
-                geolocationButton.setImageResource(R.drawable.ic_filter_24dp);
-                geolocationButton.setOnClickListener(v -> getArticles());
-            }
+    private void setGeolocation() {
+        if (isPermissionGranted()) {
+            showSlider(true);
         } else {
-            geolocationButton.setImageResource(R.drawable.ic_geo_24dp);
-            geolocationButton.setOnClickListener(v -> setupExploration());
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_REQUEST);
+        }
+    }
+
+    private void confirmGeolocation() {
+        if (distance == 0) {
+            getArticles(null);
+        }
+        if (!isPermissionGranted()) {
+            displayMessage("Necesitamos permisos para acceder a tu ubicación.");
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_REQUEST);
+        } else if (!isGPSActive()) {
+            displayMessage("Activa tu GPS para acceder a tu ubicación.");
+        } else {
+            tryGetArticlesWithLocation();
+        }
+        showSlider(false);
+    }
+
+    private void showSlider(boolean show) {
+        if (show) {
+            sliderLayout.bringToFront();
+            sliderLayout.setAlpha(0f);
+            sliderLayout.setVisibility(View.VISIBLE);
+            sliderLayout.animate()
+                    .alpha(1f)
+                    .setDuration(Duration.Fast.duration)
+                    .setListener(null);
+            buttonsLayout.animate()
+                    .alpha(0f)
+                    .setDuration(Duration.Fast.duration)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            buttonsLayout.setVisibility(View.GONE);
+                        }
+                    });
+        } else {
+            buttonsLayout.bringToFront();
+            buttonsLayout.setAlpha(0f);
+            buttonsLayout.setVisibility(View.VISIBLE);
+            buttonsLayout.animate()
+                    .alpha(1f)
+                    .setDuration(Duration.Fast.duration)
+                    .setListener(null);
+            sliderLayout.animate()
+                    .alpha(0f)
+                    .setDuration(Duration.Fast.duration)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            sliderLayout.setVisibility(View.GONE);
+                        }
+                    });
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.e(TAG, "onRequestPermissionsResult: start");
         if (requestCode == ACCESS_FINE_LOCATION_REQUEST) {
-            Log.e(TAG, "onRequestPermissionsResult: request");
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.e(TAG, "onRequestPermissionsResult: true");
-                getArticles();
+                showSlider(true);
             } else {
-                getArticles(null, false);
+                displayMessage("Necesitamos permisos para acceder a tu ubicación.");
             }
         }
     }
 
-    private void setupExploration() {
-        if (getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_REQUEST);
-        } else if (exploreService == null || articles == null || articles.size() == 0){
-            getArticles();
-        }
-    }
-
-    private void getArticles() {
-        if (getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            displayMessage("No pudo accederse a tu ubicación");
-            getArticles(null, false);
-        } else {
+    private void tryGetArticlesWithLocation() {
+        if (getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             viewOnly(ViewName.PROGRESS_BAR);
             Criteria criteria = new Criteria();
             criteria.setAccuracy(Criteria.ACCURACY_FINE);
@@ -230,33 +299,26 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
                 @Override
                 public void onLocationChanged(Location location) {
                     if (location != null) {
-                        if (first) {
-                            detectNearby = true;
-                            first = false;
-                            getArticles(location, false);
-                        } else {
-                            filter = !filter;
-                            getArticles(location, filter);
-                        }
-                        setupGeolocationFab();
+                        getArticles(location);
                     } else {
                         displayMessage("No pudo accederse a tu ubicación");
-                        viewOnly(ViewName.CARD_STACK);
-                        getArticles(null, false);
+                        getArticles(null);
                     }
                 }
                 @Override
                 public void onStatusChanged(String provider, int status, Bundle extras) {}
                 @Override
-                public void onProviderEnabled(String provider) { }
+                public void onProviderEnabled(String provider) {}
                 @Override
                 public void onProviderDisabled(String provider) {}
             }, null);
+        } else {
+            displayMessage("Necesitamos permisos para acceder a tu ubicación.");
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_REQUEST);
         }
     }
 
     private void setupLayoutManager() {
-        mLayoutManager = new CardStackLayoutManager(getContext(), this);
         mLayoutManager.setStackFrom(StackFrom.Top);
         mLayoutManager.setVisibleCount(3);
         mLayoutManager.setTranslationInterval(4.0f);
@@ -267,23 +329,26 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
         mLayoutManager.setCanScrollHorizontal(true);
         mLayoutManager.setCanScrollVertical(true);
         mLayoutManager.setSwipeableMethod(SwipeableMethod.AutomaticAndManual);
-        mCardStack.setLayoutManager(mLayoutManager);
     }
 
     private void likeArticle(boolean liked) {
-        Article article = articles.remove(0);
-        exploreService.likeArticle(article, liked);
-        if (mCardAdapter.getItemCount() == 0) {
-            viewOnly(ExploreFragment.ViewName.MESSAGE);
+        if (!articles.isEmpty()) {
+            Article article = articles.get(mLayoutManager.getTopPosition() - 1);
+            exploreService.likeArticle(article, liked);
+            if (articles.size() == mLayoutManager.getTopPosition()) {
+                viewOnly(ExploreFragment.ViewName.MESSAGE);
+            }
         }
     }
 
     private void visitArticle() {
-        Article article = articles.get(0);
-        exploreService.visitArticle(article);
-        Intent intent = new Intent(getContext(), ArticleInfoActivity.class);
-        intent.putExtra("article", article);
-        Objects.requireNonNull(getContext()).startActivity(intent);
+        if (!articles.isEmpty()) {
+            Article article = articles.get(mLayoutManager.getTopPosition());
+            exploreService.visitArticle(article);
+            Intent intent = new Intent(getContext(), ArticleInfoActivity.class);
+            intent.putExtra("article", article);
+            Objects.requireNonNull(getContext()).startActivity(intent);
+        }
     }
 
     private void viewOnly(ViewName view) {
@@ -297,6 +362,13 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
                 mMessage.setVisibility(View.VISIBLE);
                 mProgressBar.setVisibility(View.GONE);
                 mCardStack.setVisibility(View.GONE);
+                mMessage.setText("¡No encontramos artículos!\nIntentá más tarde");
+                break;
+            case MESSAGE_LOCATION:
+                mMessage.setVisibility(View.VISIBLE);
+                mProgressBar.setVisibility(View.GONE);
+                mCardStack.setVisibility(View.GONE);
+                mMessage.setText("¡No encontramos artículos!\nAumentá el radio de búsqueda\no intentá más tarde");
                 break;
             case CARD_STACK:
                 mCardStack.setVisibility(View.VISIBLE);
@@ -306,11 +378,9 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
         }
     }
 
-    private void getArticles(Location location, boolean filter) {
+    private void getArticles(Location location) {
         viewOnly(ViewName.PROGRESS_BAR);
-        articles = new ArrayList<>();
-        mCardAdapter = new CardsExploreAdapter(Objects.requireNonNull(getContext()), articles, this);
-        exploreService = new ExploreService(getContext());
+        articles.clear();
         exploreService.getArticles().addOnCompleteListener(task -> {
             if (!task.isSuccessful() || task.getResult() == null) {
                 viewOnly(ViewName.MESSAGE);
@@ -319,10 +389,14 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
                 viewOnly(ViewName.MESSAGE);
                 Log.d(TAG, "getArticles - No articles found");
             } else {
-                articles.addAll(exploreService.createExploreArticleList(task.getResult(), location, filter));
+                articles.addAll(exploreService.createExploreArticleList(task.getResult(), location, distance));
+                mCardAdapter.notifyDataSetChanged();
                 Log.d(TAG, "getArticles - Articles found: " + articles.size());
-                mCardStack.setAdapter(mCardAdapter);
-                viewOnly(ViewName.CARD_STACK);
+                if (articles.isEmpty()) {
+                    viewOnly(ViewName.MESSAGE_LOCATION);
+                } else {
+                    viewOnly(ViewName.CARD_STACK);
+                }
             }
         });
     }
@@ -344,7 +418,6 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                Log.d("SUBMIT", "onQueryTextSubmit: query->" + s);
                 Intent intent = new Intent(getContext(), SearchableActivity.class);
                 intent.putExtra("query", s);
                 startActivity(intent);
@@ -353,7 +426,6 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
 
             @Override
             public boolean onQueryTextChange(String s) {
-                Log.d("CHANGE", "onQueryTextChange: newText->" + s);
                 return false;
             }
         });
@@ -374,21 +446,23 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
 
     private void refresh() {
         exploreService.uploadInteractions();
-        if (getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_REQUEST);
+        if (isPermissionGranted() && isGPSActive() && distance != 0) {
+            tryGetArticlesWithLocation();
         } else {
-            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                displayMessage("No pudo accederse a tu ubicación");
-                getArticles(null, false);
-            } else {
-                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                getArticles(location, filter);
-            }
+            getArticles(null);
         }
     }
 
     private void displayMessage(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean isGPSActive() {
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
+    private boolean isPermissionGranted() {
+        return getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 }

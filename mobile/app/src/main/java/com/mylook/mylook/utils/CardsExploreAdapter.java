@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,14 +61,18 @@ public class CardsExploreAdapter extends RecyclerView.Adapter<CardsExploreAdapte
         Article article = articles.get(position);
         if (context instanceof Activity) {
             Activity activity = (Activity) context;
-            if ( !activity.isFinishing() ) {
+            if (!activity.isFinishing()) {
                 Glide.with(context).load(article.getPicturesArray().get(0)).into(holder.image);
             }
         }
         holder.image.setOnClickListener(v -> listener.onArticleClick());
         holder.name.setText(article.getStoreName());
-        if (article.getPromotionLevel() == 0) {
+        if (article.getPromotionLevel() == 1) {
+            Log.d("ADAPTER", "GONE: " + article.getArticleId() + " -> " + article.getPromotionLevel());
             holder.ad.setVisibility(View.GONE);
+        } else {
+            Log.d("ADAPTER", "VISIBLE: " + article.getArticleId() + " -> " + article.getPromotionLevel());
+            holder.ad.setVisibility(View.VISIBLE);
         }
         if (article.isNearby()) {
             holder.nearby.setVisibility(View.VISIBLE);

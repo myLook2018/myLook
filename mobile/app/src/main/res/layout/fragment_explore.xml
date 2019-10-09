@@ -15,7 +15,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:gravity="center"
-        android:text="No se encontraron artículos.\nRefrescá o intentá más tarde."
+        android:text="¡No encontramos artículos!\nIntentá más tarde"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -33,7 +33,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.yuyakaido.android.cardstackview.CardStackView
-        android:id="@+id/container"
+        android:id="@+id/explore_card_stack"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipChildren="false"
@@ -45,76 +45,118 @@
         app:card_enable_rotation="false"
         app:card_gravity="top"
         app:card_margin="8dp"
-        app:layout_constraintBottom_toTopOf="@id/explore_buttons_layout"
+        app:layout_constraintBottom_toTopOf="@id/explore_actions_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/explore_buttons_layout"
+    <FrameLayout
+        android:id="@+id/explore_actions_layout"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:layout_marginBottom="4dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:baselineAligned="false"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
-
+        app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:gravity="center">
+            android:id="@+id/explore_buttons_layout"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:baselineAligned="false"
+            android:gravity="center"
+            android:orientation="horizontal">
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_like_article"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_cross"
-                app:backgroundTint="@android:color/holo_red_dark"
-                app:fabSize="auto"
-                app:rippleColor="@color/accent" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center">
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_like_article"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:src="@drawable/ic_cross"
+                    app:backgroundTint="@android:color/holo_red_dark"
+                    app:fabSize="auto"
+                    app:rippleColor="@color/accent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_geolocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:src="@drawable/ic_geo_24dp"
+                    app:backgroundTint="@color/accent"
+                    app:fabSize="mini"
+                    app:rippleColor="@color/accent">
+
+                </com.google.android.material.floatingactionbutton.FloatingActionButton>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center">
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_dislike_article"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:src="@drawable/ic_check"
+                    app:backgroundTint="@android:color/holo_green_dark"
+                    app:fabSize="auto"
+                    app:rippleColor="@color/accent" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center">
+        <FrameLayout
+            android:id="@+id/explore_slider_layout"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:baselineAligned="false"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_geolocation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:backgroundTint="@color/primary"
-                app:fabSize="mini"
-                app:rippleColor="@color/accent">
+            <TextView
+                android:id="@+id/explore_label"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/red"
+                android:text="Desactivado" />
 
-            </com.google.android.material.floatingactionbutton.FloatingActionButton>
+            <SeekBar
+                android:id="@+id/explore_slider"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:max="2000"
+                android:progress="0"
+                android:progressTint="@color/primary"
+                android:thumb="@drawable/slider_thumb_disabled" />
 
-        </LinearLayout>
+        </FrameLayout>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:gravity="center">
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_dislike_article"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_check"
-                app:backgroundTint="@android:color/holo_green_dark"
-                app:fabSize="auto"
-                app:rippleColor="@color/accent" />
-
-        </LinearLayout>
-
-    </LinearLayout>
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
