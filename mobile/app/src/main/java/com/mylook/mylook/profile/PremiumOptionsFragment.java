@@ -16,7 +16,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.mylook.mylook.R;
+import com.mylook.mylook.premiumUser.NewDiffusionMessage;
 import com.mylook.mylook.premiumUser.NewPublicationActivity;
+import com.mylook.mylook.premiumUser.PremiumRequestActivity;
 import com.mylook.mylook.premiumUser.PremiumUserProfileActivity;
 import com.mylook.mylook.session.Session;
 
@@ -81,16 +83,21 @@ public class PremiumOptionsFragment extends ListFragment {
         ImageView imgNewPublication= newPub.findViewById(R.id.iconPremiumOption);
         imgNewPublication.setImageDrawable(getResources().getDrawable(ic_premium_publication));
         newPub.setOnClickListener(v -> {
-            startActivity(new Intent(mContext, NewPublicationActivity.class));
+            Intent intent= new Intent(mContext, NewPublicationActivity.class);
+            intent.putExtra("clientId", Session.clientId);
+            startActivity(intent);
         });
 
         LinearLayout newGroup = view.findViewById(R.id.incNewGroup);
         TextView lblNewGroup = (TextView) newGroup.findViewById(R.id.lblNameOption);
-        lblNewGroup.setText("Nuevo Grupo de difusion");
+        lblNewGroup.setText("Tus datos publicos");
         ImageView imgNewGroup= newGroup.findViewById(R.id.iconPremiumOption);
         imgNewGroup.setImageDrawable(getResources().getDrawable(ic_channel));
         newGroup.setOnClickListener(v -> {
-            //startActivity(new Intent(mContext, DifussionGroup.class));
+            Intent intent = new Intent(mContext, PremiumRequestActivity.class);
+            intent.putExtra("clientId", Session.clientId);
+            intent.putExtra("isChange",true);
+            startActivity(intent);
         });
 
         LinearLayout newMess = view.findViewById(R.id.incNewMess);
@@ -99,7 +106,7 @@ public class PremiumOptionsFragment extends ListFragment {
         ImageView imgNewDiffusion= newMess.findViewById(R.id.iconPremiumOption);
         imgNewDiffusion.setImageDrawable(getResources().getDrawable(ic_new_diffusion));
         newMess.setOnClickListener(v -> {
-            //startActivity(new Intent(mContext, NewDifussionMessage.class));
+            startActivity(new Intent(mContext, NewDiffusionMessage.class));
         });
     }
 

@@ -45,7 +45,7 @@ public class OutfitCreateEditAdapter extends BaseAdapter {
         } else {
             imageView = (SelectableImageView) convertView;
         }
-        Glide.with(context).asBitmap().load(articles.get(position).getPicture())
+        Glide.with(context).asBitmap().load(articles.get(position).getPicturesArray().get(0))
                 .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA))
                 .into(imageView);
         imageView.displayAsSelected(selected.contains(position));

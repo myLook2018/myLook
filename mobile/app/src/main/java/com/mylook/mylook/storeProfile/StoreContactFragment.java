@@ -7,12 +7,17 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.common.base.Strings;
 import com.mylook.mylook.R;
 
 public class StoreContactFragment extends Fragment {
@@ -21,6 +26,8 @@ public class StoreContactFragment extends Fragment {
     private TextView storeLocation, storePhone;
     private TextView txtTwitter, txtInstagram;
     private TextView txtFacebook;
+    private ImageButton btnReturnStoreInfo;
+    private TextView lblMaps;
 
 
     public StoreContactFragment() {
@@ -37,6 +44,9 @@ public class StoreContactFragment extends Fragment {
         Bundle args = getArguments();
 
         if (args != null) {
+            lblMaps = rootView.findViewById(R.id.txtMaps);
+            setOnClickLocation(args.getString("storeName"), args.getDouble("latitude"), args.getDouble("longitude"));
+
             storeLocation = rootView.findViewById(R.id.store_location);
             setStoreLocation(args.getString("location"));
 
@@ -55,6 +65,9 @@ public class StoreContactFragment extends Fragment {
             txtInstagram =rootView.findViewById(R.id.txtInstagram);
             setOnClickInstagram(args.getString("instagram"));
         }
+
+        btnReturnStoreInfo = rootView.findViewById(R.id.btnReturnStoreInfo);
+        btnReturnStoreInfo.setOnClickListener(v -> ((StoreActivity) getActivity()).returnToStoreInfo());
     }
 
     private void setStoreLocation(String storeLocation) {
@@ -66,7 +79,7 @@ public class StoreContactFragment extends Fragment {
     }
 
     private void setOnClickFacebook(String txtFacebook) {
-        if (!txtFacebook.equals("")) {
+        if (!Strings.isNullOrEmpty(txtFacebook)) {
             final String finalTxtFacebook = "https://www.facebook.com/"+txtFacebook;
             this.txtFacebook.setOnClickListener(v -> {
                 Intent intent=new Intent(Intent.ACTION_VIEW, Uri.parse(finalTxtFacebook));
@@ -82,7 +95,7 @@ public class StoreContactFragment extends Fragment {
     }
 
     private void setOnClickTwitter(String txtTwitter) {
-        if (!txtTwitter.equals("")) {
+        if (!Strings.isNullOrEmpty(txtTwitter)) {
             final String finalTxtTwitter = "https://twitter.com/"+txtTwitter;
             this.txtTwitter.setOnClickListener(v -> {
                 Intent intent=new Intent(Intent.ACTION_VIEW, Uri.parse(finalTxtTwitter));
@@ -99,7 +112,7 @@ public class StoreContactFragment extends Fragment {
     }
 
     private void setOnClickInstagram(String txtInstagram) {
-        if (!txtInstagram.equals("")) {
+        if (!Strings.isNullOrEmpty(txtInstagram)) {
             final String finalTxtInstagram = "https://www.instagram.com/"+txtInstagram;
             this.txtInstagram.setOnClickListener(v -> {
                 Intent intent=new Intent(Intent.ACTION_VIEW, Uri.parse(finalTxtInstagram));
@@ -112,5 +125,24 @@ public class StoreContactFragment extends Fragment {
             });
             lnlInsta.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void setOnClickLocation(String storeName, Double storeLatitude, Double storeLongitude) {
+        String latitude = storeLatitude.toString();
+        String longitude = storeLongitude.toString();
+        Log.e("CLICK LOCATION", String.format("Latitud: %s , Longitud: %s", latitude, longitude));
+        Uri gmmIntentUri = Uri.parse("geo:" + latitude + "," + longitude + "?z=14&q=" + latitude + "," + longitude + "(" + storeName + ")");
+        Log.e("Location uri: ", gmmIntentUri.toString());
+        this.lblMaps.setOnClickListener(v -> {
+            Log.d("CLICK LOCATION", "Se hizo click en la ubicacion de la tienda " + storeName);
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+            mapIntent.setPackage("com.google.android.apps.maps");
+            try {
+                startActivity(mapIntent);
+            } catch (ActivityNotFoundException e) {
+                Log.e("Error al abrir el link a Maps. El error es: " , e.getMessage());
+                startActivity(new Intent(Intent.ACTION_VIEW, gmmIntentUri));
+            }
+        });
     }
 }

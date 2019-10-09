@@ -15,6 +15,7 @@ import com.mylook.mylook.R;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
@@ -27,6 +28,7 @@ public class ReputationFragment extends Fragment {
     private TextView lblRecommendationsDescr;
     private float ratingSum = 0;
     private int recommendCount = 0;
+    private int promCount=0;
 
     public ReputationFragment() {
     }
@@ -51,7 +53,7 @@ public class ReputationFragment extends Fragment {
             lblDate = rootView.findViewById(R.id.lblDate);
             Date date=(Date) args.getSerializable("registerDate");
             if (date!=null) setRegisterDate(date);
-            else lblDate.setText("Ale pasame este dato"); //TODO Ver si se puede tomar del FirebaseUID
+            else lblDate.setText("Ale pasame este dato");
 
             lblCant = rootView.findViewById(R.id.lblCant);
             setSubscriptions(store);
@@ -96,15 +98,18 @@ public class ReputationFragment extends Fragment {
                     for (DocumentSnapshot document : result.getDocuments()) {
                         if (document.contains("feedBack")) {
                             try {
-                                ratingSum += Float.parseFloat((String) document.get("feedBack"));
+                                if(document.get("feedBack")!=null){
+                                    ratingSum += Float.parseFloat((String) Objects.requireNonNull(document.get("feedBack")));
+                                    recommendCount++;
+                                }
                             } catch (NumberFormatException e) {
                                 Log.e("ReputationFragment", "setRecommendations: ", e);
                             }
-                            recommendCount++;
                         }
                     }
-                    if (ratingSum != 0 && recommendCount != 0) {
-                        float prom = ratingSum / recommendCount;
+                    if (ratingSum != 0 && promCount != 0) {
+                        float prom = ratingSum / promCount;
+                        ratingBar.setVisibility(View.VISIBLE);
                         ratingBar.setRating(prom);
                         ratingBar.setEnabled(false);
                         if (recommendCount == 1)

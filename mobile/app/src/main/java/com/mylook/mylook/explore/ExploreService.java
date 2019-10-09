@@ -1,6 +1,7 @@
-package com.mylook.mylook.services;
+package com.mylook.mylook.explore;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,8 +43,6 @@ public class ExploreService {
     private static final int LOWER_LIMIT_OF_3_IN_1_3 = 105; // 1/3
 
     private String userUid;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
     private LocalInteractionDAO localDAO;
     private ArrayList<Interaction> interactions;
     private List<LocalInteraction> allLocalInteractions;
@@ -165,19 +164,23 @@ public class ExploreService {
         //Calendar cal = Calendar.getInstance();
         //cal.add(Calendar.DATE, -14);
         //Date dateBefore2Weeks = cal.getTime();
-        return db.collection("articles")
+        return FirebaseFirestore.getInstance().collection("articles")
                 //.whereGreaterThan("creationDate", dateBefore2Weeks) Le saque el filtro para que aparecieran
                 .get();
     }
 
     public void uploadInteractions() {
-        for (Interaction interaction : interactions) {
-            db.collection("interactions").add(interaction);
+        try {
+            for (Interaction interaction : interactions) {
+                FirebaseFirestore.getInstance().collection("interactions").add(interaction);
+            }
+            interactions.clear();
+            for (LocalInteraction localInteraction : currentLocalInteractions) {
+                localDAO.insert(localInteraction);
+            }
+            currentLocalInteractions.clear();
+        }catch (Exception e){
+            Log.e("EXPLORE_SRVICE", "problema al guardar interacciones locales");
         }
-        interactions.clear();
-        for (LocalInteraction localInteraction : currentLocalInteractions) {
-            localDAO.insert(localInteraction);
-        }
-        currentLocalInteractions.clear();
     }
 }

@@ -63,7 +63,7 @@ public class PublicClosetFragment extends Fragment {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String id = document.getId();
-                                dB.collection("closets").document(id).collection("favorites").get()
+                                FirebaseFirestore.getInstance().collection("closets").document(id).collection("favorites").get()
                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                             @Override
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -71,7 +71,7 @@ public class PublicClosetFragment extends Fragment {
                                                     favorites = new ArrayList<>();
                                                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                                         Favorite fav = documentSnapshot.toObject(Favorite.class);
-                                                        dB.collection("articles").document(fav.getArticleId()).get()
+                                                        FirebaseFirestore.getInstance().collection("articles").document(fav.getArticleId()).get()
                                                                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                                     @Override
                                                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {

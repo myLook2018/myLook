@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -32,7 +33,6 @@ import java.util.List;
 public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecyclerViewAdapter.ViewHolder> {
 
     private static final String TAG = "AnswersRecyclerViewAdapter";
-    private final FirebaseFirestore dB;
     private Context mContext;
     private List<HashMap<String, String>> answersList;
 
@@ -40,7 +40,6 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
     public AnswersRecyclerViewAdapter(Context mContext, List<HashMap<String,String>> answersList) {
         this.mContext = mContext;
         this.answersList = answersList;
-        dB= FirebaseFirestore.getInstance();
     }
 
     @NonNull
@@ -63,6 +62,7 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
         holder.txtStore.setText(answer.get("storeName"));
         holder.txtDescription.setText(answer.get("description"));
         if(answer.containsKey("feedBack") && !answer.get("feedBack").equals("")) {
+            holder.ratingBar.setVisibility(View.VISIBLE);
             holder.ratingBar.setRating(Float.parseFloat(answer.get("feedBack")));
             holder.ratingBar.setEnabled(false);
         }
@@ -78,17 +78,22 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
             @Override
             public void onClick(View view) {
                 Log.d("AnswerRecyclerViewAdap", "onClick: clicked on: " + position);
-                dB.collection("articles")
+                FirebaseFirestore.getInstance().collection("articles")
                         .document(answer.get("articleUID")).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if(task.isSuccessful())
                         {
                             Article art= task.getResult().toObject(Article.class);
-                            art.setArticleId(answer.get("articleUID"));
-                            Intent intent = new Intent(mContext, ArticleInfoActivity.class);
-                            intent.putExtra("article", art);
-                            mContext.startActivity(intent);
+                            if(art!=null){
+                                art.setArticleId(answer.get("articleUID"));
+                                Intent intent = new Intent(mContext, ArticleInfoActivity.class);
+                                intent.putExtra("article", art);
+                                mContext.startActivity(intent);
+                            }
+                            else {
+                                Toast.makeText(mContext, "Esta articulo ya no existe :(", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                 });
@@ -99,14 +104,14 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
             @Override
             public void onClick(View view) {
                 Log.d("AnswerRecyclerViewAdap", "onClick: clicked on: " + position);
-                dB.collection("stores")
+                FirebaseFirestore.getInstance().collection("stores")
                         .whereEqualTo("storeName",answer.get("storeName")).get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                    @Override
                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                        Store store = (Store) task.getResult().toObjects(Store.class).get(0);
                                                        Intent intent = new Intent(mContext, StoreActivity.class);
-                                                       intent.putExtra("Tienda", store.getStoreName());
+                                                       intent.putExtra("store", store.getStoreName());
                                                        mContext.startActivity(intent);
                                                    }
                                                }
@@ -131,6 +136,7 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
             imgArticle = itemView.findViewById(R.id.imgArticle);
             txtStore = itemView.findViewById(R.id.txtStore);
             ratingBar = itemView.findViewById(R.id.ratingBar);
+            ratingBar.setVisibility(View.VISIBLE);
             txtDescription= itemView.findViewById(R.id.txtDescription);
             parentLayout=itemView.findViewById(R.id.parentLayout);
             imgStore=itemView.findViewById(R.id.imgStore);
