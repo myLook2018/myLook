@@ -63,7 +63,6 @@ public class PremiumUserInfoFragment extends Fragment {
         this.clientId = clientId;
         Log.e("FRAGMENT INFO ", String.valueOf(isCurrentUser));
         this.isCurrentUser = isCurrentUser;
-
     }
 
     public PremiumUserInfoFragment() {
@@ -176,7 +175,7 @@ public class PremiumUserInfoFragment extends Fragment {
 
                     Subscription newSubscription = new Subscription(clientId, FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-                    db.collection("premiumUsersSubscriptions").add(newSubscription).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    FirebaseFirestore.getInstance().collection("premiumUsersSubscriptions").add(newSubscription).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
                         public void onSuccess(DocumentReference documentReference) {
                             Log.d("Firestore task", "DocumentSnapshot written with ID: " + documentReference.getId());
@@ -243,7 +242,7 @@ public class PremiumUserInfoFragment extends Fragment {
             }
         });
     }
-
+  
     public void initElements(View rootView) {
         profilePhoto = rootView.findViewById(R.id.premium_profile_photo);
         btnSubscribe = rootView.findViewById(R.id.btn_subscribe);

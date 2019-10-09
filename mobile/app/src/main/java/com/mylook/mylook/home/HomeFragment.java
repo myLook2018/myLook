@@ -202,7 +202,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onStop() {
         super.onStop();
-
     }
 
     private void checkCurrentUser(FirebaseUser user) {

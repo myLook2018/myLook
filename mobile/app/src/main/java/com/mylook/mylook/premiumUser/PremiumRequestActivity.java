@@ -38,6 +38,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.PremiumUser;
+import com.mylook.mylook.home.MyLookActivity;
+import com.mylook.mylook.profile.AccountActivity;
 import com.mylook.mylook.session.Session;
 import com.theartofdev.edmodo.cropper.CropImage;
 
@@ -375,7 +377,6 @@ public class PremiumRequestActivity extends AppCompatActivity {
                             mProgressBar.setVisibility(View.GONE);
                             displayMessage("Ya eres un usuario destacado");
                             setResult(SUCCESS_CODE);
-
                             Session.updateData();
                             Session.setIsPremium(true);
                             finish();
