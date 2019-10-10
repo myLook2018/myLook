@@ -40,10 +40,10 @@ exports.premiumUserBroadcast = functions.firestore
       console.log(newPublication.creationDate.seconds)
       const message = {
         data:{
-          "title": newPublication.premiumUserName+' publicó en su canal!', 
+          "title": newPublication.premiumUserName+' publicó en su canal!',
           "deepLink": "www.mylook.com/diffusionChannel",
-          "sound": "default", 
-          "topic": topic, 
+          "sound": "default",
+          "topic": topic,
           "userImage": newPublication.userPhotoUrl,
           "body": newPublication.message,
           "premiumUserName": newPublication.premiumUserName

@@ -1,0 +1,116 @@
+<div class="main-container  mat-typography">
+  <mat-card class="main-card">
+    <div class="title">
+        <h1>Selecciona tu Vidriera</h1>
+    <div class="selectionRow" style="display: inline-flex;">
+      <form autocomplete="off" class="formCss" [formGroup]="storefrontForm">
+        <mat-form-field class="inputs" appearance="outline">
+          <mat-select (selectionChange)="onOptionSelected($event)" [(value)]="this.activeStorefront" placeholder="Actualizando datos" [disabled]="this.isUpLoading">
+            <!-- <mat-option>Sin vidriera</mat-option> -->
+            <div formArrayName="storefronts" *ngFor="let control of storefrontForm.get('storefronts').controls; let i = index;">
+              <mat-option [value]="control?.value.name" (click)="setIndex(i)">{{control?.value.name}}</mat-option>
+            </div>
+          </mat-select>
+        </mat-form-field>
+        <div class="frontActions">
+            <button mat-icon-button class="actionIcon_colored" (click)="addNewStoreFront()"  [disabled]="this.isUpLoading || isEmptyFront()" [matTooltip]="tooltipMessage">
+                <mat-icon>add</mat-icon>
+            </button>
+            <button mat-icon-button class="actionIcon_colored" (click)="deleteItem()"  [disabled]="this.isUpLoading" [matTooltip]="deleteTooltip">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </div>
+      </form>
+      <mat-form-field class="searchBar" appearance="outline" style="margin-left: 4.2rem; width: 27rem">
+          <mat-label>Nuevo nombre de la vidriera</mat-label>
+          <input required type="text" matInput  [(ngModel)]="this.activeStorefront" (ngModelChange)="changeStorefrontName($event)"  [disabled]="this.isUpLoading">
+          <mat-hint align="end">Ninguna de tus vidrieras puede tener el nombre por defecto "Nueva Vidriera".</mat-hint>
+      </mat-form-field>
+    </div>
+
+    </div>
+    <div class="content">
+      <div class="front-example">
+        <mat-card>
+        <h2>Aqui verás una vista previa de cómo lucira tu vidriera</h2>
+        <div class="images">
+            <img class="coverPh" src={{actualStore?.coverPh}}>
+            <img class="profilePh" src={{actualStore?.profilePh}}>
+            <div class="frontPhotos-container">
+              <div *ngFor="let article of actualArticles">
+                <img *ngIf="isInSelected(article)" class="storefrontPhoto" src={{article?.picturesArray[0]}}>
+              </div>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+      <div class="articles-selector">
+        <mat-card>
+          <div class="selectHeader">
+        <h2>Selecciona los articulos de tu vidriera</h2>
+        <mat-form-field class="searchBar" appearance="outline">
+            <mat-label>Buscar por Código ó Nombre</mat-label>
+            <input type="text" matInput [(ngModel)]="this.filterText" (ngModelChange)="filterArticles($event)"  [disabled]="this.isUpLoading">
+            <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div>
+        <mat-table class="table" [dataSource]="dataSource">
+
+          <!-- Picture Column
+          <ng-container matColumnDef="picture">
+              <mat-header-cell *matHeaderCellDef><mat-icon>photo</mat-icon></mat-header-cell>
+              <mat-cell *matCellDef="let element"><img height="120" width="120" src={{element.picturesArray[0]}}> </mat-cell>
+          </ng-container> -->
+            <!-- code Column -->
+          <ng-container matColumnDef="code">
+              <mat-header-cell *matHeaderCellDef> Código </mat-header-cell>
+              <mat-cell *matCellDef="let element"> {{element.code}} </mat-cell>
+          </ng-container>
+          <!-- title Column -->
+          <ng-container matColumnDef="title">
+              <mat-header-cell *matHeaderCellDef > Titulo </mat-header-cell>
+              <mat-cell *matCellDef="let element"> {{element.title}} </mat-cell>
+          </ng-container>
+
+          <!-- actions Column -->
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef> Seleccionar </mat-header-cell>
+            <mat-cell *matCellDef="let element; let i = index">
+                <mat-checkbox (change)="addIdToSelecteds(element, $event)" [checked]="isInSelected(element)" [disabled]="(!isInSelected(element) && (this.selectedIndexes.length > 5)) || this.isUpLoading"></mat-checkbox>
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"></mat-row>
+        </mat-table>
+        </mat-card>
+      </div>
+    </div>
+    <mat-card-actions class="actions">
+        <button
+          [disabled]="isUpLoading"
+          type="button"
+
+          [ngClass]="{buttonDisabled: isUpLoading}"
+          mat-raised-button
+          (click)="goToInventory();"
+          >
+          Cancelar
+        </button>
+        <button
+          [disabled]="this.isUpLoading || isEmptyFront()"
+          class="activatedButton"
+          type="button"
+
+          [ngClass]="{buttonDisabled: (isUpLoading || isEmptyFront())}"
+          mat-raised-button
+          (click)="submitChanges()"
+          >
+          Aceptar
+        </button>
+      </mat-card-actions>
+      <div class="proggressBar">
+        <mat-progress-bar *ngIf="isUpLoading" mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>
+      </div>
+  </mat-card>
+</div>
+

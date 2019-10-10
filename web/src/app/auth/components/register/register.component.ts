@@ -93,6 +93,7 @@ export class RegisterComponent implements OnInit {
       this.router.navigateByUrl('/Registrarse');
     }
     this.createForm();
+    console.log('el form al INICIO', this.registerStoreFormGroupStep2.value);
     this.urlsProfile = [];
     this.urlsProfile.push('/assets/noProfilePic.png');
     this.urlsPortada = [];
@@ -113,7 +114,7 @@ export class RegisterComponent implements OnInit {
       autocomplete.addListener('place_changed', () => {
         this.ngZone.run(() => {
           // get the place result
-          let place: google.maps.places.PlaceResult = autocomplete.getPlace();
+          const place: google.maps.places.PlaceResult = autocomplete.getPlace();
 
           // verify result
           if (place.geometry === undefined || place.geometry === null) {
@@ -170,7 +171,7 @@ export class RegisterComponent implements OnInit {
     this.registerStoreFormGroupStep1 = this.fb.group({
       storeName: ['', Validators.required],
       storeMail: [this.email, Validators.email],
-      storePhone: ['', Validators.required]
+      storePhone: ['', Validators.required],
     });
     this.registerStoreFormGroupStep2 = this.fb.group({
       ownerName: [''],
@@ -186,8 +187,7 @@ export class RegisterComponent implements OnInit {
       facebookLink: [''],
       instagramLink: [''],
       twitterLink: [''],
-      provider: [''],
-      registerDate: ['']
+      provider: ['']
     });
 
     this.createUserForm();
@@ -259,9 +259,13 @@ export class RegisterComponent implements OnInit {
                     })
                     .then(() => {
                       this.buildFinalForm();
-                      console.log('formFinal', this.registerStoreFormGroup.value);
+                      const aux = this.registerStoreFormGroup.get('store') as FormGroup;
+                      aux.addControl('registerDate',
+                        new FormControl(new Date(), Validators.required)
+                      );
+                      console.log('formFinal', aux.value);
                       this.userService
-                        .addStore(this.registerStoreFormGroup.value.store)
+                        .addStore(aux.value)
                         .then(() => {
                           console.log('se registro la tienda');
                         });
@@ -326,8 +330,6 @@ export class RegisterComponent implements OnInit {
   buildFinalForm() {
     this.registerStoreFormGroupStep2.get('storeLatitude').setValue(this.latitude);
     this.registerStoreFormGroupStep2.get('storeLongitude').setValue(this.longitude);
-    this.registerStoreFormGroupStep2.get('registerDate').setValue(new Date);
-    debugger;
     const floor = this.registerStoreFormGroupStep2.get('storeFloor').value;
     this.registerStoreFormGroupStep2.get('storeFloor').setValue(floor.toString());
     const newValues = Object.assign(

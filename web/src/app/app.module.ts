@@ -43,7 +43,7 @@ import { StoreService } from './auth/services/store.service';
 import { MatDialogModule, MatSort, MatSortModule, MatNativeDateModule } from '@angular/material';
 import { DialogAlertComponent } from './dialog/dialog-alert/dialog-alert.component';
 import { MatChipsModule } from '@angular/material/chips';
-import { ArticleDialogComponent } from './articles/components/dialogs/articleDialog';
+import { StoreFrontComponent } from './articles/components/inventory/storeFront/storeFront';
 import { PromoteDialogComponent } from './articles/components/dialogs/promoteDialog';
 import { SuccesfulDialogComponent } from './dialog/succesful-dialog/succesful-dialog.component';
 import { DeleteConfirmationDialogComponent } from './articles/components/dialogs/deleteConfirmationDialog';
@@ -72,6 +72,7 @@ import { PolarAreaComponent } from './anylitics/components/polar-area/polar-area
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { TimelineComponent } from './anylitics/components/timeline/timeline.component';
 import { FrontDialogComponent } from './articles/components/dialogs/frontDialog';
+import { NewArticleComponent } from './articles/components/new-article/new-article.component';
 import { RatingModule } from 'primeng/rating';
 import { NewStoreService } from './store/service/store.service';
 import { PromotionsBarComponent } from './anylitics/components/promotions-bar/promotions-bar.component';
@@ -111,7 +112,7 @@ registerLocaleData(localeAR);
     InventoryComponent,
     SignupComponent,
     DialogAlertComponent,
-    ArticleDialogComponent,
+    StoreFrontComponent,
     SuccesfulDialogComponent,
     DeleteConfirmationDialogComponent,
     StoreComponent,
@@ -132,6 +133,7 @@ registerLocaleData(localeAR);
     MercadopagoComponent,
     SuccessComponent,
     ConfigurationsComponent,
+    NewArticleComponent
   ],
   imports: [
     HttpClientModule,
@@ -195,7 +197,7 @@ registerLocaleData(localeAR);
     { provide: LOCALE_ID, useValue: 'es-AR' },
     // ArticleResolver, StoreResolver,
     NewStoreService],
-  entryComponents: [FrontDialogComponent, PromoteDialogComponent, DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent,
+  entryComponents: [FrontDialogComponent, PromoteDialogComponent, DialogAlertComponent, SuccesfulDialogComponent,
     DeleteConfirmationDialogComponent, MapsDialogComponent, EditStoreComponent],
   bootstrap: [AppComponent]
 })
