@@ -26,6 +26,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
@@ -33,6 +34,7 @@ import com.mylook.mylook.entities.RequestRecommendation;
 import com.mylook.mylook.session.Session;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class RecommendFragment extends Fragment {
@@ -40,7 +42,6 @@ public class RecommendFragment extends Fragment {
     private FloatingActionButton fab;
     private Context mContext;
     private RecyclerView recyclerView;
-    private FirebaseFirestore dB;
     private static List<RequestRecommendation> requestRecommendationsList;
     public final static String TAG = "RecommendFragment";
     public static int NEW_REQUEST = 1;
@@ -54,7 +55,6 @@ public class RecommendFragment extends Fragment {
         Log.e(TAG, "OnViewCreated- savedInstance" + savedInstanceState);
         super.onViewCreated(view, savedInstanceState);
         mContext = view.getContext();
-        this.dB = FirebaseFirestore.getInstance();
         recyclerView = view.findViewById(R.id.recyclerViewRecommend);
         fab = view.findViewById(R.id.fab);
         progressBar = view.findViewById(R.id.progressBar);
@@ -136,8 +136,10 @@ public class RecommendFragment extends Fragment {
     public void getRequestRecommendations() {
         progressBar.setVisibility(View.VISIBLE);
         Log.e(TAG, "getRequestRecommendations");
-        dB.collection("requestRecommendations")
-                .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid()).orderBy("limitDate").get()
+        FirebaseFirestore.getInstance().collection("requestRecommendations")
+                .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .orderBy("isClosed", Query.Direction.ASCENDING)
+                .orderBy("limitDate").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
@@ -147,8 +149,15 @@ public class RecommendFragment extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 RequestRecommendation requestRecommendation = document.toObject(RequestRecommendation.class);
                                 requestRecommendation.setDocumentId(document.getId());
-                                Log.e("Request", requestRecommendation.getDocumentId());
-                                requestRecommendationsList.add(requestRecommendation);
+                                Calendar cal = Calendar.getInstance();
+                                cal.setTimeInMillis(requestRecommendation.getLimitDate());
+                                Calendar calNow = Calendar.getInstance();
+                                int daysDiff = cal.get(Calendar.DAY_OF_YEAR) - calNow.get(Calendar.DAY_OF_YEAR);
+                                Log.e("Days diff", ""+daysDiff);
+                                if ( (!requestRecommendation.getIsClosed() && cal.getTimeInMillis() > calNow.getTimeInMillis())
+                                        || ( daysDiff >= -7)) {
+                                    requestRecommendationsList.add(requestRecommendation);
+                                }
                             }
                             adapter.notifyDataSetChanged();
                         }

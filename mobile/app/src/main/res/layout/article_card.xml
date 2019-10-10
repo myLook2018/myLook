@@ -44,7 +44,8 @@
             android:paddingEnd="3dp"
             android:text="ad"
             android:textColor="@color/white"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:visibility="invisible" />
 
         <FrameLayout
             android:id="@+id/nearby_layout"

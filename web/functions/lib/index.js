@@ -30,35 +30,41 @@ admin.initializeApp(functions.config().firebase);
  * @param snap.before.data() JSON del documento previo al cambio
  * @param snap.after.data() JSON del documento posterior al cambio
  */
-exports.pushNotifications = functions.firestore
-  .document('requestRecommendations/{docId}')
+exports.premiumUserBroadcast = functions.firestore
+  .document('diffusionMessages/{docId}')
   .onWrite((snap, context) => {
-    const newValue = snap.after.data();
-    const previousValue = snap.before.data();
-    const newAnswer = newValue.answers;
-    const oldAnswer = previousValue.answers;
-    if (newAnswer.length > oldAnswer.length) {
-      const title = newValue.title;
-      const desc = newAnswer[newAnswer.length - 1].description;
-      const storeName = newAnswer[newAnswer.length - 1].storeName;
-      const payload = {
-        notification: {
-          title: 'Nueva Recomendación para ' + title + ' de ' + storeName,
-          body: desc,
-          sound: 'default'
-        }
-      };
-      const options = {
-        priority: 'high',
-        timeToLive: 60 * 60 * 24
-      };
-      return { p: payload, o: options };
+    const newPublication = snap.after.data();
+    const topic = newPublication.topic
+    console.log(JSON.stringify(newPublication))
+    return admin.firestore().doc('clients/'+newPublication.clientId).get().then( snapshot => {
+      console.log(newPublication.creationDate.seconds)
+      const message = {
+        data:{
+          "title": newPublication.premiumUserName+' publicó en su canal!', 
+          "deepLink": "www.mylook.com/diffusionChannel",
+          "sound": "default", 
+          "topic": topic, 
+          "userImage": newPublication.userPhotoUrl,
+          "body": newPublication.message,
+          "premiumUserName": newPublication.premiumUserName
+        },
+        "topic": topic
+      }
+
       return admin
-        .messaging()
-        .sendToTopic('pushNotifications', payload, options);
-    }
-    return 'Didnt write new recommendations';
+      .messaging()
+        .send(message)
+          .then((response) => {
+              // Response is a message ID string.
+              console.log('Successfully sent message:', response);
+          })
+          .catch((error) => {
+              console.log('Error sending message:', error);
+          });
+
+    })
   });
+
 exports.newAnswerNotification = functions.firestore
   .document('requestRecommendations/{docId}')
   .onWrite((snap, context) => {

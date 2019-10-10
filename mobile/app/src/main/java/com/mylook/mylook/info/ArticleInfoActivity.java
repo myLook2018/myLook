@@ -6,7 +6,11 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
+
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,6 +52,13 @@ public class ArticleInfoActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_details);
+        Toolbar tb = findViewById(R.id.toolbar);
+        tb.setTitle("Detalle del Articulo");
+        setSupportActionBar(tb);
+        ActionBar ab = getSupportActionBar();
+        if(ab !=null){
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
         invalidateOptionsMenu();
         getArticleFromIntent();
     }

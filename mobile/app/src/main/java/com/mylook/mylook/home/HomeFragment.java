@@ -2,9 +2,12 @@ package com.mylook.mylook.home;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.ActionProvider;
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -24,6 +27,7 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -32,9 +36,11 @@ import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
+import com.mylook.mylook.entities.Notification;
 import com.mylook.mylook.entities.PremiumUser;
 import com.mylook.mylook.entities.Subscription;
 import com.mylook.mylook.login.LoginActivity;
+import com.mylook.mylook.notifications.NotificationCenter;
 import com.mylook.mylook.profile.AccountActivity;
 import com.mylook.mylook.utils.CardsHomeFeedAdapter;
 
@@ -46,12 +52,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import ru.nikartm.support.BadgePosition;
+import ru.nikartm.support.ImageBadgeView;
+
 public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private CardsHomeFeedAdapter adapter;
     private static List<Object> list;
     private ArrayList<Subscription> subscriptionList;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private ProgressBar mProgressBar;
     private ImageView starImage;
     private TextView emptyArticles;
     private SwipeRefreshLayout refreshLayout;
@@ -59,7 +67,11 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private Context mContext;
     final static String TAG = "HomeFragment";
     private static HomeFragment homeInstance;
-
+    private TextView textCartItemCount;
+    private int notificationCount = 0;
+    private ImageBadgeView notificationItem;
+    private View notifications;
+    private TextView txtViewCount;
     public static HomeFragment getInstance() {
         if (homeInstance == null) {
             homeInstance = new HomeFragment();
@@ -87,7 +99,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         setHasOptionsMenu(true);
         mContext = getContext();
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view_content);
-        mProgressBar = view.findViewById(R.id.home_progress_bar);
         starImage = view.findViewById(R.id.empty_star);
         emptyArticles = view.findViewById(R.id.emptyText);
 
@@ -100,25 +111,64 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         refreshLayout = view.findViewById(R.id.refresh_layout_home);
         refreshLayout.setOnRefreshListener(this);
-
         loadFragment();
-        /*setupFirebaseAuth();
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            mProgressBar.setVisibility(View.VISIBLE);
-            loadFragment();
-        } else {
-            mProgressBar.setVisibility(View.GONE);
-        }*/
     }
 
     private void loadFragment() {
-        readSubscriptions();
+        readSubscriptions(false);
         updateInstallationToken();
+    }
+
+    private void countNotifications(){
+
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.home_menu, menu);
+        notifications = menu.findItem(R.id.notifications_menu).getActionView();
+        notifications.setOnClickListener(l -> {
+            Intent intent = new Intent(getContext(), NotificationCenter.class);
+            startActivity(intent);
+        });
+        txtViewCount = (TextView) notifications.findViewById(R.id.txtCount);
+        txtViewCount.setOnClickListener(l -> {
+            Intent intent = new Intent(getContext(), NotificationCenter.class);
+            startActivity(intent);
+        });
+        FirebaseFirestore.getInstance().collection("notifications")
+                .whereEqualTo("userId", FirebaseAuth.getInstance().getUid())
+                .whereEqualTo("openedNotification", false)
+                .orderBy("creationDate", Query.Direction.DESCENDING)
+                .get().addOnSuccessListener(v -> {
+            notificationCount = v.getDocuments().size();
+            if (notificationCount > 0){
+                txtViewCount.setVisibility(View.VISIBLE);
+                Log.e("Notifications", ""+v.getDocuments().size());
+                txtViewCount.setText(String.valueOf(notificationCount));
+            } else {
+                txtViewCount.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        FirebaseFirestore.getInstance().collection("notifications")
+                .whereEqualTo("userId", FirebaseAuth.getInstance().getUid())
+                .whereEqualTo("openedNotification", false)
+                .orderBy("creationDate", Query.Direction.DESCENDING)
+                .get().addOnSuccessListener(v -> {
+            notificationCount = v.getDocuments().size();
+            if (notificationCount > 0){
+                txtViewCount.setVisibility(View.VISIBLE);
+                Log.e("Notifications", ""+v.getDocuments().size());
+                txtViewCount.setText(String.valueOf(notificationCount));
+            } else {
+                txtViewCount.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override
@@ -127,6 +177,9 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         if (id == R.id.settings_menu) {
             Intent intent = new Intent(getContext(), AccountActivity.class);
             startActivityForResult(intent,1);
+        } else if (id == R.id.notifications_menu){
+            Intent intent = new Intent(getContext(), NotificationCenter.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -144,15 +197,11 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onStart() {
         super.onStart();
-        //FirebaseAuth.getInstance().addAuthStateListener(mAuthListener);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        /*if (mAuthListener != null) {
-            FirebaseAuth.getInstance().removeAuthStateListener(mAuthListener);
-        }*/
     }
 
     private void checkCurrentUser(FirebaseUser user) {
@@ -183,19 +232,21 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                         Map<String, Object> update = new HashMap<>();
                         update.put("installToken", mToken);
                         FirebaseFirestore.getInstance().collection("clients").document(task.getResult().getDocuments().get(0).getId()).set(update, SetOptions.merge());
-                        mProgressBar.setVisibility(View.GONE);
                     }
                 });
             });
     }
 
-    public void readSubscriptions() {
+    public void readSubscriptions(boolean isRefresh) {
         //Devuelve los ultimos meses, TODO Cambiar esto para probar en serio
         final Calendar myCalendar = Calendar.getInstance();
         myCalendar.set(Calendar.MONTH, myCalendar.get(Calendar.MONTH) - 7);
         Log.e(TAG, list.toString());
         Log.e(TAG, "Begin read Subscriptions- Uid:" + FirebaseAuth.getInstance().getCurrentUser());
-        if (list.size() == 0) {
+        if(isRefresh){
+            list.clear();
+        }
+        if (list.size() == 0 ) {
             FirebaseFirestore.getInstance().collection("subscriptions")
                     .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .get()
@@ -210,12 +261,12 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                             .orderBy("creationDate", Query.Direction.DESCENDING)
                                             .whereGreaterThan("creationDate", myCalendar.getTime())
                                             .get().addOnCompleteListener(task12 -> {
-                                        if (task12.isSuccessful() && task.getResult() != null) {
-                                            for (QueryDocumentSnapshot documentSnapshot : task12.getResult()) {
+                                        if (task12.isSuccessful() && task.getResult() != null) {// Si se usa esta lista están ordenados por fecha
+                                            /*for (QueryDocumentSnapshot documentSnapshot : task12.getResult()) {
                                                 Article art = documentSnapshot.toObject(Article.class);
                                                 art.setArticleId(documentSnapshot.getId());
-                                                //list.add(art); // Si se usa esta lista están ordenados por fecha
-                                            }
+                                                list.add(art);
+                                            }*/
 
                                             if (createArticleList(task12.getResult())) { //Con esta por la probabilidad de las promos, pero no por fecha
                                                 /*for (Article art : list) {
@@ -228,7 +279,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                                 emptyArticles.setVisibility(View.VISIBLE);
                                                 starImage.setVisibility(View.VISIBLE);
                                             }
-                                            mProgressBar.setVisibility(View.GONE);
                                         } else {
                                             Log.e("Firestore task", "onComplete: " + task12.getException());
                                         }
@@ -237,7 +287,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                             } else {
                                 emptyArticles.setVisibility(View.VISIBLE);
                                 starImage.setVisibility(View.VISIBLE);
-                                mProgressBar.setVisibility(View.GONE);
                             }
                         }
                     });
@@ -260,6 +309,13 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                         // TODO ver esto
                                         PremiumUser premiumUser = documentSnapshot.toObject(PremiumUser.class);
                                         list.add(premiumUser);
+                                    }
+                                    if(list.isEmpty()){
+                                        emptyArticles.setVisibility(View.VISIBLE);
+                                        starImage.setVisibility(View.VISIBLE);
+                                    } else {
+                                        emptyArticles.setVisibility(View.GONE);
+                                        starImage.setVisibility(View.GONE);
                                     }
                                     adapter.notifyDataSetChanged();
                                     Log.e("On complete", "Tamaño adapter " + adapter.getItemCount());
@@ -391,6 +447,16 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onRefresh() {
-        readSubscriptions();
+        try{
+            readSubscriptions(true);
+        }catch (Exception e)
+        {
+            list.clear();
+            Log.e(TAG, "Problema refrescando");
+        }
+    }
+
+    public void clear() {
+        list.clear();
     }
 }

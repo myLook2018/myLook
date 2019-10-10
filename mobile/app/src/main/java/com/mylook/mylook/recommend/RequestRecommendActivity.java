@@ -45,7 +45,6 @@ public class RequestRecommendActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private TextView txtLimitDate;
     private ArrayList<HashMap<String, String>> answers;
-    private FirebaseFirestore dB;
     private String requestId;
     private boolean isClosed = false;
     private Menu optionsMenu;
@@ -67,9 +66,8 @@ public class RequestRecommendActivity extends AppCompatActivity {
         txtDescription = findViewById(R.id.txtRecommendDescpription);
         txtTitle = findViewById(R.id.txtRecommendTitle);
         txtLimitDate = findViewById(R.id.txtDate);
-        this.dB = FirebaseFirestore.getInstance();
         getIncomingIntent();
-        invalidateOptionsMenu();
+        //invalidateOptionsMenu();
     }
 
     private void initRecyclerView(ArrayList<HashMap<String, String>> answerList) {
@@ -106,7 +104,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
         }
         //ACA LLEGA DISTINTO
         Log.e(TAG, "requestId"+requestId);
-        dB.collection("requestRecommendations").document(requestId).get().addOnCompleteListener(
+        FirebaseFirestore.getInstance().collection("requestRecommendations").document(requestId).get().addOnCompleteListener(
                 new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -114,18 +112,23 @@ public class RequestRecommendActivity extends AppCompatActivity {
                             DocumentSnapshot doc = task.getResult();
                             txtDescription.setText(doc.get("description").toString());
                             txtTitle.setText(doc.get("title").toString());
-                            Calendar cal = Calendar.getInstance();
-                            cal.setTimeInMillis((long) doc.get("limitDate"));
-                            int mes = cal.get(Calendar.MONTH) + 1;
-                            final String dateFormat = cal.get(Calendar.DAY_OF_MONTH) + "/" + mes + "/" + cal.get(Calendar.YEAR);
-                            txtLimitDate.setText("Hasta el " + dateFormat);
+                            isClosed = (boolean) doc.get("isClosed");
+                            if(isClosed){
+                                txtLimitDate.setText("Cerrada");
+                            }else {
+                                Calendar cal = Calendar.getInstance();
+                                cal.setTimeInMillis((long) doc.get("limitDate"));
+                                int mes = cal.get(Calendar.MONTH) + 1;
+                                final String dateFormat = cal.get(Calendar.DAY_OF_MONTH) + "/" + mes + "/" + cal.get(Calendar.YEAR);
+                                txtLimitDate.setText("Hasta el " + dateFormat);
+                            }
                             setImage(doc.get("requestPhoto").toString());
                             answers = (ArrayList<HashMap<String, String>>) doc.get("answers");
-                            isClosed = (boolean) doc.get("isClosed");
                             initRecyclerView(answers);
                         } else {
                             Log.e(TAG, "busqueda not succesful");
                         }
+                        invalidateOptionsMenu();
                     }
                 }
         );
@@ -142,7 +145,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
 
 
     private void updateAnswers(){
-        dB.collection("requestRecommendations").document(requestId).update("answers", answers).addOnCompleteListener(
+        FirebaseFirestore.getInstance().collection("requestRecommendations").document(requestId).update("answers", answers).addOnCompleteListener(
                 new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -156,7 +159,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        dB.collection("requestRecommendations").document(requestId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        FirebaseFirestore.getInstance().collection("requestRecommendations").document(requestId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot doc = task.getResult();
@@ -177,7 +180,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
                 updateAnswers();
             }
         });
-        dB.collection("answeredRecommendations").whereEqualTo("requestUID", requestId).get()
+        FirebaseFirestore.getInstance().collection("answeredRecommendations").whereEqualTo("requestUID", requestId).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -185,7 +188,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
                             for (DocumentSnapshot doc:task.getResult().getDocuments()){
                                 if(doc.get("storeName").equals(answer.get("storeName")))
                                 {
-                                    dB.collection("answeredRecommendations").document(doc.getId()).update("feedBack", answer.get("feedBack"));
+                                    FirebaseFirestore.getInstance().collection("answeredRecommendations").document(doc.getId()).update("feedBack", answer.get("feedBack"));
                                 }
 
                             }
@@ -207,19 +210,9 @@ public class RequestRecommendActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(!isClosed) {
-            getMenuInflater().inflate(R.menu.request_recommendation_menu, menu);
-            // Locate MenuItem with ShareActionProvider
-            MenuItem item = menu.findItem(R.id.share_req);
-
-            // Fetch and store ShareActionProvider
-            //mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-        } else {
-//            menu.getItem(0).setVisible(false);
-//            menu.getItem(1).setVisible(false);
-//            menu.getItem(2).setVisible(false);
-//            menu.getItem(3).setVisible(false);
-            return false;
+        getMenuInflater().inflate(R.menu.request_recommendation_menu, menu);
+        if(isClosed) {
+            menu.findItem(R.id.close_req).setVisible(false); // si ya esta cerrada no muestro la opcion
         }
         return true;
     }
@@ -245,7 +238,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
                     .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                            dB.collection("requestRecommendations").document(requestId).update("isClosed", true).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            FirebaseFirestore.getInstance().collection("requestRecommendations").document(requestId).update("isClosed", true).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     Toast.makeText(getApplicationContext(),"Tu pedido ha sido cerrado", Toast.LENGTH_LONG).show();

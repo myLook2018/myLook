@@ -44,8 +44,6 @@ class ExploreService {
     private static final int LOWER_LIMIT_OF_3_IN_1_3 = 105; // 1/3
 
     private String userUid;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
     private LocalInteractionDAO localDAO;
     private ArrayList<Interaction> interactions;
     private List<LocalInteraction> allLocalInteractions;
@@ -222,7 +220,7 @@ class ExploreService {
         //Calendar cal = Calendar.getInstance();
         //cal.add(Calendar.DATE, -14);
         //Date dateBefore2Weeks = cal.getTime();
-        return db.collection("articles")
+        return FirebaseFirestore.getInstance().collection("articles")
                 //.whereGreaterThan("creationDate", dateBefore2Weeks) Le saque el filtro para que aparecieran
                 .get();
     }
@@ -232,14 +230,14 @@ class ExploreService {
         //Calendar cal = Calendar.getInstance();
         //cal.add(Calendar.DATE, -14);
         //Date dateBefore2Weeks = cal.getTime();
-        return db.collection("premiumPublications")
+        return FirebaseFirestore.getInstance().collection("premiumPublications")
                 //.whereGreaterThan("creationDate", dateBefore2Weeks) Le saque el filtro para que aparecieran
                 .get();
     }
 
     void uploadInteractions() {
         for (Interaction interaction : interactions) {
-            db.collection("interactions").add(interaction);
+            FirebaseFirestore.getInstance().collection("interactions").add(interaction);
         }
         interactions.clear();
         for (LocalInteraction localInteraction : currentLocalInteractions) {

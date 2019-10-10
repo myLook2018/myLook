@@ -57,15 +57,17 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
         final String dateFormat = cal.get(Calendar.DAY_OF_MONTH) + "/" + mes + "/" + cal.get(Calendar.YEAR);
         Calendar today = Calendar.getInstance();
         int daysLeft = (int) TimeUnit.MILLISECONDS.toDays(cal.getTime().getTime() - today.getTime().getTime());
-        if(requestRecommendation.getIsClosed()){
+        if(requestRecommendation.getIsClosed() || daysLeft < 0){
             holder.txtDate.setText("Cerrada");
         } else {
             if(daysLeft == 0){
                 holder.txtDate.setText("Último día");
             } else if (daysLeft > 1) {
                 holder.txtDate.setText("Faltan " + daysLeft + " días");
-            } else {
-                holder.txtDate.setText("Falta " + daysLeft + " día");
+            } else if(daysLeft<0){  // si no se cerro desde la cloud function
+                holder.txtDate.setText("Cerrada");
+            }else {
+                holder.txtDate.setText("Faltan " + daysLeft + " días");
             }
         }
         holder.titleRequest.setText(requestRecommendation.getTitle());

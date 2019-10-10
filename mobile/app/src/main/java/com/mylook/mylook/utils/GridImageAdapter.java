@@ -62,7 +62,7 @@ public class GridImageAdapter extends ArrayAdapter {
         String imgUrl;
         if (publications == null) {
             final Article art = (Article) getItem(position);
-            imgUrl = art.getPicture();
+            imgUrl = art.getPicturesArray().get(0);
             holder.image.setOnClickListener(v -> {
                 Intent intent = new Intent(mContext, ArticleInfoActivity.class);
                 intent.putExtra("article", art);
