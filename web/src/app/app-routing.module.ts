@@ -14,6 +14,7 @@ import { DashboardComponent } from './anylitics/components/dashboard/dashboard.c
 import { HomePageComponent } from './home-page/home-page.component';
 import { NgModule } from '@angular/core';
 import { ConfigurationsComponent } from './store/components/configurations/configurations.component';
+import { StoreFrontComponent } from './articles/components/inventory/storeFront/storeFront';
 
 export const rootRouterConfig: Routes = [
  // { path: '', component: HomePageComponent},
@@ -30,6 +31,7 @@ export const rootRouterConfig: Routes = [
       { path: 'Tiendas/:storeName/Ver-Articulo/:id', component: NewArticleComponent, resolve: { data: UserResolver }},
       { path: 'Tiendas/:storeName/Editar-Articulo/:id', component: NewArticleComponent, resolve: { data: UserResolver }},
       { path: 'Tiendas/:storeName/Nuevo-Articulo', component: NewArticleComponent, resolve: { data: UserResolver }},
+      { path: 'Tiendas/:storeName/Vidriera', component: StoreFrontComponent, resolve: { data: UserResolver }},
     ]},
   { path: 'Ingresar', component: LoginComponent},
   { path: 'Registrarse', component: SignupComponent},

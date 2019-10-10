@@ -22,6 +22,8 @@ export class StoreModel {
   storeLongitude: number;
   storeTower: string;
   storeDept: string;
+  storefronts: Array<any>;
+  registerDate: Date;
 
   constructor() {
     this.firebaseUID = '';
@@ -47,5 +49,7 @@ export class StoreModel {
     this.storeLongitude = 0;
     this.storeTower = '';
     this.storeDept = '';
+    this.storefronts = [];
+    this.registerDate = new Date();
   }
 }

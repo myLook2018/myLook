@@ -14,7 +14,7 @@
                             (click)="cancelSetting()">Cancelar</button>
                         <button id="uploadArticle" mat-flat-button *ngIf="selectionMode" (click)="setVidriera()">Aceptar</button>
                         <button style="margin-right:5px" id="uploadArticle" mat-flat-button *ngIf="!selectionMode"
-                            (click)="openStoreFrontDialog()">Elije tu vidriera</button>
+                            (click)="goToStoreFront()">Elije tu vidriera</button>
                         <button id="uploadArticle" mat-flat-button [disabled]="selectionMode" *ngIf="!selectionMode"
                             (click)="goToAddArticle()">Subir Prenda</button>
                     </div>
@@ -89,26 +89,27 @@
                     <ng-container matColumnDef="actions">
                         <mat-header-cell *matHeaderCellDef> Acciones </mat-header-cell>
                         <mat-cell *matCellDef="let element; let i = index">
+                            <button *ngIf="!selectionMode"
+                                matTooltip="Prenda Promocionada"
+                                [matTooltipDisabled]="(element.promotionLevel==1)"
+                                mat-icon-button
+                                [ngClass]="(element.promotionLevel==1)?'actionIcon':'actionIcon-Promoted'" (click)="openPromoteDialog(element, $event)">
+                              <mat-icon>whatshot</mat-icon>
+                            </button>
+                            <button *ngIf="!selectionMode" mat-icon-button class="actionIcon_colored" (click)="goToEdit(element, $event)">
+                              <mat-icon>edit</mat-icon>
+                            </button>
                             <button *ngIf="!selectionMode" mat-icon-button class="actionIcon_colored" (click)="openConfirmationDialog(element, $event)">
                                 <mat-icon>delete</mat-icon>
                             </button>
-                            <button *ngIf="!selectionMode" mat-icon-button class="actionIcon_colored" (click)="goToEdit(element, $event)">
-                                <mat-icon>edit</mat-icon>
-                            </button>
-                            <button *ngIf="!selectionMode"
-                                      matTooltip="Prenda Promocionada"
-                                      [matTooltipDisabled]="(element.promotionLevel==1)"
-                                     mat-icon-button
-                                     [ngClass]="(element.promotionLevel==1)?'actionIcon':'actionIcon-Promoted'" (click)="openPromoteDialog(element, $event)">
-                                <mat-icon>whatshot</mat-icon>
-                            </button>
-                            <mat-checkbox *ngIf="selectionMode" (change)="addIdToSelecteds(i, $event)" (click)="stop($event)" ></mat-checkbox>
+
+                            <!-- <mat-checkbox *ngIf="selectionMode" (change)="addIdToSelecteds(i, $event)" (click)="stop($event)" ></mat-checkbox> -->
 
                         </mat-cell>
                     </ng-container>
 
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                    <mat-row *matRowDef="let row; columns: displayedColumns; let i = index" (click)="showInformation(row)"></mat-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"></mat-row>
                 </mat-table>
             </div>
           </div>

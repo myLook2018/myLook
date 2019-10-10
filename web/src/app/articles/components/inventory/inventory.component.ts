@@ -2,7 +2,6 @@ import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Article } from '../../models/article';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { StoreFrontDialogComponent } from '../dialogs/storeFrontDialog';
 import {
   MatDialog,
   MatTableDataSource,
@@ -30,7 +29,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
   sortOrder = 'asc';
   over: any;
   options: FormGroup;
-  storeFront: FormGroup;
+  // storeFront: FormGroup;
   articlesToGenerateFront: Article[] = [];
   FirebaseUser = new StoreModel();
   userStore = new StoreModel();
@@ -47,7 +46,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    this.createForm();
+    // this.createForm();
     this.options = fb.group({
       hideRequired: false,
       floatLabel: 'never'
@@ -103,15 +102,15 @@ export class InventoryComponent implements OnInit, OnDestroy {
     }
   }
 
-  createForm() {
-    this.storeFront = this.fb.group({
-      // completar los datos de la prenda
-    });
-  }
+  // createForm() {
+  //   this.storeFront = this.fb.group({
+  //     // completar los datos de la prenda
+  //   });
+  // }
 
-  deleteForm() {
-    this.storeFront = undefined;
-  }
+  // deleteForm() {
+  //   this.storeFront = undefined;
+  // }
 
   deleteArticle(article) {
     this.articleService.deleteArticle(article);
@@ -284,8 +283,8 @@ export class InventoryComponent implements OnInit, OnDestroy {
   }
 
   addIdToSelecteds(row, event) {
-    console.log('row',row);
-    console.log('event',event);
+    console.log('row', row);
+    console.log('event', event);
     const index = this.selectedIndexes.indexOf(this.articles[row].articleId, 0);
     if (index > -1) {
       this.selectedIndexes.splice(index, 1);
@@ -335,21 +334,21 @@ export class InventoryComponent implements OnInit, OnDestroy {
     this.router.navigate([`/Tiendas/${this.userStore.storeName}/Ver-Articulo/${article.articleId}`]);
   }
 
-  openStoreFrontDialog (article) {
-     const dataToSend = {
-      storeProfilePicture: this.userStore.profilePh,
-      storeBackPhoto: this.userStore.coverPh,
-      articles: this.articles
-    }
+  // openStoreFrontDialog (article) {
+  //    const dataToSend = {
+  //     storeProfilePicture: this.userStore.profilePh,
+  //     storeBackPhoto: this.userStore.coverPh,
+  //     articles: this.articles
+  //   }
 
-    const dialogRef = this.dialog.open(StoreFrontDialogComponent, {
-      width: '1500px',
-      height: '900px',
-      data: dataToSend
-    });
+  //   const dialogRef = this.dialog.open(StoreFrontDialogComponent, {
+  //     width: '1500px',
+  //     height: '900px',
+  //     data: dataToSend
+  //   });
 
-    dialogRef.afterClosed().subscribe(result => {});
-  }
+  //   dialogRef.afterClosed().subscribe(result => {});
+  // }
 
   goToEdit(article) {
     event.stopPropagation();
@@ -359,5 +358,10 @@ export class InventoryComponent implements OnInit, OnDestroy {
   goToAddArticle() {
     console.log('Yendo a ver articulos', `/Tiendas/${this.userStore.storeName}/Nuevo-Articulo/`);
     this.router.navigate([`/Tiendas/${this.userStore.storeName}/Nuevo-Articulo`]);
+  }
+
+  goToStoreFront() {
+    console.log('Yendo a elegir vidriera');
+    this.router.navigate([`/Tiendas/${this.userStore.storeName}/Vidriera`]);
   }
 }

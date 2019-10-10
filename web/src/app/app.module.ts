@@ -43,7 +43,7 @@ import { StoreService } from './auth/services/store.service';
 import { MatDialogModule, MatSort, MatSortModule, MatNativeDateModule } from '@angular/material';
 import { DialogAlertComponent } from './dialog/dialog-alert/dialog-alert.component';
 import { MatChipsModule } from '@angular/material/chips';
-import { StoreFrontDialogComponent } from './articles/components/dialogs/storeFrontDialog';
+import { StoreFrontComponent } from './articles/components/inventory/storeFront/storeFront';
 import { PromoteDialogComponent } from './articles/components/dialogs/promoteDialog';
 import { SuccesfulDialogComponent } from './dialog/succesful-dialog/succesful-dialog.component';
 import { DeleteConfirmationDialogComponent } from './articles/components/dialogs/deleteConfirmationDialog';
@@ -112,7 +112,7 @@ registerLocaleData(localeAR);
     InventoryComponent,
     SignupComponent,
     DialogAlertComponent,
-    StoreFrontDialogComponent,
+    StoreFrontComponent,
     SuccesfulDialogComponent,
     DeleteConfirmationDialogComponent,
     StoreComponent,
@@ -197,7 +197,7 @@ registerLocaleData(localeAR);
     { provide: LOCALE_ID, useValue: 'es-AR' },
     // ArticleResolver, StoreResolver,
     NewStoreService],
-  entryComponents: [FrontDialogComponent, PromoteDialogComponent, DialogAlertComponent, StoreFrontDialogComponent, SuccesfulDialogComponent,
+  entryComponents: [FrontDialogComponent, PromoteDialogComponent, DialogAlertComponent, SuccesfulDialogComponent,
     DeleteConfirmationDialogComponent, MapsDialogComponent, EditStoreComponent],
   bootstrap: [AppComponent]
 })

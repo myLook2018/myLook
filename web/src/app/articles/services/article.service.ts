@@ -28,6 +28,7 @@ export class ArticleService {
   storeFrontPath = 'storeFronts';
   mercadoPagoPath = 'promotion';
   promotePath = 'promotions';
+  storeCollectionPath = 'stores';
   db: any;
   require: any;
 
@@ -235,5 +236,16 @@ export class ArticleService {
           reject(error);
         });
     });
+  }
+
+  updateStorefront(storeId, storefrontsNew) {
+    return this.fst.collection(this.storeCollectionPath).doc(storeId).update(({
+      storefronts: storefrontsNew
+      })).then(function () {
+        console.log('actualizados los storeFronts');
+      }).catch(function (error) {
+        // The document probably doesn't exist.
+        console.error('Error updating document: ', error);
+      });
   }
 }

@@ -92,7 +92,7 @@ export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
           this.loadImagesToCrop(pictureArray);
           if (this.isEditMode) { this.changeToEdit(); }
         });
-      } else { this.createForm()}
+      } else { this.createForm(); }
   }
 
   ngOnInit() {
@@ -115,7 +115,6 @@ export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
       colors: [{value: [], disabled: this.isFormDisabled}],
       cost: [{value: '', disabled: this.isFormDisabled}, Validators.required],
       creationDate: [new Date, Validators.required],
-      estaEnVidriera: [false],
       initial_stock: [{value: null, disabled: this.isFormDisabled}, Validators.required],
       material: [{value: '', disabled: this.isFormDisabled}, Validators.required],
       picturesArray: [[]],
@@ -127,7 +126,8 @@ export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
       storeName: [],
       tags: [{value: [], disabled: this.isFormDisabled}],
       title: [{value: '', disabled: this.isFormDisabled}, Validators.required],
-      isStoreFront: [{value: false, disabled: this.isFormDisabled}, Validators.required]
+      isStoreFront: [ false, Validators.required],
+      storefronts: [[]]
     });
   }
 
@@ -232,7 +232,7 @@ export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
     const croppers = [crop1, crop2, crop3];
     console.log('crops', croppers);
     for (let index = 0; index < this.isLoadedImage.length; index++) {
-      if(this.isLoadedImage[index]) {
+      if (this.isLoadedImage[index]) {
         try {
           croppers[index].crop();
         } catch (error) {
@@ -292,9 +292,9 @@ export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.isUpLoading = true;
     console.log('las imagenes ', this.croppedImage);
-    let imagesToUpload: File[] = [];
+    const imagesToUpload: File[] = [];
     this.croppedImage.forEach(photo => {
-      //delete
+      // delete
       console.log('photo ', photo);
       const sub: string = photo.substr(22);
       console.log('sub ', sub);
