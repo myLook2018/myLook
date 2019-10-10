@@ -194,6 +194,7 @@ public class EditInfoActivity extends AppCompatActivity {
                             oldUser = userInDB;
                             mProgressBar.setVisibility(View.GONE);
                             if(userInDB.getProvider() != null){
+                                txtPrivAcc.setVisibility(View.GONE);
                                 txtChangePassword.setEnabled(false);
                                 txtChangePassword.setVisibility(View.GONE);
                             }
