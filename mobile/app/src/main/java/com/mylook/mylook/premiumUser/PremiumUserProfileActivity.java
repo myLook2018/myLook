@@ -42,7 +42,7 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_store_final);
         tab = findViewById(R.id.tab);
         Toolbar tb =  findViewById(R.id.toolbar);
-        tb.setTitle("Usuario Destacado");
+        tb.setTitle("");
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
         if(ab !=null){

@@ -44,7 +44,7 @@ public class SearchableActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
         Toolbar tb = findViewById(R.id.toolbar);
-        tb.setTitle("Tu busqueda");
+        tb.setTitle("Tu búsqueda");
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);

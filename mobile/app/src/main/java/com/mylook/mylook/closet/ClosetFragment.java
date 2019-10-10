@@ -89,7 +89,7 @@ public class ClosetFragment extends Fragment {
 
     private void setupViewPager(ViewPager viewPager) {
         ClosetTabAdapter adapter = new ClosetTabAdapter(getChildFragmentManager());
-        adapter.addFragment(favoritesTab, "Favoritos");
+        adapter.addFragment(favoritesTab, "Prendas");
         adapter.addFragment(outfitsTab, "Conjuntos");
         viewPager.setAdapter(adapter);
         adapter.notifyDataSetChanged();

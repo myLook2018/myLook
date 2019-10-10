@@ -67,11 +67,11 @@ public class MyLookActivity extends AppCompatActivity implements BottomNavigatio
                 fragment = ExploreFragment.getInstance();
                 break;
             case R.id.ic_recommend:
-                ((Toolbar) findViewById(R.id.main_toolbar)).setTitle("Recomendaciones Solicitadas");
+                ((Toolbar) findViewById(R.id.main_toolbar)).setTitle("Recomendaciones");
                 fragment = RecommendFragment.getInstance();
                 break;
             case R.id.ic_closet:
-                ((Toolbar) findViewById(R.id.main_toolbar)).setTitle("Ropero");
+                ((Toolbar) findViewById(R.id.main_toolbar)).setTitle("Favoritos");
                 fragment = ClosetFragment.getInstance();
                 break;
             case R.id.ic_premium:
