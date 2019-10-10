@@ -6,8 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,36 +28,41 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Subscription;
 
-public class PremiumUserInfoFragment extends Fragment{
-    private  boolean isCurrentUser;
+import java.util.Calendar;
+import java.util.Date;
+
+public class PremiumUserInfoFragment extends Fragment {
+    private boolean isCurrentUser;
     private FirebaseUser user;
-    private FirebaseFirestore dB;
     private ImageView profilePhoto;
-    private Button btnSubscribe,btnMoreInfo;
+    private Button btnSubscribe, btnMoreInfo;
     private TextView premiumName;
     private TextView txtEmail;
     private Context context;
     private String clientId;
     private boolean mSubscribed;
-    private String documentId="";
+    private String documentId = "";
     private TextView txtLocalization;
-    private TextView txtFacebook,txtInstagram;
-    private LinearLayout lnlface,lnlInsta;
+    private TextView txtFacebook, txtInstagram;
+    private LinearLayout lnlface, lnlInsta;
+    private TextView lblDate;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
     @SuppressLint("ValidFragment")
-    public PremiumUserInfoFragment(Context context, String clientId, boolean isCurrentUser) {
-        dB = FirebaseFirestore.getInstance();
+    public PremiumUserInfoFragment(String clientId, boolean isCurrentUser) {
         user = FirebaseAuth.getInstance().getCurrentUser();
-        this.context=context;
-        this.clientId=clientId;
-        this.isCurrentUser=isCurrentUser;
-
+        Log.e("ClientId", clientId);
+        this.clientId = clientId;
+        Log.e("FRAGMENT INFO ", String.valueOf(isCurrentUser));
+        this.isCurrentUser = isCurrentUser;
     }
 
     public PremiumUserInfoFragment() {
@@ -65,26 +72,25 @@ public class PremiumUserInfoFragment extends Fragment{
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_info_premium, container, false);
         initElements(rootView);
-        if(!isCurrentUser){
+        if (!isCurrentUser) {
             checkFollow();
             setOnClickSubscribe();
-            Log.e("ISCURRENTUSER",String.valueOf(isCurrentUser));
         }
         return rootView;
     }
 
     public void setOnClickFacebook(String txtFacebook) {
-        if(txtFacebook!=""){
-            final String finalTxtFacebook = "https://www.facebook.com/"+txtFacebook;
+        if (txtFacebook != "") {
+            final String finalTxtFacebook = "https://www.facebook.com/" + txtFacebook;
             this.txtFacebook.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent=new Intent(Intent.ACTION_VIEW, Uri.parse(finalTxtFacebook));
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(finalTxtFacebook));
                     intent.setPackage("com.facebook.android");
-                    try{
+                    try {
                         startActivity(intent);
-                    }catch (ActivityNotFoundException e){
-                        startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(finalTxtFacebook)));
+                    } catch (ActivityNotFoundException e) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(finalTxtFacebook)));
                     }
                 }
             });
@@ -93,17 +99,17 @@ public class PremiumUserInfoFragment extends Fragment{
     }
 
     public void setOnClickInstagram(String txtInstagram) {
-        if(txtInstagram!="") {
-            final String finalTxtInstagram = "http://instagram.com/"+txtInstagram;
+        if (txtInstagram != "") {
+            final String finalTxtInstagram = "http://instagram.com/" + txtInstagram;
             this.txtInstagram.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent=new Intent(Intent.ACTION_VIEW, Uri.parse(finalTxtInstagram));
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(finalTxtInstagram));
                     intent.setPackage("com.instagram.android");
-                    try{
+                    try {
                         startActivity(intent);
-                    }catch (ActivityNotFoundException e){
-                        startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(finalTxtInstagram)));
+                    } catch (ActivityNotFoundException e) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(finalTxtInstagram)));
                     }
                 }
             });
@@ -111,39 +117,72 @@ public class PremiumUserInfoFragment extends Fragment{
         }
     }
 
-    public void setTxtLocalization(String txtLocalization) {
-        this.txtLocalization.setText(txtLocalization);
-    }
 
     public void setProfilePhoto(String profilePhoto) {
-        Glide.with(context).load(profilePhoto).into(this.profilePhoto);
+        Glide.with(getContext()).load(profilePhoto).into(this.profilePhoto);
+    }
+
+    public void suscribeToTopic() {
+        db.collection("clients").document(clientId).get().addOnSuccessListener(suc -> {
+            db.collection("topics")
+                    .whereEqualTo("userId", suc.get("userId")).get()
+                    .addOnSuccessListener(v -> {
+                        for (DocumentSnapshot doc : v.getDocuments()) {
+                            FirebaseMessaging.getInstance().subscribeToTopic((String) doc.get("topic"))
+                                    .addOnSuccessListener(vTopic -> {
+                                        displayMessage("Ahora estas suscripto a " + premiumName.getText().toString());
+                                        setupButtonSubscribe(true);
+                                    }).addOnFailureListener(f -> {
+                                Log.e("No se pudo subscribir", f.getMessage());
+                                setupButtonSubscribe(true);
+                            });
+
+                        }
+                    }).addOnFailureListener(f -> {
+                Log.e("Error en la query ", f.getMessage());
+            });
+        });
+    }
+
+    public void unsuscribeFromTopic() {
+        db.collection("clients").document(clientId).get().addOnSuccessListener(suc -> {
+            FirebaseFirestore.getInstance().collection("topics")
+                    .whereEqualTo("userId", suc.get("userId")).get()
+                    .addOnSuccessListener(v -> {
+                        for (DocumentSnapshot doc : v.getDocuments()) {
+                            FirebaseMessaging.getInstance().unsubscribeFromTopic((String) doc.get("topic"))
+                                    .addOnSuccessListener(vTopic -> {
+                                        displayMessage("Ya no estás suscripto");
+                                    }).addOnFailureListener(f -> {
+                                displayMessage("No se pudo dessubscribir" + f.getMessage());
+                            });
+
+
+                        }
+                    }).addOnFailureListener(f -> {
+                displayMessage("Error en la query" + f.getMessage());
+            });
+        });
     }
 
 
-    public void setPremiumName(String storeName) {
-        this.premiumName.setText(storeName);
-    }
-
-    public void setTxtEmail(String txtEmail) {
-        this.txtEmail.setText(txtEmail);
-    }
-    public void setOnClickSubscribe(){
+    public void setOnClickSubscribe() {
         btnSubscribe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 btnSubscribe.setEnabled(false);
                 if (!mSubscribed) {
 
-                    Subscription newSubscription = new Subscription(clientId, user.getUid());
+                    Subscription newSubscription = new Subscription(clientId, FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-                    dB.collection("premiumUsersSubscriptions").add(newSubscription).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    FirebaseFirestore.getInstance().collection("premiumUsersSubscriptions").add(newSubscription).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
                         public void onSuccess(DocumentReference documentReference) {
                             Log.d("Firestore task", "DocumentSnapshot written with ID: " + documentReference.getId());
                             documentId = documentReference.getId();
-                            setupButtonSubscribe(true);
-                            displayMessage("Ahora estas suscripto a "+premiumName.getText().toString());
+                            suscribeToTopic();
                         }
+
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
@@ -153,14 +192,13 @@ public class PremiumUserInfoFragment extends Fragment{
                     });
 
                 } else {
-                    dB.collection("premiumUsersSubscriptions").document(documentId).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    FirebaseFirestore.getInstance().collection("premiumUsersSubscriptions").document(documentId).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 setupButtonSubscribe(false);
                                 documentId = "";
-                                Log.e("BUTTON",documentId);
-                                displayMessage("Ya no estás suscripto");
+                                unsuscribeFromTopic();
                             }
                             btnSubscribe.setEnabled(true);
                         }
@@ -174,20 +212,21 @@ public class PremiumUserInfoFragment extends Fragment{
 
         if (subscribed) {
             btnSubscribe.setText("Desuscribirse");
-            btnSubscribe.setBackgroundColor( getResources().getColor(R.color.primary_dark));
+            btnSubscribe.setBackgroundColor(getResources().getColor(R.color.primary_dark));
             mSubscribed = true;
         } else {
             btnSubscribe.setText("Suscribirse");
             btnSubscribe.setBackgroundColor(getResources().getColor(R.color.accent));
-            mSubscribed=false;
+            mSubscribed = false;
         }
 
         btnSubscribe.setEnabled(true);
     }
+
     public void checkFollow() {
         btnSubscribe.setVisibility(View.VISIBLE);
-        dB.collection("premiumUsersSubscriptions")
-                .whereEqualTo("userId", user.getUid())
+        FirebaseFirestore.getInstance().collection("premiumUsersSubscriptions")
+                .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .whereEqualTo("storeName", clientId)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -196,27 +235,40 @@ public class PremiumUserInfoFragment extends Fragment{
                     if (!task.getResult().isEmpty()) {
                         //read subscription id
                         documentId = task.getResult().getDocuments().get(0).getId();
-                        mSubscribed=true;
+                        mSubscribed = true;
                     }
                     setupButtonSubscribe(!task.getResult().isEmpty());
                 }
             }
         });
     }
-    public void initElements(View rootView){
+  
+    public void initElements(View rootView) {
         profilePhoto = rootView.findViewById(R.id.premium_profile_photo);
-        btnSubscribe =rootView.findViewById(R.id.btn_subscribe);
-        premiumName =rootView.findViewById(R.id.profile_premium_name);
-        txtEmail=rootView.findViewById(R.id.txtEmail);
-        txtLocalization=rootView.findViewById(R.id.txtLocalization);
-        txtInstagram=rootView.findViewById(R.id.txtInstagram);
-        txtFacebook=rootView.findViewById(R.id.txtFacebook);
-        lnlface=rootView.findViewById(R.id.lnlFace);
-        lnlInsta=rootView.findViewById(R.id.lnlInta);
+        btnSubscribe = rootView.findViewById(R.id.btn_subscribe);
+        premiumName = rootView.findViewById(R.id.profile_premium_name);
+        txtEmail = rootView.findViewById(R.id.txtEmail);
+        txtLocalization = rootView.findViewById(R.id.txtLocalization);
+        txtInstagram = rootView.findViewById(R.id.txtInstagram);
+        txtFacebook = rootView.findViewById(R.id.txtFacebook);
+        lnlface = rootView.findViewById(R.id.lnlFace);
+        lnlInsta = rootView.findViewById(R.id.lnlInta);
+        lblDate = rootView.findViewById(R.id.lblDate);
 
+        Bundle args = getArguments();
+        if (args != null) {
+            txtLocalization.setText(args.getString("location"));
+            premiumName.setText(args.getString("name"));
+            setProfilePhoto(args.getString("photo"));
+            txtEmail.setText(args.getString("email"));
+            setOnClickFacebook(args.getString("facebook"));
+            setOnClickInstagram(args.getString("instagram"));
+        }
     }
 
     private void displayMessage(String message) {
         Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
+
+
 }

@@ -93,7 +93,7 @@ export class RegisterComponent implements OnInit {
       this.router.navigateByUrl('/Registrarse');
     }
     this.createForm();
-    console.log('el form al INICIO', this.registerStoreFormGroupStep2.value)
+    console.log('el form al INICIO', this.registerStoreFormGroupStep2.value);
     this.urlsProfile = [];
     this.urlsProfile.push('/assets/noProfilePic.png');
     this.urlsPortada = [];
@@ -114,7 +114,7 @@ export class RegisterComponent implements OnInit {
       autocomplete.addListener('place_changed', () => {
         this.ngZone.run(() => {
           // get the place result
-          let place: google.maps.places.PlaceResult = autocomplete.getPlace();
+          const place: google.maps.places.PlaceResult = autocomplete.getPlace();
 
           // verify result
           if (place.geometry === undefined || place.geometry === null) {
@@ -176,8 +176,10 @@ export class RegisterComponent implements OnInit {
     this.registerStoreFormGroupStep2 = this.fb.group({
       ownerName: [''],
       storeAddress: [''],
-      storeLatitude: [''],
-      storeLongitude: [''],
+      storePosition : this.fb.group({
+        latitude: [''],
+        longitude: [''],
+      }),
       storeFloor: [''],
       storeDept: [''],
       storeTower: [''],
@@ -185,7 +187,7 @@ export class RegisterComponent implements OnInit {
       facebookLink: [''],
       instagramLink: [''],
       twitterLink: [''],
-      provider: [''],
+      provider: ['']
     });
 
     this.createUserForm();
@@ -328,7 +330,6 @@ export class RegisterComponent implements OnInit {
   buildFinalForm() {
     this.registerStoreFormGroupStep2.get('storeLatitude').setValue(this.latitude);
     this.registerStoreFormGroupStep2.get('storeLongitude').setValue(this.longitude);
-    debugger;
     const floor = this.registerStoreFormGroupStep2.get('storeFloor').value;
     this.registerStoreFormGroupStep2.get('storeFloor').setValue(floor.toString());
     const newValues = Object.assign(

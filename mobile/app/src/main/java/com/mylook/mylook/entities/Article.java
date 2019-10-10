@@ -24,7 +24,6 @@ public class Article implements Serializable, Comparable<Article>, Comparator<Ar
     private ArrayList<String> favorites;
     private Date creationDate;
     private int promotionLevel;
-    private boolean estaEnVidriera;
     private boolean isStorefront;
 
     public Article() {
@@ -221,14 +220,6 @@ public class Article implements Serializable, Comparable<Article>, Comparator<Ar
 
     public void setFavorites(ArrayList<String> favorites) {
         this.favorites = favorites;
-    }
-
-    public boolean isEstaEnVidriera() {
-        return estaEnVidriera;
-    }
-
-    public void setEstaEnVidriera(boolean estaEnVidriera) {
-        this.estaEnVidriera = estaEnVidriera;
     }
 
     public boolean isIsStorefront() {

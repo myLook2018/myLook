@@ -3,42 +3,36 @@ package com.mylook.mylook.premiumUser;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.PremiumUser;
+import com.mylook.mylook.session.Session;
 import com.mylook.mylook.storeProfile.StoreTabAdapter;
 import com.mylook.mylook.utils.SectionsPagerAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PremiumUserProfileActivity extends AppCompatActivity {
 
 
-    private FirebaseUser user;
+    private PremiumUser premiumUser;
     private TabLayout tab;
     private ViewPager viewPagerUserInfo;
-    private ViewPager viewPagerUserPublications;
     private String clientId;
     private PremiumUserInfoFragment infoFragment;
     private ReputationPremiumFragment reputationFragment;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private boolean isCurrentUser;
-    private FloatingActionButton fab;
+    private PremiumPublicationsFragment publicationsFragment;
+    private PublicClosetFragment publicClosetFragment;
+    private boolean isCurrentUser=false;
     private String premiumUserId; //el userUID del usuario destacado NO EL ACTUAL
 
     @SuppressLint("RestrictedApi")
@@ -46,123 +40,81 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store_final);
-        user = FirebaseAuth.getInstance().getCurrentUser();
         tab = findViewById(R.id.tab);
-        viewPagerUserInfo = findViewById(R.id.storeInfoViewPager);
-        viewPagerUserPublications = findViewById(R.id.storeViewPager);
         Toolbar tb =  findViewById(R.id.toolbar);
-        fab=findViewById(R.id.fab);
         tb.setTitle("Usuario Destacado");
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-        Intent intentStore = getIntent();
-        clientId = intentStore.getStringExtra("clientId");
+        if(ab !=null){
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
+        invalidateOptionsMenu();
+        Intent inconmingIntent = getIntent();
+        clientId = inconmingIntent.getStringExtra("clientId");
+        if(inconmingIntent.hasExtra("isCurrent")){
+            isCurrentUser=true;
+        }else{
+            isCurrentUser= Session.clientId.equals(clientId);
+        }
 
-        isCurrentUser=false;
-        db.collection("clients").document(clientId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    if(task.getResult().get("userId").toString().equals(user.getUid())){
-                     isCurrentUser=true;
-                     fab.setVisibility(View.VISIBLE);
-
-                    }
-                    premiumUserId=task.getResult().get("userId").toString();
-                }
-                infoFragment = new PremiumUserInfoFragment(PremiumUserProfileActivity.this, clientId,isCurrentUser);
-                setupViewPagerInfo(viewPagerUserInfo);
-                setContentInfo();
-
-            }});
-        reputationFragment=new ReputationPremiumFragment(clientId);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), NewPublicationActivity.class);
-                intent.putExtra("clientId",clientId);
-                startActivity(intent);
-            }
-        });
+        setContentInfo();
     }
     private void setContentInfo(){
-        db.collection("premiumUsers").whereEqualTo("clientId",clientId)
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    // Log.d("info de firebase", "onComplete: " + task.getResult().toObjects(Store.class));
-                    PremiumUser user = task.getResult().getDocuments().get(0).toObject(PremiumUser.class);
-                    infoFragment.setTxtLocalization(user.getLocalization());
-                    infoFragment.setOnClickFacebook(user.getLinkFacebook());
-                    infoFragment.setOnClickInstagram(user.getLinkInstagram());
-                    infoFragment.setPremiumName(user.getUserName());
-                    infoFragment.setProfilePhoto(user.getProfilePhoto());
-                    infoFragment.setTxtEmail(user.getContactMail());
-                    reputationFragment.setRegisterDate(user.getPremiumDate());
-                    setupViewPager(viewPagerUserPublications);
-                    tab.setupWithViewPager(viewPagerUserPublications);
-                } else {
-                    Log.d("Firestore task", "onComplete: " + task.getException());
-                }
-            }
-        });
-
-    }
-   /* private void loadVisit() {
-        db.collection("visits").whereEqualTo("storeName", clientId).whereEqualTo("userId",user.getUid()).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
-                            if(task.getResult().getDocuments().size()==0){
-                                visitId=null;
-                                visit=new Visit(clientId,user.getUid(),1);
-                                //db.collection("visits").add(visit.toMap());
-
-                            }else{
-                                Log.e("OLD VISIT","ID: " +visitId);
-                                visit = null;
-                                visitId=null;
-                                visit=task.getResult().getDocuments().get(0).toObject(Visit.class);
-                                visit.toVisit();
-                                visitId=task.getResult().getDocuments().get(0).getId();
-                            }
-
+        FirebaseFirestore.getInstance().collection("premiumUsers")
+                .whereEqualTo("clientId",clientId)
+                .get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult()!=null) {
+                        List<PremiumUser> results = new ArrayList<>(task.getResult().toObjects(PremiumUser.class));
+                        if(!results.isEmpty()){
+                            premiumUser = results.get(0);
+                            premiumUserId= premiumUser.getUserId();
+                            setFragments();
                         }
+                    } else {
+                        Log.d("Firestore task", "onComplete: " + task.getException());
                     }
                 });
 
     }
-    private void saveVisit(){
-        if(visitId!=null){
-            Log.e("VISIT","ID: " +visitId);
-            db.collection("visits").document(visitId).set(visit.toMap(), SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    finish();
-                }
-            });
-        }else{
-            db.collection("visits").add(visit.toMap()).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentReference> task) {
-                    finish();
-                }
-            });
-        }
+
+    private void setFragments() {
+        Toolbar tb = findViewById(R.id.toolbar);
+        setSupportActionBar(tb);
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) ab.setTitle(premiumUser.getUserName());
+        Bundle bundle = new Bundle();
+        bundle.putString("name", premiumUser.getUserName());
+        bundle.putString("photo", premiumUser.getProfilePhoto());
+        bundle.putString("facebook", premiumUser.getLinkFacebook());
+        bundle.putString("instagram", premiumUser.getLinkInstagram());
+        bundle.putString("location",premiumUser.getLocalization());
+        bundle.putString("email", premiumUser.getContactMail());
+        bundle.putSerializable("registerDate", premiumUser.getPremiumDate());
+        TabLayout tab = findViewById(R.id.tab);
+
+        infoFragment = new PremiumUserInfoFragment(clientId,isCurrentUser);
+        infoFragment.setArguments(bundle);
+        viewPagerUserInfo = findViewById(R.id.storeInfoViewPager);
+        setupViewPagerInfo(viewPagerUserInfo);
+
+        publicationsFragment=new PremiumPublicationsFragment(premiumUserId);
+        publicationsFragment.setArguments(bundle);
+
+        publicClosetFragment=new PublicClosetFragment(premiumUserId);
+        publicClosetFragment.setArguments(bundle);
+
+        reputationFragment=new ReputationPremiumFragment(FirebaseAuth.getInstance().getUid());
+        reputationFragment.setArguments(bundle);
+
+        ViewPager viewPagerUserPublications = findViewById(R.id.storeViewPager);
+        setupViewPager(viewPagerUserPublications);
+        tab.setupWithViewPager(viewPagerUserPublications);
+        //saveVisit
+
     }
-    */
     @Override
     protected void onStop() {
         super.onStop();
-        //saveVisit();
-    }
-
-    public void moreInfo(){
-        viewPagerUserInfo.setCurrentItem(1);
     }
 
 
@@ -175,37 +127,11 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         StoreTabAdapter adapter = new StoreTabAdapter(getSupportFragmentManager());
         Log.e("VIEW PAGER","CARGAAAAAAAAAA");
-        adapter.addFragment(0,new PremiumPublicationsFragment(premiumUserId),"Publicaciones");
-        adapter.addFragment(1,new PublicClosetFragment(premiumUserId),"Ropero");
+        adapter.addFragment(0,publicationsFragment,"Publicaciones");
+        adapter.addFragment(1,publicClosetFragment,"Difusiones");
         adapter.addFragment(2,reputationFragment,"Reputación");
         viewPager.setAdapter(adapter);
-
-
-        viewPagerUserPublications.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int i, float v, int i1) {
-
-            }
-
-            @SuppressLint("RestrictedApi")
-            @Override
-            public void onPageSelected(int i) {
-                switch (i){
-                    case 0:
-                        fab.setVisibility(View.VISIBLE);
-                        break;
-                    default:
-                        fab.setVisibility(View.GONE);
-                        break;
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int i) {
-
-            }
-        });
-
+        viewPager.setCurrentItem(0);
     }
     private void setupViewPagerInfo(ViewPager viewPager){
         SectionsPagerAdapter adapter=new SectionsPagerAdapter(getSupportFragmentManager());
@@ -214,7 +140,7 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
     }
     @Override
     public boolean onSupportNavigateUp(){
-        finish();
+        this.finish();
         return true;
     }
 }

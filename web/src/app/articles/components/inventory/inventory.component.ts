@@ -197,51 +197,6 @@ export class InventoryComponent implements OnInit, OnDestroy {
     });
   }
 
-  // openArticleDialog(article: Article, event): void {
-  //   event.stopPropagation();
-  //   let dataToSend = {};
-  //   if (article !== undefined) {
-  //     dataToSend = {
-  //       storeName: this.userStore.storeName,
-  //       storeLatitude: this.userStore.storeLatitude,
-  //       storeLongitude: this.userStore.storeLongitude,
-  //       title: article.title,
-  //       code: article.code,
-  //       id: article.articleId,
-  //       picturesArray: article.picturesArray,
-  //       cost: article.cost,
-  //       sizes: article.sizes,
-  //       material: article.material,
-  //       colors: article.colors,
-  //       initial_stock: article.initial_stock,
-  //       provider: article.provider,
-  //       tags: article.tags,
-  //       onlyView: false
-
-  //     };
-  //   } else {
-  //     dataToSend = {
-  //       storeName: this.userStore.storeName,
-  //       storeLatitude: this.userStore.storeLatitude,
-  //       storeLongitude: this.userStore.storeLongitude,
-  //       tags: [],
-  //       sizes: [],
-  //       colors: [],
-  //       onlyView: false
-
-  //     };
-  //   }
-
-  //   debugger;
-  //   const dialogRef = this.dialog.open(ArticleDialogComponent, {
-  //     maxWidth: '850px',
-  //     maxHeight: 'calc(95vh)',
-  //     data: dataToSend
-  //   });
-
-  //   dialogRef.afterClosed().subscribe(result => {});
-  // }
-
   resetSelectedVidriera() {
     for (let i = 0; i < this.articles.length; i++) {
       console.log(`sacando de vidriera ` + this.articles[i].title);
@@ -333,22 +288,6 @@ export class InventoryComponent implements OnInit, OnDestroy {
     console.log('Yendo a ver articulos', `/Tiendas/${this.userStore.storeName}/Nuevo-Articulo/${article.articleId}`);
     this.router.navigate([`/Tiendas/${this.userStore.storeName}/Ver-Articulo/${article.articleId}`]);
   }
-
-  // openStoreFrontDialog (article) {
-  //    const dataToSend = {
-  //     storeProfilePicture: this.userStore.profilePh,
-  //     storeBackPhoto: this.userStore.coverPh,
-  //     articles: this.articles
-  //   }
-
-  //   const dialogRef = this.dialog.open(StoreFrontDialogComponent, {
-  //     width: '1500px',
-  //     height: '900px',
-  //     data: dataToSend
-  //   });
-
-  //   dialogRef.afterClosed().subscribe(result => {});
-  // }
 
   goToEdit(article) {
     event.stopPropagation();

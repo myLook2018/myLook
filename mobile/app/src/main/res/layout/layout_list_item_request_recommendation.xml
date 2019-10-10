@@ -63,8 +63,7 @@
                     android:textSize="20sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/rdbStateImage"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="2" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/txtRecommendTitle"
@@ -72,7 +71,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
-                    android:text="@string/ImageTitle"
                     android:textAlignment="textStart"
                     android:textColor="@color/primary_dark"
                     android:textSize="17sp"
@@ -84,9 +82,8 @@
                     android:id="@+id/txtDate"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
                     android:layout_marginStart="8dp"
-                    android:text="Limit @string/limit_date"
+                    android:layout_marginBottom="8dp"
                     android:textColor="@color/grey"
                     android:textSize="14dp"
                     app:layout_constraintBottom_toBottomOf="parent"

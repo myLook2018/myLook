@@ -62,7 +62,7 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
             holder.nameStore.setText(article.getStoreName());
             holder.txtTitle.setText(article.getTitle());
             // loading article image using Glide library
-            Glide.with(mContext).load(article.getPicture()).into(holder.articleImage);
+            Glide.with(mContext).load(article.getPicturesArray().get(0)).into(holder.articleImage);
 
             holder.articleCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -106,7 +106,7 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
                 public void onClick(View v) {
                     Intent intent= new Intent(mContext, StoreActivity.class);
                     Log.d("perfil tienda", "onClick: paso por intent la data del articulo");
-                    intent.putExtra("Tienda", store.getStoreName());
+                    intent.putExtra("store", store.getStoreName());
                     mContext.startActivity(intent);
                 }
             });

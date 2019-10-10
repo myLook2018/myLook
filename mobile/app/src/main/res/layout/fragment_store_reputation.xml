@@ -99,13 +99,13 @@
                 android:id="@+id/cardRecommendations"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
                 android:layout_weight="1"
                 android:elevation="10dp"
                 android:minHeight="100dp"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -131,7 +131,8 @@
                         android:maxHeight="24dp"
                         android:minHeight="24dp"
                         android:padding="8dp"
-                        android:soundEffectsEnabled="false" />
+                        android:soundEffectsEnabled="false"
+                        android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/lblRecomendationsDescr"
