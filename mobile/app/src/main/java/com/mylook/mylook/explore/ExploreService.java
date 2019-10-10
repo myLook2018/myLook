@@ -10,6 +10,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Interaction;
+import com.mylook.mylook.entities.PremiumPublication;
 import com.mylook.mylook.room.AppDatabase;
 import com.mylook.mylook.room.LocalInteraction;
 import com.mylook.mylook.room.LocalInteractionDAO;
@@ -58,11 +59,11 @@ class ExploreService {
         interactions = new ArrayList<>();
     }
 
-    List<Article> createExploreArticleList(QuerySnapshot query, Location location, double distance) {
+    List<Object> createExploreArticleList(QuerySnapshot query, Location location, double distance) {
         List<Article> promo1 = new ArrayList<>();
         List<Article> promo2 = new ArrayList<>();
         List<Article> promo3 = new ArrayList<>();
-        List<Article> articles = new ArrayList<>();
+        List<Object> articles = new ArrayList<>();
 
         for (QueryDocumentSnapshot document : query) {
             if (isNew(document.getId())) {
@@ -130,6 +131,18 @@ class ExploreService {
         return articles;
     }
 
+    List<Object> addPremiumPublicationsToList(List<Object> publications, QuerySnapshot query) {
+        Random r = new Random();
+        int index;
+        for (QueryDocumentSnapshot document : query) {
+            PremiumPublication premiumPublication = document.toObject(PremiumPublication.class);
+            premiumPublication.setPremiumPublicationId(document.getId());
+            index = r.nextInt(publications.size());
+            publications.add(index, premiumPublication);
+        }
+        return publications;
+    }
+
     private boolean isNew(String id) {
         // TODO incluir en produccion
         // return allLocalInteractions.stream().noneMatch(li -> li.getUid().equals(id));
@@ -155,6 +168,28 @@ class ExploreService {
         currentLocalInteractions.add(local);
     }
 
+    void likePremiumPublication(PremiumPublication premiumPublication, boolean liked) {
+        // TODO check this
+        /*
+        Interaction userInteraction = new Interaction();
+        userInteraction.setSavedToCloset(false);
+        userInteraction.setClickOnArticle(false);
+        userInteraction.setPromotionLevel(article.getPromotionLevel());
+        userInteraction.setLiked(liked);
+        userInteraction.setArticleId(article.getArticleId());
+        userInteraction.setStoreName(article.getStoreName());
+        userInteraction.setTags(article.getTags());
+        userInteraction.setUserId(userUid);
+        interactions.add(userInteraction);
+
+        LocalInteraction local = new LocalInteraction();
+        local.setUid(article.getArticleId());
+        local.setUserId(userUid);
+        local.setDate(Calendar.getInstance().getTime());
+        currentLocalInteractions.add(local);
+        */
+    }
+
     void visitArticle(Article article) {
         Interaction userInteraction = new Interaction();
         userInteraction.setPromotionLevel(article.getPromotionLevel());
@@ -167,12 +202,37 @@ class ExploreService {
         interactions.add(userInteraction);
     }
 
+    void visitPremiumPublication(PremiumPublication premiumPublication) {
+        // TODO check this
+        /*
+        Interaction userInteraction = new Interaction();
+        userInteraction.setPromotionLevel(article.getPromotionLevel());
+        userInteraction.setLiked(false);
+        userInteraction.setClickOnArticle(true);
+        userInteraction.setArticleId(article.getArticleId());
+        userInteraction.setStoreName(article.getStoreName());
+        userInteraction.setTags(article.getTags());
+        userInteraction.setUserId(userUid);
+        interactions.add(userInteraction);
+        */
+    }
+
     Task<QuerySnapshot> getArticles() {
         //TODO incluir en produccion
         //Calendar cal = Calendar.getInstance();
         //cal.add(Calendar.DATE, -14);
         //Date dateBefore2Weeks = cal.getTime();
         return db.collection("articles")
+                //.whereGreaterThan("creationDate", dateBefore2Weeks) Le saque el filtro para que aparecieran
+                .get();
+    }
+
+    Task<QuerySnapshot> getPremiumPublications() {
+        //TODO incluir en produccion
+        //Calendar cal = Calendar.getInstance();
+        //cal.add(Calendar.DATE, -14);
+        //Date dateBefore2Weeks = cal.getTime();
+        return db.collection("premiumPublications")
                 //.whereGreaterThan("creationDate", dateBefore2Weeks) Le saque el filtro para que aparecieran
                 .get();
     }

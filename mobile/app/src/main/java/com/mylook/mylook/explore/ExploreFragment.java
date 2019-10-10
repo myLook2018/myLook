@@ -36,7 +36,9 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
+import com.mylook.mylook.entities.PremiumPublication;
 import com.mylook.mylook.info.ArticleInfoActivity;
+import com.mylook.mylook.premiumUser.PublicationDetail;
 import com.mylook.mylook.utils.CardsExploreAdapter;
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
 import com.yuyakaido.android.cardstackview.CardStackListener;
@@ -51,7 +53,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ExploreFragment extends Fragment implements CardStackListener, CardsExploreAdapter.ArticleVisitListener {
+public class ExploreFragment extends Fragment implements CardStackListener, CardsExploreAdapter.PublicationVisitListener {
 
     private static final int ACCESS_FINE_LOCATION_REQUEST = 1;
     private static String TAG = "ExploreFragment";
@@ -65,7 +67,7 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
     private LinearLayout buttonsLayout;
     private FrameLayout sliderLayout;
 
-    private List<Article> articles;
+    private List<Object> publications;
 
     @SuppressLint("StaticFieldLeak")
     private static ExploreFragment exploreInstance;
@@ -82,10 +84,10 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
     public void onCardSwiped(Direction direction) {
         switch (direction) {
             case Left:
-                likeArticle(false);
+                likePublication(false);
                 break;
             case Right:
-                likeArticle(true);
+                likePublication(true);
                 break;
         }
     }
@@ -105,6 +107,11 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
     @Override
     public void onArticleClick() {
         visitArticle();
+    }
+
+    @Override
+    public void onPremiumPublicationClick() {
+        visitPremiumPublication();
     }
 
     private enum ViewName {
@@ -152,8 +159,8 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
         mLayoutManager = new CardStackLayoutManager(getContext(), this);
         setupLayoutManager();
         mCardStack.setLayoutManager(mLayoutManager);
-        articles = new ArrayList<>();
-        mCardAdapter = new CardsExploreAdapter(Objects.requireNonNull(getContext()), articles, this);
+        publications = new ArrayList<>();
+        mCardAdapter = new CardsExploreAdapter(Objects.requireNonNull(getContext()), publications, this);
         mCardStack.setAdapter(mCardAdapter);
 
         FloatingActionButton dislikeButton = view.findViewById(R.id.fab_dislike_article);
@@ -331,22 +338,39 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
         mLayoutManager.setSwipeableMethod(SwipeableMethod.AutomaticAndManual);
     }
 
-    private void likeArticle(boolean liked) {
-        if (!articles.isEmpty()) {
-            Article article = articles.get(mLayoutManager.getTopPosition() - 1);
-            exploreService.likeArticle(article, liked);
-            if (articles.size() == mLayoutManager.getTopPosition()) {
-                viewOnly(ExploreFragment.ViewName.MESSAGE);
+    private void likePublication(boolean liked) {
+        if (!publications.isEmpty()) {
+            Object publication = publications.get(mLayoutManager.getTopPosition() - 1);
+            if (publication instanceof Article) {
+                Article article = (Article) publication;
+                exploreService.likeArticle(article, liked);
+
+            } else if (publication instanceof PremiumPublication) {
+                PremiumPublication premiumPublication = (PremiumPublication) publication;
+                exploreService.likePremiumPublication(premiumPublication, liked);
             }
+        }
+        if (publications.size() == mLayoutManager.getTopPosition()) {
+            viewOnly(ExploreFragment.ViewName.MESSAGE);
         }
     }
 
     private void visitArticle() {
-        if (!articles.isEmpty()) {
-            Article article = articles.get(mLayoutManager.getTopPosition());
+        if (!publications.isEmpty()) {
+            Article article = (Article) publications.get(mLayoutManager.getTopPosition());
             exploreService.visitArticle(article);
             Intent intent = new Intent(getContext(), ArticleInfoActivity.class);
             intent.putExtra("article", article);
+            Objects.requireNonNull(getContext()).startActivity(intent);
+        }
+    }
+
+    private void visitPremiumPublication() {
+        if (!publications.isEmpty()) {
+            PremiumPublication premiumPublication = (PremiumPublication) publications.get(mLayoutManager.getTopPosition());
+            exploreService.visitPremiumPublication(premiumPublication);
+            Intent intent = new Intent(getContext(), PublicationDetail.class);
+            intent.putExtra("premiumPublication", premiumPublication);
             Objects.requireNonNull(getContext()).startActivity(intent);
         }
     }
@@ -380,7 +404,7 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
 
     private void getArticles(Location location) {
         viewOnly(ViewName.PROGRESS_BAR);
-        articles.clear();
+        publications.clear();
         exploreService.getArticles().addOnCompleteListener(task -> {
             if (!task.isSuccessful() || task.getResult() == null) {
                 viewOnly(ViewName.MESSAGE);
@@ -388,11 +412,43 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
             } else if (task.getResult().isEmpty()) {
                 viewOnly(ViewName.MESSAGE);
                 Log.d(TAG, "getArticles - No articles found");
+                if (location == null) {
+                    getPremiumPublications();
+                }
             } else {
-                articles.addAll(exploreService.createExploreArticleList(task.getResult(), location, distance));
+                publications.addAll(exploreService.createExploreArticleList(task.getResult(), location, distance));
+                Log.d(TAG, "getArticles - Articles found: " + publications.size());
+                if (location == null) {
+                    getPremiumPublications();
+                } else {
+                    mCardAdapter.notifyDataSetChanged();
+                    if (publications.isEmpty()) {
+                        viewOnly(ViewName.MESSAGE_LOCATION);
+                    } else {
+                        viewOnly(ViewName.CARD_STACK);
+                    }
+                }
+            }
+        });
+    }
+
+    private void getPremiumPublications() {
+        exploreService.getPremiumPublications().addOnCompleteListener(task -> {
+            if (!task.isSuccessful() || task.getResult() == null) {
+                if (publications.isEmpty()) {
+                    viewOnly(ViewName.MESSAGE);
+                }
+                Log.e(TAG, "getPremiumPublications", task.getException());
+            } else if (task.getResult().isEmpty()) {
+                if (publications.isEmpty()) {
+                    viewOnly(ViewName.MESSAGE);
+                }
+                Log.d(TAG, "getPremiumPublications - No publications found");
+            } else {
+                publications = exploreService.addPremiumPublicationsToList(publications, task.getResult());
+                Log.d(TAG, "getPremiumPublications - Publications found: " + task.getResult().size());
                 mCardAdapter.notifyDataSetChanged();
-                Log.d(TAG, "getArticles - Articles found: " + articles.size());
-                if (articles.isEmpty()) {
+                if (publications.isEmpty()) {
                     viewOnly(ViewName.MESSAGE_LOCATION);
                 } else {
                     viewOnly(ViewName.CARD_STACK);
