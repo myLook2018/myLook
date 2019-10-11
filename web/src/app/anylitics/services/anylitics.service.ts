@@ -28,6 +28,12 @@ export class AnyliticService {
   promotionsPath = 'promotions';
   db: any;
   require: any;
+  isCached = false;
+  isVisitsCached: boolean;
+  isInteractionsCached: boolean;
+  isSubsCached: any;
+  isRecoCached: any;
+  isPromotedCached: any;
 
   constructor(public fst: AngularFirestore) {
     console.log(`en el collector de analytics`);
@@ -39,9 +45,9 @@ export class AnyliticService {
 
   getInteractions(storeName) {
     console.log(`geting interactions`);
-    this.interactions = [];
     return new Promise<any>((resolve, reject) => {
-      console.log(`estamos preguntando interacciones de ` + storeName);
+      if (!this.isInteractionsCached) {
+        console.log(`estamos preguntando interacciones de ` + storeName);
       const res = this.db.collection(this.collectionPath).where('storeName', '==', storeName).orderBy('interactionTime')
       .get().then(queryRes => {
         queryRes.forEach(doc => {
@@ -50,53 +56,68 @@ export class AnyliticService {
           this.interactions.push(data);
         });
       }).then(() => {
+          this.isInteractionsCached = true;
           resolve(this.interactions);
         }).catch(function (error) {
           console.log('Error getting documents: ', error);
           reject(error);
         });
+      } else {
+        console.log('devolviendo cache');
+        resolve(this.interactions);
+      }
     });
   }
 
   getVisits(storeName) {
     console.log(`geting visits`);
-    this.visits = [];
     return new Promise<any>((resolve, reject) => {
-      console.log(`estamos preguntando visits de ` + storeName);
-      const res = this.db.collection(this.visitsPath).where('storeName', '==', storeName)
-      .get().then(queryRes => {
-        queryRes.forEach(doc => {
-          const data = doc.data();
-          data.id = doc.id;
-          this.visits.push(data);
-        });
-      }).then(() => {
-          resolve(this.visits);
-        }).catch(function (error) {
-          console.log('Error getting documents: ', error);
-          reject(error);
-        });
+      if (!this.isVisitsCached) {
+        console.log(`estamos preguntando visits de ` + storeName);
+        const res = this.db.collection(this.visitsPath).where('storeName', '==', storeName)
+        .get().then(queryRes => {
+          queryRes.forEach(doc => {
+            const data = doc.data();
+            data.id = doc.id;
+            this.visits.push(data);
+          });
+        }).then(() => {
+            this.isVisitsCached = true;
+            resolve(this.visits);
+          }).catch(function (error) {
+            console.log('Error getting documents: ', error);
+            reject(error);
+          });
+      } else {
+        console.log('devolviendo cache visits');
+        resolve(this.visits);
+      }
     });
   }
 
   getSubscriptions(storeName) {
     console.log(`geting subscriptions`);
-    this.subscriptions = [];
     return new Promise<any>((resolve, reject) => {
-      console.log(`estamos preguntando subcripciones de ` + storeName);
-      const res = this.db.collection(this.subPath).where('storeName', '==', storeName)
-      .get().then(queryRes => {
-        queryRes.forEach(doc => {
-          const data = doc.data();
-          data.id = doc.id;
-          this.subscriptions.push(data);
-        });
-      }).then(() => {
-          resolve(this.subscriptions);
-        }).catch(function (error) {
-          console.log('Error getting documents: ', error);
-          reject(error);
-        });
+      if (!this.isSubsCached) {
+        console.log(`estamos preguntando subcripciones de ` + storeName);
+        const res = this.db.collection(this.subPath).where('storeName', '==', storeName)
+        .get().then(queryRes => {
+          queryRes.forEach(doc => {
+            const data = doc.data();
+            data.id = doc.id;
+            this.subscriptions.push(data);
+          });
+        }).then(() => {
+            this.isSubsCached = true;
+            resolve(this.subscriptions);
+          }).catch(function (error) {
+            console.log('Error getting documents: ', error);
+            reject(error);
+          });
+      } else {
+        console.log('devolviendo subs cached');
+        resolve(this.subscriptions);
+      }
     });
   }
 
@@ -104,42 +125,53 @@ export class AnyliticService {
     console.log(`geting Feedback`);
     this.answeredRecomendations = [];
     return new Promise<any>((resolve, reject) => {
-      console.log(`estamos preguntando feedback de ` + storeName);
-      const res = this.db.collection(this.answeredRecomPath).where('storeName', '==', storeName)
-      .get().then(queryRes => {
-        queryRes.forEach(doc => {
-          const data = doc.data();
-          data.id = doc.id;
-          this.answeredRecomendations.push(data);
-        });
-      }).then(() => {
-         console.log('feedback que devolvemos', this.answeredRecomendations);
-          resolve(this.answeredRecomendations);
-        }).catch(function (error) {
-          console.log('Error getting documents: ', error);
-          reject(error);
-        });
+      if (!this.isRecoCached) {
+        console.log(`estamos preguntando feedback de ` + storeName);
+        const res = this.db.collection(this.answeredRecomPath).where('storeName', '==', storeName)
+        .get().then(queryRes => {
+          queryRes.forEach(doc => {
+            const data = doc.data();
+            data.id = doc.id;
+            this.answeredRecomendations.push(data);
+          });
+        }).then(() => {
+           console.log('feedback que devolvemos', this.answeredRecomendations);
+           this.isRecoCached = true;
+            resolve(this.answeredRecomendations);
+          }).catch(function (error) {
+            console.log('Error getting documents: ', error);
+            reject(error);
+          });
+      } else {
+        console.log('devolviendo reco cached');
+        resolve(this.answeredRecomendations);
+      }
     });
   }
 
   getPromotedArticles(storeID) {
     console.log(`geting promotions`);
-    this.promotions = [];
     return new Promise<any>((resolve, reject) => {
-      console.log(`estamos preguntando promociones de ` + storeID);
-      const res = this.db.collection(this.promotionsPath).where('storeId', '==', storeID)
-      .get().then(queryRes => {
-        queryRes.forEach(doc => {
-          const data = doc.data();
-          data.id = doc.id;
-          this.promotions.push(data);
-        });
-      }).then(() => {
-          resolve(this.promotions);
-        }).catch(function (error) {
-          console.log('Error getting documents: ', error);
-          reject(error);
-        });
+      if (!this.isPromotedCached) {
+        console.log(`estamos preguntando promociones de ` + storeID);
+        const res = this.db.collection(this.promotionsPath).where('storeId', '==', storeID)
+        .get().then(queryRes => {
+          queryRes.forEach(doc => {
+            const data = doc.data();
+            data.id = doc.id;
+            this.promotions.push(data);
+          });
+        }).then(() => {
+            this.isPromotedCached = true;
+            resolve(this.promotions);
+          }).catch(function (error) {
+            console.log('Error getting documents: ', error);
+            reject(error);
+          });
+        } else {
+        console.log('devolviendo promoted cached');
+        resolve(this.promotions);
+      }
     });
   }
 }

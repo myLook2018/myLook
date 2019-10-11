@@ -137,4 +137,8 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
   gotToConfiguration() {
     this.router.navigate([`/Tiendas/${this.userStore.storeName}/Configuracion`]);
   }
+
+  goToAnalyticsPromotions() {
+    this.router.navigate([`/Tiendas/${this.userStore.storeName}/Promociones`]);
+  }
 }
