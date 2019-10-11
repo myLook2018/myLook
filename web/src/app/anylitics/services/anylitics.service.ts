@@ -123,7 +123,6 @@ export class AnyliticService {
 
   getRecomendationFeedBack(storeName) {
     console.log(`geting Feedback`);
-    this.answeredRecomendations = [];
     return new Promise<any>((resolve, reject) => {
       if (!this.isRecoCached) {
         console.log(`estamos preguntando feedback de ` + storeName);
