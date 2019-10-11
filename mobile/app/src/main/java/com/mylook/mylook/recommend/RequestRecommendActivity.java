@@ -101,6 +101,9 @@ public class RequestRecommendActivity extends AppCompatActivity {
                 if(intent.hasExtra("requestId"))
                     requestId = intent.getStringExtra("requestId");
             }
+            if(getIntent().hasExtra("fromDeepLink")){
+                fromDeepLink = true;
+            }
         }
         //ACA LLEGA DISTINTO
         Log.e(TAG, "requestId"+requestId);
@@ -195,16 +198,18 @@ public class RequestRecommendActivity extends AppCompatActivity {
                         }
                     }
                 });
-        Session.getInstance().updateActivitiesStatus(Session.RECOMEND_FRAGMENT);
+        if(!fromDeepLink)
+            Session.getInstance().updateActivitiesStatus(Session.RECOMEND_FRAGMENT);
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        Log.e(TAG, "Is from deep link? "+fromDeepLink);
         if(fromDeepLink){
             Intent intent= new Intent(getApplicationContext(), MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-            finish();
         }
     }
 
@@ -267,9 +272,6 @@ public class RequestRecommendActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    @Override
-    public boolean onSupportNavigateUp(){
-        finish();
-        return true;
-    }
+
+
 }
