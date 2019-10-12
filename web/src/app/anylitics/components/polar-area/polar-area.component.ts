@@ -42,32 +42,6 @@ export class PolarAreaComponent implements OnInit {
           }
       ]
   };
-  /*
-    this.data = {
-      labels: this.tags,
-      datasets: [
-        {
-          data: this.countOfTags,
-          backgroundColor: [
-            '#FF6384',
-            '#36A2EB',
-            '#FFCE56',
-            '#ccf62e',
-            '#ebb329',
-            '#7c7c7c',
-            '#4c0000'
-          ],
-          hoverBackgroundColor: [
-            '#FF6384',
-            '#36A2EB',
-            '#FFCE56',
-            '#ccf62e',
-            '#ebb329',
-            '#7c7c7c',
-            '#4c0000'
-          ]
-        }]
-    };*/
   }
 
 }

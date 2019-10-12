@@ -1,9 +1,9 @@
 import { AngularFirestore, AngularFirestoreCollection} from 'angularfire2/firestore';
 import { Injectable } from '@angular/core';
 import * as firebase from 'firebase';
-import { Promotion } from '../model/promotion';
+import { Promotion } from '../components/promotions/model/promotion';
 import * as jsPDF from 'jspdf';
-import { logo } from './logo';
+import { logo } from '../components/promotions/logo';
 @Injectable()
 export class PromotionsService {
   mpURL = 'https://us-central1-app-mylook.cloudfunctions.net/postMercadopagoCheckout';
@@ -14,6 +14,7 @@ export class PromotionsService {
   articlesPath = 'articles';
   db: firebase.firestore.Firestore;
   require: any;
+  isCached = false;
 
   constructor(public fst: AngularFirestore) {
     console.log(`en el collector`);
@@ -23,25 +24,30 @@ export class PromotionsService {
   }
 
   getPromotions(storeId) {
-    this.promotions = [];
     // tslint:disable-next-line:no-shadowed-variable
     return new Promise<any>((resolve, reject) => {
-      console.log(`estamos preguntando por este ID` + storeId);
-      this.db.collection(this.promotionsPath).where('storeId', '==', storeId)
-        .get().then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            data.documentId = doc.id;
-            this.promotions.push(data);
+      if (!this.isCached) {
+        console.log(`estamos preguntando por este ID` + storeId);
+        this.db.collection(this.promotionsPath).where('storeId', '==', storeId)
+          .get().then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              const data = doc.data();
+              data.documentId = doc.id;
+              this.promotions.push(data);
+            });
+          }).then(() => {
+            console.log('promotions', this.promotions);
+            this.isCached = true;
+            resolve(this.promotions);
+          })
+          .catch(function (error) {
+            console.log('Error getting documents: ', error);
+            reject(error);
           });
-        }).then(() => {
-          console.log('promotions', this.promotions);
-          resolve(this.promotions);
-        })
-        .catch(function (error) {
-          console.log('Error getting documents: ', error);
-          reject(error);
-        });
+      } else {
+        console.log('devolviendo cache');
+        resolve(this.promotions);
+      }
     });
   }
 
@@ -49,7 +55,7 @@ export class PromotionsService {
     const doc = this.db.doc(`${this.articlesPath}/${promotion}`);
     const snapshot = await doc.get();
     const value = snapshot.data();
-    const ALFIN = {picture: value.picturesArray[0], name: value.title};
+    const ALFIN = {picture: value.picturesArray[0], name: value.title, code: value.code};
     return ALFIN;
   }
 
@@ -72,14 +78,14 @@ export class PromotionsService {
   doc.addImage(logo, 'PNG', 160, 2, 40, 15);
   doc.setFontSize(12);
   doc.setFontStyle('normal');
-  doc.text('Recibo N°', 5, 10);
+  doc.text('Código de recibo', 5, 10);
   doc.text(`${data.promotion.documentId}`, 5, 18);
 
   // doc.text('Detalle de Venta de Promoción', 70, 10);
   doc.line(5, 20, 205, 20);
 
   doc.setFontStyle('bold');
-  doc.text('Detalle de Venta de Promoción', 70, 10);
+  doc.text('Detalle de promoción contratada', 70, 10);
   // doc.text('Estadísticas de la organización', 67, 26);
 
   doc.setFontStyle('normal');
@@ -87,11 +93,11 @@ export class PromotionsService {
   doc.text(`Nombre de la tienda:`, 6, 30);
   doc.text(`${data.store.storeName}`, 70, 30);
 
-  doc.text(`Nombre del articulo:`, 6, 40);
+  doc.text(`Nombre de la prenda:`, 6, 40);
   doc.text(`${data.promotion.title}`, 70, 40);
 
-  doc.text(`ID del articulo:`, 6, 50);
-  doc.text(`${data.promotion.articleId}`, 70, 50);
+  doc.text(`Código de la prenda:`, 6, 50);
+  doc.text(`${data.promotion.code}`, 70, 50);
 
   doc.text(`Inicio de promoción:`, 6, 60);
   doc.text(`${formatDate(data.promotion.startOfPromotion.toDate())}`, 70, 60);
@@ -117,8 +123,8 @@ export class PromotionsService {
   doc.text(`${cardOwner}`, 70, 110);
 
   const last4digits = data.promotion.lastFourDigits ? data.promotion.lastFourDigits : 'No disponible';
-  doc.text(`Últimos 4 dígitos:`, 6, 120);
-  doc.text(`${last4digits}`, 70, 120);
+  doc.text(`Número de tarjeta:`, 6, 120);
+  doc.text(`xxxx-xxxx-xxxx-${last4digits}`, 70, 120);
 
   const idMercadoPago = data.promotion.idMercadoPago ? data.promotion.idMercadoPago : 'No disponible';
   doc.text(`Código de Transacción:`, 6, 130);

@@ -1,11 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-promotions-bar',
-  templateUrl: './promotions-bar.component.html',
-  styleUrls: ['./promotions-bar.component.css']
+  selector: 'app-views-by-promotions',
+  templateUrl: './views-by-promotions.component.html',
+  styleUrls: ['./views-by-promotions.component.css']
 })
-export class PromotionsBarComponent implements OnInit {
+export class ViewsByPromotionsComponent implements OnInit {
   @Input() level1Articles: any;
   @Input() level2Articles: any;
   @Input() level3Articles: any;
@@ -17,7 +17,7 @@ export class PromotionsBarComponent implements OnInit {
     this.options = {
       title: {
         display: true,
-        text: 'Interacciones por Promoción',
+        text: 'Visitas según Promoción',
         fontSize: 24
       },
       legend: {
@@ -37,27 +37,27 @@ export class PromotionsBarComponent implements OnInit {
   }
 
   ngOnInit() {
-    const level1Real = (this.level1Articles / 3) + 1;
-    const level2Real = (this.level2Articles + 10);
-    const level3Real = (this.level3Articles + 8);
-    console.log(`dibujando ` + level1Real + ` - ` + level2Real + ` - ` + level3Real);
+    const level1Real = (this.level1Articles);
+    const level2Real = (this.level2Articles);
+    const level3Real = (this.level3Articles);
+    console.log(`dibujando visitas segun promocion: 0=` + level1Real + ` - 1=` + level2Real + ` - 2=` + level3Real);
     this.data = {
-      labels: [`Niveles de promoción`],
+      labels: [],
       datasets: [
         {
-          label: 'Articulos Sin promoción',
+          label: 'Visitas de artículos sin promoción',
           backgroundColor: '#FF6384',
           borderColor: '#1E88E5',
           data: [this.level1Articles]
         },
         {
-          label: 'Articulos con Promoción Básica',
+          label: 'Visitas de artículos con promoción Básica',
           backgroundColor: '#42A5F5',
           borderColor: '#1E88E5',
           data: [this.level2Articles]
         },
         {
-          label: 'Articulo con Promoción Premium',
+          label: 'Visitas de artículos con promoción Premium',
           backgroundColor: '#FFCE56',
           borderColor: '#1E88E5',
           data: [this.level3Articles]

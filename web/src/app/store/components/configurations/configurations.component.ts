@@ -3,7 +3,7 @@ import { DataService } from '../../../service/dataService';
 import { StoreModel } from 'src/app/auth/models/store.model';
 import { FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { ImgCropperConfig, LyResizingCroppingImages } from '@alyle/ui/resizing-cropping-images';
-import { PromotionsService } from './service/promotions.service';
+import { PromotionsService } from '../../../anylitics/services/promotions.service';
 import { MatTableDataSource } from '@angular/material';
 
 @Component({
@@ -29,19 +29,14 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit{
   croppedImage?: string[] = ['', '', ''];
   isLoadedImage = [false];
   actualImageId: any;
-
-  displayedColumns = ['Articulo', 'FechaInicio', 'FechaFin', 'NivelPromocion', 'PrecioFinal', 'Descargar'];
-  promotionTableDataSource: any;
-  promotionsData;
-  locale: string;
-  constructor( private dataService: DataService, private formBuilder: FormBuilder, private promotionsService: PromotionsService) {
+  constructor( private dataService: DataService, private formBuilder: FormBuilder, ) {
    }
 
   ngOnInit() {
     this.dataService.getStoreInfo().then(store => {
       this.actualStore = store;
       this.actualFirebaseUser = this.dataService.getFirebaseUser();
-      this.getPromotionsDone();
+      // this.getPromotionsDone();
       console.log('+-'.repeat(15), this.actualStore);
       console.log('+-'.repeat(15), this.actualFirebaseUser);
       this.myFormGroup = this.formBuilder.group({
@@ -121,36 +116,36 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit{
     }
   // ----------------------------------- Fin todo lo de cortar imagenes --------------------------
 
-  async getPromotionsDone() {
-    await this.promotionsService.getPromotions(this.actualStore.firebaseUID).then( promotions => {
-      console.log('promotions que me corresponden', promotions);
-      this.promotionsData = promotions;
-      this.promotionsData.forEach( promotion => {
-        this.promotionsService.getArticleImage(promotion.articleId).then( data => {
-           promotion.image = data.picture;
-           promotion.title = data.name;
-          });
-      });
-      console.log('promotions que me corresponden luego de agregar image', promotions);
-      this.promotionTableDataSource = new MatTableDataSource(this.promotionsData);
-    });
-  }
+  // async getPromotionsDone() {
+  //   await this.promotionsService.getPromotions(this.actualStore.firebaseUID).then( promotions => {
+  //     console.log('promotions que me corresponden', promotions);
+  //     this.promotionsData = promotions;
+  //     this.promotionsData.forEach( promotion => {
+  //       this.promotionsService.getArticleImage(promotion.articleId).then( data => {
+  //          promotion.image = data.picture;
+  //          promotion.title = data.name;
+  //         });
+  //     });
+  //     console.log('promotions que me corresponden luego de agregar image', promotions);
+  //     this.promotionTableDataSource = new MatTableDataSource(this.promotionsData);
+  //   });
+  // }
 
-  getTotalCost() {
-    return this.promotionsData.map(promotion => promotion.promotionCost).reduce((acc, value) => acc + value, 0);
-  }
+  // getTotalCost() {
+  //   return this.promotionsData.map(promotion => promotion.promotionCost).reduce((acc, value) => acc + value, 0);
+  // }
 
-  getPromotionLevel(level) {
-    return (level === 3) ? 'Premium' : 'Estandar';
-  }
+  // getPromotionLevel(level) {
+  //   return (level === 3) ? 'Premium' : 'Estandar';
+  // }
 
-  getImagesFromPromotion (articleId) {
+  // getImagesFromPromotion (articleId) {
 
-  }
+  // }
 
-  downloadPromotion(element) {
-    console.log(element);
-    const data = {promotion: element, store: this.actualStore}
-    this.promotionsService.downloadPromotion(data);
-  }
+  // downloadPromotion(element) {
+  //   console.log(element);
+  //   const data = {promotion: element, store: this.actualStore}
+  //   this.promotionsService.downloadPromotion(data);
+  // }
 }
