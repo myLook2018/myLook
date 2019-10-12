@@ -88,6 +88,8 @@ public class CardsExploreAdapter extends RecyclerView.Adapter<CardsExploreAdapte
             }
             holder.image.setOnClickListener(v -> listener.onPremiumPublicationClick());
             holder.name.setText(premiumPublication.getStoreName());
+            holder.ad.setVisibility(View.GONE);
+            holder.nearby.setVisibility(View.GONE);
         }
     }
 

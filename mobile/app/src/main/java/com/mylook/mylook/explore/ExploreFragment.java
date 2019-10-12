@@ -370,7 +370,7 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
             PremiumPublication premiumPublication = (PremiumPublication) publications.get(mLayoutManager.getTopPosition());
             exploreService.visitPremiumPublication(premiumPublication);
             Intent intent = new Intent(getContext(), PublicationDetail.class);
-            intent.putExtra("premiumPublication", premiumPublication);
+            intent.putExtra("publication", premiumPublication);
             Objects.requireNonNull(getContext()).startActivity(intent);
         }
     }
