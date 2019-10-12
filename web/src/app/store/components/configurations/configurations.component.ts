@@ -17,7 +17,7 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit{
   actualStore = new StoreModel();
   actualFirebaseUser;
   myFormGroup: FormGroup;
-  isEditMode = false;
+  isEditMode = true;
   myConfig: ImgCropperConfig = {
     width: 400, // Default `250`
     height: 400, // Default `200`,

@@ -1,33 +1,33 @@
-.example-card {
-  max-width: 432px;
-  max-height: 634px;
-  margin-left: auto;
-  margin-right: auto;
-}
+// .example-card {
+//   max-width: 432px;
+//   max-height: 634px;
+//   margin-left: auto;
+//   margin-right: auto;
+// }
 
-p {
-  text-transform: lowercase;
-}
+// p {
+//   text-transform: lowercase;
+// }
 
-p::first-letter {
-  text-transform: uppercase;
-}
+// p::first-letter {
+//   text-transform: uppercase;
+// }
 
-.firstToUpper::first-letter {
-  text-transform: uppercase;
-}
+// .firstToUpper::first-letter {
+//   text-transform: uppercase;
+// }
 
-.elForm {
-  max-width: 0px;
-  // margin-left: auto;
-  margin-right: auto;
-  margin-top: 2rem;
-}
+// .elForm {
+//   max-width: 0px;
+//   // margin-left: auto;
+//   margin-right: auto;
+//   margin-top: 2rem;
+// }
 
-.storeMainInformation {
-  max-height: 120px;
-  overflow: auto;
-}
+// .storeMainInformation {
+//   max-height: 120px;
+//   overflow: auto;
+// }
 
 ly-cropping {
   max-width: 400px;
@@ -44,91 +44,108 @@ ly-cropping {
 .promotionsTable {
   padding: 1rem 0 0 0;
   margin-top: 12rem;
-
 }
- /* ------------------------------------------------------------------------------------------- */
+//  /* ------------------------------------------------------------------------------------------- */
+// .configuration {
+//   // background-color: red;
+//   display: grid;
+//   grid-template-columns: repeat(5, 1fr);
+//   grid-auto-rows: minmax(100px, auto);
+//   grid-row-gap: 2rem;
+
+//   .storeInformation{
+//     // background-color: green;
+//     display: inline-grid;
+//     grid-column: 1/6;
+//     grid-row: 1;
+//     .resume {
+//       // background-color: pink;
+//       grid-column: 1/2
+//     }
+//     .extraInformation {
+//       grid-column: 2/6;
+//       grid-row: 1;
+//       // background-color: aquamarine;
+
+//       .info-card {
+//         margin-left: auto;
+//         margin-right: 4rem;
+
+//         .container-table {
+//           display: grid;
+//           grid-template-columns: repeat(2, 25vw);
+//           grid-gap: 10px;
+//           grid-auto-rows: minmax(100px, auto);
+//           align-items: center;
+//           justify-items: center;
+//           margin-left: 2rem;
+
+//           .first-column {
+//             grid-column: 1/2;
+//             grid-row: 1;
+//             align-self: stretch;
+//             width: calc(23vw);
+
+//           }
+
+//           .second-column {
+//             grid-column: 2/3;
+//             grid-row: 1;
+//             align-self: stretch;
+//             width: calc(23vw);
+//           }
+
+//           .fullWidth {
+//             width: 100%;
+//           }
+//         }
+
+//         .extraInformationEdit {
+//           text-align: end;
+//         }
+//       }
+//     }
+//   }
+
+//   .marketingInformation {
+//     // background-color: yellow;
+//     grid-column: 1/6;
+//     grid-row: 2;
+//   }
+
+// }
+
+// textarea {
+//   resize: none !important;
+// }
+
 .configuration {
-  // background-color: red;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-auto-rows: minmax(100px, auto);
-  grid-row-gap: 2rem;
+  height: 100%;
+  width: 100%;
+  .card-container {
+    margin: 2rem;
+    min-width: 735px;
 
-  .storeInformation{
-    // background-color: green;
-    display: inline-grid;
-    grid-column: 1/6;
-    grid-row: 1;
-    .resume {
-      // background-color: pink;
-      grid-column: 1/2
-    }
-    .extraInformation {
-      grid-column: 2/6;
-      grid-row: 1;
-      // background-color: aquamarine;
+    .storeInformation {
 
-      .info-card {
-        margin-left: auto;
-        margin-right: 4rem;
+      .first-row {
+        display: flex;
+      }
 
-        .container-table {
-          display: grid;
-          grid-template-columns: repeat(2, 25vw);
-          grid-gap: 10px;
-          grid-auto-rows: minmax(100px, auto);
-          align-items: center;
-          justify-items: center;
-          margin-left: 2rem;
+      .information {
+        width: 50%;
+      }
 
-          .first-column {
-            grid-column: 1/2;
-            grid-row: 1;
-            align-self: stretch;
-            width: calc(23vw);
-
-          }
-
-          .second-column {
-            grid-column: 2/3;
-            grid-row: 1;
-            align-self: stretch;
-            width: calc(23vw);
-          }
-
-          .fullWidth {
-            width: 100%;
-          }
-        }
-
-        .extraInformationEdit {
-          text-align: end;
-        }
+      .fullWidth {
+        width: 100%;
       }
     }
+
+    .storePhotos {
+      width: 50%;
+      min-width: 500px;
+    }
   }
-
-  .marketingInformation {
-    // background-color: yellow;
-    grid-column: 1/6;
-    grid-row: 2;
-  }
-
-}
-
-textarea {
-  resize: none !important;
-}
-
-.backgroundColor {
-  width: 100%;
-  height: calc(100vh - 48px);
-  background: rgba(252,236,252,0.14);
-  background: -moz-linear-gradient(top, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
-  background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(252,236,252,0.14)), color-stop(49%, rgba(251,166,225,0.16)), color-stop(85%, rgba(255,124,216,0.18)), color-stop(100%, rgba(253,137,215,0.19)));
-  background: -ms-linear-gradient(top, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
-  background: linear-gradient(to bottom, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', endColorstr='#fd89d7', GradientType=0 );
 }
 
 .myLookPink {
