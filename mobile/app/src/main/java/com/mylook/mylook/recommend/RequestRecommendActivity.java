@@ -5,9 +5,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,7 +43,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
 
     private static final String TAG = "RequestRecommendation";
     private ImageView imgRequestPhoto;
-    private TextView txtDescription;
+    private TextView txtDescription, sizeText, categoryText, sizeLabel, categoryLabel;
     private TextView txtTitle;
     private RecyclerView recyclerView;
     private TextView txtLimitDate;
@@ -58,7 +61,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
         setContentView(R.layout.activity_request_recommendation);
         Log.d(TAG, "onCreate: started.");
         Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
-        tb.setTitle("Tu solicitud");
+        tb.setTitle("Tu Solicitud");
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
@@ -66,6 +69,10 @@ public class RequestRecommendActivity extends AppCompatActivity {
         txtDescription = findViewById(R.id.txtRecommendDescpription);
         txtTitle = findViewById(R.id.txtRecommendTitle);
         txtLimitDate = findViewById(R.id.txtDate);
+        sizeText = findViewById(R.id.sizeText);
+        sizeLabel = findViewById(R.id.sizeLabel);
+        categoryText = findViewById(R.id.categoryText);
+        categoryLabel = findViewById(R.id.categoryLabel);
         getIncomingIntent();
         //invalidateOptionsMenu();
     }
@@ -112,6 +119,21 @@ public class RequestRecommendActivity extends AppCompatActivity {
                             DocumentSnapshot doc = task.getResult();
                             txtDescription.setText(doc.get("description").toString());
                             txtTitle.setText(doc.get("title").toString());
+
+                            if(doc.contains("size")) {
+                                sizeText.setText(doc.get(("size")).toString().toUpperCase());
+                                sizeLabel.setText("Talle: ");
+                            } else{
+                                sizeText.setVisibility(View.GONE);
+                                sizeLabel.setVisibility(View.GONE);
+                            }
+                            if(doc.contains("category")) {
+                                categoryText.setText(doc.get("category").toString());
+                                categoryLabel.setText("Categoría: ");
+                            } else {
+                                categoryText.setVisibility(View.GONE);
+                                categoryLabel.setVisibility(View.GONE);
+                            }
                             isClosed = (boolean) doc.get("isClosed");
                             if(isClosed){
                                 txtLimitDate.setText("Cerrada");
@@ -224,7 +246,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
         if(id == R.id.share_req){
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, "Me podes ayudar con esta recomendación? https://www.mylook.com/recommendation?requestId="+requestId);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "¿Me podés ayudar con esta recomendación? https://www.mylook.com/recommendation?requestId="+requestId);
             sendIntent.setType("text/plain");
             startActivity(Intent.createChooser(sendIntent, "Share via"));
         }
@@ -233,15 +255,15 @@ public class RequestRecommendActivity extends AppCompatActivity {
 //        }
         if(id == R.id.close_req){
             final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(this, R.style.AlertDialogTheme);
-            final android.app.AlertDialog alert = dialog.setTitle("Cerrar pedido")
-                    .setMessage("¿Estás seguro que querés cerrar este pedido?")
+            final android.app.AlertDialog alert = dialog.setTitle("Cerrar solicitud")
+                    .setMessage("¿Estás seguro que querés cerrar esta solicitud?")
                     .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                             FirebaseFirestore.getInstance().collection("requestRecommendations").document(requestId).update("isClosed", true).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    Toast.makeText(getApplicationContext(),"Tu pedido ha sido cerrado", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(),"Tu solicitud ha sido cerrado", Toast.LENGTH_LONG).show();
                                 }
 
                             });

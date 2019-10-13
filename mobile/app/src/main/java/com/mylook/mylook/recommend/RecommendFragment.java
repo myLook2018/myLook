@@ -20,7 +20,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -42,6 +44,8 @@ public class RecommendFragment extends Fragment {
     private FloatingActionButton fab;
     private Context mContext;
     private RecyclerView recyclerView;
+    private TextView noRecommendationsText;
+    private ImageView noRecommendationsImage;
     private static List<RequestRecommendation> requestRecommendationsList;
     public final static String TAG = "RecommendFragment";
     public static int NEW_REQUEST = 1;
@@ -58,6 +62,8 @@ public class RecommendFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerViewRecommend);
         fab = view.findViewById(R.id.fab);
         progressBar = view.findViewById(R.id.progressBar);
+        noRecommendationsImage = view.findViewById(R.id.noRecommendationsImage);
+        noRecommendationsText = view.findViewById(R.id.noRecommendationsText);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -163,6 +169,14 @@ public class RecommendFragment extends Fragment {
                         }
                         adapter.notifyDataSetChanged();
                         progressBar.setVisibility(View.GONE);
+                        if(requestRecommendationsList.size() == 0){
+                            noRecommendationsImage.setVisibility(View.VISIBLE);
+                            noRecommendationsText.setVisibility(View.VISIBLE);
+                        }else {
+                            noRecommendationsImage.setVisibility(View.INVISIBLE);
+                            noRecommendationsText.setVisibility(View.INVISIBLE);
+
+                        }
                     }
                 });
     }
