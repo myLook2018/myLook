@@ -67,7 +67,15 @@ public class RequestRecommendActivity extends AppCompatActivity {
         txtTitle = findViewById(R.id.txtRecommendTitle);
         txtLimitDate = findViewById(R.id.txtDate);
         getIncomingIntent();
-        //invalidateOptionsMenu();
+        invalidateOptionsMenu();
+
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        super.onSupportNavigateUp();
+        onBackPressed();
+        return true;
     }
 
     private void initRecyclerView(ArrayList<HashMap<String, String>> answerList) {
@@ -205,16 +213,19 @@ public class RequestRecommendActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Log.e(TAG, "Is from deep link? "+fromDeepLink);
+        Log.e(TAG, "ON back pressed");
+        Log.e(TAG, "From deep link"+fromDeepLink);
         if(fromDeepLink){
             Intent intent= new Intent(getApplicationContext(), MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
+        } else {
+            finish();
         }
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+        public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.request_recommendation_menu, menu);
         if(isClosed) {
             menu.findItem(R.id.close_req).setVisible(false); // si ya esta cerrada no muestro la opcion
