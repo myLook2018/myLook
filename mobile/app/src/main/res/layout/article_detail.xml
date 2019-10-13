@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/greyBackground">
+    android:background="@color/white">
 
     <ScrollView
         android:id="@+id/scrollView3"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="50dp"
-        android:background="@color/greyBackground"
+        android:background="@color/white"
         app:layout_constraintBottom_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -46,7 +47,7 @@
             <View
                 android:id="@+id/divider2"
                 android:layout_width="0dp"
-                android:layout_height="2dp"
+                android:layout_height="1dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="26dp"
                 android:layout_marginEnd="8dp"
@@ -63,6 +64,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_weight="2"
                 android:text="MATERIAL"
+                android:textColor="@color/grey"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/txtStoreName" />
@@ -84,6 +86,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_weight="1"
                 android:text="TALLES"
+                android:textColor="@color/grey"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/txtMaterial" />
@@ -91,7 +94,7 @@
             <View
                 android:id="@+id/divider3"
                 android:layout_width="0dp"
-                android:layout_height="2dp"
+                android:layout_height="1dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="18dp"
                 android:layout_marginEnd="8dp"
@@ -100,16 +103,14 @@
                 app:layout_constraintStart_toEndOf="@+id/lblSizes"
                 app:layout_constraintTop_toBottomOf="@id/txtMaterial" />
 
-            <LinearLayout
-                android:id="@+id/lnlSizes"
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupSizesS"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="16dp"
-                android:layout_weight="2"
-                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/lblSizes"></LinearLayout>
+                app:layout_constraintTop_toBottomOf="@+id/lblSizes" />
 
             <TextView
                 android:id="@+id/lblColors"
@@ -119,34 +120,32 @@
                 android:layout_marginTop="16dp"
                 android:layout_weight="1"
                 android:text="COLORES"
+                android:textColor="@color/grey"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/lnlSizes" />
+                app:layout_constraintTop_toBottomOf="@id/chipGroupSizesS" />
 
             <View
                 android:id="@+id/divider4"
                 android:layout_width="0dp"
-                android:layout_height="2dp"
+                android:layout_height="1dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="26dp"
                 android:layout_marginEnd="8dp"
                 android:background="?android:attr/listDivider"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/lblColors"
-                app:layout_constraintTop_toBottomOf="@id/lnlSizes" />
+                app:layout_constraintTop_toBottomOf="@id/chipGroupSizesS" />
 
 
-            <LinearLayout
-                android:id="@+id/lnlColors"
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupColors"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="16dp"
-                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/lblColors">
-
-            </LinearLayout>
+                app:layout_constraintTop_toBottomOf="@id/lblColors" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

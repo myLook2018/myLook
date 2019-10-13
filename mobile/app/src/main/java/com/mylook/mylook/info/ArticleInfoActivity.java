@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
+
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.appcompat.app.ActionBar;
@@ -12,12 +15,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
@@ -41,22 +45,24 @@ public class ArticleInfoActivity extends AppCompatActivity {
     private Context mContext = this;
     private FloatingActionButton btnCloset;
     private FloatingActionButton btnShare;
+    private ChipGroup chipGroupSizes;
+    private Button btnStore;
     private String articleId;
     private String downLoadUri;
     private Article article;
     private ArrayList<String> tags, imageArraySlider;
-    private LinearLayout lnlSizes, lnlColors;
     private TextView txtMaterial, txtCost, txtTitle, txtStoreName;
     private boolean inCloset;
     private boolean initialInCloset;
     private boolean fromDeepLink = false;
+    private ChipGroup chipGroupColors;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_details);
         Toolbar tb = findViewById(R.id.toolbar);
-        tb.setTitle("Detalle del Articulo");
+        tb.setTitle("Detalle de la Prenda");
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
         if(ab !=null){
@@ -98,14 +104,16 @@ public class ArticleInfoActivity extends AppCompatActivity {
     }
 
     private void initElements() {
+        chipGroupSizes =findViewById(R.id.chipGroupSizesS);
+        chipGroupColors =findViewById(R.id.chipGroupColors);
+
         btnCloset=findViewById(R.id.btnCloset);
+        btnStore=findViewById(R.id.btnStore);
         //articleImage=findViewById(R.id.article_image);
         txtTitle=findViewById(R.id.txtTitle);
         txtStoreName=findViewById(R.id.txtStoreName);
         txtMaterial=findViewById(R.id.txtMaterial);
         txtCost=findViewById(R.id.txtCost);
-        lnlSizes=findViewById(R.id.lnlSizes);
-        lnlColors=findViewById(R.id.lnlColors);
         btnShare =  findViewById(R.id.btnShare);
         //Glide.with(mContext).load(downLoadUri).into(articleImage);
 
@@ -183,29 +191,40 @@ public class ArticleInfoActivity extends AppCompatActivity {
                 });
 
     }
+    private Chip getChip(final ChipGroup entryChipGroup, String text) {
+        final Chip chip = new Chip(this);
+        /*int paddingDp = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 10,
+                getResources().getDisplayMetrics()
+        );
+        chip.setPadding(paddingDp, paddingDp, paddingDp, paddingDp);*/
+        chip.setText(text);
+        chip.setOnCloseIconClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                entryChipGroup.removeView(chip);
+            }
+        });
+        return chip;
+    }
 
     private void setDetail() {
         txtStoreName.setText(article.getStoreName());
         txtTitle.setText(article.getTitle());
         txtMaterial.setText(article.getMaterial());
         txtCost.setText(String.format("$%s", String.valueOf(article.getCost())));
-        LinearLayout lnl = new LinearLayout(this);
-        lnl.setOrientation(LinearLayout.VERTICAL);
         for (String size : article.getSizes()) {
-            TextView item = new TextView(this);
-            item.setText(size);
-            lnl.addView(item);
+            chipGroupSizes.addView(getChip(chipGroupSizes,size));
         }
-        lnlSizes.addView(lnl);
-        LinearLayout lnl2 = new LinearLayout(this);
         for (String color : article.getColors()) {
-            TextView item = new TextView(this);
-            item.setText(color);
-            lnl2.addView(item);
+            chipGroupColors.addView(getChip(chipGroupColors,color));
         }
-        lnlColors.addView(lnl2);
-        lnl2.setOrientation(LinearLayout.VERTICAL);
         txtStoreName.setOnClickListener(v -> {
+            Intent intentVisitStore = new Intent(mContext, StoreActivity.class);
+            intentVisitStore.putExtra("store", article.getStoreName());
+            mContext.startActivity(intentVisitStore);
+        });
+        btnStore.setOnClickListener(v -> {
             Intent intentVisitStore = new Intent(mContext, StoreActivity.class);
             intentVisitStore.putExtra("store", article.getStoreName());
             mContext.startActivity(intentVisitStore);
