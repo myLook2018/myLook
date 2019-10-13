@@ -31,7 +31,7 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
     private PremiumUserInfoFragment infoFragment;
     private ReputationPremiumFragment reputationFragment;
     private PremiumPublicationsFragment publicationsFragment;
-    private PublicClosetFragment publicClosetFragment;
+    private PremiumDiffusionFragment publicDifusionFragment;
     private boolean isCurrentUser=false;
     private String premiumUserId; //el userUID del usuario destacado NO EL ACTUAL
 
@@ -100,8 +100,8 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
         publicationsFragment=new PremiumPublicationsFragment(premiumUserId);
         publicationsFragment.setArguments(bundle);
 
-        publicClosetFragment=new PublicClosetFragment(premiumUserId);
-        publicClosetFragment.setArguments(bundle);
+        publicDifusionFragment =new PremiumDiffusionFragment(premiumUserId);
+        publicDifusionFragment.setArguments(bundle);
 
         reputationFragment=new ReputationPremiumFragment(FirebaseAuth.getInstance().getUid());
         reputationFragment.setArguments(bundle);
@@ -128,7 +128,7 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
         StoreTabAdapter adapter = new StoreTabAdapter(getSupportFragmentManager());
         Log.e("VIEW PAGER","CARGAAAAAAAAAA");
         adapter.addFragment(0,publicationsFragment,"Publicaciones");
-        adapter.addFragment(1,publicClosetFragment,"Difusiones");
+        adapter.addFragment(1, publicDifusionFragment,"Difusiones");
         adapter.addFragment(2,reputationFragment,"Reputación");
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(0);
