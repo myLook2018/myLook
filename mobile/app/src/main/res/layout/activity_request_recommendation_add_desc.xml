@@ -63,60 +63,60 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_center"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_top"
+            android:layout_alignParentBottom="true"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/linearLayout6"
                 android:layout_width="0dp"
-                android:layout_height="432dp"
+                android:layout_height="match_parent"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:orientation="vertical"
-                android:paddingTop="51dp"
+                android:overScrollMode="always"
+                android:paddingTop="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
                     android:id="@+id/imgRecommend"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="250dp"
+                    android:layout_height="250dp"
                     android:layout_marginTop="8dp"
                     android:background="@drawable/logo_transparente_50"
                     android:maxWidth="50dp"
                     android:maxHeight="50dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/txtDescription"
-                    android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:capitalize="sentences"
-                    android:hint="Agregá una descripción a tu solicitud."
-                    android:maxLength="200"
-                    android:minHeight="100dp"
-                    android:singleLine="false"
+                    android:text="Agregá una foto a tu solicitud"
+                    android:textColor="@color/black"
+                    android:textSize="17sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imgRecommend"
-                    tools:ignore="Deprecated" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
                     android:id="@+id/editDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:backgroundTint="@color/primary_dark"
                     android:ems="10"
                     android:focusable="false"
+                    android:foregroundTint="@color/primary_dark"
                     android:hint="Fecha Límite"
                     android:inputType="textPersonName"
                     android:minWidth="120dp"
+                    android:shadowColor="@color/primary_dark"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txtDescription" />
 
@@ -126,101 +126,125 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
+                    android:backgroundTint="@color/primary_dark"
+                    android:foregroundTint="@color/primary_dark"
                     android:hint="Talle (opcional)"
+                    android:shadowColor="@color/primary_dark"
                     app:layout_constraintEnd_toEndOf="@+id/editDate"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/editDate" />
-
 
 
                 <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
                     android:id="@+id/category"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
                     android:layout_marginBottom="8dp"
+                    android:backgroundTint="@color/primary_dark"
+                    android:drawableTint="@color/primary_dark"
                     android:dropDownHeight="200dp"
-                    android:hint="Categorías"
+                    android:foregroundTint="@color/primary_dark"
+                    android:hint="Categoría"
+                    android:shadowColor="@color/primary_dark"
                     android:spinnerMode="dropdown"
                     android:textColor="@color/common_google_signin_btn_text_light_disabled"
                     android:textSize="17sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/size_input"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/size_input"
                     app:layout_constraintTop_toBottomOf="@+id/size_input"
-                    app:met_floatingLabel="highlight" />
+                    app:met_floatingLabel="normal" />
 
-                <com.google.android.material.textfield.TextInputLayout
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtDescription"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
-                    app:layout_constraintEnd_toStartOf="@+id/imgRecommend"
-                    app:layout_constraintStart_toStartOf="@+id/txtDescription"
-                    app:layout_constraintTop_toTopOf="@+id/imgRecommend">
+                    android:backgroundTint="@color/primary_dark"
+                    android:capitalize="sentences"
+                    android:foregroundTint="@color/primary_dark"
+                    android:hint="Agregá una descripción a tu solicitud."
+                    android:maxLength="200"
+                    android:minHeight="100dp"
+                    android:scrollbars="horizontal"
+                    android:shadowColor="@color/primary_dark"
+                    android:singleLine="false"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtTitle"
+                    tools:ignore="Deprecated" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/txtTitle"
-                        android:layout_width="match_parent"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:backgroundTint="@color/primary_dark"
+                    android:foregroundTint="@color/primary_dark"
+                    android:hint="Agregá un título"
+                    android:shadowColor="@color/primary_dark"
+                    android:textColorLink="@color/primary_dark"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imgRecommend" />
+
+                <com.github.clans.fab.FloatingActionMenu
+                    android:id="@+id/fabMenu"
+                    android:layout_width="233dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:menu_animationDelayPerItem="55"
+                    app:menu_buttonSpacing="0dp"
+                    app:menu_buttonToggleAnimation="@anim/no_spin_animation"
+                    app:menu_colorNormal="@color/accent"
+                    app:menu_colorPressed="@color/accent"
+                    app:menu_colorRipple="@color/accent"
+                    app:menu_fab_hide_animation="@anim/no_spin_animation"
+                    app:menu_fab_show_animation="@anim/no_spin_animation"
+                    app:menu_fab_size="normal"
+                    app:menu_icon="@drawable/ic_add_photo"
+                    app:menu_labels_colorNormal="@color/fui_transparent"
+                    app:menu_labels_colorPressed="@color/fui_transparent"
+                    app:menu_labels_colorRipple="@color/fui_transparent"
+                    app:menu_labels_cornerRadius="3dp"
+                    app:menu_labels_ellipsize="none"
+                    app:menu_labels_hideAnimation="@anim/no_spin_animation"
+                    app:menu_labels_margin="0dp"
+                    app:menu_labels_maxLines="-1"
+                    app:menu_labels_padding="8dp"
+                    app:menu_labels_position="left"
+                    app:menu_labels_showAnimation="@anim/no_spin_animation"
+                    app:menu_labels_showShadow="false"
+                    app:menu_labels_singleLine="false"
+                    app:menu_labels_textColor="@color/black"
+                    app:menu_labels_textSize="15sp"
+                    app:menu_openDirection="up">
+
+                    <com.github.clans.fab.FloatingActionButton
+                        android:id="@+id/photoFloating"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:hint="Agregá un título" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:clickable="false"
+                        android:src="@drawable/ic_camera"
+                        app:fab_colorNormal="@color/accent"
+                        app:fab_label="Cámara"
+                        app:fab_size="normal" />
+
+                    <com.github.clans.fab.FloatingActionButton
+                        android:id="@+id/galleryFloating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_gallery"
+                        app:fab_colorNormal="@color/accent"
+                        app:fab_label="Galería"
+                        app:fab_size="normal" />
+                </com.github.clans.fab.FloatingActionMenu>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <com.github.clans.fab.FloatingActionMenu
-                android:id="@+id/fabMenu"
-                android:layout_width="233dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:menu_animationDelayPerItem="55"
-                app:menu_buttonSpacing="0dp"
-                app:menu_colorNormal="@color/accent"
-                app:menu_colorPressed="@color/accent"
-                app:menu_colorRipple="@color/accent"
-                app:menu_fab_size="normal"
-                app:menu_icon="@drawable/ic_add_photo"
-                app:menu_labels_colorNormal="@color/fui_transparent"
-                app:menu_labels_colorPressed="@color/fui_transparent"
-                app:menu_labels_colorRipple="@color/fui_transparent"
-                app:menu_labels_cornerRadius="3dp"
-                app:menu_labels_ellipsize="none"
-                app:menu_labels_hideAnimation="@anim/fab_slide_out_to_right"
-                app:menu_labels_margin="0dp"
-                app:menu_labels_maxLines="-1"
-                app:menu_labels_padding="8dp"
-                app:menu_labels_position="left"
-                app:menu_labels_showAnimation="@anim/fab_slide_in_from_right"
-                app:menu_labels_showShadow="true"
-                app:menu_labels_singleLine="false"
-                app:menu_labels_textColor="@color/black"
-                app:menu_labels_textSize="15sp"
-                app:menu_openDirection="up"
-                app:menu_shadowRadius="4dp"
-                app:menu_shadowXOffset="1dp"
-                app:menu_shadowYOffset="4dp"
-                app:menu_showShadow="true"
-                >
-
-                <com.github.clans.fab.FloatingActionButton
-                    android:id="@+id/photoFloating"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_camera"
-                    app:fab_label="Cámara"
-                    app:fab_size="normal"
-                    app:fab_colorNormal="@color/accent"/>
-
-                <com.github.clans.fab.FloatingActionButton
-                    android:id="@+id/galleryFloating"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_gallery"
-                    app:fab_label="Galería"
-                    app:fab_size="normal"
-                    app:fab_colorNormal="@color/accent"/>
-            </com.github.clans.fab.FloatingActionMenu>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
