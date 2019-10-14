@@ -93,7 +93,7 @@ export class PromoteDialogComponent {
           }
       },
       'back_urls': {
-        'success': `https://app-mylook.firebaseapp.com/Tiendas${this.userData.storeName}/Catalogo`,
+        'success': `https://app-mylook.firebaseapp.com/Tiendas${this.userData.storeName}/Promociones`,
         'failure': 'https://app-mylook.firebaseapp.com/Tiendas/Error',
     },
     'auto_return': 'approved',
