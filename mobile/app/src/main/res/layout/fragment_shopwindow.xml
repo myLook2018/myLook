@@ -1,15 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<in.srain.cube.views.GridViewWithHeaderAndFooter
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/gridview"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:horizontalSpacing="5dp"
-    android:numColumns="3"
-    android:padding="5dp"
-    android:stretchMode="columnWidth"
-    android:verticalSpacing="5dp">
+    android:layout_height="wrap_content"
+    android:isScrollContainer="true"
+    android:orientation="vertical"
+    android:scrollbars="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/cover_store_photo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true" />
+
+            <GridView
+                android:id="@+id/gridview"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_below="@id/cover_store_photo"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:numColumns="3"
+                android:padding="5dp"
+                android:scrollbars="none"
+                android:stretchMode="columnWidth"
+                android:verticalSpacing="5dp" />
+        </RelativeLayout>
+
+    </ScrollView>
 
 
-</in.srain.cube.views.GridViewWithHeaderAndFooter>
+</RelativeLayout>
+

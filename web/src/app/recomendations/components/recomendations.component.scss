@@ -32,6 +32,7 @@
     width: 100%;
     height: calc(100vh - 49px);
     display: flex;
+    // background-image: linear-gradient(to top, #fdcbf11a 0%, #fdcbf125 1%, #e6dee938 100%);
   }
 
   .mat-toolbar-multiple-rows {
@@ -86,6 +87,7 @@
 
 .mat-row:hover {
   background-color:  rgb(193, 85, 212);
+  cursor: pointer;
 }
 
 .highlight{
@@ -94,8 +96,6 @@
 
 .mat-card-image {
   max-height: calc(40vh);
-  width: calc(100% + 48px);
-  margin: 0 -24px 16px -24px;
 }
 
 .descriptionArea{
@@ -118,4 +118,20 @@
 ::ng-deep .mat-menu-panel.my-full-width-menu {
   width: calc(12vw);
   min-width: 200px;
+}
+
+mat-header-cell {
+  display:flex;
+  justify-content:center;
+ }
+
+ .backgroundColor {
+  width: 100%;
+  height: calc(100);
+  background: rgba(252,236,252,0.14);
+  background: -moz-linear-gradient(top, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
+  background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(252,236,252,0.14)), color-stop(49%, rgba(251,166,225,0.16)), color-stop(85%, rgba(255,124,216,0.18)), color-stop(100%, rgba(253,137,215,0.19)));
+  background: -ms-linear-gradient(top, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
+  background: linear-gradient(to bottom, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', endColorstr='#fd89d7', GradientType=0 );
 }

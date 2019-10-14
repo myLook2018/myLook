@@ -2,8 +2,8 @@ package com.mylook.mylook.utils;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,12 +27,12 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
     private Context mContext;
     private List articlesAndStoresList;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView nameStore, txtTitle;
-        public ImageView articleImage;
-        public CardView articleCardView;
+    class MyViewHolder extends RecyclerView.ViewHolder {
+        TextView nameStore, txtTitle;
+        ImageView articleImage;
+        CardView articleCardView;
 
-        public MyViewHolder(View view) {
+        MyViewHolder(View view) {
             super(view);
             articleCardView =  view.findViewById(R.id.article_card_view);
             nameStore =  view.findViewById(R.id.store_name);
@@ -62,7 +62,7 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
             holder.nameStore.setText(article.getStoreName());
             holder.txtTitle.setText(article.getTitle());
             // loading article image using Glide library
-            Glide.with(mContext).load(article.getPicture()).into(holder.articleImage);
+            Glide.with(mContext).load(article.getPicturesArray().get(0)).into(holder.articleImage);
 
             holder.articleCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -84,7 +84,7 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
                 }
             });
         }else
-            if(articlesAndStoresList.get(position).getClass()== Store.class){
+        if(articlesAndStoresList.get(position).getClass()== Store.class){
             final Store store =(Store) articlesAndStoresList.get(position);
             holder.txtTitle.setText(store.getStoreName());
             holder.nameStore.setText("Ver Tienda");
@@ -96,7 +96,7 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
                 public void onClick(View view) {
                     Intent intent= new Intent(mContext, StoreActivity.class);
                     Log.d("perfil tienda", "onClick: paso por intent la data de la tienda");
-                    intent.putExtra("Tienda", store.getStoreName());
+                    intent.putExtra("store", store.getStoreName());
                     mContext.startActivity(intent);
 
                 }
@@ -106,40 +106,40 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
                 public void onClick(View v) {
                     Intent intent= new Intent(mContext, StoreActivity.class);
                     Log.d("perfil tienda", "onClick: paso por intent la data del articulo");
-                    intent.putExtra("Tienda", store.getStoreName());
+                    intent.putExtra("store", store.getStoreName());
                     mContext.startActivity(intent);
                 }
             });
 
         }else{
-                final PremiumUser premiumUser =(PremiumUser) articlesAndStoresList.get(position);
-                holder.txtTitle.setText(premiumUser.getUserName());
-                holder.nameStore.setText("Ver Usuario destacado");
-                // loading article image using Glide library
-                Glide.with(mContext).load(premiumUser.getProfilePhoto()).into(holder.articleImage);
+            final PremiumUser premiumUser =(PremiumUser) articlesAndStoresList.get(position);
+            holder.txtTitle.setText(premiumUser.getUserName());
+            holder.nameStore.setText("Ver Usuario destacado");
+            // loading article image using Glide library
+            Glide.with(mContext).load(premiumUser.getProfilePhoto()).into(holder.articleImage);
 
-                holder.articleCardView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent= new Intent(mContext, PremiumUserProfileActivity.class);
-                        Log.d("perfil usuario", "onClick: paso por intent la data del card");
-                        intent.putExtra("clientId", premiumUser.getClientId());
-                        mContext.startActivity(intent);
+            holder.articleCardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent= new Intent(mContext, PremiumUserProfileActivity.class);
+                    Log.d("perfil usuario", "onClick: paso por intent la data del card");
+                    intent.putExtra("clientId", premiumUser.getClientId());
+                    mContext.startActivity(intent);
 
-                    }
-                });
-                holder.articleImage.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent= new Intent(mContext, PremiumUserProfileActivity.class);
-                        Log.d("perfil usuario", "onClick: paso por intent la data del card");
-                        intent.putExtra("clientId", premiumUser.getClientId());
-                        mContext.startActivity(intent);
+                }
+            });
+            holder.articleImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent= new Intent(mContext, PremiumUserProfileActivity.class);
+                    Log.d("perfil usuario", "onClick: paso por intent la data del card");
+                    intent.putExtra("clientId", premiumUser.getClientId());
+                    mContext.startActivity(intent);
 
-                    }
-                });
+                }
+            });
 
-            }
+        }
 
     }
 

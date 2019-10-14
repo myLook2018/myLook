@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/ic_house"
+        android:icon="@drawable/ic_house"
+        android:title="">
+
+    </item>
+
+    <item
+        android:id="@+id/ic_explore"
+        android:icon="@drawable/ic_explore"
+        android:title="">
+
+    </item>
+
+    <item
+        android:id="@+id/ic_recommend"
+        android:icon="@drawable/ic_forum"
+        android:title="">
+
+    </item>
+    <item
+        android:id="@+id/ic_closet"
+        android:icon="@drawable/ic_closet_2"
+        android:title="">
+
+    </item>
+
+    <item
+        android:id="@+id/ic_premium"
+        android:icon="@drawable/ic_star"
+        android:title="">
+
+    </item>
+
+</menu>

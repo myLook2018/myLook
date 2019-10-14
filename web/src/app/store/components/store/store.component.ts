@@ -6,7 +6,6 @@ import { Observable } from '../../../../../node_modules/rxjs';
 import { MatDialog } from '@angular/material';
 import { MapsDialogComponent } from '../../../dialog/maps-dialog/maps-dialog.component';
 import { Article } from '../../../articles/models/article';
-import { Store } from '../../model/store.model';
 import { EditStoreComponent } from '../dialogs/editStore';
 import { DataService } from '../../../service/dataService';
 import { StoreModel } from '../../../auth/models/store.model';
@@ -47,7 +46,7 @@ export class StoreComponent implements OnInit, OnDestroy {
 		console.log('-+-+-+-+-+-Inicializando Perfil-+-+-+-+-+-');
 		console.log('estamos pidiendo la data del store desde store');
  //   setTimeout(() => {
-          this.dataService.getStoreInfo().then((store) => {
+          this.dataService.getStoreInfo(true).then((store) => {
 						this.userStore = store
 						this.articleService.getFrontArticlesCopado(this.userStore.storeName).then((articles) => {
 							console.log(articles);
@@ -58,7 +57,7 @@ export class StoreComponent implements OnInit, OnDestroy {
 					});
         };
       //  }, 2500);
-      
+
       ngOnDestroy(): void {}
 
 	openMapDialog(): void {

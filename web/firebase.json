@@ -1,6 +1,13 @@
 {
   "hosting": {
-    "public": "dist/develop",
+    "headers": [ {
+      "source" : "**/*.@(jpg|jpeg|gif|png)",
+      "headers" : [ {
+        "key" : "Access-Control-Allow-Origin",
+        "value" : "*"
+      } ]
+    } ],
+    "public": "dist/myLook",
     "ignore": [
       "firebase.json",
       "**/.*",

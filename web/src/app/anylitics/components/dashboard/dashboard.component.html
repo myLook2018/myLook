@@ -1,4 +1,4 @@
-<div class="mat-typography dashboard" style="top: 0">
+<div class="mat-typography dashboard backgroundColor" style="top: 0">
             <mat-toolbar>
                 <mat-toolbar-row class="stickyNavbar mat-elevation-z2">
                     <span>Estadisticas</span>
@@ -28,7 +28,7 @@
                     </div>
                 </div>
 
-                <div *ngIf="readyToRender" id="datos en bruto" style="display:inline-flex; max-width: 1707px;">
+                <div *ngIf="readyToRender" id="datos en bruto" style="display:inline-flex; max-width: 1643px;">
                     <mat-card class="dats mat-elevation-z6">
                         <h3>Interacciones Totales</h3>
                         <h1>{{totalInteractions}}</h1>
@@ -55,7 +55,7 @@
                     </mat-card>
                     <mat-card class="dats mat-elevation-z6">
                         <h3>Puntaje promedio de Recomendaciones</h3>
-                        <h1 *ngIf="feedBackProm > 0">{{feedBackProm}} de 5</h1>
+                        <h1 *ngIf="feedBackProm > 0">{{feedBackProm | number:'1.0-2'}} de 5</h1>
                         <h1 *ngIf="!(feedBackProm > 0)">No Disponible</h1>
                     </mat-card>
                 </div>

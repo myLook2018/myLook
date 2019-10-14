@@ -9,32 +9,29 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.SuccessContinuation;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -54,7 +51,7 @@ public class NewPublicationActivity extends AppCompatActivity {
     private TextView txtPublicationPhoto;
     private ImageView imgPublicationPhoto;
     private AutoCompleteTextView txtStoreName, txtArticleCode;
-    private Button btnSave;
+    private ImageButton btnSave;
     private Uri selectImageUri = null;
     private StorageReference storageRef;
     private FirebaseUser user;
@@ -62,7 +59,6 @@ public class NewPublicationActivity extends AppCompatActivity {
     private Uri downloadUrl;
     private ProgressBar mProgressBar;
     private boolean enviado = false;
-    private FirebaseFirestore dB;
     private String clientId;
 
 
@@ -78,35 +74,23 @@ public class NewPublicationActivity extends AppCompatActivity {
 
         user= FirebaseAuth.getInstance().getCurrentUser();
         storageRef = FirebaseStorage.getInstance().getReference();
-        dB=FirebaseFirestore.getInstance();
         clientId=getIntent().getStringExtra("clientId");
         initElements();
         setOnclicks();
     }
 
     private void setOnclicks() {
-        txtPublicationPhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                intent.setType("image/*");
-                startActivityForResult(intent, SELECT_FILE);
-            }
+        txtPublicationPhoto.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            intent.setType("image/*");
+            startActivityForResult(intent, SELECT_FILE);
         });
-        imgPublicationPhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                intent.setType("image/*");
-                startActivityForResult(intent, SELECT_FILE);
-            }
+        imgPublicationPhoto.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            intent.setType("image/*");
+            startActivityForResult(intent, SELECT_FILE);
         });
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendRequest();
-            }
-        });
+        btnSave.setOnClickListener(v -> sendRequest());
 
     }
 
@@ -148,8 +132,9 @@ public class NewPublicationActivity extends AppCompatActivity {
 
     private void cropActivity(int resultCode, Intent data){
         CropImage.ActivityResult result = CropImage.getActivityResult(data);
-        selectImageUri = result.getUri();
+
         if (resultCode == RESULT_OK) {
+            selectImageUri = result.getUri();
             int permissionCheck = ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.READ_EXTERNAL_STORAGE);
 
             if (permissionCheck == PackageManager.PERMISSION_GRANTED)
@@ -206,20 +191,13 @@ public class NewPublicationActivity extends AppCompatActivity {
         }
         if (permissionGranted) {
             uploadTask = storageReference.putFile(selectImageUri);
-            uploadTask.onSuccessTask(new SuccessContinuation<UploadTask.TaskSnapshot, Object>() {
-                @NonNull
-                @Override
-                public Task<Object> then(@Nullable final UploadTask.TaskSnapshot taskSnapshot) {
-                    uploadTask.getSnapshot().getStorage().getDownloadUrl().onSuccessTask(new SuccessContinuation<Uri, Object>() {
-                        @NonNull
-                        @Override
-                        public Task<Object> then(@Nullable Uri uri) {
-                            downloadUrl = uri;
-                            return (Task) uploadTask;
-                        }
-                    });
+            uploadTask.onSuccessTask((SuccessContinuation<UploadTask.TaskSnapshot, Object>) taskSnapshot -> {
+                uploadTask.getSnapshot().getStorage().getDownloadUrl()
+                        .onSuccessTask((SuccessContinuation<Uri, Object>) uri -> {
+                    downloadUrl = uri;
                     return (Task) uploadTask;
-                }
+                });
+                return (Task) uploadTask;
             });
 
         } else {
@@ -239,76 +217,54 @@ public class NewPublicationActivity extends AppCompatActivity {
         }else
         {
             Task<QuerySnapshot> task= validateStore(txtStoreName.getText().toString());
-            if(task.isComplete()){
-                if (txtArticleCode.getText().toString().isEmpty()) {
-                    displayMessage("Debe añadir un código para el artículo");
-                    return;
-                }else
-                {
-                    Task<QuerySnapshot> task2=validateCode(txtArticleCode.getText().toString(),txtStoreName.getText().toString());
-                }
-            }
-
         }
-
-        if ( selectImageUri == null) {
-            displayMessage("Debe añadir una foto a la publicación");
-            return;
-        } else {
-            mProgressBar.setVisibility(View.VISIBLE);
-            btnSave.setEnabled(false);
-            final UploadTask uptask = saveImage();
-            uptask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                    task.getResult().getStorage().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            writeFirebaseDocument(task.getResult().toString());
-                        }
-                    });
-
-
-                }
-            });
-        }
-
     }
     private Task<QuerySnapshot> validateStore(String store){
-        Task <QuerySnapshot> task = dB.collection("stores").whereEqualTo("storeName",store).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()){
-                            if(task.getResult().getDocuments().isEmpty()){
-                                displayMessage("No existe tienda");
+        Task <QuerySnapshot> task = FirebaseFirestore.getInstance().collection("stores")
+                .whereEqualTo("storeName",store).get()
+                .addOnCompleteListener(task1 -> {
+                    if (task1.isSuccessful()){
+                        if(task1.getResult().getDocuments().isEmpty()){
+                            displayMessage("No existe tienda");
                             return;
-                            }
-                            else{
+                        }
+                        else
+                        {
+                            if (txtArticleCode.getText().toString().isEmpty()) {
+                                displayMessage("Debe añadir un código para el artículo");
                                 return;
+                            }else
+                            {
+                                Task<QuerySnapshot> task2=validateCode(txtArticleCode.getText().toString(),txtStoreName.getText().toString());
                             }
                         }
                     }
                 });
-
         return task;
     }
     private Task<QuerySnapshot> validateCode(String code,String store){
-        Task<QuerySnapshot> task=dB.collection("articles").whereEqualTo("storeName",store).whereEqualTo("code",code).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()){
-                            if(task.getResult().getDocuments().isEmpty()){
-                                displayMessage("No existe Articulo en esa tienda");
-                                return;
-                            }
-                            else{
-                                return;
-                            }
+        Task<QuerySnapshot> task=FirebaseFirestore.getInstance().collection("articles").whereEqualTo("storeName",store)
+                .whereEqualTo("code",code).get()
+                .addOnCompleteListener(task1 -> {
+                    if (task1.isSuccessful()){
+                        if(task1.getResult().getDocuments().isEmpty()){
+                            displayMessage("No existe Articulo en esa tienda");
+                            return;
                         }
+                        else{
+                            if ( selectImageUri == null) {
+                                displayMessage("Debe añadir una foto a la publicación");
+                                return;
+                            } else {
+                                mProgressBar.setVisibility(View.VISIBLE);
+                                btnSave.setEnabled(false);
+                                final UploadTask uptask = saveImage();
+                                uptask.addOnCompleteListener(taskA -> taskA.getResult().getStorage().getDownloadUrl()
+                                        .addOnCompleteListener(taskB -> writeFirebaseDocument(taskB.getResult().toString())));
+
+                            }
                     }
-                });
+                }});
         return task;
     }
     private boolean writeFirebaseDocument(String uri) {
@@ -325,15 +281,12 @@ public class NewPublicationActivity extends AppCompatActivity {
             premiumPublication.put("clientId",clientId);
             premiumPublication.put("creationDate",new Timestamp(cal.getTime()));
 
-            dB.collection("premiumPublications")
-                    .add(premiumPublication).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                @Override
-                public void onSuccess(DocumentReference documentReference) {
-                    displayMessage("Tu publicación fue guardada");
-                    finish();
+            FirebaseFirestore.getInstance().collection("premiumPublications")
+                    .add(premiumPublication).addOnSuccessListener(documentReference -> {
+                        displayMessage("Tu publicación fue guardada");
+                        finish();
 
-                }
-            }).addOnFailureListener(new OnFailureListener() {
+                    }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     mProgressBar.setVisibility(View.GONE);

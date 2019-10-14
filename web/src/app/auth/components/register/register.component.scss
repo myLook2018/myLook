@@ -4,12 +4,14 @@
   margin-left: auto;
   margin-right: auto;
   max-width: 500px;
+  max-height: calc(92vh);
+  margin-top: calc(5vh);
 }
 /*.material-icons {
   font-family: "Material Icons";
   font-weight: normal;
   font-style: normal;
-  font-size: 50px;  Preferred icon size 
+  font-size: 50px;  Preferred icon size
   display: inline-block;
   line-height: 1;
   text-transform: none;
@@ -18,15 +20,15 @@
   white-space: nowrap;
   direction: ltr;
 
-  /* Support for all WebKit browsers. 
+  /* Support for all WebKit browsers.
   -webkit-font-smoothing: antialiased;
-  /* Support for Safari and Chrome. 
+  /* Support for Safari and Chrome.
   text-rendering: optimizeLegibility;
 
-  /* Support for Firefox. 
+  /* Support for Firefox.
   -moz-osx-font-smoothing: grayscale;
 
-  /* Support for IE. 
+  /* Support for IE.
   font-feature-settings: "liga";
 }
 */
@@ -57,11 +59,14 @@
 }
 
 .backgroundColor {
-  min-height: 100vh;
   width: 100%;
-  height: auto;
-  //background-color: #c4007a;
-  overflow: hidden;
+  height: calc(100vh - 95px);
+  background: rgba(252,236,252,0.14);
+  background: -moz-linear-gradient(top, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
+  background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(252,236,252,0.14)), color-stop(49%, rgba(251,166,225,0.16)), color-stop(85%, rgba(255,124,216,0.18)), color-stop(100%, rgba(253,137,215,0.19)));
+  background: -ms-linear-gradient(top, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
+  background: linear-gradient(to bottom, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', endColorstr='#fd89d7', GradientType=0 );
 }
 
 .full-length {
@@ -90,6 +95,10 @@
   width: 40%;
 }
 
+#OptionalInformation {
+  width: 33.3%
+}
+
 .circleBase {
   border-radius: 50%;
   //behavior: url(PIE.htc); /* remove if you don't care about IE8 */
@@ -110,6 +119,11 @@
   color: rgba(255,255,255,.87);
 }
 
+::ng-deep .mat-horizontal-content-container {
+  overflow: hidden;
+  padding: 0 24px 0px 24px;
+}
+
 ::ng-deep .mat-progress-bar-fill::after {
   background-color: #9C27B0;
 }
@@ -119,12 +133,55 @@
 }
 
 ::ng-deep .mat-progress-bar {
-  border-radius: 2px;
+  border-radius: 0px;
 }
 
 .proggressBar{
   margin-top: 15px;
-  width: 548px;
-  margin-left: -24px;
+  width: 502px;
+  margin-left: -17px;
 }
 
+// oculta las flechitas de los input=number
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+agm-map {
+  height: 300px;
+  width: auto;
+}
+
+
+.socialNetworks {
+  display: grid;asd
+  .network {
+    display: inline-flex;
+  }
+}
+
+.networkContainer {
+  position: relative;
+}
+
+.networkIcon {
+  position: absolute;
+  top: 15px;
+  z-index: 1;
+}
+
+.linkContainer {
+  margin-left: 22px;
+}
+
+#socialNetwork {
+  width: 100%;
+}
+
+.confirmationText {
+  text-align: center;
+  font-size: 1rem;
+  margin-top: 1rem;
+}

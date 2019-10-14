@@ -13,39 +13,37 @@
 }
 
 #loginCard {
-  width: 60%;
   margin-left: auto;
   margin-right: auto;
   margin-top: calc(10vh); // need to be refactor
   max-width: 400px;
 }
 
-.inputForm{
+.inputForm {
   width: 100%;
 }
 
-.acceptButton{
+.acceptButton {
   display: block;
   margin-left: auto;
   background-color: rgb(197, 127, 169);
   color: white;
 }
 
-.externalLogin{
+.externalLogin {
   width: 80%;
   margin-left: 10%;
   color: white;
 }
 
-.logingForm{
+.logingForm {
   margin-top: 10px;
 }
 
-#bottom-right
-{
-right: 0;
-bottom: 0;
-position: absolute;
+#bottom-right {
+  right: 0;
+  bottom: 0;
+  position: absolute;
 }
 
 .spacer {
@@ -66,7 +64,7 @@ position: absolute;
 }
 
 ::ng-deep .mat-progress-bar-fill::after {
-  background-color: #9C27B0;
+  background-color: #9c27b0;
 }
 
 ::ng-deep .mat-progress-bar-buffer {
@@ -77,17 +75,65 @@ position: absolute;
   border-radius: 2px;
 }
 
-.proggressBar{
+.proggressBar {
   margin-top: 15px;
-  width: 448px;
-  margin-left: -24px;
+  width: 402px;
+  margin-left: -17px;
 }
 
 .mat-card .mat-divider-horizontal {
-
   position: relative;
   left: 0;
   width: 100%;
   margin-top: 10px;
+}
 
+
+.gradient {
+  position: absolute;
+  width: 100%;
+  height: calc(100vh - 48px);
+  background-image: linear-gradient(to top, #ebc0fd 0%, #d9ded8 100%);
+}
+.disabledButton {
+  display: block;
+  margin-left: auto;
+  background-color: rgba(197, 127, 169, 0.5);
+  color: white;
+}
+
+.externalLoginFacebook {
+  width: 80%;
+  margin-left: 10%;
+  margin-top: 1rem;
+  color: white;
+  background-color: #3b5998;
+}
+
+.externalLoginGoogle {
+  width: 80%;
+  margin-left: 10%;
+  margin-top: 0.5rem;
+  color: white;
+  background-color: #d34836;
+}
+
+.disabledButtonFacebook {
+  width: 80%;
+  margin-left: 10%;
+  margin-top: 1rem;
+  color: white;
+  background-color: #3b58987e;
+}
+
+.disabledButtonGoogle {
+  width: 80%;
+  margin-left: 10%;
+  margin-top: 0.5rem;
+  color: white;
+  background-color: #d3483670;
+}
+
+.loginButton {
+  margin-top: 12px;
 }

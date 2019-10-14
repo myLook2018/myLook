@@ -6,7 +6,13 @@ const PromisePool = promisePool.PromisePool;
 const secureCompare = require('secure-compare');
 // Maximum concurrent account deletions.
 const MAX_CONCURRENT = 3;
+let request = require('request');
+let mercadopago = require('mercadopago');
 
+mercadopago.configure({
+    client_id: '1059447032112952',
+    client_secret: '3at5jmJl40HnPV0kBGPVjmjL4PCA9Iyp'
+});
 
 // Método que inicializa las funciones, sin esto no anda
 admin.initializeApp(functions.config().firebase)
@@ -52,7 +58,7 @@ exports.pushNotifications = functions.firestore.document('requestRecommendations
 exports.newAnswerNotification = functions.firestore.document('requestRecommendations/{docId}').onWrite((snap: any, context: any) => {
     const newValue = snap.after.data();
     const previousValue = snap.before.data();
-
+    const id = snap.before.id
     const newAnswer = newValue.answers
     const oldAnswer = previousValue.answers
 
@@ -66,6 +72,9 @@ exports.newAnswerNotification = functions.firestore.document('requestRecommendat
                 title: "Nueva Recomendación para " + title + " de " + storeName,
                 body: desc,
                 sound: "default"
+            }, 
+            data: {
+                requestId: newValue.id
             }
         };
         const options = {
@@ -79,11 +88,23 @@ exports.newAnswerNotification = functions.firestore.document('requestRecommendat
                     if (userId == doc.data().userId || userId == doc.id) {
                         console.log("Es este Usuario!!! " + userId)
                         const registrationToken = doc.data().installToken
-                        return admin.messaging().sendToDevice(registrationToken, payload, options)
-                            .then((response: Response) => {
+                        var message = {
+                            data: {
+                                "title": "Nueva Recomendación para " + title + " de " + storeName,
+                                "deepLink": "www.mylook.com/recommendation",
+                                "body": desc,
+                                "sound": "default",
+                                "requestId": id
+                            },
+                            "token": registrationToken
+                        };
+                        console.log(JSON.stringify(message))
+                        return admin.messaging().send(message)
+                            .then((response) => {
+                                // Response is a message ID string.
                                 console.log('Successfully sent message:', response);
                             })
-                            .catch((error: Error) => {
+                            .catch((error) => {
                                 console.log('Error sending message:', error);
                             });
                     }
@@ -121,11 +142,23 @@ exports.closeRecommendations = functions.https.onRequest((req: any, res: any) =>
 });
 
 
-
+exports.newMercadoPagoDoc = functions.firestore.document('prueba/{userId}')
+    .onCreate((snap:any, context: any) => {
+    // Get an object representing the document
+    // e.g. {'name': 'Marie', 'age': 66}
+    const preference = snap.data();
+    mercadopago.preferences.create(preference)
+        .then(function (preferenceASW: any) {
+          return 'si, anda la cloud functon y salio todo bien';
+        }).catch(function (error: any) {
+          return 'algo salio mal. Si, no tengo idea que, de nada por lo especifico. Toma este erorr ' + error;
+        });
+    // make the request
+});
 
 /**
  * When requested this Function will delete every user accounts that has been inactive for one year.
- * 
+ *
  */
 exports.accountcleanup = functions.https.onRequest((req: any, res: any) => {
     const key = req.query.key;
@@ -186,9 +219,20 @@ function getInactiveUsers(users = [], nextPageToken?: any) {
         if (result.pageToken) {
             return getInactiveUsers(users, result.pageToken);
         }
-
         return users;
     });
 }
 
-
+exports.newMercadoPagoDoc = functions.firestore.document('prueba/{userId}')
+    .onCreate((snap:any, context: any) => {
+    // Get an object representing the document
+    // e.g. {'name': 'Marie', 'age': 66}
+    const preference = snap.data();
+    mercadopago.preferences.create(preference)
+        .then(function (preferenceASW: any) {
+          return 'si, anda la cloud functon y salio todo bien';
+        }).catch(function (error: any) {
+          return 'algo salio mal. Si, no tengo idea que, de nada por lo especifico. Toma este erorr ' + error;
+        });
+    // make the request
+});

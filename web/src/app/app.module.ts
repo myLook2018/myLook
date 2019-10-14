@@ -43,7 +43,7 @@ import { StoreService } from './auth/services/store.service';
 import { MatDialogModule, MatSort, MatSortModule, MatNativeDateModule } from '@angular/material';
 import { DialogAlertComponent } from './dialog/dialog-alert/dialog-alert.component';
 import { MatChipsModule } from '@angular/material/chips';
-import { ArticleDialogComponent } from './articles/components/dialogs/articleDialog';
+import { StoreFrontComponent } from './articles/components/inventory/storeFront/storeFront';
 import { PromoteDialogComponent } from './articles/components/dialogs/promoteDialog';
 import { SuccesfulDialogComponent } from './dialog/succesful-dialog/succesful-dialog.component';
 import { DeleteConfirmationDialogComponent } from './articles/components/dialogs/deleteConfirmationDialog';
@@ -59,10 +59,12 @@ import { ErrorComponent } from './error/error.component';
 import { MatListModule } from '@angular/material/list';
 import { RecomendationsComponent } from './recomendations/components/recomendations.component';
 import { ImageCropperModule } from 'ngx-img-cropper/index';
-import { CropperSettings } from 'ngx-img-cropper/index';
 import { ChartModule } from 'primeng/chart';
 import { DonutchartComponent } from './anylitics/components/donutchart/donutchart.component';
 import { DashboardComponent } from './anylitics/components/dashboard/dashboard.component';
+import { AnyliticsDashboardComponent } from './anylitics/components/promotions/analytics-dashboard.component';
+import { ViewsByPromotionsComponent } from './anylitics/components/promotions/graphics/views-by-promotion/views-by-promotions.component';
+import { ReactionsPieComponent } from './anylitics/components/promotions/graphics/reactions/reactions-pie.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { AnyliticService } from './anylitics/services/anylitics.service';
 import { MatSelectModule } from '@angular/material/select';
@@ -72,6 +74,7 @@ import { PolarAreaComponent } from './anylitics/components/polar-area/polar-area
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { TimelineComponent } from './anylitics/components/timeline/timeline.component';
 import { FrontDialogComponent } from './articles/components/dialogs/frontDialog';
+import { NewArticleComponent } from './articles/components/new-article/new-article.component';
 import { RatingModule } from 'primeng/rating';
 import { NewStoreService } from './store/service/store.service';
 import { PromotionsBarComponent } from './anylitics/components/promotions-bar/promotions-bar.component';
@@ -79,11 +82,12 @@ import { HomePageComponent } from './home-page/home-page.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { OrchestratorComponent } from './orchestrator/orchestrator.component';
 import { MercadopagoComponent } from './articles/components/inventory/mercadopago/mercadopago.component';
-// import { ResizingCroppingImagesExample03Component } from './resizing-cropping-images-example-03.component';
 import { MinimaLight, MinimaDark } from '@alyle/ui/themes/minima';
 import { LyButtonModule } from '@alyle/ui/button';
 import { LyResizingCroppingImageModule } from '@alyle/ui/resizing-cropping-images';
 import { LyIconModule } from '@alyle/ui/icon';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { PromotionsService } from './anylitics/services/promotions.service';
 
 import {
   LyHammerGestureConfig,
@@ -91,6 +95,14 @@ import {
   LY_THEME
 } from '@alyle/ui';
 import { HttpClientModule} from '@angular/common/http';
+import { SuccessComponent } from './ecommerce/success/success.component';
+import { ConfigurationsComponent } from './store/components/configurations/configurations.component';
+
+import { LOCALE_ID } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localeAR from '@angular/common/locales/es-AR';
+
+registerLocaleData(localeAR);
 
 @NgModule({
   declarations: [
@@ -101,7 +113,7 @@ import { HttpClientModule} from '@angular/common/http';
     InventoryComponent,
     SignupComponent,
     DialogAlertComponent,
-    ArticleDialogComponent,
+    StoreFrontComponent,
     SuccesfulDialogComponent,
     DeleteConfirmationDialogComponent,
     StoreComponent,
@@ -120,6 +132,12 @@ import { HttpClientModule} from '@angular/common/http';
     HomePageComponent,
     OrchestratorComponent,
     MercadopagoComponent,
+    SuccessComponent,
+    ConfigurationsComponent,
+    NewArticleComponent,
+    AnyliticsDashboardComponent,
+    ViewsByPromotionsComponent,
+    ReactionsPieComponent
   ],
   imports: [
     HttpClientModule,
@@ -165,22 +183,27 @@ import { HttpClientModule} from '@angular/common/http';
     LyResizingCroppingImageModule,
     LyButtonModule,
     LyIconModule,
+    FontAwesomeModule,
     LyThemeModule.setTheme('minima-light'),
     AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyC7gRAUi_0C-w5gqsWIVp0IKyEZT-3UiUA'
+      apiKey: 'AIzaSyDmuhZx-ew-zpQzQcjiqk2yJu5OonBuSMc',
+      language: 'en',
+      libraries: ['geometry', 'places']
     })
   ],
   exports: [RouterModule],
   providers: [MatDatepickerModule, RecomendationService, DataService, AuthService,
     UserService, UserResolver, AuthGuard, StoreService,
-    ArticleService, TagsService, AnyliticService, MatTooltipModule,
+    ArticleService, TagsService, AnyliticService, MatTooltipModule, PromotionsService,
     { provide: LY_THEME, useClass: MinimaLight, multi: true }, // name: `minima-light`
     { provide: LY_THEME, useClass: MinimaDark, multi: true }, // name: `minima-dark`
     { provide: HAMMER_GESTURE_CONFIG, useClass: LyHammerGestureConfig },
+    { provide: LOCALE_ID, useValue: 'es-AR' },
     // ArticleResolver, StoreResolver,
     NewStoreService],
-  entryComponents: [FrontDialogComponent, PromoteDialogComponent, DialogAlertComponent, ArticleDialogComponent, SuccesfulDialogComponent,
+  entryComponents: [FrontDialogComponent, PromoteDialogComponent, DialogAlertComponent, SuccesfulDialogComponent,
     DeleteConfirmationDialogComponent, MapsDialogComponent, EditStoreComponent],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

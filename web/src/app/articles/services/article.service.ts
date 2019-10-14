@@ -1,17 +1,24 @@
-import {
-  AngularFirestore,
-  AngularFirestoreCollection
-} from 'angularfire2/firestore';
+import { AngularFirestore, AngularFirestoreCollection} from 'angularfire2/firestore';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Article } from '../models/article';
-import { map, filter } from 'rxjs/operators';
+import { map, filter, catchError } from 'rxjs/operators';
 import * as firebase from 'firebase';
 import { StoreFront } from '../models/storeFront';
 import { reject } from 'q';
+import { HttpClient } from '@angular/common/http';
+import { PreferenceMP } from '../models/preferenceMP';
+import { HttpHeaders } from '@angular/common/http';
+
+const httpOptions = {
+  headers: new HttpHeaders({
+    'Content-Type':  'application/json'
+  })
+};
 
 @Injectable()
 export class ArticleService {
+  mpURL = 'https://us-central1-app-mylook.cloudfunctions.net/postMercadopagoCheckout';
   articleCollection: AngularFirestoreCollection<Article>;
   promoteCollection: AngularFirestoreCollection;
   articles: Observable<Article[]>;
@@ -19,11 +26,13 @@ export class ArticleService {
   // tslint:disable-next-line:no-inferrable-types
   collectionPath: string = 'articles';
   storeFrontPath = 'storeFronts';
+  mercadoPagoPath = 'promotion';
   promotePath = 'promotions';
+  storeCollectionPath = 'stores';
   db: any;
   require: any;
 
-  constructor(public fst: AngularFirestore) {
+  constructor(public fst: AngularFirestore, private http: HttpClient) {
     console.log(`en el collector`);
     this.articleCollection = this.fst.collection(this.collectionPath);
     this.promoteCollection = this.fst.collection(this.promotePath);
@@ -31,17 +40,19 @@ export class ArticleService {
     this.db = firebase.firestore();
   }
 
-  /*getArticles(storeName) {
-    console.log(`en el get`);
-    return this.articles = this.articleCollection.snapshotChanges().pipe(map(changes => {
-      return changes.map(a => {
-        const data = a.payload.doc.data();
-        data.articleId = a.payload.doc.id;
-        console.log(data);
-        return data;
+  getArticles(storeName) {
+    console.log(`en el get subscriptions`);
+    return this.articles = this.articleCollection.snapshotChanges().pipe(map( changes => {
+      return changes.map( a => {
+        if (a.payload.doc.data().storeName === storeName) {
+          const data = a.payload.doc.data();
+          console.log(data);
+          data.articleId = a.payload.doc.id;
+          return data;
+        }
       });
     }));
-  }*/
+  }
 
   getArticlesCopado(storeName) {
     this.articlesCopado = [];
@@ -70,7 +81,7 @@ export class ArticleService {
     // tslint:disable-next-line:no-shadowed-variable
     return new Promise<any>((resolve, reject) => {
       console.log(`estamos preguntando por ` + storeName);
-      const res = this.db.collection(this.collectionPath).where('storeName', '==', storeName).where('estaEnVidriera', '==', true)
+      const res = this.db.collection(this.collectionPath).where('storeName', '==', storeName).where('isStorefront', '==', true)
         .get().then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
             const data = doc.data();
@@ -99,21 +110,13 @@ export class ArticleService {
   refreshVidrieraAttribute(articleUID, newValue: boolean) {
     return new Promise<any> ((resolve) => {
       this.fst.collection(this.collectionPath).doc(articleUID).update({
-        estaEnVidriera: newValue
+        isStorefront: newValue
       }).then(() => resolve(console.log(articleUID + `actualizado a ` + newValue)));
     }).catch(error => reject(error));
   }
 
-  refreshArticle(article: Article) {
-    return this.fst.collection(this.collectionPath).doc(`${article.articleId}`).update({
-      cost: article.cost,
-      size: article.sizes,
-      material: article.material,
-      colors: article.colors,
-      initial_stock: article.initial_stock,
-      provider: article.provider,
-      tags: article.tags
-    })
+  refreshArticle(article: Article, articleId) {
+    return this.fst.collection(this.collectionPath).doc(articleId).update(article)
       .then(function () {
         console.log('Document successfully updated!');
       })
@@ -202,5 +205,47 @@ export class ArticleService {
       });
       res.then(ref => console.log(ref.id));
     });
+  }
+
+  createNewSale(preferenceMP) {
+    console.log('creando venta');
+    return new Promise<any>((resolve) => {
+      const res = this.fst.collection(this.mercadoPagoPath).add(preferenceMP);
+      res.then(ref => console.log(ref.id));
+      resolve(res);
+    });
+  }
+
+  tryPromoteMP(preferenceMP)  {
+    return this.http.post(this.mpURL, preferenceMP);
+  }
+
+  getSingleArticle(articleId) {
+    console.log('getting article:', articleId);
+    // tslint:disable-next-line:no-shadowed-variable
+    const docRef = this.db.collection(this.collectionPath).doc(articleId);
+    return new Promise<Article>((resolve, reject) => {
+      docRef.get().then( document => {
+        if (document.exists) {
+          resolve(document.data());
+        } else {
+          reject ('No encontramos documento ' + articleId);
+        }
+        }).catch(function (error) {
+          console.log('Error getting storeFront: ', error);
+          reject(error);
+        });
+    });
+  }
+
+  updateStorefront(storeId, storefrontsNew) {
+    return this.fst.collection(this.storeCollectionPath).doc(storeId).update(({
+      storefronts: storefrontsNew
+      })).then(function () {
+        console.log('actualizados los storeFronts');
+      }).catch(function (error) {
+        // The document probably doesn't exist.
+        console.error('Error updating document: ', error);
+      });
   }
 }

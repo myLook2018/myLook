@@ -1,7 +1,7 @@
 package com.mylook.mylook.entities;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 
 public class Store {
 
@@ -17,14 +17,16 @@ public class Store {
     private String storeAddress;
     private String storeAddressNumber;
     private String storeFloor;
-    private String storePosition;
+    private double storeLatitude;
+    private double storeLongitude;
     private String storeDescription;
     private String instagramLink;
     private String twitterLink;
     private String facebookLink;
     private String provider;
     private Date registerDate;
-    //private String storeCreationDate;
+    private String storeDept;
+    private String storeTower;
 
     public Store(){}
 
@@ -73,11 +75,6 @@ public class Store {
         return storeCity;
     }
 
-
-    public String getStorePosition() {
-        return storePosition;
-    }
-
     public String getStoreProvince() {
         return storeProvince;
     }
@@ -118,10 +115,6 @@ public class Store {
 
     public void setStoreCity(String storeCity) {
         this.storeCity = storeCity;
-    }
-
-    public void setStorePosition(String storePosition) {
-        this.storePosition = storePosition;
     }
 
     public void setStoreProvince(String storeProvince) {
@@ -182,5 +175,37 @@ public class Store {
 
     public void setTwitterLink(String twitterLink) {
         this.twitterLink = twitterLink;
+    }
+
+    public double getStoreLatitude() {
+        return storeLatitude;
+    }
+
+    public void setStoreLatitude(double storeLatitude) {
+        this.storeLatitude = storeLatitude;
+    }
+
+    public double getStoreLongitude() {
+        return storeLongitude;
+    }
+
+    public void setStoreLongitude(double storeLongitude) {
+        this.storeLongitude = storeLongitude;
+    }
+
+    public String getStoreDept() {
+        return storeDept;
+    }
+
+    public void setStoreDept(String storeDept) {
+        this.storeDept = storeDept;
+    }
+
+    public String getStoreTower() {
+        return storeTower;
+    }
+
+    public void setStoreTower(String storeTower) {
+        this.storeTower = storeTower;
     }
 }

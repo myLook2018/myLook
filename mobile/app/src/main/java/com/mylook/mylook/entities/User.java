@@ -9,11 +9,25 @@ public class User implements  Comparable<User> {
     private String gender;
     private String email;
     private String dni;
-    private String birthday;
+    private long birthday;
     private String installToken;
     private boolean isPremium;
+    private String provider;
 
-    public User() {
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public boolean isPremium() {
+        return isPremium;
+    }
+
+    public void setPremium(boolean premium) {
+        isPremium = premium;
     }
 
     @Override
@@ -33,13 +47,13 @@ public class User implements  Comparable<User> {
         if(!dni.equals(o.dni)){
             return 1;
         }
-        if(!birthday.equals(o.birthday)){
+        if(birthday!=o.birthday){
             return 1;
         }
         return 0;
     }
 
-    public User(String name, String surname, String userId, String gender, String email, String dni, String birthday,boolean isPremium) {
+    /*public User(String name, String surname, String userId, String gender, String email, String dni, long birthday,boolean isPremium) {
         this.name = name;
         this.surname = surname;
         this.userId = userId;
@@ -48,15 +62,8 @@ public class User implements  Comparable<User> {
         this.dni = dni;
         this.birthday = birthday;
         this.isPremium=isPremium;
-    }
+    }*/
 
-    public boolean getPremium() {
-        return isPremium;
-    }
-
-    public void setPremium(boolean premium) {
-        isPremium = premium;
-    }
 
     public String getInstallToken() {
         return installToken;
@@ -114,11 +121,11 @@ public class User implements  Comparable<User> {
         this.dni = dni;
     }
 
-    public String getBirthday() {
+    public long getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(String birthday) {
+    public void setBirthday(long birthday) {
         this.birthday = birthday;
     }
 
@@ -131,6 +138,7 @@ public class User implements  Comparable<User> {
         map.put("dni", this.getDni());
         map.put("userId", this.getUserId());
         map.put("birthday",this.getBirthday());
+        map.put("isPremium",this.isPremium());
         return map;
     }
 }

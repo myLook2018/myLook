@@ -3,22 +3,23 @@ package com.mylook.mylook.recommend;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.ShareActionProvider;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.ShareActionProvider;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,24 +29,27 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.RequestRecommendation;
+import com.mylook.mylook.session.MainActivity;
+import com.mylook.mylook.session.Session;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 public class RequestRecommendActivity extends AppCompatActivity {
 
-    private static final String TAG = "RequestRecommendationA";
+    private static final String TAG = "RequestRecommendation";
     private ImageView imgRequestPhoto;
     private TextView txtDescription;
     private TextView txtTitle;
     private RecyclerView recyclerView;
     private TextView txtLimitDate;
     private ArrayList<HashMap<String, String>> answers;
-    private FirebaseFirestore dB;
     private String requestId;
     private boolean isClosed = false;
     private Menu optionsMenu;
     private ShareActionProvider mShareActionProvider;
+    private boolean fromDeepLink = false;
 
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,8 +67,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
         txtTitle = findViewById(R.id.txtRecommendTitle);
         txtLimitDate = findViewById(R.id.txtDate);
         getIncomingIntent();
-        this.dB = FirebaseFirestore.getInstance();
-        invalidateOptionsMenu();
+        //invalidateOptionsMenu();
     }
 
     private void initRecyclerView(ArrayList<HashMap<String, String>> answerList) {
@@ -76,24 +79,59 @@ public class RequestRecommendActivity extends AppCompatActivity {
     }
 
     private void getIncomingIntent() {
-        Log.d(TAG, "getIncomingIntent: checking for incoming intents.");
-
         Intent intent = getIntent();
-        if (intent.hasExtra("requestRecommendation")) {
-            Log.d(TAG, "getIncomingIntent: found intent extras.");
-
-            RequestRecommendation requestRecommendation = (RequestRecommendation) intent.getSerializableExtra("requestRecommendation");
-            txtDescription.setText(requestRecommendation.getDescription());
-            txtTitle.setText(requestRecommendation.getTitle());
-            txtLimitDate.setText("Hasta el "+intent.getStringExtra("dateFormat"));
-            setImage(requestRecommendation.getRequestPhoto());
-            answers = requestRecommendation.getAnswers();
-            requestId = requestRecommendation.getDocumentId();
-            isClosed = requestRecommendation.getIsClosed();
-            initRecyclerView(requestRecommendation.getAnswers());
-            Log.e("Firebase", requestRecommendation.getDescription());
-            Log.e("App", txtDescription.getText().toString());
+        Log.e("Extras", intent.getExtras().toString());
+        for (String key:intent.getExtras().keySet()) {
+            Log.e(TAG, key+": "+intent.getExtras().get(key).toString());
         }
+        if (intent.hasExtra("requestRecommendation")) {
+            fromDeepLink = false;
+            RequestRecommendation requestRecommendation = (RequestRecommendation) intent.getSerializableExtra("requestRecommendation");
+            requestId = requestRecommendation.getDocumentId();
+        } else if(intent.hasExtra("requestId")){
+            fromDeepLink = true;
+            requestId = intent.getStringExtra("requestId");
+        }else {
+            fromDeepLink = true;
+            // Cuando viene de un deeplink
+            Uri data  = intent.getData();
+            try {
+                requestId = data.getQueryParameter("requestId");
+            } catch(Exception e){
+                if(intent.hasExtra("requestId"))
+                    requestId = intent.getStringExtra("requestId");
+            }
+        }
+        //ACA LLEGA DISTINTO
+        Log.e(TAG, "requestId"+requestId);
+        FirebaseFirestore.getInstance().collection("requestRecommendations").document(requestId).get().addOnCompleteListener(
+                new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()) {
+                            DocumentSnapshot doc = task.getResult();
+                            txtDescription.setText(doc.get("description").toString());
+                            txtTitle.setText(doc.get("title").toString());
+                            isClosed = (boolean) doc.get("isClosed");
+                            if(isClosed){
+                                txtLimitDate.setText("Cerrada");
+                            }else {
+                                Calendar cal = Calendar.getInstance();
+                                cal.setTimeInMillis((long) doc.get("limitDate"));
+                                int mes = cal.get(Calendar.MONTH) + 1;
+                                final String dateFormat = cal.get(Calendar.DAY_OF_MONTH) + "/" + mes + "/" + cal.get(Calendar.YEAR);
+                                txtLimitDate.setText("Hasta el " + dateFormat);
+                            }
+                            setImage(doc.get("requestPhoto").toString());
+                            answers = (ArrayList<HashMap<String, String>>) doc.get("answers");
+                            initRecyclerView(answers);
+                        } else {
+                            Log.e(TAG, "busqueda not succesful");
+                        }
+                        invalidateOptionsMenu();
+                    }
+                }
+        );
     }
 
     private void setImage(String imageUrl) {
@@ -105,11 +143,44 @@ public class RequestRecommendActivity extends AppCompatActivity {
                 .into(imgRequestPhoto);
     }
 
+
+    private void updateAnswers(){
+        FirebaseFirestore.getInstance().collection("requestRecommendations").document(requestId).update("answers", answers).addOnCompleteListener(
+                new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.e(TAG, "Respuestas actualizadas");
+                    }
+                }
+        );
+
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-                dB.collection("requestRecommendations").document(requestId).update("answers",answers);
-                dB.collection("answeredRecommendations").whereEqualTo("requestUID", requestId).get()
+        FirebaseFirestore.getInstance().collection("requestRecommendations").document(requestId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot doc = task.getResult();
+                ArrayList<HashMap> remoteAnswers = (ArrayList<HashMap>) doc.get("answers");
+                if (remoteAnswers.size() != answers.size()){
+                    for (HashMap remoteAnswer: remoteAnswers) {
+                        boolean newRecommendation = true;
+                        for(HashMap localAnswer: answers){
+                            if(localAnswer.get("storeName").toString().equals(remoteAnswer.get("storeName"))){
+                                newRecommendation = false;
+                            }
+                        }
+                        if (newRecommendation){
+                            answers.add(remoteAnswer);
+                        }
+                    }
+                }
+                updateAnswers();
+            }
+        });
+        FirebaseFirestore.getInstance().collection("answeredRecommendations").whereEqualTo("requestUID", requestId).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -117,49 +188,46 @@ public class RequestRecommendActivity extends AppCompatActivity {
                             for (DocumentSnapshot doc:task.getResult().getDocuments()){
                                 if(doc.get("storeName").equals(answer.get("storeName")))
                                 {
-                                    dB.collection("answeredRecommendations").document(doc.getId()).update("feedBack", answer.get("feedBack"));
+                                    FirebaseFirestore.getInstance().collection("answeredRecommendations").document(doc.getId()).update("feedBack", answer.get("feedBack"));
                                 }
 
                             }
                         }
                     }
                 });
+        Session.getInstance().updateActivitiesStatus(Session.RECOMEND_FRAGMENT);
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(fromDeepLink){
+            Intent intent= new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(!isClosed) {
-            getMenuInflater().inflate(R.menu.request_recommendation_menu, menu);
-            // Locate MenuItem with ShareActionProvider
-//            MenuItem item = menu.findItem(R.id.share_req);
-
-            // Fetch and store ShareActionProvider
-//            mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-        } else {
-//            menu.getItem(0).setVisible(false);
-//            menu.getItem(1).setVisible(false);
-//            menu.getItem(2).setVisible(false);
-//            menu.getItem(3).setVisible(false);
-            return false;
+        getMenuInflater().inflate(R.menu.request_recommendation_menu, menu);
+        if(isClosed) {
+            menu.findItem(R.id.close_req).setVisible(false); // si ya esta cerrada no muestro la opcion
         }
         return true;
     }
 
-    private void setShareIntent(Intent shareIntent) {
-        if (mShareActionProvider != null) {
-            mShareActionProvider.setShareIntent(shareIntent);
-        }
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-//        if(id == R.id.share_req){
-//            Intent sendIntent = new Intent();
-//            sendIntent.setAction(Intent.ACTION_SEND);
-//            sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
-//            sendIntent.setType("text/plain");
-//            setShareIntent(sendIntent);
-//        }
+        if(id == R.id.share_req){
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "Me podes ayudar con esta recomendación? https://www.mylook.com/recommendation?requestId="+requestId);
+            sendIntent.setType("text/plain");
+            startActivity(Intent.createChooser(sendIntent, "Share via"));
+        }
 //        if(id == R.id.delete_req){
 //            // do something
 //        }
@@ -170,7 +238,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
                     .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                            dB.collection("requestRecommendations").document(requestId).update("isClosed", true).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            FirebaseFirestore.getInstance().collection("requestRecommendations").document(requestId).update("isClosed", true).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     Toast.makeText(getApplicationContext(),"Tu pedido ha sido cerrado", Toast.LENGTH_LONG).show();
@@ -205,4 +273,3 @@ public class RequestRecommendActivity extends AppCompatActivity {
         return true;
     }
 }
-

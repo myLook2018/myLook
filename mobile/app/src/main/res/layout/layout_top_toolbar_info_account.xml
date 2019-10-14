@@ -1,0 +1,23 @@
+<merge xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/info_account_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorPrimary"
+                android:elevation="4dp"
+                android:theme="@style/AppTheme.Toolbar"
+                app:popupTheme="@style/ThemeOverlay.MaterialComponents.Dark"
+                app:title="Editar Informacion"
+                app:titleTextColor="@color/white">
+
+    </androidx.appcompat.widget.Toolbar>
+
+            </RelativeLayout>
+</merge>

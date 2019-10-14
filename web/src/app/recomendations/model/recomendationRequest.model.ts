@@ -13,4 +13,5 @@ export class RecomendationRequest {
     requestPhoto?: string; // Opcional
     localization?: [Number]; // Se toma desde donde se hizo o la del User?
     answers?: RecomendationAnswer[];
+    size?: string;
   }

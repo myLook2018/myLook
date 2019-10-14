@@ -8,14 +8,14 @@
 .mat-drawer-content{
 	min-height: calc(100vh - 48px);
 	max-height: calc(100vh - 48px);
-	overflow-x: hidden;
+	overflow-x: auto;
 	overflow-y: auto;
 }
 
 #logo {
 	width: 92px;
 	height: 36px;
-	padding-left: 10px;
+	margin-left: 1rem
 }
 
 .navbar {
@@ -23,7 +23,9 @@
     height: 48px;
 	z-index: 10;
 	background: white;
-	padding: 0;
+  padding: 0;
+  margin-left: auto;
+margin-right: auto;
 }
 
 .right-icon {
@@ -88,4 +90,28 @@
 @-ms-keyframes fadein {
     from { opacity: 0; }
     to   { opacity: 1; }
+}
+
+.main-content {
+  margin-left: auto;
+margin-right: auto;
+max-width: 1920px;
+height: 100%;
+}
+
+.toolbar {
+  background-color: transparent;
+}
+
+.myLookPink {
+  color: rgb(189, 132, 199)
+}
+
+.main-content-container {
+    background: rgba(252,236,252,0.14);
+    background: -moz-linear-gradient(top, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
+    background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(252,236,252,0.14)), color-stop(49%, rgba(251,166,225,0.16)), color-stop(85%, rgba(255,124,216,0.18)), color-stop(100%, rgba(253,137,215,0.19)));
+    background: -ms-linear-gradient(top, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
+    background: linear-gradient(to bottom, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', endColorstr='#fd89d7', GradientType=0 );
 }

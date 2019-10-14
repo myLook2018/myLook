@@ -114,4 +114,22 @@ public class RequestRecommendation implements Serializable {
     public void setCategory(String category) {
         this.category = category;
     }
+
+    @Override
+    public String toString() {
+        return "RequestRecommendation{" +
+                "description='" + description + '\'' +
+                ", limitDate=" + limitDate +
+                ", localization=" + localization +
+                ", requestPhoto='" + requestPhoto + '\'' +
+                ", isClosed=" + isClosed +
+                ", updateDate='" + updateDate + '\'' +
+                ", userId='" + userId + '\'' +
+                ", title='" + title + '\'' +
+                ", answers=" + answers +
+                ", documentId='" + documentId + '\'' +
+                ", size='" + size + '\'' +
+                ", category='" + category + '\'' +
+                '}';
+    }
 }

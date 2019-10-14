@@ -1,12 +1,13 @@
-<mat-card id="loginCard" class="mat-typography">
-  <mat-card-title style="color: purple">
-    <div class="headerImage">
-      <img src="/assets/brandNoBackground.png" class="img-size centerImage">
-    </div>
-  </mat-card-title>
-  <mat-card-title>Iniciar sesión</mat-card-title>
-  <form [formGroup]="loginForm">
-    <mat-form-field class="inputForm">      
+<div class="gradient">
+  <mat-card id="loginCard" class="mat-typography">
+    <mat-card-title style="color: purple">
+        <div class="headerImage">
+          <img src="/assets/brandNoBackground.png" class="img-size centerImage">
+        </div>
+      </mat-card-title>
+  <mat-card-title style="text-align: center;">Iniciar sesión</mat-card-title>
+  <form [formGroup]="loginForm" autocomplete="off">
+    <mat-form-field class="inputForm">
       <input matInput placeholder="Ingrese su email" class="form-control" formControlName="email">
       <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
         Por favor ingrese un Email valido
@@ -16,29 +17,28 @@
         <strong>Email</strong>
       </mat-error>
     </mat-form-field>
-    <mat-form-field class="inputForm">      
+    <mat-form-field class="inputForm">
       <input matInput placeholder="Contraseña" type="password" class="form-control" formControlName="password">
     </mat-form-field>
     <label class="error">{{errorMessage}}</label>
   </form>
   <form>
-    <div>
-      <button mat-button [disabled]="isLoading" (click)="tryLogin()" class="acceptButton">Acceder</button>
+    <div class="loginButton">
+      <button mat-button [ngClass]="{disabledButton: (isLoading || loginForm.invalid)}" [disabled]="isLoading || loginForm.invalid" (click)="tryLogin()" class="acceptButton">Acceder</button>
     </div>
     <div style="display: grid;">
-      <a class="createAcc" style="text-decoration: none;color: #6a99ff;" [routerLink]="[ '/Registrarse']">Crear Cuenta en Mylook</a>
-      <a class="createAcc" style="text-decoration: none;color: #6a99ff;" [routerLink]="[ '/Ingresar']">Has olvidado tu Contraseña?</a>
+        <a class="createAcc" style="text-decoration: none;color: #6a99ff;" [routerLink]="[ '/Registrarse']">Crear cuenta en Mylook</a>
+        <a class="createAcc" style="text-decoration: none;color: #6a99ff; cursor: pointer; " (click)="restartPassword()">¿Has olvidado tu contraseña?</a>
+      </div>
+      <span class="spacer"></span>
+    </form>
+    <mat-divider id="divider"></mat-divider>
+    <form>
+      <button mat-button [disabled]="isLoading " class="externalLoginFacebook" (click)="tryLoginWithSocialNetwork('facebook')" [ngClass]="{disabledButtonFacebook: isLoading}">Acceder con Facebook</button>
+      <button mat-button [disabled]="isLoading" class="externalLoginGoogle" (click)="tryLoginWithSocialNetwork('google')" [ngClass]="{disabledButtonGoogle: isLoading}">Acceder con Google</button>
+        </form>
+        <div class="proggressBar">
+          <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>
+        </div>
+      </mat-card>
     </div>
-    <span class="spacer"></span>
-  </form>
-  <mat-divider id="divider"></mat-divider>
-  <form>
-    <button mat-button [disabled]="isLoading" class="externalLogin" style="background-color: #3b5998;margin-top: 15px; margin-bottom: 7px;"
-      (click)="tryFacebookLogin()">Acceder con Facebook</button>
-    <button mat-button [disabled]="isLoading" class="externalLogin" style="background-color: #d34836" (click)="tryGoogleLogin()">Acceder
-      con Google</button>
-  </form>
-  <div class="proggressBar">
-    <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>
-  </div>
-</mat-card>

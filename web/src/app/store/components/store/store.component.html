@@ -1,13 +1,15 @@
-<div class="mat-typography" style="top: 0">
-       <div class="mainContainer mat-typography">
-        <div class="profileDats" [ngStyle]="{ 'background-image': 'url(' + userStore.coverPh + ')'}">
-          <div class="profile">
-            <img class="profileImg" src={{userStore.profilePh}}>              
+<div class="mat-typography gradient" style="top: 0">
+       <mat-card class="mainContainer mat-typography">
+         <!-- [style.background-image]="'url('+ userStore.coverPh +')'"  -->
+        <div class="profileDats"
+        >
+        <img class="coverPh" src={{userStore.coverPh}}>
+        <div class="profile">
+            <img class="profileImg" src={{userStore.profilePh}}>
             <div class="contact">
               <div>
                 <h1 class="profileName" style="font-size: 40px;">{{userStore.storeName}}</h1>
-                <p class="direction"> Dirección: {{userStore.storeAddress}} {{userStore.storeAddressNumber}} </p>
-                <p class="direction"> {{userStore.storeCity}}, {{userStore.storeProvince}} </p>
+                <p class="direction"> Dirección: {{userStore.storeAddress}}</p>
                 <p class="direction"> Teléfono: {{userStore.storePhone}} </p>
               </div>
               <div>
@@ -15,11 +17,11 @@
                   <p>{{userStore.storeDescription}}</p>
                 </div>
                 <div class="socialNetworks">
-                  <p>
+                  <p *ngIf="userStore.facebookLink">
                     <img src="/assets/facebookLogo.png" height="20px" width="20px">
                     <a class="mediaLink" href="https://www.facebook.com/{{userStore.facebookLink}}" target="_blank"> Facebook</a>
                   </p>
-                  <p style="margin-left:15px">
+                  <p style="margin-left:15px" *ngIf="userStore.instagramLink">
                     <img src="/assets/instagramLogo.png" height="20px" width="20px">
                     <a class="mediaLink" href="https://www.instagram.com/{{userStore.instagramLink}}" target="_blank"> Instagram</a>
                   </p>
@@ -30,9 +32,16 @@
         </div>
         <div class="frontArticles">
           <div style="display: flex; flex-wrap: wrap; min-width: 1020px;">
+            <div class="noFrontLoaded" *ngIf="articles.length === 0">
+              No se han encontrado datos de su vidriera.
+              Es posible seleccionar una desde la sección 'Catálogo'.
+              Es importante que cuente con una vidriera, ya que es lo primero que ven sus clientes al llegar a su tienda
+                <!-- <img src="/assets/brandNoBackground.png" class="img-size centerImage"> -->
+            </div>
             <div style="padding: 0px; margin: 9px" *ngFor="let art of articles">
-              <img height="321" width="321" src={{art.picture}}>
+              <img height="321" width="321" src={{art.picturesArray[0]}}>
             </div>
           </div>
         </div>
-      </div>
+      </mat-card>
+  </div>

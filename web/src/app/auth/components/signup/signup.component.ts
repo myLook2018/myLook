@@ -35,7 +35,7 @@ export class SignupComponent {
      this.authService.isEmailAvaible(this.email).then(
        (res) => {
         this.authService.emailToRegister = this.email;
-        this.router.navigate(['/register']);
+        this.router.navigate(['/Registrar-Tienda']);
         }, (err) => {
           this.errorMessage = err;
         }
@@ -44,8 +44,7 @@ export class SignupComponent {
 
    createForm() {
      this.signupForm = this.fb.group({
-       email: ['', Validators.required ],
-       password: ['', Validators.required]
+       email: ['', Validators.required ]
      });
    }
 
@@ -86,7 +85,9 @@ export class SignupComponent {
      });
    }
 
-
+   clearErrors() {
+     this.errorMessage = '';
+   }
 }
 export class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {

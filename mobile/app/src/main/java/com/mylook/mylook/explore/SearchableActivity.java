@@ -2,16 +2,20 @@ package com.mylook.mylook.explore;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -28,11 +32,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SearchableActivity extends AppCompatActivity {
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private List results;
     private CardsHomeFeedAdapter adapter;
     private RecyclerView recyclerView;
     private ImageView backArrow;
+    private TextView emptyText;
 
 
     @Override
@@ -52,6 +56,13 @@ public class SearchableActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
+        ProgressBar progressBar = findViewById(R.id.home_progress_bar);
+        progressBar.setVisibility(View.VISIBLE);
+        emptyText = findViewById(R.id.emptyText);
+        emptyText.setText("Ups! no encontramos nada relacionado a tu busqueda");
+        emptyText.setVisibility(View.GONE);
+
+
 
         // Get the intent, verify the action and get the query
         Intent intent = getIntent();
@@ -64,11 +75,13 @@ public class SearchableActivity extends AppCompatActivity {
             doMySearchTitles(query);
             doMySearchStoreNames(query);
             doMySearchStorePremium(query);
+
         }
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     private void doMySearchStorePremium(final String query) {
-        db.collection("premiumUsers")
+        FirebaseFirestore.getInstance().collection("premiumUsers")
                 //.whereEqualTo("storeName",query)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -89,6 +102,9 @@ public class SearchableActivity extends AppCompatActivity {
                         } else {
                             Log.d("Firestore task", "onComplete: " + task.getException());
                         }
+                        if(results.isEmpty()){
+                            emptyText.setVisibility(View.VISIBLE);
+                        }
                     }
                 });
     }
@@ -96,7 +112,7 @@ public class SearchableActivity extends AppCompatActivity {
 
     private void doMySearchStoreNames(final String query) {
         //query = Character.toUpperCase(query.charAt(0)) + query.substring(1, query.length());
-        db.collection("stores")
+        FirebaseFirestore.getInstance().collection("stores")
                 //.whereEqualTo("storeName",query)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -123,7 +139,7 @@ public class SearchableActivity extends AppCompatActivity {
 
     private void doMySearchTitles(final String query) {
         //query = Character.toUpperCase(query.charAt(0)) + query.substring(1, query.length());
-        db.collection("articles")
+        FirebaseFirestore.getInstance().collection("articles")
                 //.whereGreaterThanOrEqualTo("title", query)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -150,7 +166,7 @@ public class SearchableActivity extends AppCompatActivity {
 
     private void doMySearchTags(final String query) {
         //query = Character.toUpperCase(query.charAt(0)) + query.substring(1, query.length());
-        db.collection("articles")
+        FirebaseFirestore.getInstance().collection("articles")
                 //.whereArrayContains("tags", query)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

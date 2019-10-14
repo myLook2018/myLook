@@ -7,53 +7,53 @@
     height: 36px;
     padding-right: 3px;
   }
-  
+
   mat-table {
     height: calc(100vh - 104px);
     overflow: auto;
   }
-  
+
   .navbar{
     height: 48px;
     z-index: 10;
   }
-  
+
   .right-icon {
     padding: 0 14px;
   }
-  
+
   .spacer {
     flex: 1 1 auto;
   }
-  
+
   table{
       width: 100%;
   }
-  
-  #uploadArticle{  
+
+  #uploadArticle{
     background-color: #9C27B0 ;
     color: #ffffff
   }
-  
+
   .img-size {
     max-width: 100px;
     max-height: 50px;
   }
-  
+
   .centerImage {
     margin: 0 auto;
   }
-  
+
   .actionIcon{
     color: #9C27B0;
     z-index: 9;
   }
-  
+
   .stickyNavbar{
     background-color: #E1BEE7;
     height: 56px;
   }
-  
+
   .profilePic{
   border-radius: 50%;
   height: 32px;
@@ -63,11 +63,11 @@
   width: 32px;
   margin: 8px 0 8px 8px;
   }
-  
+
   .mat-toolbar-multiple-rows {
     min-height: 0;
   }
-  
+
   .mat-cell, .mat-footer-cell {
     min-width: 111px;
     padding-left: 1vw;
@@ -86,9 +86,20 @@
 }
 
 .dats{
-  margin-left:auto;
-  margin-right:auto;
+  margin-left: auto;
+  margin-right: auto;
   margin-top: 15px;
-  width: calc(8.5vw);
+  width: calc(11.6vw);
+  // height: calc(23vh);
   text-align: center;
+}
+.backgroundColor {
+  width: 100%;
+  height: calc(100);
+  background: rgba(252,236,252,0.14);
+  background: -moz-linear-gradient(top, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
+  background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(252,236,252,0.14)), color-stop(49%, rgba(251,166,225,0.16)), color-stop(85%, rgba(255,124,216,0.18)), color-stop(100%, rgba(253,137,215,0.19)));
+  background: -ms-linear-gradient(top, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
+  background: linear-gradient(to bottom, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', endColorstr='#fd89d7', GradientType=0 );
 }

@@ -1,16 +1,16 @@
 <div class="mat-typography" style="top: 0">
-    <mat-toolbar>
+    <mat-toolbar class="toolbar">
         <mat-toolbar-row class="mat-elevation-z8 navbar">
             <img id="logo" src="/assets/brandNoBackground.png" />
             <span class="spacer"></span>
-            <button mat-icon-button [matMenuTriggerFor]="menu">
+            <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="userStore.storeName">
                     <mat-icon>more_vert</mat-icon>
-                  </button>
-                  <mat-menu #menu="matMenu">
-                    <button *ngIf="isLogedIn" mat-menu-item (click)="editStoreInfo()" >Configuración</button>
-                    <button *ngIf="isLogedIn" mat-menu-item (click)="logout()">Salir</button>
-                  </mat-menu>
-                  <img class="profilePic" src="{{userStore.profilePh}}">
+            </button>
+            <mat-menu #menu="matMenu">
+              <button *ngIf="isLogedIn" mat-menu-item (click)="gotToConfiguration()" >Configuración</button>
+              <button *ngIf="isLogedIn" mat-menu-item (click)="logout()">Salir</button>
+            </mat-menu>
+            <img class="profilePic" src="{{userStore.profilePh}}" *ngIf="userStore.storeName">
             <!--
 
                 <img class="profilePic" [src]="userStore.profilePh">
@@ -18,20 +18,39 @@
         </mat-toolbar-row>
     </mat-toolbar>
 
-    <mat-sidenav-container style="height: 100%;">
+    <mat-sidenav-container class="main-content mat-elevation-z2">
         <mat-sidenav *ngIf="isLogedIn" mat-sidenav #sidenav mode="side" opened class="example-sidenav" [fixedInViewport]="false"
-        [fixedTopGap]="false" [fixedBottomGap]="false" class="mat-elevation-z2">
+        [fixedTopGap]="false" [fixedBottomGap]="false" class="mat-elevation-z2" [autoFocus]="true" >
             <mat-nav-list>
-                <a mat-list-item (click)="goToProfile()">¡Visita tu Perfil!</a>
-                <a mat-list-item (click)="goToInventory()">¡Gestiona tú inventario!</a>
-                <a mat-list-item (click)="goToRecomendations()">¡Haz una recomendación!</a>
-                <a mat-list-item (click)="goToAnalytics()">¡Estadisticas!</a>
+                <mat-list-item (click)="goToProfile()">
+                  <mat-icon class="myLookPink" mat-list-icon>home</mat-icon>
+                  <p mat-line>Perfil</p>
+                </mat-list-item>
+                <mat-list-item (click)="goToInventory()">
+                  <mat-icon class="myLookPink" mat-list-icon>format_list_bulleted</mat-icon>
+                  <p mat-line>Catálogo</p>
+                </mat-list-item>
+                <mat-list-item (click)="goToRecomendations()">
+                  <mat-icon class="myLookPink" mat-list-icon>insert_comment</mat-icon>
+                  <p mat-line>Recomendaciones</p>
+                </mat-list-item>
+                <mat-list-item (click)="goToAnalytics()">
+                  <mat-icon class="myLookPink" mat-list-icon>insert_chart</mat-icon>
+                  <p mat-line>Estadísticas</p>
+                </mat-list-item>
+                <mat-list-item (click)="goToAnalyticsPromotions()">
+                  <mat-icon class="myLookPink" mat-list-icon>whatshot</mat-icon>
+                  <p mat-line>Promociones</p>
+                </mat-list-item>
+                <mat-list-item (click)="gotToConfiguration()">
+                  <mat-icon class="myLookPink" mat-list-icon>settings</mat-icon>
+                  <p mat-line>Configuración</p>
+                </mat-list-item>
             </mat-nav-list>
         </mat-sidenav>
 
-        <mat-sidenav-content>
-            <ngx-spinner bdOpacity = 1bd bdColor="#fafafa" size="large" color="#9c27b0" type = "ball-grid-pulse" fullScreen = "true">
-            <p style="color: #9c27b0" > MyLook </p>
+        <mat-sidenav-content class="main-content-container">
+            <ngx-spinner bdOpacity = 1bd bdColor="#fafafa" size="large" color="#9c27b0" type = "ball-grid-pulse" fullScreen="true">
             </ngx-spinner>
             <div class="fade"></div>
           <router-outlet class="content" (imReadyToDisplay)="hideSpinner($event)" ></router-outlet>

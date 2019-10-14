@@ -3,19 +3,16 @@ package com.mylook.mylook.recommend;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,20 +20,21 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.RequestRecommendation;
-import com.mylook.mylook.home.HomeFragment;
-import com.mylook.mylook.session.Sesion;
+import com.mylook.mylook.session.Session;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class RecommendFragment extends Fragment {
@@ -44,30 +42,30 @@ public class RecommendFragment extends Fragment {
     private FloatingActionButton fab;
     private Context mContext;
     private RecyclerView recyclerView;
-    private FirebaseFirestore dB;
     private static List<RequestRecommendation> requestRecommendationsList;
     public final static String TAG = "RecommendFragment";
+    public static int NEW_REQUEST = 1;
+    public static int RESULT_OK=1;
     private static RecommendFragment homeInstance = null;
     RequestRecyclerViewAdapter adapter;
 
-    // private ProgressBar progres
+     private ProgressBar progressBar;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         Log.e(TAG, "OnViewCreated- savedInstance" + savedInstanceState);
         super.onViewCreated(view, savedInstanceState);
         mContext = view.getContext();
-        this.dB = FirebaseFirestore.getInstance();
         recyclerView = view.findViewById(R.id.recyclerViewRecommend);
         fab = view.findViewById(R.id.fab);
-
+        progressBar = view.findViewById(R.id.progressBar);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, RecommendActivityAddDesc.class);
-                startActivity(intent);
+                startActivityForResult(intent, NEW_REQUEST);
             }
         });
-        if(requestRecommendationsList==null)
+        if(requestRecommendationsList == null || requestRecommendationsList .size() == 0)
             requestRecommendationsList = new ArrayList<RequestRecommendation>();
         adapter = new RequestRecyclerViewAdapter(mContext, requestRecommendationsList);
         recyclerView.setAdapter(adapter);
@@ -87,12 +85,24 @@ public class RecommendFragment extends Fragment {
     }
 
     /**
-     * Método para cuando haya habido algun cambio y haya que actualizar los objetos
+     * Método para cuando haya ocrurrido algun cambio y haya que actualizar los objetos
      */
-    public static void refreshStatus(){
+    public void refreshStatus(){
         if(homeInstance!=null){
-            requestRecommendationsList = new ArrayList<>();
+            initRecyclerView();
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.e("Activity result", "Reuest "+requestCode+" result "+resultCode);
+        if(requestCode == NEW_REQUEST){
+            if(resultCode == RESULT_OK){
+                initRecyclerView();
+            }
+        }
+
     }
 
     @Override
@@ -124,23 +134,35 @@ public class RecommendFragment extends Fragment {
     }
 
     public void getRequestRecommendations() {
-        //progressBar.setVisibility(View.VISIBLE);
-        dB.collection("requestRecommendations")
-                .whereEqualTo("userId", Sesion.getInstance().getSessionUserId()).orderBy("limitDate").get()
+        progressBar.setVisibility(View.VISIBLE);
+        Log.e(TAG, "getRequestRecommendations");
+        FirebaseFirestore.getInstance().collection("requestRecommendations")
+                .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .orderBy("isClosed", Query.Direction.ASCENDING)
+                .orderBy("limitDate").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        requestRecommendationsList.clear();
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 RequestRecommendation requestRecommendation = document.toObject(RequestRecommendation.class);
                                 requestRecommendation.setDocumentId(document.getId());
-                                requestRecommendationsList.add(requestRecommendation);
+                                Calendar cal = Calendar.getInstance();
+                                cal.setTimeInMillis(requestRecommendation.getLimitDate());
+                                Calendar calNow = Calendar.getInstance();
+                                int daysDiff = cal.get(Calendar.DAY_OF_YEAR) - calNow.get(Calendar.DAY_OF_YEAR);
+                                Log.e("Days diff", ""+daysDiff);
+                                if ( (!requestRecommendation.getIsClosed() && cal.getTimeInMillis() > calNow.getTimeInMillis())
+                                        || ( daysDiff >= -7)) {
+                                    requestRecommendationsList.add(requestRecommendation);
+                                }
                             }
                             adapter.notifyDataSetChanged();
-
                         }
-                        //progressBar.setVisibility(View.GONE);
+                        adapter.notifyDataSetChanged();
+                        progressBar.setVisibility(View.GONE);
                     }
                 });
     }
