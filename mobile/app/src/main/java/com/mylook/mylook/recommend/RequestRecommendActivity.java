@@ -58,7 +58,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
         setContentView(R.layout.activity_request_recommendation);
         Log.d(TAG, "onCreate: started.");
         Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
-        tb.setTitle("Tu solicitud");
+        tb.setTitle("Tu Solicitud");
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);

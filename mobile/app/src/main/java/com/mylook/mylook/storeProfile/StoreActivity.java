@@ -50,7 +50,7 @@ public class StoreActivity extends AppCompatActivity {
 
     private void init() {
         Toolbar tb = findViewById(R.id.toolbar);
-        tb.setTitle("Tienda");
+        tb.setTitle("");
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
