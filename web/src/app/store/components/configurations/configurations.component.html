@@ -196,6 +196,33 @@
             </div>
           </div>
       </div>
+      <mat-divider style="position: relative !important;"></mat-divider>
+      <div class="passwordChange" style="padding: 1rem;">
+        <br>
+        <h1>Cambio de Contraseña</h1>
+        <p style="margin-left: 1rem;">
+            Para realizar un cambio de constraseña, debe cerrar sesión y solicitar el reestablecimiento de la contraseña por medio del link de ayuda: "<strong>¿Has olvidado tu contraseña?</strong>".
+        </p>
+      </div>
+      <!--
+        <p>
+          <mat-form-field appearance="outline" class="fullWidth">
+            <mat-label>Constraseña Actual</mat-label>
+            <input matInput formControlName="this.currentPassword" [disabled]="this.isUpLoading">
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field appearance="outline" class="fullWidth">
+            <mat-label>Nueva Contraseña</mat-label>
+            <input matInput placeholder="Ej: myLookTwitter" formControlName="this.newPassword" [disabled]="this.isUpLoading">
+          </mat-form-field>
+        </p>
+        <div>
+          asdasdasdasdasd
+        </div>
+      </div>
+    -->
+    <mat-divider style="position: relative !important;"></mat-divider>
       <mat-card-actions class="actions">
           <button
             [disabled]="isUpLoading"
@@ -218,6 +245,17 @@
             >
               Actualizar Datos
           </button>
+          <!-- <button
+            [disabled]="isUpLoading"
+            class="activatedButton"
+            type="button"
+
+            [ngClass]="{buttonDisabled: (isUpLoading)}"
+            mat-raised-button
+            (click)="changePassword()"
+            >
+              Cambiar Contraseña
+          </button> -->
         </mat-card-actions>
         <div class="proggressBar">
           <mat-progress-bar *ngIf="isUpLoading" mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>

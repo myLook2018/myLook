@@ -1,12 +1,13 @@
 import { Component, OnInit, ViewChild, AfterViewInit, NgZone, ElementRef } from '@angular/core';
 import { DataService } from '../../../service/dataService';
 import { StoreModel } from 'src/app/auth/models/store.model';
-import { FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl} from '@angular/forms';
 import { ImgCropperConfig, LyResizingCroppingImages } from '@alyle/ui/resizing-cropping-images';
 import { MatSnackBar } from '@angular/material';
 import { NewStoreService } from '../../service/store.service';
 import { MapsAPILoader } from '@agm/core';
 import { Router } from '@angular/router';
+// import { StoreService } from 'src/app/auth/services/store.service';
 
 @Component({
   selector: 'app-configurations',
@@ -52,6 +53,10 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
   address: string;
   private geoCoder;
 
+  // currentPassword = new FormControl('');
+  // newPassword = new FormControl('');
+
+
 
   constructor(  private dataService: DataService,
                 private formBuilder: FormBuilder,
@@ -59,7 +64,8 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
                 private newStoreService: NewStoreService,
                 private mapsAPILoader: MapsAPILoader,
                 private ngZone: NgZone,
-                private router: Router
+                private router: Router,
+                // private storeService: StoreService
     ) {
    }
 
@@ -384,4 +390,8 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
   goToProfile() {
     this.router.navigate(['Tiendas', this.actualStore.storeName]);
   }
+
+  // changePassword() {
+    // this.storeService.changePassword('123456');
+  // }
 }

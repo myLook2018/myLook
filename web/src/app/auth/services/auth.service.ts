@@ -173,7 +173,7 @@ export class AuthService {
     return new Promise((resolve, reject) => {
     firebase.auth().sendPasswordResetEmail(email).then( res => {
       console.log('se envio el email para resetear');
-      this.openSnackBar('Te hemos enviado un email para reestablecer tu contraseña!', 'cerrar');
+      this.openSnackBar('Te hemos enviado un email para reestablecer tu contraseña!', 'x');
       // resolve(res);
     }).catch( error => {
       console.log ('ocurrio un error al intentar mandar mail. ', error);
