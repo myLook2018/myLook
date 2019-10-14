@@ -1,20 +1,20 @@
-<div class="configuration">
-  <form [formGroup]="this.myFormGroup" autocomplete="off">
+<div class="configuration" *ngIf="myFormGroup">
+  <form [formGroup]="myFormGroup" autocomplete="off">
     <mat-card class="card-container">
-      <h1>Mi Tienda</h1>
+      <h1>Información sobre tu Tienda</h1>
       <div class="storeInformation">
-          <div class="form" *ngIf="myFormGroup">
+          <div class="form" >
             <div class="container-table">
               <div>
                 <div class="first-row">
                   <div class="storePhotos">
                       <div lyTheme="minima-light" #PrimeraFoto>
+                        <h2 class="title">Foto de Perfíl</h2>
                           <div class="resize-image">
-                            <br/>
                             <div>
                               <button
-                                class="cropButton"
-                                *ngIf="isLoadedImage[0]"
+                                class="cropButtonOne"
+                                *ngIf="!this.isUpLoading"
                                 (click)="cropping0.clean()"
                                 (click)="doClean(0)"
                                 ly-button
@@ -24,7 +24,7 @@
                               </button>
                             </div>
 
-                            <ly-cropping
+                            <ly-cropping class="crp0"
                               #cropping0
                               id="crp0"
                               [config]="myConfig"
@@ -57,54 +57,136 @@
                             </div>
                           </div>
                         </div>
+<!-- ------------------------------------------------------------------------------------------- -->
+                        <div lyTheme="minima-light" #FotoPortada>
+                          <h2 class="title">Foto de Portada</h2>
+                          <div class="resize-image">
+                            <div>
+                              <button
+                                class="cropButton"
+                                *ngIf="!this.isUpLoading"
+                                (click)="cropping1.clean()"
+                                (click)="doClean(1)"
+                                ly-button
+                                appearance="icon"
+                              >
+                                <ly-icon>close</ly-icon>
+                              </button>
+                            </div>
+
+                            <ly-cropping class="crp1"
+                              #cropping1
+                              id="crp1"
+                              [config]="myConfigPortada"
+                              (cropped)="oncropped($event, 1)"
+                              (loaded)="onloaded(1)"
+                              (error)="onerror()"
+                              class="mat-typography"
+                            >
+                              <i class="material-icons"> add_photo_alternate </i> Añadir Foto
+                            </ly-cropping>
+                            <button
+                              style="visibility: hidden; position: absolute"
+                              color="accent"
+                              (click)="cropping1.crop()"
+                              ly-button
+                              raised
+                            >
+                              crop
+                            </button>
+
+                            <div lyTheme="minima-light">
+
+                              <input
+                                #_fileInput0
+                                type="file"
+                                (change)="cropping1.selectInputEvent($event)"
+                                accept="image/*"
+                                hidden
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <p>
+                          <mat-form-field appearance="outline" class="description">
+                            <mat-label>Descripción</mat-label>
+                            <textarea matInput
+                                      maxlength="180"
+                                      placeholder="Agrega una breve reseña de tu tienda."
+                                      formControlName="storeDescription"
+                                      cdkTextareaAutosize
+                                      cdkAutosizeMinRows="7"
+                                      cdkAutosizeMaxRows="7"
+                                      [disabled]="this.isUpLoading"
+                                      >
+                            </textarea>
+                            <mat-hint align="end">{{this.myFormGroup.get('storeDescription').value.length}} / 180</mat-hint>
+                          </mat-form-field>
+                        </p>
                   </div>
                   <div class="information">
                     <p>
                       <mat-form-field appearance="outline" class="fullWidth">
                         <mat-label>Dirección</mat-label>
-                        <input matInput placeholder="Ej: Avenida Colón 1234" formControlName="storeAddress">
+                        <input matInput placeholder="Ej: Avenida Colón 1234" formControlName="storeAddress" #search [disabled]="this.isUpLoading"
+                        >
                       </mat-form-field>
                     </p>
+                        <div>
+                            <agm-map
+                              [latitude]="latitude"
+                              [longitude]="longitude"
+                              [zoom]="zoom"
+                            >
+                              <agm-marker
+                                [latitude]="latitude"
+                                [longitude]="longitude"
+                                [markerDraggable]="true"
+                                (dragEnd)="markerDragEnd($event)"
+                              ></agm-marker>
+                            </agm-map>
+                          </div>
+                    <br>
                     <p>
                       <mat-form-field appearance="outline" class="fullWidth">
                         <mat-label>Torre</mat-label>
-                        <input matInput placeholder="Ejs: 1 ó A ó Torre Vitacura" formControlName="storeTower">
+                        <input matInput placeholder="Ejs: 1 ó A ó Torre Vitacura" formControlName="storeTower" [disabled]="this.isUpLoading">
                       </mat-form-field>
                     </p>
                     <p>
                       <mat-form-field appearance="outline" class="fullWidth">
                         <mat-label>Piso</mat-label>
-                        <input matInput placeholder="Ej: 1 ó 1ro" formControlName="storeFloor">
+                        <input matInput placeholder="Ej: 1 ó 1ro" formControlName="storeFloor" [disabled]="this.isUpLoading">
                       </mat-form-field>
                     </p>
                     <p>
                       <mat-form-field appearance="outline" class="fullWidth">
                         <mat-label>Departamento</mat-label>
-                        <input matInput placeholder="Ej: 1 ó A" formControlName="storeDept">
+                        <input matInput placeholder="Ej: 1 ó A" formControlName="storeDept" [disabled]="this.isUpLoading">
                       </mat-form-field>
                     </p>
                     <p>
                       <mat-form-field appearance="outline" class="fullWidth">
                         <mat-label>Teléfono</mat-label>
-                        <input matInput placeholder="Ej: 012-3456789" formControlName="storePhone">
+                        <input matInput placeholder="Ej: 012-3456789" formControlName="storePhone" [disabled]="this.isUpLoading">
                       </mat-form-field>
                     </p>
                     <p>
                         <mat-form-field appearance="outline" class="fullWidth">
                           <mat-label>Facebook</mat-label>
-                          <input matInput placeholder="Ej: myLookApp" formControlName="facebookLink">
+                          <input matInput placeholder="Ej: myLookApp" formControlName="facebookLink" [disabled]="this.isUpLoading">
                         </mat-form-field>
                       </p>
                       <p>
                         <mat-form-field appearance="outline" class="fullWidth">
                           <mat-label>Instagram</mat-label>
-                          <input matInput placeholder="Ej: myLookApp" formControlName="instagramLink">
+                          <input matInput placeholder="Ej: myLookApp" formControlName="instagramLink" [disabled]="this.isUpLoading">
                         </mat-form-field>
                       </p>
                       <p>
                         <mat-form-field appearance="outline" class="fullWidth">
                           <mat-label>Twitter</mat-label>
-                          <input matInput placeholder="Ej: myLookTwitter" formControlName="twitterLink">
+                          <input matInput placeholder="Ej: myLookTwitter" formControlName="twitterLink" [disabled]="this.isUpLoading">
                         </mat-form-field>
                       </p>
 
@@ -114,214 +196,32 @@
             </div>
           </div>
       </div>
+      <mat-card-actions class="actions">
+          <button
+            [disabled]="isUpLoading"
+            type="button"
+
+            [ngClass]="{buttonDisabled: isUpLoading}"
+            mat-raised-button
+            (click)="goToProfile()"
+            >
+            Cancelar
+          </button>
+          <button
+            [disabled]="myFormGroup.invalid || isUpLoading"
+            class="activatedButton"
+            type="button"
+
+            [ngClass]="{buttonDisabled: (myFormGroup.invalid || isUpLoading)}"
+            mat-raised-button
+            (click)="cropImages(cropping0, cropping1)"
+            >
+              Actualizar Datos
+          </button>
+        </mat-card-actions>
+        <div class="proggressBar">
+          <mat-progress-bar *ngIf="isUpLoading" mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>
+        </div>
     </mat-card>
   </form>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <!-- <div class="storeInformation">
-    <div class="resume">
-      <mat-card class="example-card">
-        <mat-card-header>
-          <mat-card-title>{{actualStore.storeName}}</mat-card-title>
-          <mat-card-subtitle>Perfil de Tienda</mat-card-subtitle>
-        </mat-card-header>
-        <img *ngIf="!isEditMode" mat-card-image src="{{actualStore.profilePh}}" alt="Cargando" height="400" width="400">
-
-        <div *ngIf="isEditMode" lyTheme="minima-light" #PrimeraFoto>
-            <div class="resize-image">
-              <br/>
-              <div>
-                <button
-                  class="cropButton"
-                  *ngIf="isLoadedImage[0]"
-                  (click)="cropping0.clean()"
-                  (click)="doClean(0)"
-                  ly-button
-                  appearance="icon"
-                >
-                  <ly-icon>close</ly-icon>
-                </button>
-              </div>
-
-              <ly-cropping
-                #cropping0
-                id="crp0"
-                [config]="myConfig"
-                (cropped)="oncropped($event, 0)"
-                (loaded)="onloaded(0)"
-                (error)="onerror()"
-                class="mat-typography"
-              >
-                <i class="material-icons"> add_photo_alternate </i> Añadir Foto
-              </ly-cropping>
-              <button
-                style="visibility: hidden; position: absolute"
-                color="accent"
-                (click)="cropping0.crop()"
-                ly-button
-                raised
-              >
-                crop
-              </button>
-
-              <div lyTheme="minima-light">
-
-                <input
-                  #_fileInput0
-                  type="file"
-                  (change)="cropping0.selectInputEvent($event)"
-                  accept="image/*"
-                  hidden
-                />
-              </div>
-            </div>
-          </div>
-
-
-        <mat-card-content class="storeMainInformation" style="height: 10rem;">
-          <p *ngIf="actualStore.storeDescription && !isEditMode">
-              <strong>Descripción:</strong> {{actualStore.storeDescription}}
-          </p>
-          <div class="form" *ngIf="isEditMode" style="overflow: hidden">
-              <form class="descriptionInput" [formGroup]="myFormGroup">
-                <p style="margin: 0">
-                  <mat-form-field appearance="outline" class="fullWidth" style="width: 25rem; overflow: hidden;">
-                    <mat-label>Descripción</mat-label>
-                    <textarea matInput placeholder="{{actualStore.storeName}} te espera" formControlName="storeDescription" style="height: 3.5rem;"></textarea>
-                  </mat-form-field>
-                  </p>
-              </form>
-          </div>
-          <p *ngIf="actualFirebaseUser && !isEditMode ">
-            <strong>Correo Electrónico:</strong> {{actualFirebaseUser.email}}
-          </p>
-          <p *ngIf="actualFirebaseUser && !isEditMode">
-            <strong>En la aplicación desde:</strong> {{actualFirebaseUser.metadata.creationTime | date: 'fullDate'}}
-          </p>
-        </mat-card-content>
-      </mat-card>
-    </div>
-    <div class="extraInformation">
-      <mat-card class="info-card">
-        <mat-card-header>
-          <mat-card-title>Información de la Cuenta</mat-card-title>
-        </mat-card-header>
-        <mat-card-content >
-          <div class="form" *ngIf="myFormGroup">
-            <form class="elForm" [formGroup]="myFormGroup">
-              <div class="container-table">
-
-              <div class="first-column">
-              <p>
-                <mat-form-field appearance="outline" class="fullWidth">
-                  <mat-label>Dirección</mat-label>
-                  <input matInput placeholder="Ej: Avenida Colón 1234" formControlName="storeAddress">
-                </mat-form-field>
-              </p>
-              <p>
-                <mat-form-field appearance="outline" class="fullWidth">
-                  <mat-label>Torre</mat-label>
-                  <input matInput placeholder="Ejs: 1 ó A ó Torre Vitacura" formControlName="storeTower">
-                </mat-form-field>
-              </p>
-              <p>
-                <mat-form-field appearance="outline" class="fullWidth">
-                  <mat-label>Piso</mat-label>
-                  <input matInput placeholder="Ej: 1 ó 1ro" formControlName="storeFloor">
-                </mat-form-field>
-              </p>
-              <p>
-                <mat-form-field appearance="outline" class="fullWidth">
-                  <mat-label>Departamento</mat-label>
-                  <input matInput placeholder="Ej: 1 ó A" formControlName="storeDept">
-                </mat-form-field>
-              </p>
-
-            </div>
-
-            <div class="second-column">
-              <p>
-                <mat-form-field appearance="outline" class="fullWidth">
-                  <mat-label>Teléfono</mat-label>
-                  <input matInput placeholder="Ej: 012-3456789" formControlName="storePhone">
-                </mat-form-field>
-              </p>
-              <p>
-                <mat-form-field appearance="outline" class="fullWidth">
-                  <mat-label>Facebook</mat-label>
-                  <input matInput placeholder="Ej: myLookApp" formControlName="facebookLink">
-                </mat-form-field>
-              </p>
-              <p>
-                <mat-form-field appearance="outline" class="fullWidth">
-                  <mat-label>Instagram</mat-label>
-                  <input matInput placeholder="Ej: myLookApp" formControlName="instagramLink">
-                </mat-form-field>
-              </p>
-              <p>
-                <mat-form-field appearance="outline" class="fullWidth">
-                  <mat-label>Twitter</mat-label>
-                  <input matInput placeholder="Ej: myLookTwitter" formControlName="twitterLink">
-                </mat-form-field>
-              </p>
-            </div>
-          </div>
-            </form>
-          </div>
-
-        </mat-card-content>
-        <mat-card-actions class="extraInformationEdit">
-          <button mat-button *ngIf="!isEditMode" (click)="changeMode($event)">Editar Información</button>
-          <button mat-button *ngIf="isEditMode" (click)="changeMode($event)">Cancelar</button>
-          <button mat-button *ngIf="isEditMode" (click)="updateInformation($event)">Confirmar</button>
-        </mat-card-actions>
-      </mat-card>
-    </div>
-  </div> -->
-<!-- </div> -->
