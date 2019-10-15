@@ -1,7 +1,7 @@
 package com.mylook.mylook.explore;
 
 import android.content.Context;
-import android.util.Log;
+import android.location.Location;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -10,6 +10,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.entities.Interaction;
+import com.mylook.mylook.entities.PremiumPublication;
 import com.mylook.mylook.room.AppDatabase;
 import com.mylook.mylook.room.LocalInteraction;
 import com.mylook.mylook.room.LocalInteractionDAO;
@@ -21,7 +22,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-public class ExploreService {
+class ExploreService {
 
     /**
      * LCM of 9, 7, 5, 3:
@@ -48,7 +49,7 @@ public class ExploreService {
     private List<LocalInteraction> allLocalInteractions;
     private List<LocalInteraction> currentLocalInteractions;
 
-    public ExploreService(Context context) {
+    ExploreService(Context context) {
         userUid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         localDAO = AppDatabase.getDatabase(context).getLocalInteractionDAO();
         allLocalInteractions = localDAO.getAllByUser(userUid);
@@ -56,16 +57,22 @@ public class ExploreService {
         interactions = new ArrayList<>();
     }
 
-    public List<Article> createExploreArticleList(QuerySnapshot query) {
+    List<Object> createExploreArticleList(QuerySnapshot query, Location location, double distance) {
         List<Article> promo1 = new ArrayList<>();
         List<Article> promo2 = new ArrayList<>();
         List<Article> promo3 = new ArrayList<>();
-        List<Article> articles = new ArrayList<>();
+        List<Object> articles = new ArrayList<>();
 
         for (QueryDocumentSnapshot document : query) {
             if (isNew(document.getId())) {
                 Article article = document.toObject(Article.class);
                 article.setArticleId(document.getId());
+                if (location != null) {
+                    article.setNearby(LocationValidator.checkIfNearby(article, location, distance));
+                    if (!article.isNearby()) {
+                        continue;
+                    }
+                }
                 switch (article.getPromotionLevel()) {
                     case 1:
                         promo1.add(article);
@@ -122,13 +129,29 @@ public class ExploreService {
         return articles;
     }
 
+    List<Object> addPremiumPublicationsToList(List<Object> publications, QuerySnapshot query) {
+        Random r = new Random();
+        int index;
+        for (QueryDocumentSnapshot document : query) {
+            PremiumPublication premiumPublication = document.toObject(PremiumPublication.class);
+            premiumPublication.setPremiumPublicationId(document.getId());
+            if(!publications.isEmpty()) //r.nextInt() da exception si recibe <=0
+            {
+                index = r.nextInt(publications.size());
+                publications.add(index, premiumPublication);
+
+            }
+        }
+        return publications;
+    }
+
     private boolean isNew(String id) {
         // TODO incluir en produccion
         // return allLocalInteractions.stream().noneMatch(li -> li.getUid().equals(id));
         return true;
     }
 
-    public void likeArticle(Article article, boolean liked) {
+    void likeArticle(Article article, boolean liked) {
         Interaction userInteraction = new Interaction();
         userInteraction.setSavedToCloset(false);
         userInteraction.setClickOnArticle(false);
@@ -147,7 +170,29 @@ public class ExploreService {
         currentLocalInteractions.add(local);
     }
 
-    public void visitArticle(Article article) {
+    void likePremiumPublication(PremiumPublication premiumPublication, boolean liked) {
+        // TODO check this
+        /*
+        Interaction userInteraction = new Interaction();
+        userInteraction.setSavedToCloset(false);
+        userInteraction.setClickOnArticle(false);
+        userInteraction.setPromotionLevel(article.getPromotionLevel());
+        userInteraction.setLiked(liked);
+        userInteraction.setArticleId(article.getArticleId());
+        userInteraction.setStoreName(article.getStoreName());
+        userInteraction.setTags(article.getTags());
+        userInteraction.setUserId(userUid);
+        interactions.add(userInteraction);
+
+        LocalInteraction local = new LocalInteraction();
+        local.setUid(article.getArticleId());
+        local.setUserId(userUid);
+        local.setDate(Calendar.getInstance().getTime());
+        currentLocalInteractions.add(local);
+        */
+    }
+
+    void visitArticle(Article article) {
         Interaction userInteraction = new Interaction();
         userInteraction.setPromotionLevel(article.getPromotionLevel());
         userInteraction.setLiked(false);
@@ -159,7 +204,22 @@ public class ExploreService {
         interactions.add(userInteraction);
     }
 
-    public Task<QuerySnapshot> getArticles() {
+    void visitPremiumPublication(PremiumPublication premiumPublication) {
+        // TODO check this
+        /*
+        Interaction userInteraction = new Interaction();
+        userInteraction.setPromotionLevel(article.getPromotionLevel());
+        userInteraction.setLiked(false);
+        userInteraction.setClickOnArticle(true);
+        userInteraction.setArticleId(article.getArticleId());
+        userInteraction.setStoreName(article.getStoreName());
+        userInteraction.setTags(article.getTags());
+        userInteraction.setUserId(userUid);
+        interactions.add(userInteraction);
+        */
+    }
+
+    Task<QuerySnapshot> getArticles() {
         //TODO incluir en produccion
         //Calendar cal = Calendar.getInstance();
         //cal.add(Calendar.DATE, -14);
@@ -169,18 +229,25 @@ public class ExploreService {
                 .get();
     }
 
-    public void uploadInteractions() {
-        try {
-            for (Interaction interaction : interactions) {
-                FirebaseFirestore.getInstance().collection("interactions").add(interaction);
-            }
-            interactions.clear();
-            for (LocalInteraction localInteraction : currentLocalInteractions) {
-                localDAO.insert(localInteraction);
-            }
-            currentLocalInteractions.clear();
-        }catch (Exception e){
-            Log.e("EXPLORE_SRVICE", "problema al guardar interacciones locales");
+    Task<QuerySnapshot> getPremiumPublications() {
+        //TODO incluir en produccion
+        //Calendar cal = Calendar.getInstance();
+        //cal.add(Calendar.DATE, -14);
+        //Date dateBefore2Weeks = cal.getTime();
+        return FirebaseFirestore.getInstance().collection("premiumPublications")
+                //.whereGreaterThan("creationDate", dateBefore2Weeks) Le saque el filtro para que aparecieran
+                .get();
+    }
+
+    void uploadInteractions() {
+        for (Interaction interaction : interactions) {
+            FirebaseFirestore.getInstance().collection("interactions").add(interaction);
         }
+        interactions.clear();
+        for (LocalInteraction localInteraction : currentLocalInteractions) {
+            // TODO aplicar en producción
+            //localDAO.insert(localInteraction);
+        }
+        currentLocalInteractions.clear();
     }
 }

@@ -10,7 +10,7 @@ public class PremiumPublication implements Serializable {
     private String storeName;
     private String userId;
     private Date date;
-
+    private String premiumPublicationId;
 
     public Date getDate() {
         return date;
@@ -74,4 +74,11 @@ public class PremiumPublication implements Serializable {
     }
 
 
+    public String getPremiumPublicationId() {
+        return premiumPublicationId;
+    }
+
+    public void setPremiumPublicationId(String premiumPublicationId) {
+        this.premiumPublicationId = premiumPublicationId;
+    }
 }
