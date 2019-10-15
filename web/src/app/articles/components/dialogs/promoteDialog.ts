@@ -147,6 +147,10 @@ export class PromoteDialogComponent {
         this.promotionCost = this.finalCost * 0.70;
         break;
       }
+      case 28: {
+        this.promotionCost = this.finalCost * 0.65;
+        break;
+      }
       case undefined: {
         this.promotionCost = 0;
       }

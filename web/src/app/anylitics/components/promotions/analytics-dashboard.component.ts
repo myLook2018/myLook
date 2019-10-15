@@ -5,6 +5,7 @@ import { AnyliticService } from '../../services/anylitics.service';
 import { PromotionsService } from '../../services/promotions.service';
 import { DataService } from 'src/app/service/dataService';
 import { MatTableDataSource } from '@angular/material';
+import { ArticleService } from 'src/app/articles/services/article.service';
 
 @Component({
   selector: 'app-analytics-dashboard',
@@ -18,12 +19,13 @@ export class AnyliticsDashboardComponent implements OnInit, OnDestroy {
   level1Articles;
   level2Articles;
   level3Articles;
+  articlesByPromotionLevel = [0, 0, 0];
   levelInteractionCounter = [0, 0, 0];
   promotionImpact = [0, 0]; // Los likes son el primero, los dislike el segundo
   likes;
   dislikes;
-  tortaTooltip = 'Indica la cantidad de prendas promocionadas que le gustaron o no al usuario, al encontrarse con tus prendas';
-  barrasTooltip = 'Indica la cantidad de veces que tu prenda se vió en detalle según su nivel de promoción';
+  tortaTooltip = 'Indica la cantidad de prendas promocionadas que le gustaron o no al usuario, al encontrarse con tus prendas.';
+  barrasTooltip = 'Indica la cantidad de veces en promedio que tu prenda se vio en detalle según su nivel de promoción.';
 
   // ------------------ de la tabla ------------------------------------
   displayedColumns = ['Articulo', 'Codigo', 'FechaInicio', 'FechaFin', 'NivelPromocion', 'PrecioFinal', 'Descargar'];
@@ -31,12 +33,13 @@ export class AnyliticsDashboardComponent implements OnInit, OnDestroy {
   promotionsData;
   locale: string;
   renderInteractions = false;
-
+  storeArticles = [];
   constructor(
     fb: FormBuilder,
     public anyliticService: AnyliticService,
     private promotionsService: PromotionsService,
-    private dataService: DataService) {
+    private dataService: DataService,
+    private articleService: ArticleService) {
   }
 
   ngOnInit() {
@@ -48,7 +51,10 @@ export class AnyliticsDashboardComponent implements OnInit, OnDestroy {
       this.anyliticService.getInteractions(this.actualStore.storeName).then((res) => {
         this.interactions = res;
         console.log('estas son tus interacciones ', this.interactions);
-        this.filterInteractions();
+        this.articleService.getArticlesCopado(this.actualStore.storeName).then( articles => {
+          this.storeArticles = articles;
+          this.filterInteractions();
+        });
       });
     });
   }
@@ -60,24 +66,33 @@ export class AnyliticsDashboardComponent implements OnInit, OnDestroy {
   // ----------------------------------- Todo Interacciones --------------------------------------------------------
 
   filterInteractions() {
+    this.calculateArticlesByPromotion();
     this.calculateClicksOnArticle();
     this.calculatePromotionImpact();
     this.renderInteractions = true;
+  }
+
+  calculateArticlesByPromotion() {
+    this.storeArticles.forEach(article => {
+      const promotionLevel = article.promotionLevel;
+      this.articlesByPromotionLevel[promotionLevel - 1]++;
+    });
   }
 
   calculateClicksOnArticle() {
     const clickOnArticleInteractions = this.interactions.filter( interaction => interaction.clickOnArticle === true );
     clickOnArticleInteractions.forEach( interaction => this.levelInteractionCounter[interaction.promotionLevel - 1]++);
     console.log('visit interactions', this.levelInteractionCounter);
-    this.level1Articles = this.levelInteractionCounter[0];
-    this.level2Articles = this.levelInteractionCounter[1];
-    this.level3Articles = this.levelInteractionCounter[2];
+    this.level1Articles = this.levelInteractionCounter[0] / this.articlesByPromotionLevel[0];
+    this.level2Articles = this.levelInteractionCounter[1] / this.articlesByPromotionLevel[1];
+    this.level3Articles = this.levelInteractionCounter[2] / this.articlesByPromotionLevel[2];
   }
 
   calculatePromotionImpact() {
     const promotedInteractions = this.interactions.filter( interaction => interaction.promotionLevel > 1);
-    console.log('interacciones con promociones ', promotedInteractions);
-    promotedInteractions.forEach( interaction => {
+    const promotedInteractionsWithOutClick = promotedInteractions.filter( interaction => interaction.clickOnArticle === false);
+    console.log('interacciones con promociones sin los visit', promotedInteractionsWithOutClick);
+    promotedInteractionsWithOutClick.forEach( interaction => {
       if (interaction.liked) {
         this.promotionImpact[0]++;
       } else { this.promotionImpact[1]++; }

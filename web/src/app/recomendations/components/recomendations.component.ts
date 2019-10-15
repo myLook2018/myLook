@@ -14,6 +14,8 @@ import {
 import { RecomendationService } from '../service/recomendationService';
 import { RecomendationAnswer } from '../model/recomendationAnswer.model';
 import { DataService } from 'src/app/service/dataService';
+import { getDistance } from 'geolib';
+import { GeolibInputCoordinates } from 'geolib/es/types';
 
 @Component({
   selector: 'app-recomendations',
@@ -50,6 +52,10 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
   isRequestSelected = false;
   disableSendRecomendation = false;
   isAnAnswer: boolean;
+  imageLoader = true;
+  imageLoaderAnswer = true;
+  lastImagenLoaded: any;
+  lastImagenLoadedAnswer: any;
 
   constructor(
     public snackBar: MatSnackBar,
@@ -61,7 +67,6 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
     private fb: FormBuilder
   ) {
     this.createForm();
-    console.log(`vamps con este nombre ` + this.userStore.storeName);
   }
 
   dataSourceRequests;
@@ -70,11 +75,11 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
   displayedColumnsAnswered: string[] = ['ListaPeticiones'];
   dataSourceArticles;
   displayedColumnsArticles: string[] = ['PrendasCatalogo'];
+  nearTooltip = 'Esta solicitud esta a menos de 2 kilometros.';
 
   ngOnInit() {
     this.selectedArticle = new Article();
     console.log('-+-+-+-+-+-Inicializando Recomendaciones-+-+-+-+-+-');
-    console.log('-+-+-+-+-+-Inicializando Inventario-+-+-+-+-+-');
     this.dataService.getStoreInfo().then(store => {
       this.userStore = store;
       this.articleService
@@ -137,6 +142,13 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
   }
 
   showInformationRequest(row) {
+    this.imageLoader = true;
+    this.requestAnswerForm.get('description').enable();
+    if ( this.selectedRequest === row || this.lastImagenLoaded === row.requestPhoto) {
+      setTimeout(() => {
+        this.imageLoader = false;
+      }, 1000);
+    }
     this.disableSendRecomendation = false;
     this.requestAnswerForm.get('description').setValue('');
     this.isRequestSelected = true;
@@ -148,36 +160,55 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
       'https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/utils%2Flogo_transparente_50.png?alt=media&token=c72e5b39-3011-4f26-ba4f-4c9f7326c68a';
     }
     this.selectedArticle = new Article();
-    this.selectedArticle.picturesArray[0] = '/assets/idea.png';
+    this.selectedArticle.picturesArray[0] = '';
+    this.lastImagenLoaded = row.requestPhoto;
     console.log(row);
   }
 
   showInformationAnswer(row, isAlreadyRecomended = false) {
     // this.isAnAnswer = isAlreadyRecomended;
+    this.selectedRequest = null;
+    this.imageLoader = true;
+    if (this.lastImagenLoaded === row.requestPhoto) {
+      setTimeout(() => {
+        this.imageLoader = false;
+      }, 1000);
+    }
+    this.imageLoaderAnswer = true;
+    this.lastImagenLoaded = row.requestPhoto;
     console.log('row', row);
     console.log('selectedArticle', this.selectedArticle);
     this.selectedArticle = new Article();
     // this.selectedArticle = row;
     // console.log('selectedArticle', this.selectedArticle);
     this.selectedArticleRowIndex = -1;
-    this.isRequestSelected = false;
+    this.isRequestSelected = true;
     this.selectedRowIndex = row.FirebaseUID;
     this.selectedRequest = row;
     this.selectedAnswer = this.selectedRequest.answers.find(
       answer => answer.storeName === this.userStore.storeName
       );
+      if (this.lastImagenLoadedAnswer === this.selectedAnswer.articlePhoto) {
+        setTimeout(() => {
+          this.imageLoaderAnswer = false;
+        }, 1000);
+      }
+      this.lastImagenLoadedAnswer = this.selectedAnswer.articlePhoto;
       this.selectedArticle.picturesArray[0] = this.selectedAnswer.articlePhoto;
       this.requestAnswerForm
       .get('description')
       .setValue(this.selectedAnswer.description);
-      this.isRequestSelected = true;
+      this.requestAnswerForm.get('description').disable();
       this.disableSendRecomendation = true;
   }
 
   showInformationArticle(row, index) {
-    if (this.isRequestSelected) {
+    if (this.isRequestSelected && this.selectedArticle !== row && !this.disableSendRecomendation) {
+      console.log('rowasdasdasd', row);
+      this.imageLoaderAnswer = true;
       this.selectedArticleRowIndex = row.articleId;
       this.selectedArticle = row;
+      this.lastImagenLoadedAnswer = row.picturesArray[0];
     }
   }
 
@@ -238,6 +269,11 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
         if (this.isInAnswers(request.answers)) {
           this.recomendationsAnswered.push(request);
         } else {
+          request.distance = this.isNear(request);
+          // tslint:disable-next-line: no-bitwise
+          request.tooltip = `Esta solicitud se hizo a ${(~~((request.distance + 99) / 100) * 100)} metros.`;
+          request.isNear = request.distance < 2000 ? true : false;
+          console.log('esta cerca? ', request.isNear);
           this.recomendationsToAnswer.push(request);
         }
       }
@@ -297,6 +333,15 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
     console.log('this.newRecos', this.newRecos)
     this.recomendationsRequests = this.newRecos;
     this.dataSourceRequests = new MatTableDataSource(this.recomendationsRequests);
+  }
+
+  isNear(recomendation: RecomendationRequest) { // great distance calculator
+    const distance = getDistance(
+      { latitude: recomendation.localization[0], longitude: recomendation.localization[1] },
+      { latitude: this.userStore.storeLatitude, longitude: this.userStore.storeLongitude }
+    );
+    console.log(`distancia de ${recomendation.title}: ` , distance);
+    return distance;
   }
 
   goToProfile() {
