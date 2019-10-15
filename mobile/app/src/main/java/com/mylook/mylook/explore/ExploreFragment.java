@@ -76,6 +76,7 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
     private LocationManager locationManager;
 
     private double distance;
+    private boolean geoDisabled=true;
 
     @Override
     public void onCardDragging(Direction direction, float ratio) {}
@@ -201,9 +202,11 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
                 distance = progress;
                 distanceLabel.setText(progress == 0 ? "Desactivado" : "< " + progress + " metros");
                 if (progress == 0) {
+                    geoDisabled=true;
                     seekBar.setThumb(getResources().getDrawable(R.drawable.slider_thumb_disabled, null));
                     distanceLabel.setTextColor(getResources().getColor(R.color.red, null));
                 } else {
+                    geoDisabled=false;
                     seekBar.setThumb(getResources().getDrawable(R.drawable.slider_thumb_enabled, null));
                     distanceLabel.setTextColor(getResources().getColor(R.color.primary_text, null));
                 }
@@ -242,7 +245,8 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
         } else if (!isGPSActive()) {
             displayMessage("Activa tu GPS para acceder a tu ubicación.");
         } else {
-            tryGetArticlesWithLocation();
+            if(!geoDisabled)
+                tryGetArticlesWithLocation();
         }
         showSlider(false);
     }
@@ -445,9 +449,11 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
                 }
                 Log.d(TAG, "getPremiumPublications - No publications found");
             } else {
-                publications = exploreService.addPremiumPublicationsToList(publications, task.getResult());
-                Log.d(TAG, "getPremiumPublications - Publications found: " + task.getResult().size());
-                mCardAdapter.notifyDataSetChanged();
+                if(!task.getResult().isEmpty()){
+                    publications = exploreService.addPremiumPublicationsToList(publications, task.getResult());
+                    Log.d(TAG, "getPremiumPublications - Publications found: " + task.getResult().size());
+                    mCardAdapter.notifyDataSetChanged();
+                }
                 if (publications.isEmpty()) {
                     viewOnly(ViewName.MESSAGE_LOCATION);
                 } else {

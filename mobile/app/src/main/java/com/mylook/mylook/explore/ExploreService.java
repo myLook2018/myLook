@@ -135,8 +135,12 @@ class ExploreService {
         for (QueryDocumentSnapshot document : query) {
             PremiumPublication premiumPublication = document.toObject(PremiumPublication.class);
             premiumPublication.setPremiumPublicationId(document.getId());
-            index = r.nextInt(publications.size());
-            publications.add(index, premiumPublication);
+            if(!publications.isEmpty()) //r.nextInt() da exception si recibe <=0
+            {
+                index = r.nextInt(publications.size());
+                publications.add(index, premiumPublication);
+
+            }
         }
         return publications;
     }
