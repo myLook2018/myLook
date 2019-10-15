@@ -57,6 +57,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mylook.mylook.R;
+import com.mylook.mylook.session.MainActivity;
 import com.mylook.mylook.session.Session;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
@@ -95,7 +96,6 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     private FirebaseUser user;
     private String urlLogo = "https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/utils%2Flogo_transparente_50.png?alt=media&token=c72e5b39-3011-4f26-ba4f-4c9f7326c68a";
     private ProgressBar mProgressBar;
-
     private MaterialBetterSpinner spinner;
     private Uri downloadUrl;
     private boolean enviado = false;
@@ -105,7 +105,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request_recommendation_add_desc);
 
-
+        invalidateOptionsMenu();
         initElements();
         Toolbar tb = findViewById(R.id.recomend_toolbar);
         setSupportActionBar(tb);
@@ -190,6 +190,8 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         fabPhoto = (FloatingActionButton) findViewById(R.id.photoFloating);
         fabGallery = (FloatingActionButton) findViewById(R.id.galleryFloating);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Intent intent = getIntent();
+
     }
 
     private void setCategoryRequest() {
@@ -549,6 +551,20 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             toast.show();
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        super.onSupportNavigateUp();
+        onBackPressed();
+        return false;
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
