@@ -10,10 +10,10 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import android.util.Log;
+import androidx.viewpager.widget.ViewPager;
+
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -27,7 +27,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
-import com.mylook.mylook.entities.Interaction;
 import com.mylook.mylook.session.MainActivity;
 import com.mylook.mylook.storeProfile.StoreActivity;
 import com.mylook.mylook.utils.SlidingImageAdapter;
@@ -51,7 +50,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
     private String downLoadUri;
     private Article article;
     private ArrayList<String> tags, imageArraySlider;
-    private TextView txtMaterial, txtCost, txtTitle, txtStoreName;
+    private TextView txtMaterial, txtCost, txtTitle, txtStoreName, txtNearby;
     private boolean inCloset;
     private boolean initialInCloset;
     private boolean fromDeepLink = false;
@@ -73,17 +72,16 @@ public class ArticleInfoActivity extends AppCompatActivity {
     }
 
     private void getArticleFromIntent(){
-        //retrieve data from intent
         Intent intent = getIntent();
-        if(intent.hasExtra("article")) {
-            article= (Article) intent.getSerializableExtra("article");
-            articleId=article.getArticleId();
+        if (intent.hasExtra("article")) {
+            article = (Article) intent.getSerializableExtra("article");
             fromDeepLink = false;
             initElements();
             setDetail();
             isArticleInCloset();
-        } else{
+        } else {
             fromDeepLink = true;
+            String articleId;
             try {
                 articleId = intent.getData().getQueryParameter("articleId");
             } catch (Exception e){
@@ -94,13 +92,14 @@ public class ArticleInfoActivity extends AppCompatActivity {
     }
 
     private void getArticleFromId(String id){
-        FirebaseFirestore.getInstance().collection("articles").document(id).get().addOnCompleteListener(task -> {
-            article = task.getResult().toObject(Article.class);
-            article.setArticleId(id);
-            initElements();
-            setDetail();
-            isArticleInCloset();
-        });
+        FirebaseFirestore.getInstance().collection("articles").document(id).get()
+                .addOnCompleteListener(task -> {
+                    article = task.getResult().toObject(Article.class);
+                    article.setArticleId(id);
+                    initElements();
+                    setDetail();
+                    isArticleInCloset();
+                });
     }
 
     private void initElements() {
@@ -109,13 +108,12 @@ public class ArticleInfoActivity extends AppCompatActivity {
 
         btnCloset=findViewById(R.id.btnCloset);
         btnStore=findViewById(R.id.btnStore);
-        //articleImage=findViewById(R.id.article_image);
         txtTitle=findViewById(R.id.txtTitle);
         txtStoreName=findViewById(R.id.txtStoreName);
         txtMaterial=findViewById(R.id.txtMaterial);
         txtCost=findViewById(R.id.txtCost);
         btnShare =  findViewById(R.id.btnShare);
-        //Glide.with(mContext).load(downLoadUri).into(articleImage);
+        txtNearby = findViewById(R.id.txtNearby);
 
         btnCloset.setOnClickListener(v -> changeSavedInCloset());
         btnShare.setOnClickListener(v -> shareArticle());
@@ -131,7 +129,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
     private void shareArticle(){
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta prenda! https://www.mylook.com/article?articleId="+articleId);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta prenda! https://www.mylook.com/article?articleId=" + article.getArticleId());
         sendIntent.setType("text/plain");
         startActivity(Intent.createChooser(sendIntent, "Share via"));
     }
@@ -146,8 +144,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         inCloset = !inCloset;
-                        // TODO mal, no deberia guardar interaccion cada vez, ni tampoco sirve que le hayan sacado favorito. Solo sirve el estado actual (cantidad)
-                        sendNewInteraction();
                         if (inCloset) {
                             setResult(RESULT_OK, new Intent().putExtra("removed", false)
                                     .putExtra("id", article.getArticleId()));
@@ -176,8 +172,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
                                             }
                                         }
                                     });
-
-
                         }
                         setFavoriteFabIcon(inCloset);
                     } else {
@@ -209,6 +203,9 @@ public class ArticleInfoActivity extends AppCompatActivity {
     }
 
     private void setDetail() {
+        if (!article.isNearby()) {
+            txtNearby.setVisibility(View.GONE);
+        }
         txtStoreName.setText(article.getStoreName());
         txtTitle.setText(article.getTitle());
         txtMaterial.setText(article.getMaterial());
@@ -259,24 +256,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
         }
     }
 
-    private void sendNewInteraction() {
-        Interaction userInteraction = new Interaction();
-        Log.e("PROMOTION LEVEL", article.getPromotionLevel() + "");
-        userInteraction.setPromotionLevel(article.getPromotionLevel());
-        userInteraction.setSavedToCloset(true);
-        userInteraction.setLiked(false);
-        userInteraction.setClickOnArticle(false);
-        userInteraction.setArticleId(this.article.getArticleId());
-        userInteraction.setStoreName(this.article.getStoreName());
-        userInteraction.setTags(tags);
-        userInteraction.setUserId(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        try{
-            FirebaseFirestore.getInstance().collection("interactions").add(userInteraction);
-        }catch(Exception e){
-            Log.e("INFO ARTIVCLE","Fallo envio de interaccion");
-        }
-    }
-
     private void displayMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
@@ -295,7 +274,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if(fromDeepLink){
+        if (fromDeepLink) {
             Intent intent= new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
             finish();
