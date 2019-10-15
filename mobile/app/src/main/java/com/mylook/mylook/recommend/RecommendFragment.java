@@ -134,7 +134,12 @@ public class RecommendFragment extends Fragment {
     }
 
     public void getRequestRecommendations() {
-        progressBar.setVisibility(View.VISIBLE);
+
+        try {
+            progressBar.setVisibility(View.VISIBLE);
+        } catch (Exception e) {
+            Log.e("Recom","No carga");
+        }
         Log.e(TAG, "getRequestRecommendations");
         FirebaseFirestore.getInstance().collection("requestRecommendations")
                 .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -144,6 +149,9 @@ public class RecommendFragment extends Fragment {
                     @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (requestRecommendationsList == null){
+                            requestRecommendationsList= new ArrayList<>(0);
+                        }
                         requestRecommendationsList.clear();
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {

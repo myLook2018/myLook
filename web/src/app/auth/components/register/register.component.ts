@@ -122,6 +122,7 @@ export class RegisterComponent implements OnInit {
           }
 
           // set latitude, longitude and zoom
+          this.registerStoreFormGroupStep2.get('storeAddress').setValue( place.formatted_address);
           this.latitude = place.geometry.location.lat();
           this.longitude = place.geometry.location.lng();
           this.zoom = 15;
@@ -176,8 +177,8 @@ export class RegisterComponent implements OnInit {
     this.registerStoreFormGroupStep2 = this.fb.group({
       ownerName: [''],
       storeAddress: [''],
-      storeLatitude: [''],
-      storeLongitude: [''],
+      storeLatitude: [],
+      storeLongitude: [],
       storeFloor: [''],
       storeDept: [''],
       storeTower: [''],
@@ -221,7 +222,7 @@ export class RegisterComponent implements OnInit {
   tryRegister() {
     this.isRegistering = true;
     if (!this.normalRegister || this.password === this.confirmPassword ) {
-      if ( !this.normalRegister || this.password.length > 6 ) {
+      if ( !this.normalRegister || this.password.length >= 6 ) {
         this.userLoginForm.addControl(
           'password',
           new FormControl(this.password, Validators.required)

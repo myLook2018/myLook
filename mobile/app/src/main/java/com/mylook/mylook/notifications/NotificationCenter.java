@@ -1,6 +1,7 @@
 package com.mylook.mylook.notifications;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -20,6 +21,7 @@ import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Notification;
 import com.mylook.mylook.premiumUser.MessagesRecyclerViewAdapter;
 import com.mylook.mylook.premiumUser.NewDiffusionMessage;
+import com.mylook.mylook.session.MainActivity;
 
 import java.util.ArrayList;
 
@@ -28,12 +30,15 @@ public class NotificationCenter extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private Toolbar tb;
+    private boolean fromDeepLink = false;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Intent intent = getIntent();
+        if(intent.hasExtra("fromDeepLink"))
+            fromDeepLink = true;
     }
 
     @Override
@@ -100,6 +105,10 @@ public class NotificationCenter extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finish();
+        if (fromDeepLink){
+            Intent intent= new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            //finish();
+        }
     }
 }

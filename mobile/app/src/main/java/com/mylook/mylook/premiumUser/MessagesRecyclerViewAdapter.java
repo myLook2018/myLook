@@ -39,6 +39,7 @@ import java.util.List;
 public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRecyclerViewAdapter.ViewHolder> {
 
     private static final String TAG = "AnswersRecyclerViewAdapter";
+    private boolean isProfile=false;
     private Context mContext;
     private List<DiffusionMessage> messageList;
 
@@ -47,11 +48,21 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
         this.mContext = mContext;
         this.messageList = messageList;
     }
+    public MessagesRecyclerViewAdapter(Context mContext, List<DiffusionMessage> messageList, boolean isProfile) {
+        this.mContext = mContext;
+        this.messageList = messageList;
+        this.isProfile =isProfile;
+    }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int position) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.premium_message_card, parent, false);
+        View view;
+        if(isProfile){
+             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.premium_message_card_profile, parent, false);
+        }else {
+             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.premium_message_card, parent, false);
+        }
         ViewHolder holder = new ViewHolder(view);
         return holder;
     }

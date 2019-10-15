@@ -92,6 +92,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             newIntent.putExtra("storeId", id);
         if (activity == ArticleInfoActivity.class)
             newIntent.putExtra("articleId", id);
+        newIntent.putExtra("fromDeepLink", true);
         PendingIntent pendingIntent =  PendingIntent.getActivity(getApplicationContext(), 0, newIntent,  PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
         return pendingIntent;
     }

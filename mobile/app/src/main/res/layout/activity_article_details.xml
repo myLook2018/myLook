@@ -39,7 +39,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/btnCloset"
                     android:layout_toStartOf="@+id/btnCloset"
-                    android:src="@drawable/ic_share"
+                    android:src="@drawable/ic_connections"
                     android:tint="@color/white"
                     app:layout_anchorGravity="end|bottom"
                     app:rippleColor="@color/white" />
@@ -60,7 +60,7 @@
                     android:padding="10dip"
                     app:centered="true"
                     app:fillColor="@color/purple"
-                    app:pageColor="#fff"
+                    app:pageColor="@color/greyBackground"
                     app:snap="false" />
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -110,11 +110,12 @@
             android:textStyle="bold" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnStore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="8dp"
-            android:text="COMPRAR"
+            android:text="VER TIENDA"
             android:textSize="17dp" />
     </RelativeLayout>
 

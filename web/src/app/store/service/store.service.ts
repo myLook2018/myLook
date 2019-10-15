@@ -24,24 +24,21 @@ export class NewStoreService {
 
     refreshStore(firebaseUID, newDats: StoreModel) {
         return this.fst.collection(this.collectionPath).doc(`${firebaseUID}`).update({
-            storeName: newDats.storeName,
-            storeMail: newDats.storeMail,
-            ownerName: newDats.ownerName,
             profilePh: newDats.profilePh,
             coverPh: newDats.coverPh,
+            storeLongitude: newDats.storeLongitude,
+            storeLatitude: newDats.storeLatitude,
+            storeAddress: newDats.storeAddress,
+            storeTower: newDats.storeTower,
+            storeFloor: newDats.storeFloor,
+            storeDept: newDats.storeDept,
             storePhone: newDats.storePhone,
             facebookLink: newDats.facebookLink,
-            storeProvince: newDats.storeProvince,
-            storeCity: newDats.storeCity,
-            storeAddressNumber: newDats.storeAddressNumber,
-            storeFloor: newDats.storeFloor,
-            storePosition: newDats.storePosition,
-            storeDescription: newDats.storeDescription,
             instagramLink: newDats.instagramLink,
-            twitterLink: newDats.twitterLink,
-            storeAddress: newDats.storeAddress,
+            twitterLink:  newDats.twitterLink,
+            storeDescription: newDats.storeDescription
         }).then(() => {
-                console.log('Document successfully updated!');
+                console.log('Se actualizo la tienda!');
             })
             .catch((error) => {
                 // The document probably doesn't exist.

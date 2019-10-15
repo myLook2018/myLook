@@ -72,6 +72,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private ImageBadgeView notificationItem;
     private View notifications;
     private TextView txtViewCount;
+    RecyclerView recyclerView;
     public static HomeFragment getInstance() {
         if (homeInstance == null) {
             homeInstance = new HomeFragment();
@@ -98,7 +99,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
         mContext = getContext();
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view_content);
+        recyclerView = view.findViewById(R.id.recycler_view_content);
         starImage = view.findViewById(R.id.empty_star);
         emptyArticles = view.findViewById(R.id.emptyText);
 
@@ -448,6 +449,8 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onRefresh() {
         try{
+            recyclerView.getRecycledViewPool().clear();
+            adapter.notifyDataSetChanged();
             readSubscriptions(true);
         }catch (Exception e)
         {

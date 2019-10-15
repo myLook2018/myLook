@@ -76,7 +76,7 @@
         <activity android:name=".login.RegisterActivity" android:launchMode="singleInstance"
             android:parentActivityName=".login.LoginActivity"/>
         <activity android:name=".recommend.RecommendActivityAddDesc"
-            android:parentActivityName=".home.MyLookActivity"
+            
             android:grantUriPermissions="true">
         </activity>
         <activity android:name=".recommend.RequestRecommendActivity">

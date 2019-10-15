@@ -28,7 +28,7 @@ public class ReputationFragment extends Fragment {
     private TextView lblRecommendationsDescr;
     private float ratingSum = 0;
     private int recommendCount = 0;
-    private int promCount=0;
+    private int promCount=0; // contador para el promedio
 
     public ReputationFragment() {
     }
@@ -40,6 +40,7 @@ public class ReputationFragment extends Fragment {
         init(rootView);
         return rootView;
     }
+
 
     private void init(View rootView) {
         Bundle args = getArguments();
@@ -91,6 +92,9 @@ public class ReputationFragment extends Fragment {
     }
 
     private void setRecommendations(String storeName) {
+        recommendCount = 0;
+        ratingSum = 0;
+        promCount=0;
         FirebaseFirestore.getInstance().collection("answeredRecommendations")
                 .whereEqualTo("storeName", storeName)
                 .get()
@@ -98,34 +102,41 @@ public class ReputationFragment extends Fragment {
                     for (DocumentSnapshot document : result.getDocuments()) {
                         if (document.contains("feedBack")) {
                             try {
-                                if(document.get("feedBack")!=null){
-                                    ratingSum += Float.parseFloat((String) Objects.requireNonNull(document.get("feedBack")));
-                                    recommendCount++;
+                                if (document.get("feedBack") != null && document.get("feedBack") != ""
+                                ) {
+                                    ratingSum += Float.parseFloat((String) (document.get("feedBack")));
+                                    promCount++;
                                 }
+                                recommendCount++;
                             } catch (NumberFormatException e) {
                                 Log.e("ReputationFragment", "setRecommendations: ", e);
                             }
                         }
                     }
+                    Log.e("ReputationFragment", "FINAL sum:" + ratingSum + " promCount " + promCount+" count "+recommendCount);
+
+
                     if (ratingSum != 0 && promCount != 0) {
                         float prom = ratingSum / promCount;
                         ratingBar.setVisibility(View.VISIBLE);
                         ratingBar.setRating(prom);
                         ratingBar.setEnabled(false);
+                        lblRecommendationsDescr.setText(typeRecommendation(prom));
+
+                    } else {
+                        ratingBar.setVisibility(View.INVISIBLE);
+                    }
+                    if(recommendCount!=0){
                         if (recommendCount == 1)
                             lblCantRecommendations.setText("1 recomendación");
                         else
                             lblCantRecommendations.setText(String.format("%d recomendaciones", recommendCount));
-                        lblRecommendationsDescr.setText(typeRecommendation(prom));
-                        recommendCount = 0;
-                        ratingSum = 0;
-                    } else {
-                        ratingBar.setVisibility(View.INVISIBLE);
+                    }else {
                         lblCantRecommendations.setVisibility(View.INVISIBLE);
-                        lblRecommendationsDescr.setText("No tiene recomendaciones");
+                        lblRecommendationsDescr.setText("No tiene recomendaciones hechas");
                     }
                 })
-                .addOnFailureListener(err -> Log.e("ReputationFragment", "setRecommendations: ", err));
+                .addOnFailureListener(err -> Log.e("ReputationFragment", "setRecommendations error: ", err));
     }
 
     private String typeRecommendation(float prom) {

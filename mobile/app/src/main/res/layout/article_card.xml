@@ -47,6 +47,14 @@
             android:textSize="20sp"
             android:visibility="invisible" />
 
+        <FrameLayout
+            android:id="@+id/nearby_layout"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:background="@drawable/explore_card_nearby" />
+
     </RelativeLayout>
 
     <FrameLayout

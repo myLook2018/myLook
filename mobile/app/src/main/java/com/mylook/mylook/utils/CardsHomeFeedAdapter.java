@@ -57,88 +57,91 @@ public class CardsHomeFeedAdapter extends RecyclerView.Adapter<CardsHomeFeedAdap
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        if(articlesAndStoresList.get(position).getClass()==Article.class){
-            final Article article =(Article) articlesAndStoresList.get(position);
-            holder.nameStore.setText(article.getStoreName());
-            holder.txtTitle.setText(article.getTitle());
-            // loading article image using Glide library
-            Glide.with(mContext).load(article.getPicturesArray().get(0)).into(holder.articleImage);
+        try {
+            if (articlesAndStoresList.get(position).getClass() == Article.class) {
+                final Article article = (Article) articlesAndStoresList.get(position);
+                holder.nameStore.setText(article.getStoreName());
+                holder.txtTitle.setText(article.getTitle());
+                // loading article image using Glide library
+                Glide.with(mContext).load(article.getPicturesArray().get(0)).into(holder.articleImage);
 
-            holder.articleCardView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent= new Intent(mContext, ArticleInfoActivity.class);
-                    Log.d("info del articulo", "onClick: paso por intent la data del articulo");
-                    intent.putExtra("article", article);
-                    mContext.startActivity(intent);
+                holder.articleCardView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(mContext, ArticleInfoActivity.class);
+                        Log.d("info del articulo", "onClick: paso por intent la data del articulo");
+                        intent.putExtra("article", article);
+                        mContext.startActivity(intent);
 
-                }
-            });
-            holder.articleImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent= new Intent(mContext, ArticleInfoActivity.class);
-                    Log.d("info del articulo", "onClick: paso por intent la data del articulo");
-                    intent.putExtra("article", article);
-                    mContext.startActivity(intent);
-                }
-            });
-        }else
-        if(articlesAndStoresList.get(position).getClass()== Store.class){
-            final Store store =(Store) articlesAndStoresList.get(position);
-            holder.txtTitle.setText(store.getStoreName());
-            holder.nameStore.setText("Ver Tienda");
-            // loading article image using Glide library
-            Glide.with(mContext).load(store.getProfilePh()).into(holder.articleImage);
+                    }
+                });
+                holder.articleImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, ArticleInfoActivity.class);
+                        Log.d("info del articulo", "onClick: paso por intent la data del articulo");
+                        intent.putExtra("article", article);
+                        mContext.startActivity(intent);
+                    }
+                });
+            } else if (articlesAndStoresList.get(position).getClass() == Store.class) {
+                final Store store = (Store) articlesAndStoresList.get(position);
+                holder.txtTitle.setText(store.getStoreName());
+                holder.nameStore.setText("Ver Tienda");
+                // loading article image using Glide library
+                Glide.with(mContext).load(store.getProfilePh()).into(holder.articleImage);
 
-            holder.articleCardView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent= new Intent(mContext, StoreActivity.class);
-                    Log.d("perfil tienda", "onClick: paso por intent la data de la tienda");
-                    intent.putExtra("store", store.getStoreName());
-                    mContext.startActivity(intent);
+                holder.articleCardView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(mContext, StoreActivity.class);
+                        Log.d("perfil tienda", "onClick: paso por intent la data de la tienda");
+                        intent.putExtra("store", store.getStoreName());
+                        mContext.startActivity(intent);
 
-                }
-            });
-            holder.articleImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent= new Intent(mContext, StoreActivity.class);
-                    Log.d("perfil tienda", "onClick: paso por intent la data del articulo");
-                    intent.putExtra("store", store.getStoreName());
-                    mContext.startActivity(intent);
-                }
-            });
+                    }
+                });
+                holder.articleImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, StoreActivity.class);
+                        Log.d("perfil tienda", "onClick: paso por intent la data del articulo");
+                        intent.putExtra("store", store.getStoreName());
+                        mContext.startActivity(intent);
+                    }
+                });
 
-        }else{
-            final PremiumUser premiumUser =(PremiumUser) articlesAndStoresList.get(position);
-            holder.txtTitle.setText(premiumUser.getUserName());
-            holder.nameStore.setText("Ver Usuario destacado");
-            // loading article image using Glide library
-            Glide.with(mContext).load(premiumUser.getProfilePhoto()).into(holder.articleImage);
+            } else {
+                final PremiumUser premiumUser = (PremiumUser) articlesAndStoresList.get(position);
+                holder.txtTitle.setText(premiumUser.getUserName());
+                holder.nameStore.setText("Ver Usuario destacado");
+                // loading article image using Glide library
+                Glide.with(mContext).load(premiumUser.getProfilePhoto()).into(holder.articleImage);
 
-            holder.articleCardView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent= new Intent(mContext, PremiumUserProfileActivity.class);
-                    Log.d("perfil usuario", "onClick: paso por intent la data del card");
-                    intent.putExtra("clientId", premiumUser.getClientId());
-                    mContext.startActivity(intent);
+                holder.articleCardView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(mContext, PremiumUserProfileActivity.class);
+                        Log.d("perfil usuario", "onClick: paso por intent la data del card");
+                        intent.putExtra("clientId", premiumUser.getClientId());
+                        mContext.startActivity(intent);
 
-                }
-            });
-            holder.articleImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent= new Intent(mContext, PremiumUserProfileActivity.class);
-                    Log.d("perfil usuario", "onClick: paso por intent la data del card");
-                    intent.putExtra("clientId", premiumUser.getClientId());
-                    mContext.startActivity(intent);
+                    }
+                });
+                holder.articleImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, PremiumUserProfileActivity.class);
+                        Log.d("perfil usuario", "onClick: paso por intent la data del card");
+                        intent.putExtra("clientId", premiumUser.getClientId());
+                        mContext.startActivity(intent);
 
-                }
-            });
+                    }
+                });
 
+            }
+        }catch(Exception e){
+        Log.e("CARD HOME", "Algo exploto, "+e.getMessage());
         }
 
     }

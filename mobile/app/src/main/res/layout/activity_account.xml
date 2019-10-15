@@ -62,6 +62,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtEmail">
 
@@ -84,7 +85,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:padding="10dp"
-            android:text="Informacion de mi cuenta"
+            android:text="Información de mi cuenta"
             android:textAlignment="gravity"
             android:textColor="@color/black"
             android:textSize="17dp"
@@ -101,7 +102,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:tint="@color/primary_light"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/image_account"
             app:srcCompat="@drawable/ic_settings" />
@@ -117,7 +118,7 @@
             android:textAlignment="viewStart"
             android:textColor="@color/black"
             android:textSize="17dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/image_destacado"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/img_notificaciones"
@@ -155,42 +156,13 @@
 
 
         <ImageView
-            android:id="@+id/image_help"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:tint="@color/primary_light"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/image_destacado"
-            app:srcCompat="@drawable/ic_help" />
-
-        <TextView
-            android:id="@+id/txtemail"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:padding="10dp"
-            android:text="Ayuda y FAQ"
-            android:textAlignment="viewStart"
-            android:textColor="@color/black"
-            android:textSize="17dp"
-            app:layout_constraintBottom_toBottomOf="@+id/image_help"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/image_help"
-            app:layout_constraintTop_toTopOf="@+id/image_help" />
-
-
-        <ImageView
             android:id="@+id/image_exit"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:tint="@color/primary_light"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/image_help"
+            app:layout_constraintTop_toBottomOf="@+id/image_destacado"
             app:srcCompat="@drawable/ic_exit" />
 
         <TextView
@@ -207,7 +179,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/image_exit"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/image_exit"
-            app:layout_constraintTop_toTopOf="@+id/image_exit" />
+            app:layout_constraintTop_toBottomOf="@+id/txtSettingsDest" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
