@@ -33,7 +33,6 @@ public class NewDiffusionMessage extends Activity {
     private Button sendMessage;
     private Toolbar toolbar;
     private RecyclerView recyclerView;
-    private FirebaseFirestore dB;
     private String userId = FirebaseAuth.getInstance().getUid();
     private List<DiffusionMessage> oldMessages;
     private String topic;
@@ -57,26 +56,24 @@ public class NewDiffusionMessage extends Activity {
         newMessage = findViewById(R.id.new_message_text);
         sendMessage = findViewById(R.id.send_new_message);
         recyclerView = findViewById(R.id.sent_premium_messages);
-        this.dB = FirebaseFirestore.getInstance();
-
         sendMessage.setOnClickListener(v -> {
             sendMessage();
         });
-        dB.collection("topics").whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .get().addOnSuccessListener(v -> {
-                    if(v.getDocuments().size() == 0){
-                        Topic newTopic = new Topic(
-                                "topic_"+FirebaseAuth.getInstance().getCurrentUser().getUid(),
-                                FirebaseAuth.getInstance().getUid(),
-                                Timestamp.now());
-                        dB.collection("topics").add(newTopic).addOnSuccessListener(newTopicTask -> {
-                            topic = "topic_"+FirebaseAuth.getInstance().getUid();
+        FirebaseFirestore.getInstance().collection("topics").whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .get().addOnSuccessListener(v -> {
+                        if(v.getDocuments().size() == 0){
+                            Topic newTopic = new Topic(
+                                    "topic_"+FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                                    FirebaseAuth.getInstance().getUid(),
+                                    Timestamp.now());
+                            FirebaseFirestore.getInstance().collection("topics").add(newTopic).addOnSuccessListener(newTopicTask -> {
+                                topic = "topic_"+FirebaseAuth.getInstance().getUid();
+                                getOldMessages();
+                            });
+                        } else {
+                            topic = v.getDocuments().get(0).toObject(Topic.class).getTopic();
                             getOldMessages();
-                        });
-                    } else {
-                        topic = v.getDocuments().get(0).toObject(Topic.class).getTopic();
-                        getOldMessages();
-                    }
+                        }
         });
 
     }
@@ -88,7 +85,7 @@ public class NewDiffusionMessage extends Activity {
         initRecyclerView();
         Log.e("UserId",userId);
         Log.e("topic", topic);
-        dB.collection("diffusionMessages")
+        FirebaseFirestore.getInstance().collection("diffusionMessages")
                 .whereEqualTo("userId", userId)
                 .whereEqualTo("topic", topic)
                 .orderBy("creationDate", Query.Direction.DESCENDING)
@@ -116,7 +113,7 @@ public class NewDiffusionMessage extends Activity {
 
     private void sendMessage(){
         if(validateMessage()) {
-            dB.collection("premiumUsers")
+            FirebaseFirestore.getInstance().collection("premiumUsers")
                     .whereEqualTo("userId", FirebaseAuth.getInstance().getUid())
                     .get().addOnSuccessListener(vClient -> {
                         String profilePhoto = (String) vClient.getDocuments().get(0).get("profilePhoto");
@@ -128,7 +125,7 @@ public class NewDiffusionMessage extends Activity {
                     newDiffusion.setCreationDate(Timestamp.now());
                     newDiffusion.setUserPhotoUrl(profilePhoto);
                     newDiffusion.setPremiumUserName(userName);
-                    dB.collection("diffusionMessages").add(newDiffusion)
+                FirebaseFirestore.getInstance().collection("diffusionMessages").add(newDiffusion)
                             .addOnSuccessListener(v -> {
                                 newMessage.setText("");
                                 getOldMessages();
