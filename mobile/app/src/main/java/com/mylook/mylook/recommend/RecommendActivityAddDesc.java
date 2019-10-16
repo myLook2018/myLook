@@ -9,13 +9,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.nfc.Tag;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -63,6 +66,8 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Field;
+import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -153,6 +158,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         });
     }
 
+
     private void initCalendar() {
 
         final Calendar myCalendar = Calendar.getInstance();
@@ -170,14 +176,18 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         editDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatePickerDialog datepick  = new DatePickerDialog(RecommendActivityAddDesc.this,date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                DatePickerDialog datepick  = new DatePickerDialog(RecommendActivityAddDesc.this,R.style.CalendarTheme,date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH));
-                datepick.show();
 
-//
-//                datepick.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.primary_dark));
-//                datepick.getButton(DatePickerDialog.BUTTON_NEUTRAL).setTextColor(getResources().getColor(R.color.primary_dark));
-//                datepick.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.primary_dark));
+                datepick.show();//
+                //No saben lo que me costó encontrar estos métodos
+                datepick.getButton(DatePickerDialog.BUTTON_NEGATIVE).getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+                datepick.getButton(DatePickerDialog.BUTTON_NEUTRAL).getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+                datepick.getButton(DatePickerDialog.BUTTON_POSITIVE).getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+                //Estos fueron más fáciles
+                datepick.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.primary_dark));
+                datepick.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.primary_dark));
+                datepick.getButton(DatePickerDialog.BUTTON_NEUTRAL).setTextColor(getResources().getColor(R.color.primary_dark));
 
             }
         });
