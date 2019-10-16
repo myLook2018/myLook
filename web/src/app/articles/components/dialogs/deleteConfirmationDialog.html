@@ -3,7 +3,7 @@
 <div mat-dialog-content class="mat-typography" style="display: flex; margin-left: auto; margin-right: auto; padding: 0" >
     <img style="margin-left:auto;margin-right:auto;margin-bottom:10px"  height="250" width="250" src={{data.photo}}>
 </div>
-  <h4 class="mat-typography" style="text-align:center; margin: 0 0 0px; color: red" *ngIf="data.promotionLevel > 1"> <strong> * Esta prenda está promocionada *</strong></h4>
+  <h4 class="mat-typography" style="text-align:center; margin: 0 0 0px; color: #f44336" *ngIf="data.promotionLevel > 1"> <strong> * Esta prenda está promocionada *</strong></h4>
 <div mat-dialog-actions class="mat-typography"  align="center">
     <button mat-raised-button [mat-dialog-close]="false">Cancelar</button>
     <button mat-raised-button color="warn" [mat-dialog-close]="true">Elimninar</button>
