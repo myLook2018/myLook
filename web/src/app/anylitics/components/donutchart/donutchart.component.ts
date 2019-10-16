@@ -6,13 +6,11 @@ import { Component, OnInit, Input } from '@angular/core';
   styleUrls: ['./donutchart.component.css']
 })
 export class DonutchartComponent implements OnInit {
-  @Input() usersClickedArticle: any;
-  @Input() articlesSavedToCloset: any;
+  @Input() negativeInteractions: any;
   @Input() positiveInteractions: any;
 
-  liked = 1;
-  visited = 1;
-  saved = 1;
+  liked = 0;
+  disliked = 0;
   data: any;
   options;
 
@@ -21,7 +19,7 @@ export class DonutchartComponent implements OnInit {
     this.options = {
       title: {
           display: true,
-          text: 'Interacciones positivas',
+          text: 'Reacciones',
           fontSize: 24
       },
       legend: {
@@ -30,24 +28,20 @@ export class DonutchartComponent implements OnInit {
   };
   }
   ngOnInit() {
-    console.log(`dibujando ` + this.articlesSavedToCloset + this.usersClickedArticle);
-    this.visited = this.usersClickedArticle;
-    this.saved = this.articlesSavedToCloset;
+    this.disliked = this.negativeInteractions;
     this.liked = this.positiveInteractions;
     this.data = {
-      labels: ['Articulos visitados', 'Articulos guardados en ropero', 'Articulos que han gustado'],
+      labels: ['Reacciones Positivas', 'Reacciones Negativas'],
       datasets: [
         {
-          data: [this.visited, this.saved, this.positiveInteractions],
+          data: [this.liked, this.disliked],
           backgroundColor: [
-            '#FF6384',
             '#36A2EB',
-            '#FFCE56'
+            '#FF6384',
           ],
           hoverBackgroundColor: [
-            '#FF6384',
             '#36A2EB',
-            '#FFCE56'
+            '#FF6384',
           ]
         }]
     };

@@ -1,5 +1,26 @@
 .dashboard{
-  max-width: 1707px;
+  width: calc(100% - 4rem);
+  margin: 2rem;
+
+  .graficos {
+    display: flex;
+    place-content: center;
+
+    .graficoIndividual {
+      margin: 0 1rem 1rem 1rem;
+    }
+  }
+
+  .datos-brutos {
+    display: flex;
+    place-content: center;
+    margin: 0 1rem 1rem 1rem;
+  }
+
+  .timeline {
+    display: flex;
+    place-content: center;
+  }
 }
 
 #logo {

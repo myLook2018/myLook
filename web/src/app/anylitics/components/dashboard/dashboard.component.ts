@@ -20,6 +20,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   readyToRender = false;
   totalInteractions;
   positiveInteractions;
+  negativeInteractions;
   sumPositiveInteractions;
   usersReached;
   usersClickedArticle;
@@ -46,6 +47,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   level1Articles = 0;
   level2Articles = 0;
   level3Articles = 0;
+  tagsToRender: any;
+  visitsByDay: any[];
+  reactionsByDay: any[];
 
   constructor(
     fb: FormBuilder,
@@ -63,7 +67,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log("-+-+-+-+-+-Inicializando Estadisticas-+-+-+-+-+-");
+    console.log('-+-+-+-+-+-Inicializando Estadisticas-+-+-+-+-+-');
     this.route.data.subscribe(routeData => {
       const data = routeData['data'];
       if (data) {
@@ -104,17 +108,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   getAnylitics() {
     console.log(1);
-    this.getTotalInteractions();
-    this.getPositiveInteractions();
+    // this.getTotalInteractions();
+    this.getReactions();
     this.getUsersReached();
-    this.getUsersClickedArticle();
-    this.getArticlesSavedToCloset();
+    // this.getUsersClickedArticle();
+    // this.getArticlesSavedToCloset();
     this.getPopularsTags();
-    this.getBestTag();
+    // this.getBestTag();
     this.getInteractionsByDay();
     this.getSubcriptors();
     this.getPromOfFeedBack();
-    this.getAmountOfPromotedInteractions();
+    // this.getAmountOfPromotedInteractions();
     this.sumPositiveInteractions = this.positiveInteractions + this.articlesSavedToCloset + this.usersClickedArticle;
     console.log(2)
   }
@@ -124,9 +128,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     console.log(`tolalInteractions: ` + this.totalInteractions);
   }
 
-  getPositiveInteractions() {
-    this.positiveInteractions = this.interactions.filter(interaction => interaction.liked === true).length;
-    console.log(`positiveInteractions: ` + this.positiveInteractions);
+  getReactions() {
+    const swipeInteractions = this.interactions.filter(interaction => interaction.clickOnArticle === false );
+    this.positiveInteractions = swipeInteractions.filter(interaction => interaction.liked === true ).length;
+    this.negativeInteractions = swipeInteractions.length - this.positiveInteractions;
   }
 
   divideAll() {
@@ -168,8 +173,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.popularityOfTags = [];
     let index;
     this.interactions.forEach((interaction) => {
-      if ((interaction.liked === true || interaction.savedToCloset === true || interaction.clickOnArticle === true)
-        && interaction.tags !== null) {
+      if ((interaction.liked === true) && interaction.tags !== null) {
         interaction.tags.map((tag) => {
           if (!this.popularTags.includes(tag)) {
             this.popularTags.push(tag);
@@ -188,6 +192,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       };
       this.popularityXtag.push(this.matrix);
     }
+
+    const orderedArray = this.popularityXtag.sort((a, b) => (a.count > b.count) ? -1 : ((b.count > a.count) ? 1 : 0));
+    console.log('orderedArray', orderedArray);
+
+    this.tagsToRender = orderedArray.slice(0, 10);
 
     console.log(this.popularityXtag);
   }
@@ -213,6 +222,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.InteractionsXday = [];
     this.daysOfTheWeek = [];
     this.interactionsByDay = [];
+    this.visitsByDay = [];
+    this.reactionsByDay = [];
     let index;
     const today = new Date();
     this.interactions.forEach((interaction) => {
@@ -221,9 +232,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
         if (!this.daysOfTheWeek.includes(`${dateOfInteraction.getDate()}/${dateOfInteraction.getMonth() + 1}`)) {
           this.daysOfTheWeek.push(`${dateOfInteraction.getDate()}/${dateOfInteraction.getMonth() + 1}`);
           this.interactionsByDay.push(0);
+          this.visitsByDay.push(0);
+          this.reactionsByDay.push(0);
         }
         index = this.daysOfTheWeek.indexOf(`${dateOfInteraction.getDate()}/${dateOfInteraction.getMonth() + 1}`);
         this.interactionsByDay[index]++;
+        if (interaction.clickOnArticle === true) { this.visitsByDay[index]++; }
+        if (interaction.clickOnArticle === false) { this.reactionsByDay[index]++; }
       }
     });
 

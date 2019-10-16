@@ -1,42 +1,18 @@
-<div class="mat-typography dashboard backgroundColor" style="top: 0">
-            <mat-toolbar>
-                <mat-toolbar-row class="stickyNavbar mat-elevation-z2">
-                    <span>Estadisticas</span>
-                </mat-toolbar-row>
-            </mat-toolbar>
+<mat-card class="mat-typography dashboard" style="top: 0">
+            <div>
+                <div id="graficos" class="graficos">
+                    <mat-card class="graficoIndividual  mat-elevation-z6">
+                            <!-- torta -->
+                            <app-donutchart *ngIf="readyToRender" [negativeInteractions]="negativeInteractions" [positiveInteractions]="positiveInteractions"></app-donutchart>
+                    </mat-card>
 
-            <div style="display:grid;">
-
-                <div id="graficos" style="display:inline-flex; max-width: 1707px;">
-                    <div class="mainContainer" *ngIf="readyToRender">
-                        <mat-card class="chartCard mat-elevation-z6">
-                            <app-donutchart *ngIf="readyToRender" [usersClickedArticle]="usersClickedArticle"
-                                [articlesSavedToCloset]="articlesSavedToCloset" [positiveInteractions]="positiveInteractions"></app-donutchart>
-                        </mat-card>
-                    </div>
-
-                    <div class="mainContainer" *ngIf="readyToRender">
-                        <mat-card class="chartCard mat-elevation-z6">
-                            <app-promotions-bar *ngIf="readyToRender" [level1Articles]="level1Articles" [level2Articles]="level2Articles" [level3Articles]="level3Articles"></app-promotions-bar>
-                        </mat-card>
-                    </div>
-
-                    <div class="mainContainer" *ngIf="readyToRender">
-                        <mat-card class="chartCard mat-elevation-z6">
-                            <app-polar-area *ngIf="readyToRender" [popularTags]="popularTags" [popularityOfTags]="popularityOfTags"></app-polar-area>
-                        </mat-card>
-                    </div>
+                    <mat-card class="graficoIndividual  mat-elevation-z6">
+                            <!-- barras -->
+                            <app-polar-area *ngIf="readyToRender" [tagsWithpopularity]='tagsToRender'></app-polar-area>
+                    </mat-card>
                 </div>
 
-                <div *ngIf="readyToRender" id="datos en bruto" style="display:inline-flex; max-width: 1643px;">
-                    <mat-card class="dats mat-elevation-z6">
-                        <h3>Interacciones Totales</h3>
-                        <h1>{{totalInteractions}}</h1>
-                    </mat-card>
-                    <mat-card class="dats mat-elevation-z6">
-                        <h3>Interacciones Positivas</h3>
-                        <h1>{{(sumPositiveInteractions)*100/totalInteractions | number:'1.0-0'}}%</h1>
-                    </mat-card>
+                <div *ngIf="readyToRender" class="datos-brutos">
                     <mat-card class="dats mat-elevation-z6">
                         <h3>Usuarios Alcanzados</h3>
                         <h1>{{usersReached}}</h1>
@@ -50,22 +26,16 @@
                         <h1>{{subscriptors}}</h1>
                     </mat-card>
                     <mat-card class="dats mat-elevation-z6">
-                        <h3>Etiqueta más popular</h3>
-                        <h1>{{bestTag}}</h1>
-                    </mat-card>
-                    <mat-card class="dats mat-elevation-z6">
                         <h3>Puntaje promedio de Recomendaciones</h3>
                         <h1 *ngIf="feedBackProm > 0">{{feedBackProm | number:'1.0-2'}} de 5</h1>
                         <h1 *ngIf="!(feedBackProm > 0)">No Disponible</h1>
                     </mat-card>
                 </div>
 
-                <div *ngIf="readyToRender" id="timeline" style="display:inline-flex; max-width: 1707px;">
-                    <div class="mainContainer" *ngIf="readyToRender">
-                        <mat-card class="chartCard mat-elevation-z6">
-                            <app-timeline *ngIf="readyToRender" [interactionsByDay]="interactionsByDay" [daysOfTheWeek]="daysOfTheWeek"></app-timeline>
-                        </mat-card>
-                    </div>
+                <div *ngIf="readyToRender" class="timeline">
+                  <mat-card class="mat-elevation-z6">
+                      <app-timeline *ngIf="readyToRender" [interactionsByDay]="interactionsByDay" [daysOfTheWeek]="daysOfTheWeek" [reactionsByDay]="reactionsByDay" [visitByDay]="visitsByDay"></app-timeline>
+                  </mat-card>
                 </div>
             </div>
-    </div>
+    </mat-card>
