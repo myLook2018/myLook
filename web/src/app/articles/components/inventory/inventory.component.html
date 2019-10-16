@@ -1,7 +1,7 @@
-            <div class="backgroundColor">
+            <div class="backgroundColor mat-typography">
 
             <mat-toolbar >
-                <mat-toolbar-row class="stickyNavbar mat-elevation-z2">
+                <mat-toolbar-row class="stickyNavbar mat-elevation-z4">
                     <span>Lista de Prendas</span>
                     <div style="margin-left: auto">
                         <!--
@@ -10,12 +10,12 @@
                     </div>
 
                     <div style="margin-left: auto">
-                        <button style="margin-right:5px" id="uploadArticle" mat-flat-button *ngIf="selectionMode"
+                        <button class="mat-elevation-z2" style="margin-right:5px" id="uploadArticle" mat-flat-button *ngIf="selectionMode"
                             (click)="cancelSetting()">Cancelar</button>
-                        <button id="uploadArticle" mat-flat-button *ngIf="selectionMode" (click)="setVidriera()">Aceptar</button>
-                        <button style="margin-right:5px" id="uploadArticle" mat-flat-button *ngIf="!selectionMode"
+                        <button class="mat-elevation-z2" id="uploadArticle" mat-flat-button *ngIf="selectionMode" (click)="setVidriera()">Aceptar</button>
+                        <button class="mat-elevation-z2" style="margin-right:5px" id="uploadArticle" mat-flat-button *ngIf="!selectionMode"
                             (click)="goToStoreFront()">Elije tu vidriera</button>
-                        <button id="uploadArticle" mat-flat-button [disabled]="selectionMode" *ngIf="!selectionMode"
+                        <button class="mat-elevation-z2" id="uploadArticle" mat-flat-button [disabled]="selectionMode" *ngIf="!selectionMode"
                             (click)="goToAddArticle()">Subir Prenda</button>
                     </div>
                 </mat-toolbar-row>
@@ -96,8 +96,8 @@
                                 [ngClass]="(element.promotionLevel==1)?'actionIcon':'actionIcon-Promoted'" (click)="openPromoteDialog(element, $event)">
                               <mat-icon>whatshot</mat-icon>
                             </button>
-                            <button *ngIf="!selectionMode" mat-icon-button class="actionIcon_colored" (click)="goToEdit(element, $event)">
-                              <mat-icon>edit</mat-icon>
+                            <button *ngIf="!selectionMode" mat-icon-button class="actionIcon_colored" (click)="showInformation(element, $event)">
+                              <mat-icon>visibility</mat-icon>
                             </button>
                             <button *ngIf="!selectionMode" mat-icon-button class="actionIcon_colored" (click)="openConfirmationDialog(element, $event)">
                                 <mat-icon>delete</mat-icon>
@@ -109,7 +109,7 @@
                     </ng-container>
 
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                    <mat-row *matRowDef="let row; columns: displayedColumns; let i = index" (click)="showInformation(row)"></mat-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns; let i = index" ></mat-row>
                 </mat-table>
             </div>
           </div>

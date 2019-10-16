@@ -5,7 +5,7 @@
         <h1>{{ this.dashboardTitle }}</h1>
 <!--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
         <div class="article-photos">
-          <h1 class="photos-title">Selecciona las Fotos</h1>
+          <h1 class="photos-title">{{this.photosLabel}}</h1>
             <div style="display:flex">
                 <div lyTheme="minima-light" #PrimeraFoto>
                   <div class="resize-image" [ngClass]="{preventMouse: this.viewArticleId !== null}">
@@ -168,7 +168,7 @@
                   </div>
                 </div>
               </div>
-              <h4 class="photos-subtitle">(La primera foto será la que se muestre más frecuentemente a los usuarios)</h4>
+              <h4 class="photos-subtitle" *ngIf="isEditMode || this.isNew">Por La primera foto será la primera que verán los usuarios</h4>
             </div>
 <!--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
         <div class="article-information">
@@ -238,7 +238,7 @@
                     [disabled]='this.viewArticleId !== null'
                   />
                 </mat-chip-list>
-              <mat-hint align="end">Utiliza 'Coma' o 'Enter' para agregar el color a la lista</mat-hint>
+                <mat-hint align="end" *ngIf="this.isEditMode || this.isNew">Utiliza 'Coma' o 'Enter' para agregar el color a la lista</mat-hint>
             </mat-form-field>
           </div>
           <div class="article-pill">
@@ -261,7 +261,7 @@
                     [disabled]='this.viewArticleId !== null'
                   />
                 </mat-chip-list>
-              <mat-hint align="end">Utiliza 'Coma' o 'Enter' para agregar el talle a la lista</mat-hint>
+              <mat-hint align="end" *ngIf="this.isEditMode || this.isNew">Utiliza 'Coma' o 'Enter' para agregar el color a la lista</mat-hint>
             </mat-form-field>
           </div>
           <div class="article-pill">
@@ -285,28 +285,27 @@
                     [disabled]='this.viewArticleId !== null'
                   />
                 </mat-chip-list>
-              <mat-hint align="end">Utiliza 'Coma' o 'Enter' para agregar la etiqueta a la lista</mat-hint>
+              <mat-hint align="end" *ngIf="this.isEditMode || this.isNew">Utiliza 'Coma' o 'Enter' para agregar el color a la lista</mat-hint>
             </mat-form-field>
           </div>
         </div>
         <mat-card-actions class="actions">
           <button
-            *ngIf="isNew"
             [disabled]="isUpLoading"
             type="button"
 
             [ngClass]="{buttonDisabled: isUpLoading}"
             mat-raised-button
             (click)="goToInventory();"
+            class="mat-elevation-z2"
             >
-              Cancelar
+              {{ cancelLabel }}
           </button>
           <button
+            class="activatedButton mat-elevation-z4"
             *ngIf="this.viewArticleId !== null"
             [disabled]="isUpLoading"
             type="button"
-
-            [ngClass]="{buttonDisabled: isUpLoading}"
             mat-raised-button
             (click)="changeToEdit();"
             >
@@ -315,7 +314,7 @@
           <button
             *ngIf="this.viewArticleId === null"
             [disabled]="articleForm.invalid || isUpLoading"
-            class="activatedButton"
+            class="activatedButton mat-elevation-z2"
             type="button"
 
             [ngClass]="{buttonDisabled: (articleForm.invalid || isUpLoading)}"

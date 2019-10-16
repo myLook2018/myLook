@@ -60,11 +60,13 @@ export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
   isUpLoading: boolean;
   actualStore: StoreModel;
   viewArticleId: string;
-  dashboardTitle = 'Carga los Datos de tu Prenda';
+  dashboardTitle = 'Cargá los Datos de tu Prenda';
   addPhotoLabel = 'Añadir foto';
   sendButtonLabel = 'Añadir prenda';
   isFormDisabled = false;
   isEditMode: boolean;
+  cancelLabel = 'Volver';
+  photosLabel = 'Fotos';
   // ------ Fin cosas de las imagenes --------
 
   constructor (
@@ -77,6 +79,8 @@ export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
     private theme: LyTheme2 ) {
       this.viewArticleId = this.route.snapshot.paramMap.get('id');
       this.isEditMode = this.router.url.includes('Editar');
+      this.isNew = this.router.url.includes('Nuevo');
+      this.photosLabel = this.isNew ? 'Seleccioná las fotos' : 'Fotos';
       console.log('es editar? ', this.isEditMode);
       console.log('el id que nos mandan', this.viewArticleId);
       if (this.viewArticleId) {
@@ -127,7 +131,6 @@ export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
       tags: [{value: [], disabled: this.isFormDisabled}],
       title: [{value: '', disabled: this.isFormDisabled}, Validators.required],
       isStoreFront: [ false, Validators.required],
-      storefronts: [[]]
     });
   }
 
@@ -176,6 +179,9 @@ export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   changeToEdit() {
+    console.log('cambiando labels');
+    this.cancelLabel = 'Cancelar';
+    this.photosLabel = 'Seleccioná las fotos';
     this.articleForm.enable();
     this.viewArticleId = null;
     this.addPhotoLabel = 'Añadir foto';
@@ -290,6 +296,8 @@ export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
+    this.disableAllInputs();
+
     this.isUpLoading = true;
     console.log('las imagenes ', this.croppedImage);
     const imagesToUpload: File[] = [];
@@ -315,15 +323,15 @@ export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
     this.uploadPictures(imagesToUpload).then(picturesURL => {
       this.articleForm.get('picturesArray').setValue(picturesURL.map(x => x));
       if ( this.isEditMode ) {
-        this.articleService.refreshArticle( this.articleForm.value, this.route.snapshot.paramMap.get('id')).then( () => {
-          this.openSnackBar('Prenda actualizada en MyLook!', 'x');
+        this.articleService.refreshArticle( this.articleForm.getRawValue(), this.route.snapshot.paramMap.get('id')).then( () => {
+          this.openSnackBar('Prenda actualizada en MyLook!', '');
           this.isUpLoading = false;
         });
       } else {
-        this.articleService.addArticle(this.articleForm.value).then(() => {
+        this.articleService.addArticle(this.articleForm.getRawValue()).then(() => {
           this.isUpLoading = false;
           console.log('prenda guardada');
-          this.openSnackBar('Prenda guardada en MyLook!', 'x');
+          this.openSnackBar('Prenda guardada en MyLook!', '');
           this.resetForm();
         });
       }
@@ -384,5 +392,36 @@ export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
         console.log('cargando indice:', index);
         croppers[index].clean();
       }
+    this.viewArticleId = null;
+    this.articleForm.reset();
+    this.enableAllInputs();
+    }
+
+    disableAllInputs() {
+      this.articleForm.get('code').disable();
+      this.articleForm.get('colors').disable();
+      this.articleForm.get('cost').disable();
+      this.articleForm.get('initial_stock').disable();
+      this.articleForm.get('material').disable();
+      this.articleForm.get('provider').disable();
+      this.articleForm.get('sizes').disable();
+      this.articleForm.get('tags').disable();
+      this.articleForm.get('title').disable();
+      this.viewArticleId = 'newID';
+    }
+
+    enableAllInputs() {
+      this.articleForm.get('code').enable();
+      this.articleForm.get('colors').setValue('');
+      this.articleForm.get('colors').enable();
+      this.articleForm.get('cost').enable();
+      this.articleForm.get('initial_stock').enable();
+      this.articleForm.get('material').enable();
+      this.articleForm.get('provider').enable();
+      this.articleForm.get('sizes').setValue('');
+      this.articleForm.get('sizes').enable();
+      this.articleForm.get('tags').setValue('');
+      this.articleForm.get('tags').enable();
+      this.articleForm.get('title').enable();
     }
 }
