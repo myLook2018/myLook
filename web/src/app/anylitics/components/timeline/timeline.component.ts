@@ -9,6 +9,7 @@ export class TimelineComponent implements OnInit {
   @Input() interactionsByDay: any;
   @Input() visitByDay: any;
   @Input() reactionsByDay: any;
+  @Input() favoritesByDay: any;
   @Input() daysOfTheWeek: any;
 
   selectData:any;
@@ -18,6 +19,7 @@ export class TimelineComponent implements OnInit {
   options: any;
   countVisitByDay: any;
   countReactionsByDay: any;
+  countFavoritesByDay: any;
 
 
   constructor() {
@@ -37,15 +39,11 @@ export class TimelineComponent implements OnInit {
     this.countInteractionsByDay = this.interactionsByDay;
     this.countVisitByDay = this.visitByDay;
     this.countReactionsByDay = this.reactionsByDay;
+    this.countFavoritesByDay = this.favoritesByDay;
     this.days = this.daysOfTheWeek;
     this.data = {
       labels: this.days,
       datasets: [
-          {
-              label: 'Interacciones totales',
-              borderColor: '#1E88E5',
-              data: this.countInteractionsByDay
-          },
           {
               label: 'Visitas a prendas',
               // backgroundColor: '#42A5F5',
@@ -57,6 +55,18 @@ export class TimelineComponent implements OnInit {
               // backgroundColor: '#42A5F5',
               borderColor: '#ccf62e',
               data: this.countReactionsByDay
+          },
+          {
+              label: 'Prendas favoritas',
+              // backgroundColor: '#42A5F5',
+              borderColor: '#ebb329',
+              data: this.countFavoritesByDay
+          },
+          {
+            label: 'Interacciones totales',
+            borderColor: '#1E88E5',
+            //  backgroundColor: '#c7e6ff',
+            data: this.countInteractionsByDay
           }
           // {
           //     label: 'Número de interacciones en el día',

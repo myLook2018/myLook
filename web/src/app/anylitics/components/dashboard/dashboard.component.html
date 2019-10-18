@@ -3,11 +3,13 @@
                 <div id="graficos" class="graficos">
                     <mat-card class="graficoIndividual  mat-elevation-z6">
                             <!-- torta -->
+                            <mat-icon class="infoTooltip" [matTooltip]="this.reactionsTooltip" matTooltipPosition="above" matTooltipClass="tooltip">info</mat-icon>
                             <app-donutchart *ngIf="readyToRender" [negativeInteractions]="negativeInteractions" [positiveInteractions]="positiveInteractions"></app-donutchart>
                     </mat-card>
 
                     <mat-card class="graficoIndividual  mat-elevation-z6">
                             <!-- barras -->
+                            <mat-icon class="infoTooltip" [matTooltip]="this.tagsTooltip" matTooltipPosition="above" matTooltipClass="tooltip">info</mat-icon>
                             <app-polar-area *ngIf="readyToRender" [tagsWithpopularity]='tagsToRender'></app-polar-area>
                     </mat-card>
                 </div>
@@ -26,15 +28,26 @@
                         <h1>{{subscriptors}}</h1>
                     </mat-card>
                     <mat-card class="dats mat-elevation-z6">
-                        <h3>Puntaje promedio de Recomendaciones</h3>
-                        <h1 *ngIf="feedBackProm > 0">{{feedBackProm | number:'1.0-2'}} de 5</h1>
+                        <mat-icon class="infoTooltip" [matTooltip]="this.recomendacionesTooltip" matTooltipPosition="above" matTooltipClass="tooltip">info</mat-icon>
+                        <h3>Recomendaciones</h3>
+                        <h1>{{answeredRecomendations}} / {{totalRecomendations}}</h1>
+                    </mat-card>
+                    <mat-card class="dats mat-elevation-z6">
+                        <mat-icon class="infoTooltip" [matTooltip]="this.recomendacionesRatingTooltip" matTooltipPosition="above" matTooltipClass="tooltip">info</mat-icon>
+                        <h3>Puntaje promedio</h3>
+                        <!-- <h1 *ngIf="feedBackProm > 0">{{feedBackProm | number:'1.0-2'}} de 5</h1> -->
+                        <p-rating [(ngModel)]="feedBackProm"
+                                  [cancel]="false"
+                                  [readonly]="true"
+                        ></p-rating>
                         <h1 *ngIf="!(feedBackProm > 0)">No Disponible</h1>
                     </mat-card>
                 </div>
 
                 <div *ngIf="readyToRender" class="timeline">
                   <mat-card class="mat-elevation-z6">
-                      <app-timeline *ngIf="readyToRender" [interactionsByDay]="interactionsByDay" [daysOfTheWeek]="daysOfTheWeek" [reactionsByDay]="reactionsByDay" [visitByDay]="visitsByDay"></app-timeline>
+                      <mat-icon class="infoTooltip" [matTooltip]="this.graficosTooltip" matTooltipPosition="above" matTooltipClass="tooltip">info</mat-icon>
+                      <app-timeline *ngIf="readyToRender" [interactionsByDay]="interactionsByDay" [daysOfTheWeek]="daysOfTheWeek" [reactionsByDay]="reactionsByDay" [visitByDay]="visitsByDay" [favoritesByDay]="favoriteByDay"></app-timeline>
                   </mat-card>
                 </div>
             </div>
