@@ -15,6 +15,8 @@ import {} from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { DataService } from '../service/dataService';
 import { AuthGuard } from '../auth/services/auth.guard';
+import { AnyliticService } from '../anylitics/services/anylitics.service';
+import { PromotionsService } from '../anylitics/services/promotions.service';
 @Component({
   selector: 'app-orchestrator',
   templateUrl: './orchestrator.component.html',
@@ -31,7 +33,9 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
     public authGuard: AuthGuard,
     private router: Router,
     private route: ActivatedRoute,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private anyliticsService: AnyliticService,
+    private promotionsService: PromotionsService
   ) {
     this.userStore.profilePh = '/assets/noProfilePic.png';
     this.router.events.subscribe((event: Event) => {
@@ -101,6 +105,8 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
     this.authService.doLogout().then(
       res => {
         this.dataServide.cleanCache();
+        this.anyliticsService.cleanCache();
+        this.promotionsService.cleanCache();
         this.router.navigate(['Inicio']);
         this.isLogedIn = false;
       },

@@ -17,7 +17,7 @@ export class ViewsByPromotionsComponent implements OnInit {
     this.options = {
       title: {
         display: true,
-        text: 'Visitas según Promoción',
+        text: 'Promedio de Visitas según Promoción',
         fontSize: 24
       },
       legend: {
@@ -48,19 +48,19 @@ export class ViewsByPromotionsComponent implements OnInit {
           label: 'Visitas de artículos sin promoción',
           backgroundColor: '#FF6384',
           borderColor: '#1E88E5',
-          data: [this.level1Articles]
+          data: [this.level1Articles.toFixed(2)]
         },
         {
           label: 'Visitas de artículos con promoción Básica',
           backgroundColor: '#42A5F5',
           borderColor: '#1E88E5',
-          data: [this.level2Articles]
+          data: [this.level2Articles.toFixed(2)]
         },
         {
           label: 'Visitas de artículos con promoción Premium',
           backgroundColor: '#FFCE56',
           borderColor: '#1E88E5',
-          data: [this.level3Articles]
+          data: [this.level3Articles.toFixed(2)]
         }
       ]
     };

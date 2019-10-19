@@ -111,10 +111,25 @@
   margin-left: auto;
   margin-right: auto;
   margin-top: 15px;
-  width: calc(11.6vw);
+  width: 15%;
   // height: calc(23vh);
   text-align: center;
 }
+
+.dats-reco{
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 15px;
+  // height: calc(23vh);
+  text-align: center;
+
+  .content {
+    display: flex;
+  }
+}
+
+
+
 .backgroundColor {
   width: 100%;
   height: calc(100);
@@ -139,7 +154,7 @@
   white-space: pre-line;
 }
 
-/deep/.ng-star-inserted {
+/deep/.ui-rating a {
   color: rgb(189, 132, 199) !important;
 }
 

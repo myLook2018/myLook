@@ -10,6 +10,7 @@ import { Interaction } from '../../model/interaction';
 import { Visit } from '../../model/visit';
 import { AnsweredRecom } from '../../model/answeredRecom';
 import { PromotedArticle } from 'src/app/articles/models/promotedArticle';
+import { DataService } from 'src/app/service/dataService';
 
 @Component({
   selector: 'app-dashboard',
@@ -65,7 +66,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     public userService: UserService,
     public authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute) {
+    private route: ActivatedRoute,
+    private dataService: DataService) {
     this.options = fb.group({
       bottom: 0,
       fixed: false,
@@ -88,12 +90,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
                                    \n Calificadas / Realizadas`;
     this.recomendacionesRatingTooltip = 'Promedio de los puntajes asignados a las recomendaciones calificadas.';
     console.log('-+-+-+-+-+-Inicializando Estadisticas-+-+-+-+-+-');
-    this.route.data.subscribe(routeData => {
-      const data = routeData['data'];
-      if (data) {
-        this.userStore = data;
-      }
-    });
+    // this.route.data.subscribe(routeData => {
+    //   const data = routeData['data'];
+    //   if (data) {
+    //     this.userStore = data;
+    //   }
+    // });
+    this.dataService.getStoreInfo().then( store => {
+      this.userStore = store;
       this.anyliticService.getInteractions(this.userStore.storeName).then((res) => this.interactions = res).then(() => {
         this.anyliticService.getVisits(this.userStore.storeName).then((res) => this.visits = res).then(() => {
           this.anyliticService.getSubscriptions(this.userStore.storeName).then((res) => this.subscriptions = res).then(() => {
@@ -109,6 +113,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           });
         });
       });
+    });
   }
 
   ngOnDestroy(): void {
