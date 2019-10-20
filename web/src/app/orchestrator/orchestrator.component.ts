@@ -26,6 +26,8 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
   FirebaseUser = new StoreModel();
   userStore = new StoreModel();
   isLogedIn = false;
+  clickedItem = 'profile';
+
   constructor(
     public userService: UserService,
     public authService: AuthService,
@@ -123,28 +125,34 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {}
   goToProfile() {
+    this.clickedItem = 'profile';
     this.router.navigate(['Tiendas', this.userStore.storeName]);
   }
 
   goToInventory() {
+    this.clickedItem = 'catalog';
     this.router.navigate([`/Tiendas/${this.userStore.storeName}/Catalogo`]);
   }
 
   goToRecomendations() {
+    this.clickedItem = 'recomendations';
     this.router.navigate([
       `/Tiendas/${this.userStore.storeName}/Recomendaciones`
     ]);
   }
 
   goToAnalytics() {
+    this.clickedItem = 'analytics';
     this.router.navigate([`/Tiendas/${this.userStore.storeName}/Estadisticas`]);
   }
 
   gotToConfiguration() {
+    this.clickedItem = 'config';
     this.router.navigate([`/Tiendas/${this.userStore.storeName}/Configuracion`]);
   }
 
   goToAnalyticsPromotions() {
+    this.clickedItem = 'promotions';
     this.router.navigate([`/Tiendas/${this.userStore.storeName}/Promociones`]);
   }
 }
