@@ -71,7 +71,7 @@ export class AnyliticsDashboardComponent implements OnInit, OnDestroy {
     this.calculatePromotionImpact();
     setTimeout(() => {
       this.renderInteractions = true;
-    }, 2000);
+    }, 2100);
   }
 
   calculateArticlesByPromotion() {
