@@ -1,5 +1,8 @@
 <mat-card class="mat-typography dashboard" style="top: 0">
-            <div>
+    <div class="spinner-content" *ngIf="!readyToRender">
+        <mat-spinner></mat-spinner>
+    </div>
+            <div class="page-content" *ngIf="readyToRender">
                 <div id="graficos" class="graficos">
                     <mat-card class="graficoIndividual  mat-elevation-z6">
                             <!-- torta -->

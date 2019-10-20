@@ -105,9 +105,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
               this.anyliticService.getPromotedArticles(this.userStore.firebaseUID).then((res) => this.promotedArticles = res).then(() => {
                 console.log('promotedArticles', this.promotedArticles);
                 this.getAnylitics();
-                setTimeout(() => {
-                  this.readyToRender = true;
-                }, 0);
               });
             });
           });
@@ -145,7 +142,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.getPromOfFeedBack();
     // this.getAmountOfPromotedInteractions();
     this.sumPositiveInteractions = this.positiveInteractions + this.articlesSavedToCloset + this.usersClickedArticle;
-    console.log(2)
+    setTimeout(() => {
+      this.readyToRender = true;
+    }, 2000);
+    console.log(2);
+
   }
 
   getTotalInteractions() {

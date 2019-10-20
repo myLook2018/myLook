@@ -161,3 +161,16 @@
 /deep/.ui-rating-icon {
   font-size: 33px !important;
 }
+
+
+.spinner-content {
+  height: calc(95vh);
+  vertical-align: middle;
+  text-align: -webkit-center;
+  display: table-cell;
+  width: calc(85vw);
+}
+
+:host /deep/.mat-progress-spinner circle, .mat-spinner circle {
+  stroke: rgb(189, 132, 199) !important;
+}

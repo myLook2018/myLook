@@ -49,6 +49,8 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
         case event instanceof NavigationEnd: {
           this.authGuard.canActivate();
           this.refreshUserInformation();
+          console.log('el path', this.router.url);
+          this.setCurrentNavigation();
           setTimeout(() => {
             this.spinner.hide();
           }, 2000);
@@ -74,6 +76,7 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
       }
     });
     console.log('iniciando orchestrator');
+
   }
 
   refreshUserInformation() {
@@ -121,6 +124,32 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
   hideSpinner(event) {
     console.log('me dijieron que me esconda, yo el spinner');
     this.spinner.hide();
+  }
+
+  setCurrentNavigation() {
+    switch (true) {
+      case (this.router.url === `/Tiendas/${this.userStore.storeName}`):
+        this.clickedItem = 'profile';
+      break;
+      case (this.router.url.includes('Catalogo')):
+        this.clickedItem = 'catalog';
+      break;
+      case (this.router.url.includes('Recomendaciones')):
+        this.clickedItem = 'recomendations';
+      break;
+      case (this.router.url.includes('Estadisticas')):
+          this.clickedItem = 'analytics';
+      break;
+      case (this.router.url.includes('Promociones')):
+          this.clickedItem = 'promotions';
+      break;
+      case (this.router.url.includes('Configuracion')):
+          this.clickedItem = 'config';
+      break;
+
+      default:
+        break;
+    }
   }
 
   ngOnDestroy(): void {}

@@ -48,3 +48,15 @@ color: rgb(189, 132, 199)
 /deep/.mat-tooltip {
   font-size: 13px !important;
 }
+
+.spinner-content {
+  height: calc(95vh);
+  vertical-align: middle;
+  text-align: -webkit-center;
+  display: table-cell;
+  width: calc(85vw);
+}
+
+:host /deep/.mat-progress-spinner circle, .mat-spinner circle {
+  stroke: rgb(189, 132, 199) !important;
+}
