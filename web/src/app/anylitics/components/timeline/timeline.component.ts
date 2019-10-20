@@ -59,7 +59,7 @@ export class TimelineComponent implements OnInit {
           {
               label: 'Prendas favoritas',
               // backgroundColor: '#42A5F5',
-              borderColor: '#ebb329',
+              borderColor: '#FF6384',
               data: this.countFavoritesByDay
           },
           {
