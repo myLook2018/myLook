@@ -3,33 +3,37 @@
   <!-- Recomendations -->
       <div class="requestList">
 
-        <button (click)="$event.stopPropagation()" class="requestList" mat-raised-button [matMenuTriggerFor]="filters">Filtrar
-          Recomendaciones</button>
-        <mat-menu class="my-full-width-menu" (click)="$event.stopPropagation()" #filters="matMenu" xPosition="after">
-          <div style="display:grid">
-
-            <mat-form-field (click)="$event.stopPropagation()" floatLabel="never" style="font-size: 15px; margin-right: auto; margin-left: auto">
-              <mat-select (click)="$event.stopPropagation()" [(value)]="selectedCatego" placeholder="Categoria">
-                <mat-option (click)="$event.stopPropagation()">Ninguna</mat-option>
-                <mat-option (click)="$event.stopPropagation()" *ngFor="let cat of categories" [value]="cat">{{cat}}</mat-option>
-              </mat-select>
-            </mat-form-field>
-            <mat-form-field (click)="$event.stopPropagation()" floatLabel="never" style="font-size: 15px; margin-right: auto; margin-left: auto">
-              <mat-select (click)="$event.stopPropagation()" [(value)]="selectedSex" placeholder="Sexo">
-                <mat-option (click)="$event.stopPropagation()">Indistinto</mat-option>
-                <mat-option (click)="$event.stopPropagation()" *ngFor="let sex of sexes" [value]="sex">{{sex}}</mat-option>
-              </mat-select>
-            </mat-form-field>
-            <button mat-raised-button (click)="filterRecos()" style=" margin-right: auto; margin-left: auto">Filtrar Recomendaciones</button>
-          </div>
-        </mat-menu>
-
-
         <mat-table class="requestTable mat-elevation-z2" [dataSource]="dataSourceRequests" matSort>
 
           <ng-container matColumnDef="ListaPeticiones">
-            <mat-header-cell *matHeaderCellDef> Solicitudes que puede responder </mat-header-cell>
-            <mat-cell *matCellDef="let element" style="height: 60px">{{element.title}}</mat-cell>
+            <mat-header-cell class="solicitudes" *matHeaderCellDef > <strong>Solicitudes</strong>
+              <button (click)="$event.stopPropagation()" mat-icon-button [matMenuTriggerFor]="filters" style="position: absolute; right: 1rem;">
+                  <mat-icon>filter_list</mat-icon>
+              </button>
+                <mat-menu class="my-full-width-menu" (click)="$event.stopPropagation()" #filters="matMenu" xPosition="after">
+                  <div style="display:grid">
+
+                    <mat-form-field (click)="$event.stopPropagation()" floatLabel="never" style="font-size: 15px; margin-right: auto; margin-left: auto">
+                      <mat-select (click)="$event.stopPropagation()" [(value)]="selectedCatego" placeholder="Categoria">
+                        <mat-option (click)="$event.stopPropagation()">Ninguna</mat-option>
+                        <mat-option (click)="$event.stopPropagation()" *ngFor="let cat of categories" [value]="cat">{{cat}}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <mat-form-field (click)="$event.stopPropagation()" floatLabel="never" style="font-size: 15px; margin-right: auto; margin-left: auto">
+                      <mat-select (click)="$event.stopPropagation()" [(value)]="selectedSex" placeholder="Sexo">
+                        <mat-option (click)="$event.stopPropagation()">Indistinto</mat-option>
+                        <mat-option (click)="$event.stopPropagation()" *ngFor="let sex of sexes" [value]="sex">{{sex}}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <button mat-raised-button (click)="filterRecos()" style=" margin-right: auto; margin-left: auto">Listo</button>
+                  </div>
+                </mat-menu>
+
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element" class="solicitudesIndividuales">
+              {{element.title}}
+              <mat-icon *ngIf="element.isNear" class="mylookPink" [matTooltip]="element.tooltip" matTooltipPosition="right" matTooltipClass="tooltip">place</mat-icon>
+            </mat-cell>
           </ng-container>
 
           <mat-header-row *matHeaderRowDef="displayedColumnsRequests"></mat-header-row>
@@ -41,7 +45,7 @@
 
         <mat-table class="answeredTable mat-elevation-z2" [dataSource]="dataSourceAnswered" matSort>
           <ng-container matColumnDef="ListaPeticiones">
-            <mat-header-cell *matHeaderCellDef> Solicitudes que ha respondido!</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef style="font-size: 16px !important;"> <strong>Tus recomendaciones</strong></mat-header-cell>
             <mat-cell *matCellDef="let element" style="height: 60px">{{element.title}}</mat-cell>
           </ng-container>
 
@@ -62,16 +66,18 @@
       <!--Al seleccionar una fila de las opciones, se despliega una carta con la descripcion-->
       <div *ngIf="isRequestSelected">
         <mat-card class="requestCard">
-          <mat-card-header style="max-height: calc(10vh);">
-            <img mat-card-avatar src="/assets/noProfilePic.png">
-            <mat-card-title>Solicitud de Recomendación.</mat-card-title>
-            <mat-card-subtitle>{{selectedRequest.title}}</mat-card-subtitle>
+          <mat-card-header style="text-align: center; justify-content: center;">
+            <mat-card-title>{{selectedRequest.title}}</mat-card-title>
+            <mat-card-subtitle>Solicitud</mat-card-subtitle>
           </mat-card-header>
-          <img mat-card-image [src]="selectedRequest.requestPhoto" alt="No se adjuntó foto en la solicitud.">
-          <mat-card-content style="max-height: calc(30vh); overflow-y: auto;">
-            <p *ngIf="selectedRequest.category"> <b>Categoría:</b> {{selectedRequest.category}}.</p>
-            <p *ngIf="selectedRequest.size"><b>Datos sobre el talle:</b> {{selectedRequest.size}}.</p>
-            <p *ngIf="selectedRequest.description">{{selectedRequest.description}}.</p>
+          <mat-card-content>
+            <div *ngIf="imageLoader" class="spinner-content">
+              <mat-spinner></mat-spinner>
+            </div>
+            <img mat-card-image style="margin-top: -6px; margin-bottom: 1rem;" [hidden]="imageLoader" [src]="selectedRequest.requestPhoto" alt="No se adjuntó foto en la solicitud." (load)="this.imageLoader = false;">
+            <p *ngIf="selectedRequest.category" style="width: 30rem"> <b>Categoría:</b> {{selectedRequest.category}}.</p>
+            <p *ngIf="selectedRequest.size" style=" width: 30rem"><b>Datos sobre el talle:</b> {{selectedRequest.size}}.</p>
+            <p *ngIf="selectedRequest.description" style="width: 30rem">{{selectedRequest.description}}.</p>
           </mat-card-content>
         </mat-card>
       </div>
@@ -80,21 +86,35 @@
       <div *ngIf="isRequestSelected">
         <form [formGroup]="requestAnswerForm">
           <mat-card class="answerCard">
-            <mat-card-header>
-              <img mat-card-avatar [src]="userStore.profilePh">
-              <mat-card-title>Nuestra recomendación!</mat-card-title>
+            <mat-card-header style="text-align: center; justify-content: center;" >
+              <mat-card-title>Tu recomendación!</mat-card-title>
               <mat-card-subtitle>{{userStore.storeName}}</mat-card-subtitle>
             </mat-card-header>
-            <img mat-card-image [src]="selectedArticle.picturesArray[0]">
+            <div *ngIf="selectedArticle.picturesArray[0]">
+              <div *ngIf="imageLoaderAnswer" class="spinner-content">
+                <mat-spinner></mat-spinner>
+              </div>
+              <img style="margin-top: -6px; margin-bottom: 1rem;" mat-card-image [hidden]="imageLoaderAnswer" [src]="selectedArticle.picturesArray[0]" alt="Seleccioná una prenda para recomendar" (load)="this.imageLoaderAnswer = false;">
+            </div>
+            <p *ngIf="!selectedArticle.picturesArray[0]" class="altLabelPhoto"> Seleccioná una prenda para recomendar </p>
             <mat-card-content>
-              <mat-form-field class="descriptionArea" style="max-height: calc(25vh); overflow-y: auto;">
-                <textarea style="height: calc(15vh);" matInput placeholder="Agrega una descripción para tu sugerencia, los clientes las aprecian!."
-                  formControlName="description">{{_descripcion}}</textarea>
+              <mat-form-field class="descriptionArea" style="max-height: calc(25vh); overflow-y: auto;" >
+                <mat-label *ngIf="!disableSendRecomendation"> Agregar una descripción </mat-label>
+                <textarea matInput
+                  formControlName="description"
+                  maxlength="180"
+                  cdkTextareaAutosize
+                  cdkAutosizeMinRows="5"
+                  cdkAutosizeMaxRows="5"
+                  [disabled]="disableSendRecomendation"
+                  >
+
+                </textarea>
+                <mat-hint align="end" *ngIf="!disableSendRecomendation">{{this.requestAnswerForm.get('description').value.length}} / 180</mat-hint>
               </mat-form-field>
             </mat-card-content>
             <mat-card-actions align="end">
-              <button class="sendRecoButton" [disabled]="(disableSendRecomendation || selectedArticle.picturesArray[0] == '/assets/idea.png')" *ngIf="isRequestSelected" mat-raised-button (click)="sendAnswer()">Enviar
-                Recomendación!</button>
+              <button class="sendRecoButton" *ngIf="!disableSendRecomendation" [disabled]="(selectedArticle.picturesArray[0] === '')" mat-raised-button (click)="sendAnswer()">Enviar</button>
             </mat-card-actions>
           </mat-card>
         </form>
@@ -106,10 +126,10 @@
 
       <!-- Prendas del catalogo -->
       <div class="articleList">
-        <mat-table class="articleTable mat-elevation-z2 navbar" [dataSource]="dataSourceArticles" matSort>
+        <mat-table class="articleTable mat-elevation-z2 navbar" [dataSource]="dataSourceArticles" matSort [ngClass]="{tableDisabled: disableSendRecomendation}">
 
           <ng-container matColumnDef="PrendasCatalogo">
-            <mat-header-cell *matHeaderCellDef> Prendas para sugerir </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef style="font-size: 16px !important;"> Tus Prendas </mat-header-cell>
             <mat-cell *matCellDef="let element; let i = index"><img height="150" width="150" src={{element.picturesArray[0]}}></mat-cell>
           </ng-container>
 

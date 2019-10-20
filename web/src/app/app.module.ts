@@ -88,6 +88,7 @@ import { LyResizingCroppingImageModule } from '@alyle/ui/resizing-cropping-image
 import { LyIconModule } from '@alyle/ui/icon';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { PromotionsService } from './anylitics/services/promotions.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import {
   LyHammerGestureConfig,
@@ -184,6 +185,7 @@ registerLocaleData(localeAR);
     LyButtonModule,
     LyIconModule,
     FontAwesomeModule,
+    MatProgressSpinnerModule,
     LyThemeModule.setTheme('minima-light'),
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyDmuhZx-ew-zpQzQcjiqk2yJu5OonBuSMc',

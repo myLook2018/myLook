@@ -186,7 +186,8 @@ export class RegisterComponent implements OnInit {
       facebookLink: [''],
       instagramLink: [''],
       twitterLink: [''],
-      provider: ['']
+      provider: [''],
+      storefronts: [[]]
     });
 
     this.createUserForm();
