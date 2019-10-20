@@ -40,13 +40,13 @@
   }
 
   .requestList{
-    width: calc(12vw);
+    width: 16%;
     min-width: 200px;
     max-height: calc(100vh - 48px);
   }
 
   .articleList{
-    width: calc(10vw);
+    width: 13%;
     min-width: 200px;
     max-height: calc(100vh - 48px);
   }
@@ -57,7 +57,7 @@
   }
 
   .answeredTable {
-    height: 40%;
+    height: 44%;
     overflow: auto;
   }
 
@@ -67,14 +67,10 @@
   }
 
 .requestCard {
-   width: calc(20vw);
-   margin-right: calc(5vh);
-   margin-left: calc(5vh);
+  margin: 3.5rem 5rem 0 1rem;
  }
  .answerCard {
-   width: calc(20vw);
-   margin-top: calc(5vh);
-   margin-right: calc(5vh);
+  margin: 3.5rem 1rem 0 0;
  }
 
 .miniLogo{
@@ -86,16 +82,18 @@
 }
 
 .mat-row:hover {
-  background-color:  rgb(193, 85, 212);
+  background-color: rgba(251, 221, 255, 0.801);
   cursor: pointer;
 }
 
 .highlight{
-  background-color: rgb(218, 154, 230);
+  background-color:  rgba(251, 231, 255, 0.644);
 }
 
 .mat-card-image {
-  max-height: calc(40vh);
+  width: 30rem;
+  height: 30rem;
+  margin: 0;
 }
 
 .descriptionArea{
@@ -103,7 +101,7 @@
 }
 
 .sendRecoButton{
-  background-color: #9C27B0;
+  background-color: rgb(189, 132, 199);
   color: white;
 }
 
@@ -125,13 +123,48 @@ mat-header-cell {
   justify-content:center;
  }
 
- .backgroundColor {
-  width: 100%;
-  height: calc(100);
-  background: rgba(252,236,252,0.14);
-  background: -moz-linear-gradient(top, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
-  background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(252,236,252,0.14)), color-stop(49%, rgba(251,166,225,0.16)), color-stop(85%, rgba(255,124,216,0.18)), color-stop(100%, rgba(253,137,215,0.19)));
-  background: -ms-linear-gradient(top, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
-  background: linear-gradient(to bottom, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', endColorstr='#fd89d7', GradientType=0 );
+.solicitudes {
+  font-size: 16px !important;
+  position: relative;
+}
+
+.mylookPink {
+  color: rgb(189, 132, 199);
+  position: absolute;
+  right: 1rem;
+}
+
+.solicitudesIndividuales {
+  height: 60px;
+  position: relative;
+}
+
+
+/deep/.mat-tooltip {
+  font-size: 12px !important;
+}
+
+.spinner-content {
+  width: 30rem;
+  height: 31rem;
+  vertical-align: middle;
+  text-align: -webkit-center;
+  display: table-cell;
+}
+
+:host /deep/.mat-progress-spinner circle, .mat-spinner circle {
+  stroke: rgb(189, 132, 199) !important;
+}
+
+.altLabelPhoto {
+  height: 31rem;
+  width: 30rem;
+  text-align-last: center;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.tableDisabled {
+  pointer-events: none;
+  overflow: hidden;
 }

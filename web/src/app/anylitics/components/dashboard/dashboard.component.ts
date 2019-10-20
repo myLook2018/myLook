@@ -247,7 +247,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     let sum = 0;
     for (let i = 0; i < filteredFeedBack.length; i++) {
       // tslint:disable-next-line: radix
-      sum = sum + parseInt(filteredFeedBack[i].feedBack);
+      sum = sum + parseFloat(filteredFeedBack[i].feedBack);
       console.log(`sumatoria parcial ` + sum);
     }
     this.feedBackProm = (sum / filteredFeedBack.length);

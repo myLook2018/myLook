@@ -11,7 +11,10 @@ export class RecomendationRequest {
     limitDate?: Date;
     updateDate?: Date;
     requestPhoto?: string; // Opcional
-    localization?: [Number]; // Se toma desde donde se hizo o la del User?
+    localization?: any; // Se toma desde donde se hizo o la del User?
     answers?: RecomendationAnswer[];
     size?: string;
+    isNear: boolean;
+    distance: number;
+    tooltip: String;
   }
