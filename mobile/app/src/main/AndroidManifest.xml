@@ -134,7 +134,6 @@
             android:parentActivityName=".session.MainActivity"/>
         <activity android:name=".login.ResetPasswordActivity"
             android:parentActivityName=".login.LoginActivity"/>
-
         <service android:name=".notifications.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>

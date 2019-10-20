@@ -4,26 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
 
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="100dp"
-        android:layout_height="70dp"
-        android:layout_centerInParent="true"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -71,13 +56,14 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/linearLayout6"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:orientation="vertical"
                 android:overScrollMode="always"
                 android:paddingTop="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -109,6 +95,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
                     android:backgroundTint="@color/primary_dark"
                     android:ems="10"
                     android:focusable="false"
@@ -139,17 +126,17 @@
                     android:id="@+id/category"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
                     android:backgroundTint="@color/primary_dark"
                     android:drawableTint="@color/primary_dark"
                     android:dropDownHeight="200dp"
                     android:foregroundTint="@color/primary_dark"
                     android:hint="Categoría"
+                    android:paddingLeft="4dp"
+                    android:paddingBottom="16dp"
                     android:shadowColor="@color/primary_dark"
                     android:spinnerMode="dropdown"
                     android:textColor="@color/common_google_signin_btn_text_light_disabled"
                     android:textSize="17sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/size_input"
                     app:layout_constraintStart_toStartOf="@+id/size_input"
                     app:layout_constraintTop_toBottomOf="@+id/size_input"
@@ -166,7 +153,7 @@
                     android:foregroundTint="@color/primary_dark"
                     android:hint="Agregá una descripción a tu solicitud."
                     android:maxLength="200"
-                    android:minHeight="100dp"
+                    android:minHeight="80dp"
                     android:scrollbars="horizontal"
                     android:shadowColor="@color/primary_dark"
                     android:singleLine="false"
@@ -180,6 +167,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
                     android:backgroundTint="@color/primary_dark"
                     android:foregroundTint="@color/primary_dark"
@@ -190,63 +178,31 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/imgRecommend" />
 
-                <com.github.clans.fab.FloatingActionMenu
-                    android:id="@+id/fabMenu"
-                    android:layout_width="233dp"
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_add_image"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:clickable="true"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:menu_animationDelayPerItem="55"
-                    app:menu_buttonSpacing="0dp"
-                    app:menu_buttonToggleAnimation="@anim/no_spin_animation"
-                    app:menu_colorNormal="@color/accent"
-                    app:menu_colorPressed="@color/accent"
-                    app:menu_colorRipple="@color/accent"
-                    app:menu_fab_hide_animation="@anim/no_spin_animation"
-                    app:menu_fab_show_animation="@anim/no_spin_animation"
-                    app:menu_fab_size="normal"
-                    app:menu_icon="@drawable/ic_add_photo"
-                    app:menu_labels_colorNormal="@color/fui_transparent"
-                    app:menu_labels_colorPressed="@color/fui_transparent"
-                    app:menu_labels_colorRipple="@color/fui_transparent"
-                    app:menu_labels_cornerRadius="3dp"
-                    app:menu_labels_ellipsize="none"
-                    app:menu_labels_hideAnimation="@anim/no_spin_animation"
-                    app:menu_labels_margin="0dp"
-                    app:menu_labels_maxLines="-1"
-                    app:menu_labels_padding="8dp"
-                    app:menu_labels_position="left"
-                    app:menu_labels_showAnimation="@anim/no_spin_animation"
-                    app:menu_labels_showShadow="false"
-                    app:menu_labels_singleLine="false"
-                    app:menu_labels_textColor="@color/black"
-                    app:menu_labels_textSize="15sp"
-                    app:menu_openDirection="up">
-
-                    <com.github.clans.fab.FloatingActionButton
-                        android:id="@+id/photoFloating"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:clickable="false"
-                        android:src="@drawable/ic_camera"
-                        app:fab_colorNormal="@color/accent"
-                        app:fab_label="Cámara"
-                        app:fab_size="normal" />
-
-                    <com.github.clans.fab.FloatingActionButton
-                        android:id="@+id/galleryFloating"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_gallery"
-                        app:fab_colorNormal="@color/accent"
-                        app:fab_label="Galería"
-                        app:fab_size="normal" />
-                </com.github.clans.fab.FloatingActionMenu>
+                    app:srcCompat="@drawable/ic_add_photo" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="100dp"
+            android:layout_height="70dp"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:visibility="invisible" />
 
     </RelativeLayout>
 
