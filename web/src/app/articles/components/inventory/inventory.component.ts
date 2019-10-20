@@ -169,8 +169,12 @@ export class InventoryComponent implements OnInit, OnDestroy {
     const confirmationRef = this.dialog.open(
       DeleteConfirmationDialogComponent,
       {
-        width: '300px',
-        data: article.picturesArray[0]
+        width: '425px',
+        data: {
+          photo: article.picturesArray[0],
+          title: article.title,
+          promotionLevel: article.promotionLevel
+        }
       }
     );
     confirmationRef.afterClosed().subscribe(result => {
