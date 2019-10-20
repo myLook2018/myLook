@@ -144,7 +144,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.sumPositiveInteractions = this.positiveInteractions + this.articlesSavedToCloset + this.usersClickedArticle;
     setTimeout(() => {
       this.readyToRender = true;
-    }, 2100);
+    }, 2400);
     console.log(2);
 
   }

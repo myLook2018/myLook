@@ -27,6 +27,7 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
   userStore = new StoreModel();
   isLogedIn = false;
   clickedItem = 'profile';
+  reload = true;
 
   constructor(
     public userService: UserService,
@@ -51,6 +52,10 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
           this.refreshUserInformation();
           console.log('el path', this.router.url);
           this.setCurrentNavigation();
+          this.reload = false;
+          setTimeout(() => {
+            this.reload = true;
+          }, 1);
           setTimeout(() => {
             this.spinner.hide();
           }, 2000);
