@@ -1,9 +1,6 @@
 .dashboard {
-  margin-top: 2rem;
-  height: 100%;
-  width: 96%;
-  margin-right: auto;
-  margin-left: auto;
+  width: calc(100% - 2rem);
+  margin: 1% 1% 0;
 
   .page {
 
@@ -50,7 +47,7 @@ color: rgb(189, 132, 199)
 }
 
 .spinner-content {
-  height: calc(74vh);
+  height: calc(88vh);
   vertical-align: middle;
   text-align: -webkit-center;
   display: table-cell;
@@ -59,4 +56,9 @@ color: rgb(189, 132, 199)
 
 :host /deep/.mat-progress-spinner circle, .mat-spinner circle {
   stroke: rgb(189, 132, 199) !important;
+}
+
+.page-content {
+  overflow: auto;
+  height: calc(88vh);
 }

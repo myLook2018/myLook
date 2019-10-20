@@ -1,7 +1,7 @@
 @import '~ngx-bar-rating/themes/br-fontawesome-theme';
 .dashboard{
-  width: calc(100% - 4rem);
-  margin: 2rem;
+  width: calc(100% - 2rem);
+  margin: 1% 1% 0;
 
   .graficos {
     display: flex;
@@ -164,7 +164,7 @@
 
 
 .spinner-content {
-  height: calc(74vh);
+  height: calc(88vh);
   vertical-align: middle;
   text-align: -webkit-center;
   display: table-cell;
@@ -173,4 +173,9 @@
 
 :host /deep/.mat-progress-spinner circle, .mat-spinner circle {
   stroke: rgb(189, 132, 199) !important;
+}
+
+.page-content {
+  overflow: auto;
+  height: calc(88vh);
 }
