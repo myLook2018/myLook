@@ -27,7 +27,7 @@
                         <h3>Suscriptores</h3>
                         <h1>{{subscriptors}}</h1>
                     </mat-card>
-                    <mat-card class="dats-reco mat-elevation-z6">
+                    <!-- <mat-card class="dats-reco mat-elevation-z6">
                         <h3>Puntajes en recomendaciones - Promedio de recomendaciones</h3>
                         <div class="content">
                           <h1 style="margin-left: 4rem;">{{answeredRecomendations}} / {{totalRecomendations}}</h1>
@@ -37,25 +37,22 @@
                         ></p-rating>
                         <h1 *ngIf="!(feedBackProm > 0)">No Disponible</h1>
                                 </div>
-                    </mat-card>
+                    </mat-card> -->
 
-
-
-                    <!-- propuesta de cards separadas
                     <mat-card class="dats mat-elevation-z6">
                         <mat-icon class="infoTooltip" [matTooltip]="this.recomendacionesTooltip" matTooltipPosition="above" matTooltipClass="tooltip">info</mat-icon>
-                        <h3>Recomendaciones</h3>
+                        <h3>Puntajes en recomendaciones</h3>
                         <h1>{{answeredRecomendations}} / {{totalRecomendations}}</h1>
                     </mat-card>
                     <mat-card class="dats mat-elevation-z6">
                         <mat-icon class="infoTooltip" [matTooltip]="this.recomendacionesRatingTooltip" matTooltipPosition="above" matTooltipClass="tooltip">info</mat-icon>
-                        <h3>Puntaje promedio</h3>
+                        <h3>Promedio de recomendaciones</h3>
                         <p-rating [(ngModel)]="feedBackProm"
                                   [cancel]="false"
                                   [readonly]="true"
                         ></p-rating>
                         <h1 *ngIf="!(feedBackProm > 0)">No Disponible</h1>
-                    </mat-card> -->
+                    </mat-card>
 
                 </div>
 

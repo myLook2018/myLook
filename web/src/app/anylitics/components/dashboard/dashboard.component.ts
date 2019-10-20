@@ -77,7 +77,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.reactionsTooltip = 'Indica la cantidad de prendas que le gustaron o no al usuario, al encontrarse con tus prendas.';
+    this.reactionsTooltip = `Indica la cantidad de prendas que le gustaron o no al usuario, al encontrarse con tus prendas.`;
     this.tagsTooltip = 'Indica la cantidad de reacciones positivas para tus 10 etiquetas más populares.';
     this.graficosTooltip =
     `Indica la cantidad de interacciones en las últimas dos semanas.
@@ -88,7 +88,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.recomendacionesTooltip = `Indica cuántas de tus recomendaciones fueron calificadas.
                                    \n Calificadas / Realizadas`;
-    this.recomendacionesRatingTooltip = 'Promedio de los puntajes asignados a las recomendaciones calificadas.';
+
     console.log('-+-+-+-+-+-Inicializando Estadisticas-+-+-+-+-+-');
     // this.route.data.subscribe(routeData => {
     //   const data = routeData['data'];
@@ -299,6 +299,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
     this.feedBackProm = (sum / filteredFeedBack.length);
     console.log(`feedBackProm ` + this.feedBackProm);
+    this.recomendacionesRatingTooltip = `Promedio de los puntajes asignados a las recomendaciones calificadas.
+    \n• Valor exacto: ${this.feedBackProm.toFixed(2)}`;
   }
 
   getAmountOfPromotedInteractions() {
