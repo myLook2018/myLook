@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 
@@ -104,7 +105,6 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     private FirebaseUser user;
     private String urlLogo = "https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/utils%2Flogo_transparente_50.png?alt=media&token=c72e5b39-3011-4f26-ba4f-4c9f7326c68a";
     private ProgressBar mProgressBar;
-    private CropImageView cropImageView;
     private MaterialBetterSpinner spinner;
     private Uri downloadUrl;
     private boolean enviado = false;
@@ -117,7 +117,6 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
 
         initElements();
         Toolbar tb = findViewById(R.id.recomend_toolbar);
-        cropImageView = findViewById(R.id.cropImageView);
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
@@ -139,7 +138,9 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         fabImage.setOnClickListener(l -> {
             CropImage.activity().
                     setAspectRatio(1,1).
-                    setGuidelines(CropImageView.Guidelines.ON).setActivityTitle("Tu imagen").
+                    setGuidelines(CropImageView.Guidelines.ON)
+
+                    .setActivityTitle("Tu imagen").
                     start(this);
         });
         setCategoryRequest();
@@ -297,7 +298,8 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             Session.getInstance().updateActivitiesStatus(Session.RECOMEND_FRAGMENT);
             mProgressBar.setVisibility(View.VISIBLE);
             btnSend.setEnabled(false);
-            fabImage.setVisibility(View.INVISIBLE);
+            fabImage.hide();
+//            fabImage.setVisibility(View.INVISIBLE);
             setCurrentLocation();
             if (currentLocation != null) {
                 final List<Double> latLong = new Vector<>();
@@ -332,14 +334,15 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                     public void onFailure(@NonNull Exception e) {
                         mProgressBar.setVisibility(View.GONE);
                         btnSend.setEnabled(true);
-                        fabImage.setVisibility(View.VISIBLE);
+                        fabImage.show();
+
                         displayMessage("Ha ocurrido un problema con tu recomendacion");
                     }
                 });
             } else {
                 mProgressBar.setVisibility(View.GONE);
                 btnSend.setEnabled(true);
-                fabImage.setVisibility(View.VISIBLE);
+                fabImage.show();
                 showLocationAlert();
             }
         }
@@ -376,7 +379,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         } else {
             mProgressBar.setVisibility(View.VISIBLE);
             btnSend.setEnabled(false);
-            fabImage.setVisibility(View.INVISIBLE);
+            fabImage.hide();
             final UploadTask uptask = saveImage();
             uptask.addOnCompleteListener(task ->
                     task.getResult().getStorage().getDownloadUrl().addOnCompleteListener(task1 -> {
@@ -548,7 +551,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                         && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     mProgressBar.setVisibility(View.INVISIBLE);
                     btnSend.setEnabled(true);
-                    fabImage.setVisibility(View.VISIBLE);
+                    fabImage.show();
                 } else {
                     setCurrentLocation();
                 }

@@ -137,7 +137,7 @@
                     android:layout_width="98dp"
                     android:layout_height="98dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/txtRecommendDescpription" />
+                    app:layout_constraintTop_toTopOf="@+id/txtRecommendTitle" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

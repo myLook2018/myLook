@@ -69,7 +69,7 @@
                 android:minHeight="24dp"
                 android:paddingLeft="8dp"
                 android:textAlignment="center"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/imgStore"
                 app:layout_constraintTop_toBottomOf="@+id/textView" />

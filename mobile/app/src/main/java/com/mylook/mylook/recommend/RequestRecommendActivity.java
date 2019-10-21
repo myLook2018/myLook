@@ -120,14 +120,14 @@ public class RequestRecommendActivity extends AppCompatActivity {
                             txtDescription.setText(doc.get("description").toString());
                             txtTitle.setText(doc.get("title").toString());
 
-                            if(doc.contains("size")) {
+                            if(doc.contains("size") && !doc.get("size").toString().isEmpty()) {
                                 sizeText.setText(doc.get(("size")).toString().toUpperCase());
                                 sizeLabel.setText("Talle: ");
                             } else{
                                 sizeText.setVisibility(View.GONE);
                                 sizeLabel.setVisibility(View.GONE);
                             }
-                            if(doc.contains("category")) {
+                            if(doc.contains("category") && !doc.get("category").toString().isEmpty()) {
                                 categoryText.setText(doc.get("category").toString());
                                 categoryLabel.setText("Categoría: ");
                             } else {
