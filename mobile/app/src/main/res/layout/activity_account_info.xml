@@ -117,24 +117,11 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
                 android:padding="10dp"
-                android:text="Informacion Privada"
+                android:text="Información Privada"
                 android:textAlignment="gravity"
                 android:textColor="@color/black"
                 android:textSize="17dp"
                 android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/txtEmail"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:clickable="true"
-                android:padding="10dp"
-                android:text="Cambiar email"
-                android:textAlignment="viewStart"
-                android:textColor="@color/black"
-                android:textSize="17dp" />
 
             <TextView
                 android:id="@+id/txtPassword"

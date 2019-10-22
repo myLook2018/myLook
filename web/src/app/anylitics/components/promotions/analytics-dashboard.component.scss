@@ -1,0 +1,50 @@
+.dashboard {
+  margin-top: 2rem;
+  height: 100%;
+  width: 96%;
+  margin-right: auto;
+  margin-left: auto;
+
+  .page {
+
+    .graficos {
+      display: flex;
+      place-content: center;
+
+      .barras-by-promocion {
+        margin: 1rem 1%;
+      }
+
+      .torta-reacciones {
+        margin: 1rem 1%;
+      }
+    }
+
+    .historico {
+      margin-top: 1rem;
+
+      .tablita {
+        max-height: calc(90vh);
+        overflow: auto;
+      }
+
+
+    }
+  }
+}
+
+.myLookPink {
+color: rgb(189, 132, 199)
+}
+
+.infoTooltip {
+  position: absolute;
+  right: 1rem;
+  z-index: 1;
+  color: rgb(189, 132, 199);
+  cursor: help;
+}
+
+/deep/.mat-tooltip {
+  font-size: 13px !important;
+}

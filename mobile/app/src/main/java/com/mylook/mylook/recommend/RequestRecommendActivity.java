@@ -74,7 +74,15 @@ public class RequestRecommendActivity extends AppCompatActivity {
         categoryText = findViewById(R.id.categoryText);
         categoryLabel = findViewById(R.id.categoryLabel);
         getIncomingIntent();
-        //invalidateOptionsMenu();
+        invalidateOptionsMenu();
+
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        super.onSupportNavigateUp();
+        onBackPressed();
+        return true;
     }
 
     private void initRecyclerView(ArrayList<HashMap<String, String>> answerList) {
@@ -107,6 +115,9 @@ public class RequestRecommendActivity extends AppCompatActivity {
             } catch(Exception e){
                 if(intent.hasExtra("requestId"))
                     requestId = intent.getStringExtra("requestId");
+            }
+            if(getIntent().hasExtra("fromDeepLink")){
+                fromDeepLink = true;
             }
         }
         //ACA LLEGA DISTINTO
@@ -217,21 +228,26 @@ public class RequestRecommendActivity extends AppCompatActivity {
                         }
                     }
                 });
-        Session.getInstance().updateActivitiesStatus(Session.RECOMEND_FRAGMENT);
+        if(!fromDeepLink)
+            Session.getInstance().updateActivitiesStatus(Session.RECOMEND_FRAGMENT);
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        Log.e(TAG, "ON back pressed");
+        Log.e(TAG, "From deep link"+fromDeepLink);
         if(fromDeepLink){
             Intent intent= new Intent(getApplicationContext(), MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
+        } else {
             finish();
         }
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+        public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.request_recommendation_menu, menu);
         if(isClosed) {
             menu.findItem(R.id.close_req).setVisible(false); // si ya esta cerrada no muestro la opcion
@@ -289,9 +305,6 @@ public class RequestRecommendActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    @Override
-    public boolean onSupportNavigateUp(){
-        finish();
-        return true;
-    }
+
+
 }

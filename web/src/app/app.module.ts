@@ -59,10 +59,12 @@ import { ErrorComponent } from './error/error.component';
 import { MatListModule } from '@angular/material/list';
 import { RecomendationsComponent } from './recomendations/components/recomendations.component';
 import { ImageCropperModule } from 'ngx-img-cropper/index';
-import { CropperSettings } from 'ngx-img-cropper/index';
 import { ChartModule } from 'primeng/chart';
 import { DonutchartComponent } from './anylitics/components/donutchart/donutchart.component';
 import { DashboardComponent } from './anylitics/components/dashboard/dashboard.component';
+import { AnyliticsDashboardComponent } from './anylitics/components/promotions/analytics-dashboard.component';
+import { ViewsByPromotionsComponent } from './anylitics/components/promotions/graphics/views-by-promotion/views-by-promotions.component';
+import { ReactionsPieComponent } from './anylitics/components/promotions/graphics/reactions/reactions-pie.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { AnyliticService } from './anylitics/services/anylitics.service';
 import { MatSelectModule } from '@angular/material/select';
@@ -80,13 +82,13 @@ import { HomePageComponent } from './home-page/home-page.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { OrchestratorComponent } from './orchestrator/orchestrator.component';
 import { MercadopagoComponent } from './articles/components/inventory/mercadopago/mercadopago.component';
-// import { ResizingCroppingImagesExample03Component } from './resizing-cropping-images-example-03.component';
 import { MinimaLight, MinimaDark } from '@alyle/ui/themes/minima';
 import { LyButtonModule } from '@alyle/ui/button';
 import { LyResizingCroppingImageModule } from '@alyle/ui/resizing-cropping-images';
 import { LyIconModule } from '@alyle/ui/icon';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { PromotionsService } from './store/components/configurations/service/promotions.service';
+import { PromotionsService } from './anylitics/services/promotions.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import {
   LyHammerGestureConfig,
@@ -133,7 +135,10 @@ registerLocaleData(localeAR);
     MercadopagoComponent,
     SuccessComponent,
     ConfigurationsComponent,
-    NewArticleComponent
+    NewArticleComponent,
+    AnyliticsDashboardComponent,
+    ViewsByPromotionsComponent,
+    ReactionsPieComponent
   ],
   imports: [
     HttpClientModule,
@@ -180,6 +185,7 @@ registerLocaleData(localeAR);
     LyButtonModule,
     LyIconModule,
     FontAwesomeModule,
+    MatProgressSpinnerModule,
     LyThemeModule.setTheme('minima-light'),
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyDmuhZx-ew-zpQzQcjiqk2yJu5OonBuSMc',

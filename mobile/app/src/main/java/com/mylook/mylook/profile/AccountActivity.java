@@ -28,8 +28,6 @@ public class AccountActivity extends AppCompatActivity {
     private TextView txtDestacado;
     private ImageView imageAccount;
     private TextView txtAccount;
-    private ImageView imageHelp;
-    private TextView txtHelp;
     private ImageView imageExit;
     private TextView txtNotifications;
     private ImageView imageNotifications;
@@ -68,12 +66,10 @@ public class AccountActivity extends AppCompatActivity {
         txtName = findViewById(R.id.txtName);
         imageAccount = findViewById(R.id.image_account);
         txtAccount = findViewById(R.id.txtPrivAccount);
-        imageNotifications = findViewById(R.id.img_notificaciones);
-        txtNotifications = findViewById(R.id.txtemail);
+        //imageNotifications = findViewById(R.id.img_notificaciones);
+        //txtNotifications = findViewById(R.id.txtemail);
         imageDestacado =findViewById(R.id.image_destacado);
         txtDestacado = findViewById(R.id.txtSettingsDest);
-        imageHelp = findViewById(R.id.image_help);
-        txtHelp = findViewById(R.id.txtemail);
         imageExit = findViewById(R.id.image_exit);
         txtExit = findViewById(R.id.txtExit);
     }
@@ -115,13 +111,13 @@ public class AccountActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        txtNotifications.setOnClickListener(v -> {
+        /*txtNotifications.setOnClickListener(v -> {
             //TODO Definir que hacemos con las notis
         });
 
         imageNotifications.setOnClickListener(v -> {
             //TODO Definir que hacemos con las notis
-        });
+        });*/
 
         imageDestacado.setOnClickListener(v -> {
             Intent intent = new Intent(mContext, PremiumRequestActivity.class);
@@ -138,12 +134,6 @@ public class AccountActivity extends AppCompatActivity {
 
         });
 
-        imageHelp.setOnClickListener(v -> {
-            //TODO Definir help
-        });
-        txtHelp.setOnClickListener(v -> {
-            //TODO Definir help
-        });
 
         txtExit.setOnClickListener(v -> {
             DialogManager dm = DialogManager.getInstance();

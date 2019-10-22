@@ -25,9 +25,6 @@ input {
       .photos-subtitle {
         margin: 0;
         text-align: center;
-        position: absolute;
-        bottom: 0px;
-        left: 125px;
       }
     }
 
@@ -46,7 +43,7 @@ input {
       margin-top: 1rem;
 
       .activatedButton {
-        background-color: #9C27B0; color: white;
+        background-color: #bd84c7; color: white;
       }
 
       .buttonDisabled {
@@ -98,4 +95,8 @@ ly-cropping {
 
 .preventMouse {
   pointer-events: none;
+}
+
+.myLookPink {
+  color: #bd84c7
 }

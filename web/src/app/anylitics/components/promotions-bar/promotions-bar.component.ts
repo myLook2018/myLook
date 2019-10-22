@@ -22,6 +22,16 @@ export class PromotionsBarComponent implements OnInit {
       },
       legend: {
         position: 'bottom'
+      },
+      responsive: true,
+      scales: {
+        yAxes: [
+          {
+            ticks: {
+              beginAtZero: true
+            }
+          }
+        ]
       }
     };
   }

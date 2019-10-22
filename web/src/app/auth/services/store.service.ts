@@ -1,7 +1,8 @@
-import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from 'angularfire2/firestore';
+import { AngularFirestore, DocumentReference } from 'angularfire2/firestore';
 import { Injectable, Inject } from '@angular/core';
 import { UserService } from './user.service';
 import { StoreModel } from '../models/store.model';
+import { AngularFireAuth } from 'angularfire2/auth';
 
 @Injectable()
 export class StoreService {
@@ -9,7 +10,8 @@ export class StoreService {
 
     constructor(
         public db: AngularFirestore,
-        public usrService: UserService
+        public usrService: UserService,
+        private firebase: AngularFireAuth
     ) {}
 
     checkUserExistance(user) {
@@ -115,6 +117,16 @@ export class StoreService {
 
 
         });
-
     }
+
+    // changePassword(actualPassword) {
+    //   const user = this.firebase.auth.currentUser;
+    //   var credential = Firebase.auth.credentia.credential(
+    //     email,
+    //     password
+    // );
+    //   user.reauthenticateAndRetrieveDataWithCredential(actualPassword).then( result => {
+    //     console.log('nos reautenticamos', result);
+    //   });
+    // }
 }

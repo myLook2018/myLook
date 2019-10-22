@@ -93,7 +93,7 @@ export class PromoteDialogComponent {
           }
       },
       'back_urls': {
-        'success': `https://app-mylook.firebaseapp.com/Tiendas${this.userData.storeName}/Catalogo`,
+        'success': `https://app-mylook.firebaseapp.com/Tiendas${this.userData.storeName}/Promociones`,
         'failure': 'https://app-mylook.firebaseapp.com/Tiendas/Error',
     },
     'auto_return': 'approved',
@@ -145,6 +145,10 @@ export class PromoteDialogComponent {
       }
       case 14: {
         this.promotionCost = this.finalCost * 0.70;
+        break;
+      }
+      case 28: {
+        this.promotionCost = this.finalCost * 0.65;
         break;
       }
       case undefined: {

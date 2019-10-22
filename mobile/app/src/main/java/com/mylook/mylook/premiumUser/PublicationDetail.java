@@ -46,7 +46,7 @@ public class PublicationDetail extends AppCompatActivity{
         setContentView(R.layout.activity_publication_detail);
 
         tb = findViewById(R.id.toolbar);
-        tb.setTitle("Detalles de la publicacion");
+        tb.setTitle("Post");
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);

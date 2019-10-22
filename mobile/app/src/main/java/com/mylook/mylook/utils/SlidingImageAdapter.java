@@ -44,7 +44,7 @@ public class SlidingImageAdapter extends PagerAdapter {
         View imageLayout = inflater.inflate(R.layout.slidingimages_layout, view, false);
         final ImageView imageView = imageLayout.findViewById(R.id.image_view_slider);
         Glide.with(context).asBitmap().load(arrayImages.get(position)).apply(new RequestOptions()
-                .diskCacheStrategy(DiskCacheStrategy.DATA).placeholder(R.mipmap.ic_mylook))
+                .diskCacheStrategy(DiskCacheStrategy.DATA))
                 .into(imageView);
         view.addView(imageLayout, 0);
         return imageLayout;

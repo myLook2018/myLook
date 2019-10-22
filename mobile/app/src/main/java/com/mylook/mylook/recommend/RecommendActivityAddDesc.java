@@ -61,6 +61,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mylook.mylook.R;
+import com.mylook.mylook.session.MainActivity;
 import com.mylook.mylook.session.Session;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageActivity;
@@ -114,7 +115,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request_recommendation_add_desc);
 
-
+        invalidateOptionsMenu();
         initElements();
         Toolbar tb = findViewById(R.id.recomend_toolbar);
         setSupportActionBar(tb);
@@ -196,6 +197,8 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         title = findViewById(R.id.txtTitle);
         fabImage = findViewById((R.id.fab_add_image));
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Intent intent = getIntent();
+
     }
 
     private void setCategoryRequest() {
@@ -532,6 +535,20 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
             toast.show();
         }
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        super.onSupportNavigateUp();
+        onBackPressed();
+        return false;
     }
 
 
