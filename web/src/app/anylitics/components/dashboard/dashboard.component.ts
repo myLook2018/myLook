@@ -10,6 +10,7 @@ import { Interaction } from '../../model/interaction';
 import { Visit } from '../../model/visit';
 import { AnsweredRecom } from '../../model/answeredRecom';
 import { PromotedArticle } from 'src/app/articles/models/promotedArticle';
+import { DataService } from 'src/app/service/dataService';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,6 +21,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   readyToRender = false;
   totalInteractions;
   positiveInteractions;
+  negativeInteractions;
   sumPositiveInteractions;
   usersReached;
   usersClickedArticle;
@@ -46,6 +48,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
   level1Articles = 0;
   level2Articles = 0;
   level3Articles = 0;
+  tagsToRender: any;
+  visitsByDay: any[];
+  reactionsByDay: any[];
+  favoriteByDay: any[];
+  reactionsTooltip;
+  tagsTooltip;
+  graficosTooltip;
+  recomendacionesTooltip: string;
+  recomendacionesRatingTooltip: string;
+  totalRecomendations: number;
+  answeredRecomendations: number;
 
   constructor(
     fb: FormBuilder,
@@ -53,7 +66,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     public userService: UserService,
     public authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute) {
+    private route: ActivatedRoute,
+    private dataService: DataService) {
     this.options = fb.group({
       bottom: 0,
       fixed: false,
@@ -63,13 +77,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log("-+-+-+-+-+-Inicializando Estadisticas-+-+-+-+-+-");
-    this.route.data.subscribe(routeData => {
-      const data = routeData['data'];
-      if (data) {
-        this.userStore = data;
-      }
-    });
+    this.reactionsTooltip = `Indica la cantidad de prendas que le gustaron o no al usuario, al encontrarse con tus prendas.`;
+    this.tagsTooltip = 'Indica la cantidad de reacciones positivas para tus 10 etiquetas más populares.';
+    this.graficosTooltip =
+    `Indica la cantidad de interacciones en las últimas dos semanas.
+    \n • Interacciones Totales: Suma de visitas, reacciones (positivas y negativas) y prendas favoritas.
+    \n • Visitas a prendas: Cantidad de veces que tu prenda se vió en detalle.
+    \n • Prendas Favoritas: Cantidad de veces que tu prenda se guardó como favorita.
+    \n • Reacciones: Cantidad de veces que un usuario, al ver tu prenda, reaccionó positiva o negativamente.`;
+
+    this.recomendacionesTooltip = `Indica cuántas de tus recomendaciones fueron calificadas.
+                                   \n Calificadas / Realizadas`;
+
+    console.log('-+-+-+-+-+-Inicializando Estadisticas-+-+-+-+-+-');
+    // this.route.data.subscribe(routeData => {
+    //   const data = routeData['data'];
+    //   if (data) {
+    //     this.userStore = data;
+    //   }
+    // });
+    this.dataService.getStoreInfo().then( store => {
+      this.userStore = store;
       this.anyliticService.getInteractions(this.userStore.storeName).then((res) => this.interactions = res).then(() => {
         this.anyliticService.getVisits(this.userStore.storeName).then((res) => this.visits = res).then(() => {
           this.anyliticService.getSubscriptions(this.userStore.storeName).then((res) => this.subscriptions = res).then(() => {
@@ -77,14 +105,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
               this.anyliticService.getPromotedArticles(this.userStore.firebaseUID).then((res) => this.promotedArticles = res).then(() => {
                 console.log('promotedArticles', this.promotedArticles);
                 this.getAnylitics();
-                setTimeout(() => {
-                  this.readyToRender = true;
-                }, 0);
               });
             });
           });
         });
       });
+    });
   }
 
   ngOnDestroy(): void {
@@ -104,19 +130,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   getAnylitics() {
     console.log(1);
-    this.getTotalInteractions();
-    this.getPositiveInteractions();
+    // this.getTotalInteractions();
+    this.getReactions();
     this.getUsersReached();
-    this.getUsersClickedArticle();
-    this.getArticlesSavedToCloset();
+    // this.getUsersClickedArticle();
+    // this.getArticlesSavedToCloset();
     this.getPopularsTags();
-    this.getBestTag();
+    // this.getBestTag();
     this.getInteractionsByDay();
     this.getSubcriptors();
     this.getPromOfFeedBack();
-    this.getAmountOfPromotedInteractions();
+    // this.getAmountOfPromotedInteractions();
     this.sumPositiveInteractions = this.positiveInteractions + this.articlesSavedToCloset + this.usersClickedArticle;
-    console.log(2)
+    setTimeout(() => {
+      this.readyToRender = true;
+    }, 2400);
+    console.log(2);
+
   }
 
   getTotalInteractions() {
@@ -124,9 +154,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     console.log(`tolalInteractions: ` + this.totalInteractions);
   }
 
-  getPositiveInteractions() {
-    this.positiveInteractions = this.interactions.filter(interaction => interaction.liked === true).length;
-    console.log(`positiveInteractions: ` + this.positiveInteractions);
+  getReactions() {
+    // tslint:disable-next-line: max-line-length
+    const swipeInteractions = this.interactions.filter(interaction => interaction.clickOnArticle === false  && interaction.savedToCloset === false);
+    this.positiveInteractions = swipeInteractions.filter(interaction => interaction.liked === true ).length;
+    this.negativeInteractions = swipeInteractions.length - this.positiveInteractions;
   }
 
   divideAll() {
@@ -168,8 +200,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.popularityOfTags = [];
     let index;
     this.interactions.forEach((interaction) => {
-      if ((interaction.liked === true || interaction.savedToCloset === true || interaction.clickOnArticle === true)
-        && interaction.tags !== null) {
+      if ((interaction.liked === true) && interaction.tags !== null) {
         interaction.tags.map((tag) => {
           if (!this.popularTags.includes(tag)) {
             this.popularTags.push(tag);
@@ -188,6 +219,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       };
       this.popularityXtag.push(this.matrix);
     }
+
+    const orderedArray = this.popularityXtag.sort((a, b) => (a.count > b.count) ? -1 : ((b.count > a.count) ? 1 : 0));
+    console.log('orderedArray', orderedArray);
+
+    this.tagsToRender = orderedArray.slice(0, 10);
 
     console.log(this.popularityXtag);
   }
@@ -213,6 +249,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.InteractionsXday = [];
     this.daysOfTheWeek = [];
     this.interactionsByDay = [];
+    this.visitsByDay = [];
+    this.reactionsByDay = [];
+    this.favoriteByDay = [];
     let index;
     const today = new Date();
     this.interactions.forEach((interaction) => {
@@ -221,9 +260,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
         if (!this.daysOfTheWeek.includes(`${dateOfInteraction.getDate()}/${dateOfInteraction.getMonth() + 1}`)) {
           this.daysOfTheWeek.push(`${dateOfInteraction.getDate()}/${dateOfInteraction.getMonth() + 1}`);
           this.interactionsByDay.push(0);
+          this.visitsByDay.push(0);
+          this.reactionsByDay.push(0);
+          this.favoriteByDay.push(0);
         }
         index = this.daysOfTheWeek.indexOf(`${dateOfInteraction.getDate()}/${dateOfInteraction.getMonth() + 1}`);
         this.interactionsByDay[index]++;
+        if (interaction.clickOnArticle === true) { this.visitsByDay[index]++; }
+        if (interaction.clickOnArticle === false && interaction.savedToCloset === false ) { this.reactionsByDay[index]++; }
+        if (interaction.savedToCloset === true ) { this.favoriteByDay[index]++; }
       }
     });
 
@@ -240,10 +285,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getPromOfFeedBack() {
+    this.totalRecomendations = this.feedBack.length;
+    this.answeredRecomendations = 0;
     console.log('haciendo el calculo de las estrellas', this.feedBack);
     const filteredFeedBack = this.feedBack.filter(feedBack => {
       return feedBack.feedBack;
     });
+    this.answeredRecomendations = filteredFeedBack.length
     let sum = 0;
     for (let i = 0; i < filteredFeedBack.length; i++) {
       // tslint:disable-next-line: radix
@@ -252,6 +300,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
     this.feedBackProm = (sum / filteredFeedBack.length);
     console.log(`feedBackProm ` + this.feedBackProm);
+    this.recomendacionesRatingTooltip = `Promedio de los puntajes asignados a las recomendaciones calificadas.
+    \n• Valor exacto: ${this.feedBackProm.toFixed(2)}`;
   }
 
   getAmountOfPromotedInteractions() {

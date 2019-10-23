@@ -15,6 +15,8 @@ import {} from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { DataService } from '../service/dataService';
 import { AuthGuard } from '../auth/services/auth.guard';
+import { AnyliticService } from '../anylitics/services/anylitics.service';
+import { PromotionsService } from '../anylitics/services/promotions.service';
 @Component({
   selector: 'app-orchestrator',
   templateUrl: './orchestrator.component.html',
@@ -24,6 +26,9 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
   FirebaseUser = new StoreModel();
   userStore = new StoreModel();
   isLogedIn = false;
+  clickedItem = 'profile';
+  reload = true;
+
   constructor(
     public userService: UserService,
     public authService: AuthService,
@@ -31,7 +36,9 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
     public authGuard: AuthGuard,
     private router: Router,
     private route: ActivatedRoute,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private anyliticsService: AnyliticService,
+    private promotionsService: PromotionsService
   ) {
     this.userStore.profilePh = '/assets/noProfilePic.png';
     this.router.events.subscribe((event: Event) => {
@@ -43,6 +50,12 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
         case event instanceof NavigationEnd: {
           this.authGuard.canActivate();
           this.refreshUserInformation();
+          console.log('el path', this.router.url);
+          this.setCurrentNavigation();
+          this.reload = false;
+          setTimeout(() => {
+            this.reload = true;
+          }, 1);
           setTimeout(() => {
             this.spinner.hide();
           }, 2000);
@@ -68,6 +81,7 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
       }
     });
     console.log('iniciando orchestrator');
+
   }
 
   refreshUserInformation() {
@@ -101,6 +115,8 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
     this.authService.doLogout().then(
       res => {
         this.dataServide.cleanCache();
+        this.anyliticsService.cleanCache();
+        this.promotionsService.cleanCache();
         this.router.navigate(['Inicio']);
         this.isLogedIn = false;
       },
@@ -115,30 +131,62 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
     this.spinner.hide();
   }
 
+  setCurrentNavigation() {
+    switch (true) {
+      case (this.router.url === `/Tiendas/${this.userStore.storeName}`):
+        this.clickedItem = 'profile';
+      break;
+      case (this.router.url.includes('Catalogo')):
+        this.clickedItem = 'catalog';
+      break;
+      case (this.router.url.includes('Recomendaciones')):
+        this.clickedItem = 'recomendations';
+      break;
+      case (this.router.url.includes('Estadisticas')):
+          this.clickedItem = 'analytics';
+      break;
+      case (this.router.url.includes('Promociones')):
+          this.clickedItem = 'promotions';
+      break;
+      case (this.router.url.includes('Configuracion')):
+          this.clickedItem = 'config';
+      break;
+
+      default:
+        break;
+    }
+  }
+
   ngOnDestroy(): void {}
   goToProfile() {
+    this.clickedItem = 'profile';
     this.router.navigate(['Tiendas', this.userStore.storeName]);
   }
 
   goToInventory() {
+    this.clickedItem = 'catalog';
     this.router.navigate([`/Tiendas/${this.userStore.storeName}/Catalogo`]);
   }
 
   goToRecomendations() {
+    this.clickedItem = 'recomendations';
     this.router.navigate([
       `/Tiendas/${this.userStore.storeName}/Recomendaciones`
     ]);
   }
 
   goToAnalytics() {
+    this.clickedItem = 'analytics';
     this.router.navigate([`/Tiendas/${this.userStore.storeName}/Estadisticas`]);
   }
 
   gotToConfiguration() {
+    this.clickedItem = 'config';
     this.router.navigate([`/Tiendas/${this.userStore.storeName}/Configuracion`]);
   }
 
   goToAnalyticsPromotions() {
+    this.clickedItem = 'promotions';
     this.router.navigate([`/Tiendas/${this.userStore.storeName}/Promociones`]);
   }
 }

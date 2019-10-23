@@ -28,7 +28,6 @@ export class AnyliticService {
   promotionsPath = 'promotions';
   db: any;
   require: any;
-  isCached = false;
   isVisitsCached: boolean;
   isInteractionsCached: boolean;
   isSubsCached: any;
@@ -172,5 +171,18 @@ export class AnyliticService {
         resolve(this.promotions);
       }
     });
+  }
+
+  cleanCache() {
+    this.interactions = [];
+    this.visits = [];
+    this.subscriptions = [];
+    this.answeredRecomendations = [];
+    this.promotions = [];
+    this.isRecoCached = false;
+    this.isInteractionsCached = false;
+    this.isSubsCached = false;
+    this.isVisitsCached = false;
+    this.isPromotedCached = false;
   }
 }

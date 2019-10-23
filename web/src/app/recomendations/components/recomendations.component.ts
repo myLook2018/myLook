@@ -147,7 +147,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
     if ( this.selectedRequest === row || this.lastImagenLoaded === row.requestPhoto) {
       setTimeout(() => {
         this.imageLoader = false;
-      }, 1000);
+      }, 500);
     }
     this.disableSendRecomendation = false;
     this.requestAnswerForm.get('description').setValue('');
@@ -172,7 +172,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
     if (this.lastImagenLoaded === row.requestPhoto) {
       setTimeout(() => {
         this.imageLoader = false;
-      }, 1000);
+      }, 500);
     }
     this.imageLoaderAnswer = true;
     this.lastImagenLoaded = row.requestPhoto;
@@ -191,7 +191,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
       if (this.lastImagenLoadedAnswer === this.selectedAnswer.articlePhoto) {
         setTimeout(() => {
           this.imageLoaderAnswer = false;
-        }, 1000);
+        }, 500);
       }
       this.lastImagenLoadedAnswer = this.selectedAnswer.articlePhoto;
       this.selectedArticle.picturesArray[0] = this.selectedAnswer.articlePhoto;
