@@ -4,17 +4,37 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/storeInfoViewPager"
+    <RelativeLayout
+        android:id="@+id/slider_linear"
         android:layout_width="match_parent"
-        android:layout_height="150dp" />
+        android:layout_height="170dp"
+        android:layout_marginBottom="0dp"
+        android:maxHeight="200dp"
+        android:orientation="vertical">
 
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/storeInfoViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.viewpagerindicator.CirclePageIndicator
+            android:id="@+id/circle_page_indicator"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="bottom"
+            app:centered="true"
+            app:fillColor="@color/purple"
+            app:pageColor="@color/greyBackground"
+            app:snap="false" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/relLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/storeInfoViewPager">
+        android:layout_below="@id/slider_linear">
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab"
@@ -31,18 +51,6 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         </androidx.viewpager.widget.ViewPager>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:src="@drawable/ic_add"
-            android:visibility="gone"
-            app:borderWidth="0dp" />
 
 
     </RelativeLayout>
