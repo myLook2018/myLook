@@ -8,7 +8,7 @@
     android:layout_height="wrap_content"
     android:layout_weight="1">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/premium_profile_photo"
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -20,6 +20,7 @@
         android:minHeight="120dp"
         android:minWidth="120dp"
         android:scaleType="centerCrop"
+        app:layout_constraintCircleRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/linearLayout9"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,14 +38,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/premium_profile_photo"
         app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/profile_premium_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/primary_dark"
-            android:textSize="17sp"
-            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/txtEmail"
@@ -89,16 +82,6 @@
                 android:layout_weight="1"
                 app:srcCompat="@drawable/ic_facebook" />
 
-            <TextView
-                android:id="@+id/txtFacebook"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:clickable="true"
-                android:focusable="true"
-                android:onClick="onClick"
-                android:text="Facebook" />
         </LinearLayout>
 
         <LinearLayout
@@ -115,16 +98,6 @@
                 android:layout_weight="1"
                 app:srcCompat="@drawable/ic_instagram" />
 
-            <TextView
-                android:id="@+id/txtInstagram"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:clickable="true"
-                android:focusable="true"
-                android:onClick="onClick"
-                android:text="Instagram" />
         </LinearLayout>
 
     </LinearLayout>

@@ -11,6 +11,15 @@ public class PremiumPublication implements Serializable {
     private String userId;
     private Date date;
     private String premiumPublicationId;
+    private String articleId;
+
+    public String getArticleId() {
+        return articleId;
+    }
+
+    public void setArticleId(String articleId) {
+        this.articleId = articleId;
+    }
 
     public Date getDate() {
         return date;

@@ -9,10 +9,11 @@
         android:id="@+id/cv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
         android:elevation="10dp"
+        android:visibility="invisible"
         app:cardCornerRadius="5dp">
 
         <RelativeLayout
@@ -30,12 +31,14 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
 
-                    <ImageView
+                    <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/imgStore"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
                         android:layout_marginStart="8dp"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        app:layout_constraintCircleRadius="8dp"
+                        />
 
                     <TextView
                         android:id="@+id/txtStore"
@@ -46,6 +49,7 @@
                         android:layout_weight="1"
                         android:textColor="@color/primary"
                         android:textSize="17dp" />
+
                 </LinearLayout>
 
                 <ImageView
@@ -62,9 +66,21 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/txtStore"
                     android:layout_toRightOf="@+id/imgArticle"
-                    android:padding="8dp"
+                    android:padding="4dp"
                     android:textColor="@color/primary_text"
                     android:textSize="17dp" />
+
+                <TextView
+                    android:id="@+id/lblVisitArticle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:text="VER PRENDA"
+                    android:textColor="@color/primary"
+                    android:textSize="17dp"
+                    android:visibility="gone" />
 
                 <me.zhanghai.android.materialratingbar.MaterialRatingBar
                     android:id="@+id/ratingBar"

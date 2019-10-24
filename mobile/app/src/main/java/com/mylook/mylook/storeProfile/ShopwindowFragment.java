@@ -63,7 +63,7 @@ public class ShopwindowFragment extends Fragment {
                         storeShopWindowArticles.add(art);
                         Log.e("VIDRIERA", "Encontro articulo");
                     }
-                    grid.setAdapter(new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview, storeShopWindowArticles));
+                    grid.setAdapter(new GridImageAdapter(getActivity(), R.layout.ripple_image_view, storeShopWindowArticles));
                 })
                 .addOnFailureListener(err -> Log.e("Firestore task", "onFailure: " + err));
     }
