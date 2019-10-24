@@ -68,117 +68,132 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <ImageView
-                    android:id="@+id/imgRecommend"
-                    android:layout_width="250dp"
-                    android:layout_height="250dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/logo_transparente_50"
-                    android:maxWidth="50dp"
-                    android:maxHeight="50dp"
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView4" />
+                    app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Agregá una foto a tu solicitud"
-                    android:textColor="@color/black"
-                    android:textSize="17sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/linearLayout2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-                <EditText
-                    android:id="@+id/editDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:backgroundTint="@color/primary_dark"
-                    android:ems="10"
-                    android:focusable="false"
-                    android:foregroundTint="@color/primary_dark"
-                    android:hint="Fecha Límite"
-                    android:inputType="textPersonName"
-                    android:minWidth="120dp"
-                    android:shadowColor="@color/primary_dark"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txtDescription" />
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/txtDescription"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:backgroundTint="@color/primary_dark"
+                            android:capitalize="sentences"
+                            android:foregroundTint="@color/primary_dark"
+                            android:hint="Agregá una descripción a tu solicitud."
+                            android:maxLength="200"
+                            android:minHeight="80dp"
+                            android:scrollbars="horizontal"
+                            android:shadowColor="@color/primary_dark"
+                            android:singleLine="false"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="@+id/txtTitle"
+                            app:layout_constraintTop_toBottomOf="@+id/txtTitle"
+                            tools:ignore="Deprecated" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/size_input"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:backgroundTint="@color/primary_dark"
-                    android:foregroundTint="@color/primary_dark"
-                    android:hint="Talle (opcional)"
-                    android:shadowColor="@color/primary_dark"
-                    app:layout_constraintEnd_toEndOf="@+id/editDate"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editDate" />
+                        <TextView
+                            android:id="@+id/textView4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Agregá una foto a tu solicitud"
+                            android:textColor="@color/black"
+                            android:textSize="17sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
+                        <EditText
+                            android:id="@+id/editDate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:backgroundTint="@color/primary_dark"
+                            android:ems="10"
+                            android:focusable="false"
+                            android:foregroundTint="@color/primary_dark"
+                            android:hint="Fecha Límite"
+                            android:inputType="textPersonName"
+                            android:minWidth="120dp"
+                            android:shadowColor="@color/primary_dark"
+                            app:layout_constraintStart_toStartOf="@+id/txtTitle"
+                            app:layout_constraintTop_toBottomOf="@+id/txtDescription" />
 
-                <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
-                    android:id="@+id/category"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/primary_dark"
-                    android:drawableTint="@color/primary_dark"
-                    android:dropDownHeight="200dp"
-                    android:foregroundTint="@color/primary_dark"
-                    android:hint="Categoría"
-                    android:paddingLeft="4dp"
-                    android:paddingBottom="16dp"
-                    android:shadowColor="@color/primary_dark"
-                    android:spinnerMode="dropdown"
-                    android:textColor="@color/common_google_signin_btn_text_light_disabled"
-                    android:textSize="17sp"
-                    app:layout_constraintEnd_toEndOf="@+id/size_input"
-                    app:layout_constraintStart_toStartOf="@+id/size_input"
-                    app:layout_constraintTop_toBottomOf="@+id/size_input"
-                    app:met_floatingLabel="normal" />
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/txtTitle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:backgroundTint="@color/primary_dark"
+                            android:foregroundTint="@color/primary_dark"
+                            android:hint="Agregá un título"
+                            android:maxLength="40"
+                            android:shadowColor="@color/primary_dark"
+                            android:textColorLink="@color/primary_dark"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/imgRecommend" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/txtDescription"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:backgroundTint="@color/primary_dark"
-                    android:capitalize="sentences"
-                    android:foregroundTint="@color/primary_dark"
-                    android:hint="Agregá una descripción a tu solicitud."
-                    android:maxLength="200"
-                    android:minHeight="80dp"
-                    android:scrollbars="horizontal"
-                    android:shadowColor="@color/primary_dark"
-                    android:singleLine="false"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txtTitle"
-                    tools:ignore="Deprecated" />
+                        <ImageView
+                            android:id="@+id/imgRecommend"
+                            android:layout_width="300dp"
+                            android:layout_height="300dp"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/logo_transparente_50"
+                            android:maxWidth="50dp"
+                            android:maxHeight="50dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/txtTitle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:backgroundTint="@color/primary_dark"
-                    android:foregroundTint="@color/primary_dark"
-                    android:hint="Agregá un título"
-                    android:maxLength="40"
-                    android:shadowColor="@color/primary_dark"
-                    android:textColorLink="@color/primary_dark"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imgRecommend" />
+                        <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+                            android:id="@+id/category"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:backgroundTint="@color/primary_dark"
+                            android:drawableTint="@color/primary_dark"
+                            android:dropDownHeight="200dp"
+                            android:foregroundTint="@color/primary_dark"
+                            android:hint="Categoría"
+                            android:paddingLeft="4dp"
+                            android:paddingBottom="16dp"
+                            android:shadowColor="@color/primary_dark"
+                            android:spinnerMode="dropdown"
+                            android:textColor="@color/black"
+                            android:textSize="17sp"
+                            app:layout_constraintEnd_toEndOf="@+id/editDate"
+                            app:layout_constraintStart_toStartOf="@+id/txtTitle"
+                            app:layout_constraintTop_toBottomOf="@+id/size_input"
+                            app:met_floatingLabel="normal" />
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/size_input"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:backgroundTint="@color/primary_dark"
+                            android:foregroundTint="@color/primary_dark"
+                            android:hint="Talle (opcional)"
+                            android:shadowColor="@color/primary_dark"
+                            app:layout_constraintStart_toStartOf="@+id/txtTitle"
+                            app:layout_constraintTop_toBottomOf="@+id/editDate" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </ScrollView>
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/fab_add_image"

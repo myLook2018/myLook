@@ -49,11 +49,12 @@
                 app:layout_constraintTop_toBottomOf="@id/imgStore" />
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/txtScore"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:padding="8dp"
+                android:visibility="gone"
                 android:text="Tu calificación:"
                 android:textColor="@color/primary_dark"
                 app:layout_constraintStart_toStartOf="@+id/imgStore"

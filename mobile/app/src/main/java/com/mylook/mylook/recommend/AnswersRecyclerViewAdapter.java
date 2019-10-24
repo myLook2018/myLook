@@ -61,6 +61,7 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
         Glide.with(mContext).asBitmap().load(answer.get("articlePhoto")).into(holder.imgArticle);
         holder.txtStore.setText(answer.get("storeName"));
         holder.txtDescription.setText(answer.get("description"));
+        holder.txtScore.setVisibility(View.VISIBLE);
         if(answer.containsKey("feedBack") && !answer.get("feedBack").equals("")) {
             holder.ratingBar.setVisibility(View.VISIBLE);
             holder.ratingBar.setRating(Float.parseFloat(answer.get("feedBack")));
@@ -125,7 +126,7 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
     }
     public class ViewHolder extends RecyclerView.ViewHolder{
         ImageView imgArticle;
-        TextView txtStore;
+        TextView txtStore, txtScore;
         TextView txtDescription;
         RatingBar ratingBar;
         RelativeLayout parentLayout;
@@ -140,6 +141,7 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
             txtDescription= itemView.findViewById(R.id.txtDescription);
             parentLayout=itemView.findViewById(R.id.parentLayout);
             imgStore=itemView.findViewById(R.id.imgStore);
+            txtScore=itemView.findViewById(R.id.txtScore);
 
 
 

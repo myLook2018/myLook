@@ -120,7 +120,7 @@ public class RequestRecommendActivity extends AppCompatActivity {
                 fromDeepLink = true;
             }
         }
-        //ACA LLEGA DISTINTO
+
         Log.e(TAG, "requestId"+requestId);
         FirebaseFirestore.getInstance().collection("requestRecommendations").document(requestId).get().addOnCompleteListener(
                 new OnCompleteListener<DocumentSnapshot>() {
