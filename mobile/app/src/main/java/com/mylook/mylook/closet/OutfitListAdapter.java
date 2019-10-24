@@ -9,11 +9,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Outfit;
 
@@ -48,9 +50,7 @@ public class OutfitListAdapter extends RecyclerView.Adapter<OutfitListAdapter.Ou
         int count = outfit.getArticles().size();
         outfitViewHolder.extra.setText(count == 1 ?
                 String.format("%d artículo", count) : String.format("%d artículos", count));
-        outfitViewHolder.btnView.setOnClickListener(v -> clickListener.showOutfit(v, i));
-        outfitViewHolder.btnEdit.setOnClickListener(v -> clickListener.editOutfit(v, i));
-        outfitViewHolder.btnDelete.setOnClickListener(v -> clickListener.deleteOutfit(v, i));
+        outfitViewHolder.outfit_card.setOnClickListener(v -> clickListener.showOutfit(v, i));
 
         /*
         Button btn = (Button) findViewById(R.id.button);
@@ -109,7 +109,7 @@ public class OutfitListAdapter extends RecyclerView.Adapter<OutfitListAdapter.Ou
     class OutfitViewHolder extends RecyclerView.ViewHolder {
         TextView name, extra;
         ImageView image1, image2, image3;
-        MaterialButton btnView, btnEdit, btnDelete;
+        MaterialCardView outfit_card;
 
         OutfitViewHolder(View itemView) {
             super(itemView);
@@ -118,9 +118,7 @@ public class OutfitListAdapter extends RecyclerView.Adapter<OutfitListAdapter.Ou
             image3 = itemView.findViewById(R.id.outfit_article_image3);
             name = itemView.findViewById(R.id.outfit_name);
             extra = itemView.findViewById(R.id.outfit_quantity_articles);
-            btnView = itemView.findViewById(R.id.view_outfit_btn);
-            btnEdit = itemView.findViewById(R.id.edit_outfit_btn);
-            btnDelete = itemView.findViewById(R.id.delete_outfit_btn);
+            outfit_card = itemView.findViewById(R.id.outfit_card);
         }
     }
 

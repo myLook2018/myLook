@@ -96,13 +96,20 @@ public class FavoritesTab extends Fragment {
     }
 
     private void confirmDeleteFavorite(int position) {
-        new AlertDialog.Builder(getContext())
-                .setIcon(android.R.drawable.ic_dialog_alert)
+        android.app.AlertDialog alert = new android.app.AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
                 .setTitle("Eliminar favorito")
                 .setMessage("Estás seguro de que querés eliminar el favorito?")
-                .setPositiveButton("Eliminar", (dialog, which) -> deleteFavorite(position))
-                .setNegativeButton("Cancelar", null)
-                .show();
+                .setPositiveButton("Si", (paramDialogInterface, paramInt) -> {
+                          deleteFavorite(position);
+                        }
+                )
+                .setNegativeButton("No", null).create();
+        alert.setOnShowListener(dialog1 -> {
+            alert.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(this.getResources().getColor(R.color.purple));
+            alert.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(this.getResources().getColor(R.color.purple));
+        });
+        alert.show();
+
     }
 
     private void deleteFavorite(int position) {
@@ -117,18 +124,18 @@ public class FavoritesTab extends Fragment {
                         closet.removeFavoriteFromOutfits(outfitsToChange, idToDelete)
                                 .addOnSuccessListener(success2 -> {
                                     adapter.notifyDataSetChanged();
-                                    displayToast("Se eliminó de tu ropero y actualizaron conjuntos");
+                                    displayToast("Se eliminó de tus favoritos y actualizaron conjuntos");
                                 })
                                 .addOnFailureListener(fail -> {
                                     adapter.notifyDataSetChanged();
-                                    displayToast("Se eliminó de tu ropero, pero los conjuntos no se actualizaron");
+                                    displayToast("Se eliminó de tus favoritos, pero los conjuntos no se actualizaron");
                                 });
                     } else {
                         adapter.notifyDataSetChanged();
-                        displayToast("Se eliminó de tu ropero");
+                        displayToast("Se eliminó de tu favorito");
                     }
                 })
-                .addOnFailureListener(fail -> displayToast("Error al eliminar del ropero"));
+                .addOnFailureListener(fail -> displayToast("Error al eliminar de los favoritos"));
     }
 
     private void displayToast(String message) {

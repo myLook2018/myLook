@@ -65,27 +65,6 @@ public class ClosetFragment extends Fragment {
         setupViewPager(viewPager);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.closet_menu, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.help_menu) {
-            createHelpDialog();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void createHelpDialog() {
-        new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme).setTitle("Ayuda")
-                .setPositiveButton("Aceptar", (dialog, which) ->
-                        dialog.cancel()).setMessage("Acá podés ver toda tu ropa favorita y los conjuntos que armás. Para armar un " +
-                "nuevo conjunto andá a la pestaña conjuntos y apretá en el botón +")
-                .create().show();
-    }
 
     private void setupViewPager(ViewPager viewPager) {
         ClosetTabAdapter adapter = new ClosetTabAdapter(getChildFragmentManager());

@@ -157,8 +157,8 @@ public class OutfitCreateEditActivity extends AppCompatActivity {
     }
 
     private void createOutfit() {
-        if(selectedIds.isEmpty()){
-            displayToast("El conjunto esta vacio!");
+        if(selectedIds.size()<3){
+            displayToast("Seleccioná al menos 3 prendas");
             return;
         }else if (editText.getText().toString().equals("")) {
             displayToast("Ingrese un nombre para el conjunto");
