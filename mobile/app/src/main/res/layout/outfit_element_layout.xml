@@ -55,10 +55,11 @@
             android:id="@+id/rl_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/lnl_img"
             android:paddingStart="12dp"
-            android:paddingEnd="12dp"
             android:paddingTop="8dp"
-            android:layout_below="@id/lnl_img">
+            android:paddingEnd="12dp"
+            android:paddingBottom="8dp">
 
             <TextView
                 android:id="@+id/outfit_name"
@@ -73,47 +74,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/outfit_name"
                 android:textSize="14sp" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/rl_btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="4dp"
-            android:layout_below="@id/rl_text">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/view_outfit_btn"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="VER"
-                android:textSize="16sp"
-                app:icon="@drawable/ic_visibility"
-                app:strokeColor="@color/accent"
-                app:strokeWidth="2dp"/>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/edit_outfit_btn"
-                style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
-                android:layout_width="64dp"
-                android:layout_height="wrap_content"
-                android:layout_toStartOf="@id/delete_outfit_btn"
-                app:icon="@drawable/ic_edit"
-                app:iconGravity="textStart"
-                android:textSize="16sp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/delete_outfit_btn"
-                style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
-                android:layout_width="64dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                app:icon="@drawable/ic_delete"
-                app:iconGravity="textStart"
-                android:textSize="16sp" />
 
         </RelativeLayout>
 
