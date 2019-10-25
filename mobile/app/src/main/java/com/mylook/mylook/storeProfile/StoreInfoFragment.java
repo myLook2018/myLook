@@ -22,15 +22,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Subscription;
 import com.mylook.mylook.session.Session;
+import com.viewpagerindicator.CirclePageIndicator;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class StoreInfoFragment extends Fragment {
 
-    private ImageView storePhoto;
-    private Button btnSubscribe;
-    private TextView storeName;
     private TextView txtDescription;
-    private boolean mSubscribed;
-    private String subscriptionDocument;
 
     public StoreInfoFragment() {
     }
@@ -46,103 +44,13 @@ public class StoreInfoFragment extends Fragment {
         Bundle args = getArguments();
 
         if (args != null) {
-            String store = args.getString("name");
-
-            storeName = rootView.findViewById(R.id.profile_store_name);
-            setStoreName(store);
-
-            storePhoto = rootView.findViewById(R.id.premium_profile_photo);
-            setStorePhoto(args.getString("photo"));
-
             txtDescription = rootView.findViewById(R.id.txtDescription);
             txtDescription.setMovementMethod(new ScrollingMovementMethod());
             setStoreDescription(args.getString("description"));
-
-            ImageButton btnMoreInfo = rootView.findViewById(R.id.btnMasInfo);
-            btnMoreInfo.setOnClickListener(v -> ((StoreActivity) getActivity()).moreInfo());
-
-            btnSubscribe = rootView.findViewById(R.id.btn_subscribe);
-            checkFollow(store);
-            setOnClickSubscribe(store);
         }
     }
-
-    private void setStoreName(String storeName) {
-        this.storeName.setText(storeName);
-    }
-
-    private void setStorePhoto(String storePhoto) {
-        Glide.with(getContext()).load(storePhoto).into(this.storePhoto);
-    }
-
     private void setStoreDescription(String txtDescription) {
         this.txtDescription.setText(txtDescription);
     }
 
-    private void checkFollow(String storeName) {
-        btnSubscribe.setEnabled(false);
-        try {
-            FirebaseFirestore.getInstance().collection("subscriptions")
-                    .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .whereEqualTo("storeName", storeName)
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                            subscriptionDocument = task.getResult().getDocuments().get(0).getId();
-                            mSubscribed = true;
-                        }
-                        setupButtonSubscribe(mSubscribed);
-                        btnSubscribe.setEnabled(true);
-                    });
-        }catch (Exception e)
-        {
-            Log.e("STORE INFO", "Error en el checkeo del follow");
-        }
-    }
-
-    private void setOnClickSubscribe(String storeName) {
-        btnSubscribe.setOnClickListener(view -> {
-            btnSubscribe.setEnabled(false);
-            if (!mSubscribed) {
-                Subscription newSubscription = new Subscription(storeName, FirebaseAuth.getInstance().getCurrentUser().getUid());
-                FirebaseFirestore.getInstance().collection("subscriptions").add(newSubscription).addOnSuccessListener(documentReference -> {
-                    Log.d("Firestore task", "DocumentSnapshot written with ID: " + documentReference.getId());
-                    subscriptionDocument = documentReference.getId();
-                    setupButtonSubscribe(true);
-                    btnSubscribe.setEnabled(true);
-                    displayMessage("Ahora estás suscripto a " + storeName);
-                    Session.getInstance().updateActivitiesStatus(Session.HOME_FRAGMENT);
-                }).addOnFailureListener(e -> {
-                    Log.w("Firestore task", "Error adding document", e);
-                    btnSubscribe.setEnabled(true);
-                });
-            } else {
-                FirebaseFirestore.getInstance().collection("subscriptions").document(subscriptionDocument).delete().addOnSuccessListener(task -> {
-                    mSubscribed = false;
-                    setupButtonSubscribe(false);
-                    btnSubscribe.setEnabled(true);
-                    subscriptionDocument = null;
-                    displayMessage("Ya no estás suscripto a " + storeName);
-                    Session.getInstance().updateActivitiesStatus(Session.HOME_FRAGMENT);
-                    btnSubscribe.setEnabled(true);
-                });
-            }
-        });
-    }
-
-    private void setupButtonSubscribe(boolean subscribed) {
-        if (subscribed) {
-            btnSubscribe.setText("Desuscribirse");
-            btnSubscribe.setBackgroundColor(getResources().getColor(R.color.primary_dark));
-            mSubscribed = true;
-        } else {
-            btnSubscribe.setText("Suscribirse");
-            btnSubscribe.setBackgroundColor(getResources().getColor(R.color.accent));
-            mSubscribed = false;
-        }
-    }
-
-    private void displayMessage(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-    }
 }

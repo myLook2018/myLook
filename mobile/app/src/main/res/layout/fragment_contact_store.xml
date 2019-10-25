@@ -4,36 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center_vertical"
     android:background="@color/white"
     android:padding="8dp">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/premium_profile_photo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Información de contacto"
-        android:textColor="@color/primary_dark"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout8"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_weight="1"
+        android:minWidth="120dp"
+        android:minHeight="120dp"
+        android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout8"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
         android:orientation="vertical"
         android:padding="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/premium_profile_photo"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
@@ -54,7 +49,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:paddingLeft="8dp"
-                android:text="Ubicacion" />
+                android:text="Ubicacion"
+                android:textColor="@color/black" />
         </LinearLayout>
 
         <TextView
@@ -82,28 +78,33 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:paddingLeft="8dp"
-                android:text="Telefono" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
+                android:text="Telefono"
+                android:textColor="@color/black" />
         </LinearLayout>
 
     </LinearLayout>
 
+    <Button
+        android:id="@+id/btn_subscribe"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_gravity="right"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:enabled="true"
+        android:textSize="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout8" />
+
     <LinearLayout
+        android:id="@+id/lnlSocial"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/linearLayout8">
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toStartOf="@id/btn_subscribe"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout8">
 
         <LinearLayout
             android:id="@+id/lnlFace"
@@ -119,16 +120,6 @@
                 android:layout_weight="1"
                 app:srcCompat="@drawable/ic_facebook" />
 
-            <TextView
-                android:id="@+id/txtFacebook"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:clickable="true"
-                android:focusable="true"
-                android:onClick="onClick"
-                android:text="Facebook" />
         </LinearLayout>
 
         <LinearLayout
@@ -145,16 +136,6 @@
                 android:layout_weight="1"
                 app:srcCompat="@drawable/ic_instagram" />
 
-            <TextView
-                android:id="@+id/txtInstagram"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:clickable="true"
-                android:focusable="true"
-                android:onClick="onClick"
-                android:text="Instagram" />
         </LinearLayout>
 
         <LinearLayout
@@ -171,28 +152,8 @@
                 android:layout_weight="1"
                 app:srcCompat="@drawable/ic_twitter" />
 
-            <TextView
-                android:id="@+id/txtTwitter"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:clickable="true"
-                android:focusable="true"
-                android:onClick="onClick"
-                android:text="Twitter" />
         </LinearLayout>
 
     </LinearLayout>
 
-    <ImageButton
-        android:id="@+id/btnReturnStoreInfo"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/accent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_action_name" />
 </androidx.constraintlayout.widget.ConstraintLayout>
