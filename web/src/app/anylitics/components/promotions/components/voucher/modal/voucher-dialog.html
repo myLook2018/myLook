@@ -1,0 +1,172 @@
+<h1 mat-dialog-title style="text-align:center; margin:0">
+  Campaña de Cupones en MyLook
+</h1>
+<div
+  class="mat-typography"
+  mat-dialog-content
+  style="display: inline; margin-left: auto; margin-right: auto; padding: 0"
+>
+  <form [formGroup]="firstFormGroup" style="max-height: calc(95vh);">
+    <div class="first-row">
+
+    <div class="Picture">
+      <img class="promotionPicture" height="250" width="250" src="assets/voucher.png" />
+    </div>
+    <div class="formArea">
+      <div class="disclaimer mat-typography">
+          ‌‌ ‌‌ ‌‌ ‌‌ Los cupones son una forma de mejorar los vinculos con sus subcriptores, otorgandoles un incentivo para visitar su tienda.<br>
+          ‌‌ ‌‌ ‌‌ ‌‌ Las campañas de cupones dentro de MyLook se dividen en dos tipos:<br>
+        • Campaña Estandar: Se les envia a TODOS sus subcriptores un cupón con los beneficios que usted detalle, con una validez preestablecida.<br>
+        • Campaña Premium: Tiene el mismo alcance que la campaña Estandar, pero se envian a su vez cupones a un número de usuarios de myLook que cumplan con ciertas caracteristicas. Usted puede definir la cantidad de usuarios extra a alcanzar<br>
+      </div>
+    </div>
+  </div>
+
+    <div class="inputs">
+
+
+        <div class="voucher-type">
+
+        <mat-form-field class="my-form-input" appearance="outline" style="width: 50%;">
+          <mat-label>Tipo de Cupón</mat-label>
+
+          <mat-select [ngModelOptions]="{ standalone: true }"
+            [(ngModel)]="this.voucherType"
+            name="type"
+          >
+            <mat-option *ngFor="let type of voucherTypes"
+              [value]="type.value"
+              (click)="tryCalculateCost()">
+              {{ type.viewValue }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="my-form-input" appearance="outline" style="width: 50%;" *ngIf="this.voucherType === 2">
+            <mat-label>Porcentaje de descuento</mat-label>
+          <input matInput
+                 [(ngModel)]="this.voucherValue"
+                 [formControl]="this.discountNumber"
+                 min='5' max='100' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57"
+          >
+          <mat-hint>Mínimo 5%, Máximo 100%</mat-hint>
+          <mat-error>El número debe ser entre 5 y 100</mat-error>
+        </mat-form-field>
+        </div>
+
+        <div class="opciones">
+          <mat-form-field class="my-form-input"  appearance="outline" style="width: 50%">
+            <mat-label>Nivel de Promoción</mat-label>
+            <mat-select
+              [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="selectedPromotion"
+              name="prom"
+            >
+              <mat-option
+                *ngFor="let prom of promotionsLevels"
+                [value]="prom.value"
+                (click)="tryCalculateCost()"
+                >{{ prom.viewValue }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="my-form-input" appearance="outline" style="width: 50%">
+            <mat-label>Duración</mat-label>
+            <mat-select
+              [ngModelOptions]="{ standalone: true }"
+              placeholder="Duración"
+              [(ngModel)]="duration"
+              name="dur"
+            >
+              <mat-option
+                *ngFor="let duration of durationOptions"
+                [value]="duration.value"
+                (click)="tryCalculateCost()"
+                >{{ duration.viewValue }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+        </div>
+
+        <div class="premium-options" *ngIf="this.selectedPromotion === 1">
+            <mat-divider class="my-divider"></mat-divider>
+
+          <mat-form-field class="my-form-input"  appearance="outline" style="width: 100%;">
+            <mat-label>Sexo al que esta dirigido</mat-label>
+            <mat-select [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="this.genderSelected"
+              name="type"
+            >
+              <mat-option *ngFor="let gender of genderTypes"
+                [value]="gender.value"
+                (click)="tryCalculateCost()">
+                {{ gender.viewValue }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="my-form-input" appearance="outline" style="width: 50%;" >
+          <mat-label>Desde edad</mat-label>
+          <input matInput
+                    [formControl]="this.fromAge"
+                    min='0' max='100' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57"
+            >
+            <mat-error>Debe ser mayor a 0</mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="my-form-input" appearance="outline" style="width: 50%;">
+          <mat-label>Hasta edad</mat-label>
+          <input matInput
+                    [formControl]="this.toAge"
+                    min='0' max='100' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57"
+            >
+            <mat-error>Debe ser mayor a 0</mat-error>
+          </mat-form-field>
+          <p class="center-error" *ngIf="!isAgeCorrect">El rango de edad debe ser válido. La edad máxima debe ser mayor a la mínima.</p>
+          <div class="slider-content">
+            <p class="slider-help">  Selecciona el alcance a otros usuarios de myLook que desees tenga la campaña</p>
+              <mat-slider
+              [ngModelOptions]="{standalone: true}"
+              [disabled]="isLoading"
+              [max]="maxSlider"
+              [min]="minSlider"
+              [step]="1"
+              [thumbLabel]="true"
+              [(ngModel)]="sliderValue"
+              (change)="tryCalculateCost()"
+              >
+          </mat-slider>
+          </div>
+        </div>
+        <p class="finalCost">
+            Costo final: ${{ promotionCost | number: '1.0-2' }}.
+          </p>
+      </div>
+
+
+  <div class="mat-dialog-actions">
+    <button mat-class="confirmButton"
+            mat-raised-button
+            [disabled]="isLoading"
+            (click)="onNoClick()">
+      Cancelar
+    </button>
+    <button
+    class="confirmButton"
+    mat-raised-button
+    cdkFocusInitial
+    (click)="sendToMP()"
+    [ngClass]="{disabledButton: !(voucherType && selectedPromotion && duration)}"
+    [disabled]="!((voucherType && selectedPromotion && duration)) || isLoading"
+    >
+    Aceptar
+  </button>
+      <div class="proggressBar">
+        <mat-progress-bar *ngIf="(isLoading)" mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>
+      </div>
+
+</div>
+</form>
+
+</div>
