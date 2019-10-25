@@ -167,13 +167,11 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".premiumUser.NewDiffusionMessage" />
-        <activity
-            android:name=".notifications.NotificationCenter"
-            android:parentActivityName=".session.MainActivity" />
-        <activity
-            android:name=".login.ResetPasswordActivity"
-            android:parentActivityName=".login.LoginActivity" />
+        <activity android:name=".premiumUser.NewDiffusionMessage"/>
+        <activity android:name=".notifications.NotificationCenter"
+            android:parentActivityName=".session.MainActivity"/>
+        <activity android:name=".login.ResetPasswordActivity"
+            android:parentActivityName=".login.LoginActivity"/>
 
         <service android:name=".notifications.MyFirebaseMessagingService">
             <intent-filter>

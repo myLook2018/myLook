@@ -9,19 +9,25 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.nfc.Tag;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import androidx.core.app.ActivityCompat;
@@ -41,8 +47,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.clans.fab.FloatingActionButton;
-import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -60,9 +64,16 @@ import com.mylook.mylook.R;
 import com.mylook.mylook.session.MainActivity;
 import com.mylook.mylook.session.Session;
 import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageActivity;
+import com.theartofdev.edmodo.cropper.CropImageView;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
+import com.yalantis.ucrop.UCrop;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.lang.reflect.Field;
+import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -87,12 +98,11 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     private Uri picUri;
     private TextInputEditText txtSize;
     private boolean permissionGranted = true;
-    private final int REQUEST_CAMERA = 3, SELECT_FILE = 0, READ_EXTERNAL_STORAGE = 1, LOCATION_PERMISSION = 2, PIC_CROP = 4;
+    private final int REQUEST_CAMERA = 3, SELECT_FILE = 0, READ_EXTERNAL_STORAGE = 1, LOCATION_PERMISSION = 2, PIC_CROP = 4, WRITE_EXTERNAL_STORAGE = 5;
     //keep track of cropping intent
     protected LocationManager locationManager;
     private Location currentLocation;
-    private FloatingActionMenu fabMenu;
-    private FloatingActionButton fabPhoto, fabGallery;
+    private FloatingActionButton fabImage;
     private FirebaseUser user;
     private String urlLogo = "https://firebasestorage.googleapis.com/v0/b/mylook-develop.appspot.com/o/utils%2Flogo_transparente_50.png?alt=media&token=c72e5b39-3011-4f26-ba4f-4c9f7326c68a";
     private ProgressBar mProgressBar;
@@ -125,32 +135,20 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                 }
             }
         });
+
+        fabImage.setOnClickListener(l -> {
+            CropImage.activity().
+                    setAspectRatio(1,1).
+                    setGuidelines(CropImageView.Guidelines.ON)
+
+                    .setActivityTitle("Tu imagen").
+                    start(this);
+        });
         setCategoryRequest();
         initCalendar();
 
-        fabPhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (getCameraAccess()) {
-                    try {
-                        startCameraIntent();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-
-        fabGallery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                intent.setType("image/*");
-                startActivityForResult(intent, SELECT_FILE);
-
-            }
-        });
     }
+
 
     private void initCalendar() {
 
@@ -169,8 +167,19 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         editDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new DatePickerDialog(RecommendActivityAddDesc.this, date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                DatePickerDialog datepick  = new DatePickerDialog(RecommendActivityAddDesc.this,R.style.CalendarTheme,date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH));
+
+                datepick.show();//
+                //No saben lo que me costó encontrar estos métodos
+                datepick.getButton(DatePickerDialog.BUTTON_NEGATIVE).getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+                datepick.getButton(DatePickerDialog.BUTTON_NEUTRAL).getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+                datepick.getButton(DatePickerDialog.BUTTON_POSITIVE).getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+                //Estos fueron más fáciles
+                datepick.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.primary_dark));
+                datepick.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.primary_dark));
+                datepick.getButton(DatePickerDialog.BUTTON_NEUTRAL).setTextColor(getResources().getColor(R.color.primary_dark));
+
             }
         });
     }
@@ -186,9 +195,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         txtDescription = (TextInputEditText) findViewById(R.id.txtDescription);
         editDate = (EditText) findViewById(R.id.editDate);
         title = findViewById(R.id.txtTitle);
-        fabMenu = (FloatingActionMenu) findViewById(R.id.fabMenu);
-        fabPhoto = (FloatingActionButton) findViewById(R.id.photoFloating);
-        fabGallery = (FloatingActionButton) findViewById(R.id.galleryFloating);
+        fabImage = findViewById((R.id.fab_add_image));
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Intent intent = getIntent();
 
@@ -294,7 +301,8 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             Session.getInstance().updateActivitiesStatus(Session.RECOMEND_FRAGMENT);
             mProgressBar.setVisibility(View.VISIBLE);
             btnSend.setEnabled(false);
-            fabMenu.setVisibility(View.INVISIBLE);
+            fabImage.hide();
+//            fabImage.setVisibility(View.INVISIBLE);
             setCurrentLocation();
             if (currentLocation != null) {
                 final List<Double> latLong = new Vector<>();
@@ -329,14 +337,15 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                     public void onFailure(@NonNull Exception e) {
                         mProgressBar.setVisibility(View.GONE);
                         btnSend.setEnabled(true);
-                        fabMenu.setVisibility(View.VISIBLE);
+                        fabImage.show();
+
                         displayMessage("Ha ocurrido un problema con tu recomendacion");
                     }
                 });
             } else {
                 mProgressBar.setVisibility(View.GONE);
                 btnSend.setEnabled(true);
-                fabMenu.setVisibility(View.VISIBLE);
+                fabImage.show();
                 showLocationAlert();
             }
         }
@@ -373,21 +382,12 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
         } else {
             mProgressBar.setVisibility(View.VISIBLE);
             btnSend.setEnabled(false);
-            fabMenu.setVisibility(View.INVISIBLE);
+            fabImage.hide();
             final UploadTask uptask = saveImage();
-            uptask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                    task.getResult().getStorage().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            writeFirebaseDocument(task.getResult().toString());
-                        }
-                    });
-
-
-                }
-            });
+            uptask.addOnCompleteListener(task ->
+                    task.getResult().getStorage().getDownloadUrl().addOnCompleteListener(task1 -> {
+                        writeFirebaseDocument(task1.getResult().toString());
+                    }));
         }
 
     }
@@ -494,33 +494,16 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == REQUEST_CAMERA) {
-                picUri = data.getData();
-                //picUri = (Uri) data.getExtras().get(Intent.EXTRA_STREAM);
-                perfromCrop();
-            } else if (requestCode == SELECT_FILE) {
-                selectImageUri = data.getData();
-                CropImage.activity(selectImageUri)
-                        .setAspectRatio(1, 1)
-                        .start(this);
-            }
-        }
+        Log.e("Request code", ""+requestCode);
+        Log.e("Result code", ""+resultCode);
+
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 selectImageUri = result.getUri();
                 imgRecommend.setImageURI(selectImageUri);
-                fabMenu.close(true);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
-            }
-        }
-        if (requestCode == PIC_CROP) {
-            if(data.getExtras()!=null){
-                bitmap = (Bitmap) data.getExtras().getParcelable("data");
-                imgRecommend.setImageBitmap(bitmap);
-                fabMenu.close(true);
             }
         }
     }
@@ -529,21 +512,23 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
     private void perfromCrop() {
         try {
             //call the standard crop action intent (the user device may not support it)
-            Intent cropIntent = new Intent("com.android.camera.action.CROP");
-            //indicate image type and Uri
-            cropIntent.setDataAndType(picUri, "image/*");
-            //set crop properties
-            cropIntent.putExtra("crop", "true");
-            //indicate aspect of desired crop
-            cropIntent.putExtra("aspectX", 1);
-            cropIntent.putExtra("aspectY", 1);
-            //indicate output X and Y
-            cropIntent.putExtra("outputX", 256);
-            cropIntent.putExtra("outputY", 256);
-            //retrieve data on return
-            cropIntent.putExtra("return-data", true);
-            //start the activity - we handle returning in onActivityResult
-            startActivityForResult(cropIntent, PIC_CROP);
+
+                Intent cropIntent = new Intent("com.android.camera.action.CROP");
+                //indicate image type and Uri
+                cropIntent.setDataAndType(picUri, "image/*");
+                //set crop properties
+                cropIntent.putExtra("crop", "true");
+                //indicate aspect of desired crop
+                cropIntent.putExtra("aspectX", 1);
+                cropIntent.putExtra("aspectY", 1);
+                //indicate output X and Y
+                cropIntent.putExtra("outputX", 256);
+                cropIntent.putExtra("outputY", 256);
+                //retrieve data on return
+                cropIntent.putExtra("return-data", true);
+                //start the activity - we handle returning in onActivityResult
+                startActivityForResult(cropIntent, PIC_CROP);
+
         } catch (ActivityNotFoundException anfe) {
             //display an error message
             String errorMessage = "Whoops - your device doesn't support the crop action!";
@@ -551,6 +536,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
             toast.show();
         }
     }
+
 
     @Override
     public void onBackPressed() {
@@ -582,7 +568,7 @@ public class RecommendActivityAddDesc extends AppCompatActivity {
                         && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     mProgressBar.setVisibility(View.INVISIBLE);
                     btnSend.setEnabled(true);
-                    fabMenu.setVisibility(View.VISIBLE);
+                    fabImage.show();
                 } else {
                     setCurrentLocation();
                 }
