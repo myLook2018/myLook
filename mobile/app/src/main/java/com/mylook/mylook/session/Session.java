@@ -36,6 +36,7 @@ public class Session {
     public static String clientId= "";
 
     private Session() {
+        initializeElements();
     }
 
     public boolean isPremiumUser(){
@@ -119,7 +120,7 @@ public class Session {
 
     public static boolean updateData(){
         Log.e("SESION", "clientId: "+clientId);
-        if (Strings.isNullOrEmpty(clientId)){
+        if (!Strings.isNullOrEmpty(clientId)){
             FirebaseFirestore.getInstance().collection("clients").document(clientId).get()
                     .addOnSuccessListener(document -> {
                         isPremium = (boolean) document.get("isPremium");
@@ -134,6 +135,16 @@ public class Session {
     }
 
     public static void clear(){
+        HomeFragment.getInstance().clear();
+        ExploreFragment.getInstance().clear();
+        RecommendFragment.getInstance().clear();
+        ClosetFragment.getInstance().clear();
+        PremiumOptionsFragment.getInstance().clear();
         singleton=null;
+        userId = null;
+        isPremium=false;
+        name= "";
+        mail= "";
+        clientId= "";
     }
 }

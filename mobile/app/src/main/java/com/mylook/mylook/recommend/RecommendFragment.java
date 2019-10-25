@@ -226,4 +226,8 @@ public class RecommendFragment extends Fragment {
     }
 
 
+    public void clear() {
+        requestRecommendationsList=null;
+        homeInstance=null;
+    }
 }

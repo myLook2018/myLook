@@ -74,4 +74,8 @@ public class ClosetFragment extends Fragment {
         adapter.notifyDataSetChanged();
         tabLayout.setupWithViewPager(viewPager);
     }
+
+    public void clear() {
+        closetInstance=null;
+    }
 }

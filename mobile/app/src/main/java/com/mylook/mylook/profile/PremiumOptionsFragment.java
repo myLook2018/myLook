@@ -122,4 +122,7 @@ public class PremiumOptionsFragment extends ListFragment {
         return inflater.inflate(R.layout.fragment_premium_func,null);
     }
 
+    public void clear() {
+        premiumOptionsInstance=null;
+    }
 }

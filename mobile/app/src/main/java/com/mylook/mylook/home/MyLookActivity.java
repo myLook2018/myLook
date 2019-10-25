@@ -27,6 +27,7 @@ public class MyLookActivity extends AppCompatActivity implements BottomNavigatio
     private Session currentSesion;
     private static final String TAG = "MyLookActivity";
     private BottomNavigationView navigation;
+    private boolean isPremium;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +36,10 @@ public class MyLookActivity extends AppCompatActivity implements BottomNavigatio
         loadFragment(HomeFragment.getInstance());
         navigation= findViewById(R.id.navigation);
         navigation.inflateMenu(R.menu.bottom_navigation_menu_premium);
-        if(Session.getInstance().isPremiumUser())
+        if(getIntent().hasExtra("isPremium")){
+            isPremium= (boolean) getIntent().getSerializableExtra("isPremium");
+        }
+        if(Session.getInstance().isPremiumUser() || isPremium )
             navigation.getMenu().findItem(R.id.ic_premium).setVisible(true);
         else
             navigation.getMenu().findItem(R.id.ic_premium).setVisible(false);

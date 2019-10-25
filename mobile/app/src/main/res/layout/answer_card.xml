@@ -55,9 +55,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:padding="8dp"
-                android:visibility="gone"
                 android:text="Tu calificación:"
                 android:textColor="@color/primary_dark"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/ratingBar"
                 app:layout_constraintStart_toStartOf="@+id/imgStore"
                 app:layout_constraintTop_toBottomOf="@+id/txtDescription" />
 
@@ -84,6 +85,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
                     android:text="VER PRENDA"
+                    android:paddingLeft="8dp"
                     android:textColor="@color/primary"
                     android:textSize="17dp"
                     android:visibility="gone"
@@ -92,12 +94,12 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imgStore"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_weight="1"
-                app:layout_constraintCircleRadius="8dp"                                          
+                app:layout_constraintCircleRadius="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
