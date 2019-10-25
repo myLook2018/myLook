@@ -72,7 +72,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:tint="@color/primary_light"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -81,7 +81,7 @@
         <TextView
             android:id="@+id/txtPrivAccount"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:padding="10dp"
@@ -94,6 +94,33 @@
             app:layout_constraintStart_toEndOf="@+id/image_account"
             app:layout_constraintTop_toTopOf="@+id/image_account" />
 
+
+        <ImageView
+            android:id="@+id/image_coupon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:tint="@color/primary_light"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/image_account"
+            app:srcCompat="@drawable/ic_coupon" />
+
+        <TextView
+            android:id="@+id/txtCoupons"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:padding="10dp"
+            android:text="Mis cupones"
+            android:textAlignment="gravity"
+            android:textColor="@color/black"
+            android:textSize="17dp"
+            app:layout_constraintBottom_toBottomOf="@+id/image_coupon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/image_coupon"
+            app:layout_constraintTop_toTopOf="@+id/image_coupon" />
 
         <ImageView
             android:id="@+id/img_notificaciones"
@@ -160,15 +187,18 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
             android:tint="@color/primary_light"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/image_destacado"
+            app:layout_constraintTop_toBottomOf="@+id/image_coupon"
             app:srcCompat="@drawable/ic_exit" />
 
         <TextView
             android:id="@+id/txtExit"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:padding="10dp"
@@ -179,7 +209,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/image_exit"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/image_exit"
-            app:layout_constraintTop_toBottomOf="@+id/txtSettingsDest" />
+            app:layout_constraintTop_toTopOf="@+id/image_exit" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

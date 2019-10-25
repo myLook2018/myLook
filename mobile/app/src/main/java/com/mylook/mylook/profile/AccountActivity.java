@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
 
 import com.mylook.mylook.R;
+import com.mylook.mylook.coupon.MyCoupons;
 import com.mylook.mylook.dialogs.DialogManager;
 import com.mylook.mylook.premiumUser.PremiumRequestActivity;
 import com.mylook.mylook.session.Session;
@@ -34,6 +35,8 @@ public class AccountActivity extends AppCompatActivity {
     private TextView txtExit;
     private Context mContext;
     private String clientId;
+    private TextView txtCoupons;
+    private ImageView imgCoupons;
     private boolean isPremiumUser;
     public final static String TAG = "PremiumOptionsFragment";
 
@@ -72,6 +75,8 @@ public class AccountActivity extends AppCompatActivity {
         txtDestacado = findViewById(R.id.txtSettingsDest);
         imageExit = findViewById(R.id.image_exit);
         txtExit = findViewById(R.id.txtExit);
+        txtCoupons = findViewById(R.id.txtCoupons);
+        imgCoupons = findViewById(R.id.image_coupon);
     }
 
     @Override
@@ -108,6 +113,16 @@ public class AccountActivity extends AppCompatActivity {
 
         imageAccount.setOnClickListener(v -> {
             Intent intent = new Intent(mContext, EditInfoActivity.class);
+            startActivity(intent);
+        });
+        txtCoupons.setOnClickListener(v -> {
+            Intent intent=new Intent(getApplicationContext(), MyCoupons.class);
+            startActivityForResult(intent,1);
+
+        });
+
+        imgCoupons.setOnClickListener(v -> {
+            Intent intent = new Intent(mContext, MyCoupons.class);
             startActivity(intent);
         });
 
