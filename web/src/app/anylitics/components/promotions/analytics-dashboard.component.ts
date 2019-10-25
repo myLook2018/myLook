@@ -19,7 +19,7 @@ export class AnyliticsDashboardComponent implements OnInit, OnDestroy {
   level1Articles;
   level2Articles;
   level3Articles;
-  articlesByPromotionLevel = [0, 0, 0];
+  articlesByPromotionLevel = [1, 1, 1];
   levelInteractionCounter = [0, 0, 0];
   promotionImpact = [0, 0]; // Los likes son el primero, los dislike el segundo
   likes;
@@ -69,14 +69,34 @@ export class AnyliticsDashboardComponent implements OnInit, OnDestroy {
     this.calculateArticlesByPromotion();
     this.calculateClicksOnArticle();
     this.calculatePromotionImpact();
-    this.renderInteractions = true;
+    setTimeout(() => {
+      this.renderInteractions = true;
+    }, 2100);
   }
 
   calculateArticlesByPromotion() {
-    this.storeArticles.forEach(article => {
-      const promotionLevel = article.promotionLevel;
-      this.articlesByPromotionLevel[promotionLevel - 1]++;
-    });
+      const level3Interactions = this.interactions.filter( interaction => interaction.promotionLevel === 3);
+      const itemsCountLevel3 = [];
+      level3Interactions.forEach( interaction => {
+        if (!itemsCountLevel3.includes(interaction.articleId)) { itemsCountLevel3.push(interaction.articleId); }
+      });
+      this.articlesByPromotionLevel[2] = itemsCountLevel3.length;
+
+
+      const level2Interactions = this.interactions.filter( interaction => interaction.promotionLevel === 2);
+      const itemsCountLevel2 = [];
+      level2Interactions.forEach( interaction => {
+        if (!itemsCountLevel2.includes(interaction.articleId)) { itemsCountLevel2.push(interaction.articleId); }
+      });
+      this.articlesByPromotionLevel[1] = itemsCountLevel2.length;
+
+
+      const level1Interactions = this.interactions.filter( interaction => interaction.promotionLevel === 1);
+      const itemsCountLevel1 = [];
+      level1Interactions.forEach( interaction => {
+        if (!itemsCountLevel1.includes(interaction.articleId)) { itemsCountLevel1.push(interaction.articleId); }
+      });
+      this.articlesByPromotionLevel[0] = itemsCountLevel1.length;
   }
 
   calculateClicksOnArticle() {
@@ -130,9 +150,9 @@ export class AnyliticsDashboardComponent implements OnInit, OnDestroy {
 
   }
 
-  downloadPromotion(element) {
+  downloadPromotion( element: any ) {
     console.log(element);
-    const data = {promotion: element, store: this.actualStore}
+    const data = {promotion: element, store: this.actualStore };
     this.promotionsService.downloadPromotion(data);
   }
 

@@ -17,7 +17,7 @@ export class ViewsByPromotionsComponent implements OnInit {
     this.options = {
       title: {
         display: true,
-        text: 'Visitas según Promoción',
+        text: 'Promedio de Visitas según Promoción',
         fontSize: 24
       },
       legend: {

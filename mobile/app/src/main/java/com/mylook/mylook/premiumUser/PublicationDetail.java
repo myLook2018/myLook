@@ -8,9 +8,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,30 +30,34 @@ import com.mylook.mylook.entities.PremiumPublication;
 import com.mylook.mylook.entities.PremiumUser;
 import com.mylook.mylook.info.ArticleInfoActivity;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class PublicationDetail extends AppCompatActivity{
     private ImageView imgPhoto;
     private TextView txtStoreName;
     private TextView txtDescription;
     private RatingBar ratingBar;
-    private ImageView imgStore;
+    private CircleImageView imgStore;
     private PremiumPublication publication;
     private Toolbar tb;
     private PremiumUser premiumUser;
     private Article art;
     private Context mContext = PublicationDetail.this;
+    private CardView cv;
+    private ProgressBar progressBar;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_publication_detail);
-
         tb = findViewById(R.id.toolbar);
         tb.setTitle("Post");
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
-
+        progressBar=findViewById(R.id.progressBarPub);
+        progressBar.setVisibility(View.VISIBLE);
         publication=(PremiumPublication)getIntent().getSerializableExtra("publication");
         loadData();
         Log.e("CLICK EN LA FOTO",publication.getPublicationPhoto());
@@ -67,14 +74,11 @@ public class PublicationDetail extends AppCompatActivity{
                             if (task.isSuccessful()){
                                 if(!task.getResult().getDocuments().isEmpty()) {
                                     premiumUser = task.getResult().getDocuments().get(0).toObject(PremiumUser.class);
-                                    FirebaseFirestore.getInstance().collection("articles").whereEqualTo("code", publication.getArticleCode()).whereEqualTo("storeName", publication.getStoreName())
-                                            .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                            if (task.isSuccessful()) {
-                                                if (!(task.getResult().getDocuments().isEmpty())) {
-                                                    art = task.getResult().getDocuments().get(0).toObject(Article.class);
-                                                    art.setArticleId(task.getResult().getDocuments().get(0).getId());
+                                    FirebaseFirestore.getInstance().collection("articles").document(publication.getArticleId()).get()
+                                            .addOnCompleteListener(task1 -> {
+                                                if(task1.isComplete()){
+                                                    art=task1.getResult().toObject(Article.class);
+                                                    art.setArticleId(publication.getArticleId());
                                                     if (art != null)
                                                         initElements();
                                                     else {
@@ -82,10 +86,7 @@ public class PublicationDetail extends AppCompatActivity{
                                                         finish();
                                                     }
                                                 }
-                                            }
-                                        }
-                                    });
-
+                                            });
                                 }
                             }
                         }
@@ -94,34 +95,49 @@ public class PublicationDetail extends AppCompatActivity{
         }else{
             this.finish();
         }
+
     }
     private void displayMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     private void initElements() {
+
+        imgStore=findViewById(R.id.imgStore);
+        Glide.with(getApplicationContext()).asBitmap().load(premiumUser.getProfilePhoto()).into(imgStore);
         imgPhoto = findViewById(R.id.imgArticle);
+        Glide.with(getApplicationContext()).asBitmap().load(publication.getPublicationPhoto()).into(imgPhoto);
         txtStoreName =findViewById(R.id.txtStore);
         ratingBar = findViewById(R.id.ratingBar);
         ratingBar.setVisibility(View.INVISIBLE);
         txtDescription= findViewById(R.id.txtDescription);
-        imgStore=findViewById(R.id.imgStore);
+        cv=findViewById(R.id.cv);
+        TextView lblVisitArticle = findViewById(R.id.lblVisitArticle);
+        lblVisitArticle.setVisibility(View.VISIBLE);
 
-
-        Glide.with(getApplicationContext()).asBitmap().load(publication.getPublicationPhoto()).into(imgPhoto);
-        txtDescription.setText(publication.getStoreName());
         txtStoreName.setText(premiumUser.getUserName());
-        Glide.with(getApplicationContext()).asBitmap().load(premiumUser.getProfilePhoto()).into(imgStore);
         txtDescription.setText(art.getTitle() +" de "+art.getStoreName());
+        cv.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
 
-        imgPhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        txtStoreName.setOnClickListener(v -> {
+            Intent intent = new Intent(mContext, PremiumUserProfileActivity.class);
+            Log.d("perfil destacado", "onClick: paso por intent la data del articulo");
+            intent.putExtra("clientId", premiumUser.getClientId());
+            mContext.startActivity(intent);
+        });
+        imgPhoto.setOnClickListener(v -> {
+            Intent intent = new Intent(mContext, ArticleInfoActivity.class);
+            Log.d("info del articulo", "onClick: paso por intent la data del articulo");
+            intent.putExtra("article", art);
+            mContext.startActivity(intent);
+        });
+
+        lblVisitArticle.setOnClickListener(v -> {
                 Intent intent = new Intent(mContext, ArticleInfoActivity.class);
                 Log.d("info del articulo", "onClick: paso por intent la data del articulo");
                 intent.putExtra("article", art);
                 mContext.startActivity(intent);
-            }
         });
 
 

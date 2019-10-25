@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.mylook.mylook.R;
@@ -44,7 +45,7 @@ public class GridImageAdapter extends ArrayAdapter {
     }
 
     private static class ViewHolder {
-        SquareImageView image;
+        ImageView image;
     }
 
     @NonNull
@@ -54,7 +55,7 @@ public class GridImageAdapter extends ArrayAdapter {
         if (convertView == null) {
             convertView = mInflater.inflate(layoutResource, parent, false);
             holder = new ViewHolder();
-            holder.image = convertView.findViewById(R.id.grid_image_view);
+            holder.image = convertView.findViewById(R.id.ripple_image_view_image);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();

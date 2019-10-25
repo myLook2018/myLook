@@ -3,6 +3,7 @@ package com.mylook.mylook.recommend;
 import android.content.Context;
 import android.content.Intent;
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +29,8 @@ import com.mylook.mylook.storeProfile.StoreActivity;
 
 import java.util.HashMap;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecyclerViewAdapter.ViewHolder> {
@@ -56,7 +59,7 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
         Log.d("CardAnswer", "onBindViewHolder: called.");
 
         final HashMap<String,String> answer = answersList.get(position);
-
+        holder.cv.setVisibility(View.VISIBLE);
         Glide.with(mContext).asBitmap().load(answer.get("storePhoto")).into(holder.imgStore);
         Glide.with(mContext).asBitmap().load(answer.get("articlePhoto")).into(holder.imgArticle);
         holder.txtStore.setText(answer.get("storeName"));
@@ -130,7 +133,8 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
         TextView txtDescription;
         RatingBar ratingBar;
         RelativeLayout parentLayout;
-        ImageView imgStore;
+        CircleImageView imgStore;
+        CardView cv;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -142,6 +146,7 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
             parentLayout=itemView.findViewById(R.id.parentLayout);
             imgStore=itemView.findViewById(R.id.imgStore);
             txtScore=itemView.findViewById(R.id.txtScore);
+            cv=itemView.findViewById(R.id.cv);
 
 
 

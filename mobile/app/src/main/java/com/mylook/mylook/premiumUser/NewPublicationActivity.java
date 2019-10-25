@@ -32,6 +32,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -60,6 +61,7 @@ public class NewPublicationActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private boolean enviado = false;
     private String clientId;
+    private String articleId;
 
 
     @Override
@@ -256,6 +258,7 @@ public class NewPublicationActivity extends AppCompatActivity {
                                 displayMessage("Debe añadir una foto a la publicación");
                                 return;
                             } else {
+                                articleId=task1.getResult().getDocuments().get(0).getId();
                                 mProgressBar.setVisibility(View.VISIBLE);
                                 btnSave.setEnabled(false);
                                 final UploadTask uptask = saveImage();
@@ -280,6 +283,8 @@ public class NewPublicationActivity extends AppCompatActivity {
             premiumPublication.put("userId",user.getUid());
             premiumPublication.put("clientId",clientId);
             premiumPublication.put("creationDate",new Timestamp(cal.getTime()));
+            premiumPublication.put("articleId",articleId);
+
 
             FirebaseFirestore.getInstance().collection("premiumPublications")
                     .add(premiumPublication).addOnSuccessListener(documentReference -> {

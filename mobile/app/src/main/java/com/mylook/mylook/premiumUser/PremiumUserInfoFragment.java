@@ -38,23 +38,21 @@ import com.mylook.mylook.entities.Subscription;
 import java.util.Calendar;
 import java.util.Date;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class PremiumUserInfoFragment extends Fragment {
     private boolean isCurrentUser;
     private FirebaseUser user;
-    private ImageView profilePhoto;
+    private CircleImageView profilePhoto;
     private Button btnSubscribe, btnMoreInfo;
-    private TextView premiumName;
     private TextView txtEmail;
     private Context context;
-    private String clientId;
+    private String clientId, userName;
     private boolean mSubscribed;
     private String documentId = "";
     private TextView txtLocalization;
-    private TextView txtFacebook, txtInstagram;
     private LinearLayout lnlface, lnlInsta;
     private TextView lblDate;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
 
     @SuppressLint("ValidFragment")
     public PremiumUserInfoFragment(String clientId, boolean isCurrentUser) {
@@ -82,7 +80,7 @@ public class PremiumUserInfoFragment extends Fragment {
     public void setOnClickFacebook(String txtFacebook) {
         if (txtFacebook != "") {
             final String finalTxtFacebook = "https://www.facebook.com/" + txtFacebook;
-            this.txtFacebook.setOnClickListener(new View.OnClickListener() {
+            this.lnlface.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(finalTxtFacebook));
@@ -101,7 +99,7 @@ public class PremiumUserInfoFragment extends Fragment {
     public void setOnClickInstagram(String txtInstagram) {
         if (txtInstagram != "") {
             final String finalTxtInstagram = "http://instagram.com/" + txtInstagram;
-            this.txtInstagram.setOnClickListener(new View.OnClickListener() {
+            this.lnlInsta.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(finalTxtInstagram));
@@ -123,14 +121,14 @@ public class PremiumUserInfoFragment extends Fragment {
     }
 
     public void suscribeToTopic() {
-        db.collection("clients").document(clientId).get().addOnSuccessListener(suc -> {
-            db.collection("topics")
+        FirebaseFirestore.getInstance().collection("clients").document(clientId).get().addOnSuccessListener(suc -> {
+            FirebaseFirestore.getInstance().collection("topics")
                     .whereEqualTo("userId", suc.get("userId")).get()
                     .addOnSuccessListener(v -> {
                         for (DocumentSnapshot doc : v.getDocuments()) {
                             FirebaseMessaging.getInstance().subscribeToTopic((String) doc.get("topic"))
                                     .addOnSuccessListener(vTopic -> {
-                                        displayMessage("Ahora estas suscripto a " + premiumName.getText().toString());
+                                        displayMessage("Ahora estas suscripto a " + userName);
                                         setupButtonSubscribe(true);
                                     }).addOnFailureListener(f -> {
                                 Log.e("No se pudo subscribir", f.getMessage());
@@ -145,7 +143,7 @@ public class PremiumUserInfoFragment extends Fragment {
     }
 
     public void unsuscribeFromTopic() {
-        db.collection("clients").document(clientId).get().addOnSuccessListener(suc -> {
+        FirebaseFirestore.getInstance().collection("clients").document(clientId).get().addOnSuccessListener(suc -> {
             FirebaseFirestore.getInstance().collection("topics")
                     .whereEqualTo("userId", suc.get("userId")).get()
                     .addOnSuccessListener(v -> {
@@ -246,11 +244,8 @@ public class PremiumUserInfoFragment extends Fragment {
     public void initElements(View rootView) {
         profilePhoto = rootView.findViewById(R.id.premium_profile_photo);
         btnSubscribe = rootView.findViewById(R.id.btn_subscribe);
-        premiumName = rootView.findViewById(R.id.profile_premium_name);
         txtEmail = rootView.findViewById(R.id.txtEmail);
         txtLocalization = rootView.findViewById(R.id.txtLocalization);
-        txtInstagram = rootView.findViewById(R.id.txtInstagram);
-        txtFacebook = rootView.findViewById(R.id.txtFacebook);
         lnlface = rootView.findViewById(R.id.lnlFace);
         lnlInsta = rootView.findViewById(R.id.lnlInta);
         lblDate = rootView.findViewById(R.id.lblDate);
@@ -258,9 +253,9 @@ public class PremiumUserInfoFragment extends Fragment {
         Bundle args = getArguments();
         if (args != null) {
             txtLocalization.setText(args.getString("location"));
-            premiumName.setText(args.getString("name"));
             setProfilePhoto(args.getString("photo"));
             txtEmail.setText(args.getString("email"));
+            userName=args.getString("name");
             setOnClickFacebook(args.getString("facebook"));
             setOnClickInstagram(args.getString("instagram"));
         }

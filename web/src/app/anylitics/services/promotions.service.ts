@@ -63,6 +63,11 @@ export class PromotionsService {
 
   }
 
+  cleanCache() {
+    this.promotions = [];
+    this.isCached = false;
+  }
+
   downloadPromotion(data) {
     console.log('data', data);
   /*

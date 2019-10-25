@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.recyclerview.widget.RecyclerView android:id="@+id/premium_messages"
+<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/premium_messages"
     android:layout_width="0dp"
     android:layout_height="0dp"
     android:layout_marginStart="4dp"
     android:layout_marginEnd="4dp"
     android:orientation="vertical"
-    android:textAlignment="textEnd"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:paddingBottom="8dp"
+    android:textAlignment="textEnd">
 
 </androidx.recyclerview.widget.RecyclerView>

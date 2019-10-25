@@ -7,6 +7,9 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class TimelineComponent implements OnInit {
   @Input() interactionsByDay: any;
+  @Input() visitByDay: any;
+  @Input() reactionsByDay: any;
+  @Input() favoritesByDay: any;
   @Input() daysOfTheWeek: any;
 
   selectData:any;
@@ -14,6 +17,9 @@ export class TimelineComponent implements OnInit {
   days = [];
   data: any;
   options: any;
+  countVisitByDay: any;
+  countReactionsByDay: any;
+  countFavoritesByDay: any;
 
 
   constructor() {
@@ -31,16 +37,43 @@ export class TimelineComponent implements OnInit {
   ngOnInit() {
     console.log(`dibujando ` + this.daysOfTheWeek + ` - ` + this.interactionsByDay);
     this.countInteractionsByDay = this.interactionsByDay;
+    this.countVisitByDay = this.visitByDay;
+    this.countReactionsByDay = this.reactionsByDay;
+    this.countFavoritesByDay = this.favoritesByDay;
     this.days = this.daysOfTheWeek;
     this.data = {
       labels: this.days,
       datasets: [
           {
-              label: 'Número de interacciones en el día',
-             // backgroundColor: '#42A5F5',
-              borderColor: '#1E88E5',
-              data: this.countInteractionsByDay
+              label: 'Visitas a prendas',
+              // backgroundColor: '#42A5F5',
+              borderColor: '#FFCE56',
+              data: this.countVisitByDay
+          },
+          {
+              label: 'Reacciones',
+              // backgroundColor: '#42A5F5',
+              borderColor: '#ccf62e',
+              data: this.countReactionsByDay
+          },
+          {
+              label: 'Prendas favoritas',
+              // backgroundColor: '#42A5F5',
+              borderColor: '#FF6384',
+              data: this.countFavoritesByDay
+          },
+          {
+            label: 'Interacciones totales',
+            borderColor: '#1E88E5',
+            //  backgroundColor: '#c7e6ff',
+            data: this.countInteractionsByDay
           }
+          // {
+          //     label: 'Número de interacciones en el día',
+          //     // backgroundColor: '#42A5F5',
+          //     borderColor: '#ebb329',
+          //     data: this.countInteractionsByDay
+          // }
       ]
   };
   /*

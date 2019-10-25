@@ -60,7 +60,7 @@ public class PremiumPublicationsFragment extends Fragment {
                                 PremiumPublication pub=doc.toObject(PremiumPublication.class);
                                 publications.add(pub);
                             }
-                            grid.setAdapter(new GridImageAdapter(getActivity(),R.layout.layout_grid_imageview,publications,0));
+                            grid.setAdapter(new GridImageAdapter(getActivity(),R.layout.ripple_image_view,publications,0));
                         } })
                 .addOnFailureListener(err -> Log.e("Firestore task", "onFailure: " + err));
     }

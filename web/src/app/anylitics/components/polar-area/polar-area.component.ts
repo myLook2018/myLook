@@ -6,8 +6,7 @@ import { Component, OnInit, Input } from '@angular/core';
   styleUrls: ['./polar-area.component.css']
 })
 export class PolarAreaComponent implements OnInit {
-  @Input() popularityOfTags: any;
-  @Input() popularTags: any;
+  @Input() tagsWithpopularity;
 
   countOfTags = [];
   tags = [];
@@ -28,15 +27,16 @@ export class PolarAreaComponent implements OnInit {
   };
   }
   ngOnInit() {
-    console.log(`dibujando ` + this.popularTags + ` - ` + this.popularityOfTags);
-    this.countOfTags = this.popularityOfTags;
-    this.tags = this.popularTags;
+    this.tagsWithpopularity.forEach( tagXcount => {
+      this.tags.push(tagXcount.tag);
+      this.countOfTags.push(tagXcount.count);
+    });
     this.data = {
       labels: this.tags,
       datasets: [
           {
               label: 'Reacciones positivas',
-              backgroundColor: '#42A5F5',
+              backgroundColor: '#36A2EB',
               borderColor: '#1E88E5',
               data: this.countOfTags
           }
