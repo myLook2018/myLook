@@ -21,7 +21,7 @@ export class VoucherDialogComponent implements OnInit {
   diferenceInDays;
   minDate = new Date();
   duration = 0;
-  selectedPromotion;
+  selectedCampaing;
   selectedPayMethod: Number;
   promotionData;
   firstFormGroup: FormGroup ;
@@ -30,11 +30,11 @@ export class VoucherDialogComponent implements OnInit {
   userData;
   isDisabled = true;
   voucherType = -1;
-  voucherValue = 5;
+  voucherValue = 0;
   genderSelected = '';
 
 
-  promotionsLevels = [
+  campaignTypes = [
     { value: 0, viewValue: 'Campaña Basica' },
     { value: 1, viewValue: 'Campaña Premium' }
   ];
@@ -84,7 +84,7 @@ export class VoucherDialogComponent implements OnInit {
   isAgeCorrect = true;
   extraClients = [];
   sliderValue = 0;
-  maxSlider = 40;
+  maxSlider = 0;
   minSlider = 0;
   description: FormControl;
   clientsTotal: Array<any>;
@@ -92,6 +92,7 @@ export class VoucherDialogComponent implements OnInit {
   allNonSubscribers: Array<any>;
   filteredNonSubscribers: any[];
   voucherReference: string;
+  title: FormControl;
   constructor(
     public dialogRef: MatDialogRef<VoucherDialogComponent>,
     private _formBuilder: FormBuilder,
@@ -106,17 +107,17 @@ export class VoucherDialogComponent implements OnInit {
 
       });
       this.userData = data;
-      this.discountNumber = new FormControl(0, [Validators.max(100), Validators.min(5)]);
+      this.discountNumber = new FormControl(0, [Validators.max(100), Validators.min(0)]);
       this.fromAge = new FormControl(0, [Validators.max(100), Validators.min(0)]);
       this.toAge = new FormControl(0, [Validators.max(100), Validators.min(0)]);
       this.description = new FormControl('');
+      this.title = new FormControl('');
       this.dataService.getNumberClients().then( clients => {
          this.clientsTotal = clients;
          console.log('clientes ', this.clientsTotal);
          this.dataService.getNumberOfSubscriptors().then( subscriptos => {
            this.subscritorsTotal = subscriptos;
            console.log('estos son mis subs', this.subscritorsTotal);
-           this.maxSlider = (this.clientsTotal.length - this.subscritorsTotal.length);
            this.allNonSubscribers = this.clientsTotal.filter(client => !this.subscritorsTotal.find(subs => {
              console.log(`${subs.userId} === ${client.userId}`);
              // tslint:disable-next-line: triple-equals
@@ -176,7 +177,7 @@ export class VoucherDialogComponent implements OnInit {
     this.promotionData = {
       startOfPromotion: new Date(),
       duration: this.duration,
-      promotionLevel: this.selectedPromotion,
+      promotionLevel: this.selectedCampaing,
       payMethod: 0,
       promotionCost: this.promotionCost,
     };
@@ -185,15 +186,14 @@ export class VoucherDialogComponent implements OnInit {
   }
 
   tryCalculateCost() {
-    // if (this.selectedPromotion) {
+      if (this.voucherType === 0 ) {this.discountNumber.setValue(0); }
       this.baseCost = 50;
-    // } else { this.baseCost = 0; }
       console.log('slider value ', this.sliderValue);
       this.promotionCost = this.baseCost + ( this.sliderValue * 0.20);
 
     try {
       console.log(`Promocion por ${this.duration} dias.`);
-      console.log(`Nivel de promocion: ${this.selectedPromotion}.`);
+      console.log(`Nivel de selectedCampaing: ${this.selectedCampaing}.`);
       console.log('a pagar ' + this.promotionCost );
       this.selectRandomExtraClients();
 
@@ -214,7 +214,7 @@ export class VoucherDialogComponent implements OnInit {
   }
 
   async sendToMP() {
-    const shouldAgeBeLoaded = this.selectedPromotion === 1;
+    const shouldAgeBeLoaded = this.selectedCampaing === 1;
     const isAgeBad = this.fromAge.value >= this.toAge.value;
 
     if (shouldAgeBeLoaded && isAgeBad) {
@@ -245,11 +245,12 @@ export class VoucherDialogComponent implements OnInit {
     const documentData = {
       startDate: new Date,
       dueDate: end,
-      title: 'un title',
+      title: this.title.value,
       storeId: this.data.storeId,
       storeName: this.data.storeName,
       payMethod: null,
-      voucherType: this.selectedPromotion,
+      voucherType: this.voucherType,
+      campaignType: this.selectedCampaing,
       discountValue: discount,
       promotionCost: this.promotionCost,
       idMercadoPago: null,
