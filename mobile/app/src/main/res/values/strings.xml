@@ -25,7 +25,7 @@
     <string name="title_notifications">Notifications</string>
     <string name="title_activity_store">StoreActivity</string>
 
-    <!-- Strings related to store -->
+    <!-- Strings related to storeName -->
     <string name="storeName">Store name</string>
     <string name="userNameStore">User name</string>
     <string name="storeDescription">Store description</string>
@@ -53,6 +53,32 @@
     <string name="new_outfit">Nuevo Conjunto</string>
     <string name="edit_outfit">Editar</string>
     <string name="delete_outfit">Eliminar</string>
+
+    <!--Related to Promotions-->
+    <array name="voucherTypes">
+        <item>2x1</item>
+        <item>Descuento</item>
+    </array>
+
+    <!--Related to Firebase Collections-->
+    <string name="articlesCollection">articles</string>
+    <string name="categoriesCollection">categories</string>
+    <string name="clients">clients</string>
+    <string name="diffusionCollection">diffusionMessages</string>
+    <string name="interactionsCollection">interactions</string>
+    <string name="notificationsCollection">notifications</string>
+    <string name="outfitCollection">outfits</string>
+    <string name="premiumPublicationCollection">premiumPublications</string>
+    <string name="premiumUsersCollection">premiumUsers</string>
+    <string name="premiumUsersSubscriptionsCollection">premiumUsersSubscriptions</string>
+    <string name="promotionsCollection">promotions</string>
+    <string name="requestRecommendationsCollection">requestRecommendations</string>
+    <string name="storesCollection">stores</string>
+    <string name="subscriptionsCollection">subscriptions</string>
+    <string name="topicsCollection">topics</string>
+    <string name="visitsCollection">visits</string>
+    <string name="voucherCampaingCollection">voucherCampaing</string>
+    <string name="vouchersCollection">vouchers</string>
 
     <!-- Related to facebook-->
     <string name="facebook_app_id">2265525280404446</string>

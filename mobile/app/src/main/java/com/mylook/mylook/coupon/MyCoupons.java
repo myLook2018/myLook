@@ -2,6 +2,7 @@ package com.mylook.mylook.coupon;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -12,6 +13,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -39,8 +41,7 @@ public class MyCoupons extends AppCompatActivity {
     }
 
 
-
-    private void initElements(){
+    private void initElements() {
         setContentView(R.layout.activity_my_coupons);
         myCoupons = findViewById(R.id.couponRecycler);
         progressBar = findViewById(R.id.progressBar);
@@ -59,14 +60,10 @@ public class MyCoupons extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+
         finish();
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        return super.onSupportNavigateUp();
-    }
 
     @Override
     protected void onResume() {
@@ -74,26 +71,43 @@ public class MyCoupons extends AppCompatActivity {
         loadElements();
     }
 
-    private void loadElements(){
-        FirebaseFirestore.getInstance().collection("coupons").
-                whereEqualTo("clientId", FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .get().addOnSuccessListener(l -> {
-                        for(DocumentSnapshot doc: l.getDocuments()){
-                            coupons.add(doc.toObject(Coupon.class));
-                        }
-                        adapter.notifyDataSetChanged();
-                        progressBar.setVisibility(View.GONE);
-
-                });
+    private void loadElements() {
         initRecyclerView();
+        String clientId = Session.clientId;
+        coupons.clear();
+        FirebaseFirestore.getInstance().collection(getResources().getString(R.string.vouchersCollection))
+                .whereEqualTo("clientId", clientId)
+                .get().addOnSuccessListener(l -> {
+
+            for (DocumentSnapshot doc : l.getDocuments()) {
+                Coupon newCoupon = doc.toObject(Coupon.class);
+                FirebaseFirestore.getInstance().collection(getResources().getString(R.string.storesCollection)).document((String) doc.get("storeId"))
+                        .get().addOnSuccessListener(storeTask -> {
+                    newCoupon.setImgStoreUrl((String)storeTask.get("profilePh"));
+                    newCoupon.setDocumentId(doc.getId());
+                    coupons.add(newCoupon);
+                    adapter.notifyDataSetChanged();
+                    if(coupons.size() == l.getDocuments().size()){
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
+            }
+
+        });
     }
 
 
     private void initRecyclerView() {
         myCoupons = findViewById(R.id.couponRecycler);
-        CouponRecyclerViewAdapter adapter = new CouponRecyclerViewAdapter(MyCoupons.this, coupons);
+        adapter = new CouponRecyclerViewAdapter(MyCoupons.this, coupons);
         myCoupons.setAdapter(adapter);
         myCoupons.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

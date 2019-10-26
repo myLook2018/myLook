@@ -16,6 +16,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <include
+            android:id="@+id/toolbar"
             layout="@layout/layout_top_toolbar"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />
@@ -24,6 +25,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@color/greyBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -32,7 +34,11 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/couponRecycler"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ProgressBar
             android:id="@+id/progressBar"
