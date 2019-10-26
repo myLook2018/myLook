@@ -17,16 +17,18 @@ export class VoucherComponent implements OnInit {
   }
 
   openNewVoucher() {
+    const phoneAux = this.userStore.phone ? this.userStore.phone : 123456789;
     const dataToSend = {
+      storeId: this.userStore.firebaseUID,
       storeName: this.userStore.storeName,
-      phone: this.userStore.storePhone,
+      phone: phoneAux,
       phoneArea: '2966',
       ownerName: this.userStore.ownerName,
       storeEmail: this.userStore.storeMail,
       dni: '38773582',
     };
     const promoteRef = this.dialog.open(VoucherDialogComponent, {
-      width: '750px',
+      width: '950px',
       disableClose: true,
       data: dataToSend
     });

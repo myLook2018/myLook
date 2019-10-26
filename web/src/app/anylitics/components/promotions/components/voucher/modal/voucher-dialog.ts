@@ -1,15 +1,16 @@
-import { Component, Inject, EventEmitter } from '@angular/core';
+import { Component, Inject, EventEmitter, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatHorizontalStepper } from '@angular/material';
 import { FormBuilder, Validators, FormGroup, FormControl } from '@angular/forms';
 import { ArticleService } from 'src/app/articles/services/article.service';
 import { PreferenceMP } from 'src/app/articles/models/preferenceMP';
+import { DataService } from 'src/app/service/dataService';
 
 @Component({
   selector: 'app-voucher-dialog',
   templateUrl: 'voucher-dialog.html',
   styleUrls: ['./voucher-dialog.scss'],
 })
-export class VoucherDialogComponent {
+export class VoucherDialogComponent implements OnInit {
   step1: any;
 
   urlMercadoPago = 'la pinche url';
@@ -28,7 +29,7 @@ export class VoucherDialogComponent {
   baseCost: number;
   userData;
   isDisabled = true;
-  voucherType = 0;
+  voucherType = -1;
   voucherValue = 5;
   genderSelected = '';
 
@@ -40,15 +41,14 @@ export class VoucherDialogComponent {
 
   voucherTypes = [
     { value: 0, viewValue: '2 x 1' },
-    { value: 1, viewValue: '3 x 2' },
-    { value: 2, viewValue: 'Porcentaje de Descuento' },
+    { value: 1, viewValue: 'Porcentaje de Descuento' },
   ];
 
   genderTypes = [
-    { value: 'male', viewValue: 'Masculino'},
-    { value: 'female', viewValue: 'Femenino'},
-    { value: 'otro', viewValue: 'Otro'},
-    { value: 'both', viewValue: 'Indistinto'},
+    { value: 'Masculino', viewValue: 'Masculino'},
+    { value: 'Femenino', viewValue: 'Femenino'},
+    { value: 'Otro', viewValue: 'Otro'},
+    { value: 'Ambos', viewValue: 'Indistinto'},
   ];
 
   durationOptions = [
@@ -73,7 +73,7 @@ export class VoucherDialogComponent {
     { value: 20, viewValue: '20 días'},
     { value: 21, viewValue: '21 día'},
     { value: 28, viewValue: '1 mes'},
-  ]
+  ];
 
   payMethods = [{ value: 0, viewValue: 'Gratis!' }];
   isLoading = false;
@@ -82,14 +82,22 @@ export class VoucherDialogComponent {
   fromAge: FormControl;
   toAge: FormControl;
   isAgeCorrect = true;
-  extraClients = 0;
+  extraClients = [];
   sliderValue = 0;
   maxSlider = 40;
   minSlider = 0;
+  description: FormControl;
+  clientsTotal: Array<any>;
+  subscritorsTotal: Array<any>;
+  allNonSubscribers: Array<any>;
+  filteredNonSubscribers: any[];
+  voucherReference: string;
   constructor(
     public dialogRef: MatDialogRef<VoucherDialogComponent>,
     private _formBuilder: FormBuilder,
     private articleService: ArticleService,
+    private dataService: DataService,
+
     @Inject(MAT_DIALOG_DATA) public data
     ) {
       this.firstFormGroup = this._formBuilder.group({
@@ -100,9 +108,29 @@ export class VoucherDialogComponent {
       this.userData = data;
       this.discountNumber = new FormControl(0, [Validators.max(100), Validators.min(5)]);
       this.fromAge = new FormControl(0, [Validators.max(100), Validators.min(0)]);
-      this.toAge = new FormControl(0, [Validators.max(100), Validators.min(this.fromAge.value)]);
+      this.toAge = new FormControl(0, [Validators.max(100), Validators.min(0)]);
+      this.description = new FormControl('');
+      this.dataService.getNumberClients().then( clients => {
+         this.clientsTotal = clients;
+         console.log('clientes ', this.clientsTotal);
+         this.dataService.getNumberOfSubscriptors().then( subscriptos => {
+           this.subscritorsTotal = subscriptos;
+           console.log('estos son mis subs', this.subscritorsTotal);
+           this.maxSlider = (this.clientsTotal.length - this.subscritorsTotal.length);
+           this.allNonSubscribers = this.clientsTotal.filter(client => !this.subscritorsTotal.find(subs => {
+             console.log(`${subs.userId} === ${client.userId}`);
+             // tslint:disable-next-line: triple-equals
+             console.log(subs.userId == client.userId);
+             return subs.userId === client.userId;
+            }));
+           console.log('los no subscriptos', this.allNonSubscribers);
+           console.log('slider va a tener max', this.maxSlider);
+          });
+        });
     }
 
+  ngOnInit() {
+  }
 
   onNoClick(): void {
     this.dialogRef.close();
@@ -110,35 +138,37 @@ export class VoucherDialogComponent {
   }
 
   initializePreference() {
-    console.log('lo que tenemos de dato', this.userData);
+    console.log('lo que tenemos de dato', this.data);
     this.preferenceMP =  {
       'items': [{
-        'id': `${this.selectedPromotion}-${this.duration}`,
+        // tslint:disable-next-line: max-line-length
+        'id': this.voucherReference,
         'title': 'Campaña de Cupones - MyLook',
         'quantity': 1,
         'currency_id': 'ARS',
-        'unit_price': this.promotionCost
+        'unit_price': 1,
+        // 'unit_price': this.promotionCost,
         }],
       'payer': {
-          'name': this.userData.storeName,
-          'surname': this.userData.storeName,
-          'email': this.userData.email,
+          'name': this.data.storeName,
+          'surname': this.data.storeName,
+          'email': this.data.email,
           'phone': {
-              'area_code': this.userData.phoneArea,
+              'area_code': this.data.phoneArea,
               // tslint:disable-next-line: radix
-              'number': parseInt(this.userData.phone)
+              'number': parseInt(this.data.phone)
           },
           'identification': {
               'type': 'DNI', // Available ID types at https://api.mercadopago.com/v1/identification_types
-              'number': this.userData.dni
+              'number': this.data.dni
           }
       },
       'back_urls': {
-        'success': `https://app-mylook.firebaseapp.com/Tiendas${this.userData.storeName}/Promociones`,
+        'success': `https://app-mylook.firebaseapp.com/Tiendas${this.data.storeName}/Promociones`,
         'failure': 'https://app-mylook.firebaseapp.com/Tiendas/Error',
     },
     'auto_return': 'approved',
-    'external_reference': `${this.selectedPromotion}-${this.duration}`
+    'external_reference': this.voucherReference
     };
   }
 
@@ -158,16 +188,24 @@ export class VoucherDialogComponent {
     // if (this.selectedPromotion) {
       this.baseCost = 50;
     // } else { this.baseCost = 0; }
-      console.log('slider value ', this.sliderValue)
+      console.log('slider value ', this.sliderValue);
       this.promotionCost = this.baseCost + ( this.sliderValue * 0.20);
 
     try {
       console.log(`Promocion por ${this.duration} dias.`);
       console.log(`Nivel de promocion: ${this.selectedPromotion}.`);
       console.log('a pagar ' + this.promotionCost );
+      this.selectRandomExtraClients();
 
     } catch {
       console.log(`no pude calcular diff`);
+    }
+  }
+
+  selectRandomExtraClients() {
+    for (let index = 0; index < this.sliderValue; index++) {
+      const randomClient = this.filteredNonSubscribers[Math.floor(Math.random() * this.filteredNonSubscribers.length)].id;
+      this.extraClients.push(randomClient);
     }
   }
 
@@ -183,11 +221,81 @@ export class VoucherDialogComponent {
       this.isAgeCorrect = false;
       return;
     }
-    this.initializePreference();
-    console.log('mandando al servicio', this.preferenceMP);
-    this.isLoading = true;
-    this.disableButton = true;
-    const res: any = await this.articleService.tryPromoteMP(this.preferenceMP).toPromise();
-    window.open(res.initPoint, '_self');
+    this.generateDocumentNotPaid().then((data) => {
+      console.log('lo que creamos', data);
+      this.voucherReference = data.id;
+      this.initializePreference();
+      console.log('mandando al servicio', this.preferenceMP);
+      this.isLoading = true;
+      this.disableButton = true;
+      this.articleService.tryPromoteMP(this.preferenceMP).toPromise().then( (res: any) => {
+        window.open(res.initPoint, '_self');
+      });
+    });
+  }
+
+  generateDocumentNotPaid() {
+    const discount = this.voucherType === 0 ? null : this.discountNumber.value;
+    const end = new Date;
+    const subsIds = [];
+    this.subscritorsTotal.forEach(subscriptor => {
+      subsIds.push(subscriptor.id);
+    });
+    end.setDate(end.getDate() + this.duration);
+    const documentData = {
+      startDate: new Date,
+      dueDate: end,
+      title: 'un title',
+      storeId: this.data.storeId,
+      storeName: this.data.storeName,
+      payMethod: null,
+      voucherType: this.selectedPromotion,
+      discountValue: discount,
+      promotionCost: this.promotionCost,
+      idMercadoPago: null,
+      paymentMethod: null,
+      lastFourDigits: null,
+      cardOwner: null,
+      description: this.description.value,
+      genderFocus: this.genderSelected,
+      fromAge: this.fromAge.value,
+      toAge: this.toAge.value,
+      clientsId: subsIds.concat(this.extraClients)
+    };
+
+    return this.dataService.addNewVoucherCollection(documentData);
+  }
+
+  recalculateExtraClients() {
+    console.log('-+'.repeat(15));
+    console.log('recalculando clientes extras');
+    this.filteredNonSubscribers = this.allNonSubscribers.filter(nonSub => {
+      // match del genero
+      let isGender = true;
+      if (this.genderSelected !== 'Ambos') {
+        isGender = nonSub.gender === this.genderSelected;
+      }
+
+      // match edad
+      let isBetweenAges = true;
+      const dateBirthday = new Date(nonSub.birthday);
+      console.log('fecha de nacimiento?', dateBirthday);
+      const ageDifMs = Date.now() - dateBirthday.getTime();
+      const ageDate = new Date(ageDifMs); // miliseconds from epoch
+      const realAge = Math.abs(ageDate.getUTCFullYear() - 1970);
+
+      // tslint:disable-next-line: radix
+      const from = parseInt(this.fromAge.value);
+      // tslint:disable-next-line: radix
+      const to = parseInt(this.toAge.value);
+      isBetweenAges = ( from  < realAge && realAge < to );
+      console.log(`${from} < ${realAge} < ${to}`);
+      console.log('isBetweenAges', isBetweenAges);
+      console.log('isGender', isGender);
+
+      return (isGender && isBetweenAges);
+    });
+    console.log('encontramos de filtrar a ' , this.filteredNonSubscribers.length);
+    this.maxSlider = this.filteredNonSubscribers.length;
   }
 }

@@ -6,23 +6,26 @@
   mat-dialog-content
   style="display: inline; margin-left: auto; margin-right: auto; padding: 0"
 >
-  <form [formGroup]="firstFormGroup" style="max-height: calc(95vh);">
+  <form [formGroup]="firstFormGroup" style="max-height: calc(95vh);" autocomplete="off">
     <div class="first-row">
 
     <div class="Picture">
-      <img class="promotionPicture" height="250" width="250" src="assets/voucher.png" />
+      <img class="promotionPicture" height="150" width="150" src="assets/voucher.png" />
     </div>
     <div class="formArea">
       <div class="disclaimer mat-typography">
-          ‌‌ ‌‌ ‌‌ ‌‌ Los cupones son una forma de mejorar los vinculos con sus subcriptores, otorgandoles un incentivo para visitar su tienda.<br>
-          ‌‌ ‌‌ ‌‌ ‌‌ Las campañas de cupones dentro de MyLook se dividen en dos tipos:<br>
-        • Campaña Estandar: Se les envia a TODOS sus subcriptores un cupón con los beneficios que usted detalle, con una validez preestablecida.<br>
-        • Campaña Premium: Tiene el mismo alcance que la campaña Estandar, pero se envian a su vez cupones a un número de usuarios de myLook que cumplan con ciertas caracteristicas. Usted puede definir la cantidad de usuarios extra a alcanzar<br>
+      Los cupones son una forma de mejorar los vinculos con sus subcriptores, otorgandoles un incentivo para visitar su tienda.<br>
+      Las campañas de cupones dentro de MyLook se dividen en dos tipos:<br>
+          <div style="margin-left:1rem">
+            • Campaña Estandar: Se les envia a TODOS sus subcriptores un cupón con los beneficios que usted detalle, con una validez preestablecida.<br>
+            • Campaña Premium: Tiene el mismo alcance que la campaña Estandar, pero se envian a su vez cupones a un número de usuarios de myLook que cumplan con ciertas caracteristicas. Usted puede definir la cantidad de usuarios extra a alcanzar<br>
+          </div>
       </div>
     </div>
   </div>
 
     <div class="inputs">
+      <mat-divider class="my-divider"></mat-divider>
 
 
         <div class="voucher-type">
@@ -42,7 +45,7 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field class="my-form-input" appearance="outline" style="width: 50%;" *ngIf="this.voucherType === 2">
+        <mat-form-field class="my-form-input" appearance="outline" style="width: 50%;" *ngIf="this.voucherType === 1">
             <mat-label>Porcentaje de descuento</mat-label>
           <input matInput
                  [(ngModel)]="this.voucherValue"
@@ -87,6 +90,16 @@
             </mat-select>
           </mat-form-field>
 
+          <mat-form-field class="my-form-input" appearance="outline" style="width: 100%;">
+            <mat-label>Descripción</mat-label>
+            <input matInput
+            maxlength="180"
+            [formControl]="this.description"
+            >
+            <mat-hint align="end">{{this.description.value.length}} / 180</mat-hint>
+
+          </mat-form-field>
+
         </div>
 
         <div class="premium-options" *ngIf="this.selectedPromotion === 1">
@@ -100,7 +113,9 @@
             >
               <mat-option *ngFor="let gender of genderTypes"
                 [value]="gender.value"
-                (click)="tryCalculateCost()">
+                (click)="tryCalculateCost()"
+                (click)="recalculateExtraClients()"
+                >
                 {{ gender.viewValue }}
               </mat-option>
             </mat-select>
@@ -109,19 +124,21 @@
           <mat-form-field class="my-form-input" appearance="outline" style="width: 50%;" >
           <mat-label>Desde edad</mat-label>
           <input matInput
+                (change)="recalculateExtraClients()"
                     [formControl]="this.fromAge"
                     min='0' max='100' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57"
             >
-            <mat-error>Debe ser mayor a 0</mat-error>
+            <mat-error>Debe ser mayor a 0 y menor a 100</mat-error>
           </mat-form-field>
 
           <mat-form-field class="my-form-input" appearance="outline" style="width: 50%;">
           <mat-label>Hasta edad</mat-label>
           <input matInput
+                  (change)="recalculateExtraClients()"
                     [formControl]="this.toAge"
                     min='0' max='100' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57"
             >
-            <mat-error>Debe ser mayor a 0</mat-error>
+            <mat-error>Debe ser mayor a 0 y menor a 100</mat-error>
           </mat-form-field>
           <p class="center-error" *ngIf="!isAgeCorrect">El rango de edad debe ser válido. La edad máxima debe ser mayor a la mínima.</p>
           <div class="slider-content">
@@ -157,9 +174,10 @@
     mat-raised-button
     cdkFocusInitial
     (click)="sendToMP()"
-    [ngClass]="{disabledButton: !(voucherType && selectedPromotion && duration)}"
-    [disabled]="!((voucherType && selectedPromotion && duration)) || isLoading"
+    [disabled]=" voucherType === null || !duration || isLoading || (selectedPromotion === 1 && !this.genderSelected)"
     >
+    <!-- [disabled]="!((voucherType && selectedPromotion && (duration ))) || isLoading" -->
+    <!-- [ngClass]="{disabledButton: !(voucherType && selectedPromotion && duration)}" -->
     Aceptar
   </button>
       <div class="proggressBar">
