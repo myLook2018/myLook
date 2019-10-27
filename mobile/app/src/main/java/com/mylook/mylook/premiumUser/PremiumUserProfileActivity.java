@@ -101,7 +101,7 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
         bundle.putSerializable("registerDate", premiumUser.getPremiumDate());
         TabLayout tab = findViewById(R.id.tab);
 
-        infoFragment = new PremiumUserInfoFragment(premiumUserId, isCurrentUser);
+        infoFragment = new PremiumUserInfoFragment(clientId, isCurrentUser);
         infoFragment.setArguments(bundle);
         viewPagerUserInfo = findViewById(R.id.storeInfoViewPager);
         setupViewPagerInfo(viewPagerUserInfo);
@@ -112,7 +112,7 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
         publicDifusionFragment = new PremiumDiffusionFragment(premiumUserId);
         publicDifusionFragment.setArguments(bundle);
 
-        reputationFragment = new ReputationPremiumFragment(premiumUserId);
+        reputationFragment = new ReputationPremiumFragment(clientId);
         reputationFragment.setArguments(bundle);
 
         ViewPager viewPagerUserPublications = findViewById(R.id.storeViewPager);

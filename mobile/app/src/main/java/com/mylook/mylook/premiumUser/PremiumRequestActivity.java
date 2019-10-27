@@ -47,13 +47,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class PremiumRequestActivity extends AppCompatActivity {
 
     private static final int SUCCESS_CODE = 0;
     private static final int UNSUCCESS_CODE = 2;
     private final int SELECT_FILE = 0;
     private TextView txtProfilePhoto;
-    private ImageView imgProfilePhoto;
+    private CircleImageView imgProfilePhoto;
     private AutoCompleteTextView txtEmail, txtLocalization;
     private AutoCompleteTextView txtIg, txtFacebook;
     private ImageButton btnRequest;

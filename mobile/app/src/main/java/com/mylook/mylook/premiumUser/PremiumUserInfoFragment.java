@@ -43,7 +43,7 @@ public class PremiumUserInfoFragment extends Fragment {
     private Button btnSubscribe, btnMoreInfo;
     private TextView txtEmail;
     private Context context;
-    private String premiumId, userName;
+    private String clientIdPremium, userName;
     private boolean mSubscribed;
     private String documentId = "";
     private TextView txtLocalization;
@@ -51,10 +51,10 @@ public class PremiumUserInfoFragment extends Fragment {
     private TextView lblDate;
 
     @SuppressLint("ValidFragment")
-    public PremiumUserInfoFragment(String premiumId, boolean isCurrentUser) {
+    public PremiumUserInfoFragment(String clientIdPremium, boolean isCurrentUser) {
         user = FirebaseAuth.getInstance().getCurrentUser();
-        Log.e("ClientId", premiumId);
-        this.premiumId = premiumId;
+        Log.e("ClientId", clientIdPremium);
+        this.clientIdPremium = clientIdPremium;
         Log.e("FRAGMENT INFO ", String.valueOf(isCurrentUser));
         this.isCurrentUser = isCurrentUser;
     }
@@ -117,7 +117,7 @@ public class PremiumUserInfoFragment extends Fragment {
     }
 
     public void suscribeToTopic() {
-        FirebaseFirestore.getInstance().collection("clients").document(premiumId).get().addOnSuccessListener(suc -> {
+        FirebaseFirestore.getInstance().collection("clients").document(clientIdPremium).get().addOnSuccessListener(suc -> {
             FirebaseFirestore.getInstance().collection("topics")
                     .whereEqualTo("userId", suc.get("userId")).get()
                     .addOnSuccessListener(v -> {
@@ -139,7 +139,7 @@ public class PremiumUserInfoFragment extends Fragment {
     }
 
     public void unsuscribeFromTopic() {
-        FirebaseFirestore.getInstance().collection("clients").document(premiumId).get().addOnSuccessListener(suc -> {
+        FirebaseFirestore.getInstance().collection("clients").document(clientIdPremium).get().addOnSuccessListener(suc -> {
             FirebaseFirestore.getInstance().collection("topics")
                     .whereEqualTo("userId", suc.get("userId")).get()
                     .addOnSuccessListener(v -> {
@@ -167,7 +167,7 @@ public class PremiumUserInfoFragment extends Fragment {
                 btnSubscribe.setEnabled(false);
                 if (!mSubscribed) {
 
-                    Subscription newSubscription = new Subscription(premiumId, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    Subscription newSubscription = new Subscription(clientIdPremium, FirebaseAuth.getInstance().getCurrentUser().getUid());
 
                     FirebaseFirestore.getInstance().collection("premiumUsersSubscriptions").add(newSubscription).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
@@ -175,6 +175,7 @@ public class PremiumUserInfoFragment extends Fragment {
                             Log.d("Firestore task", "DocumentSnapshot written with ID: " + documentReference.getId());
                             documentId = documentReference.getId();
                             suscribeToTopic();
+                            setupButtonSubscribe(true);
                         }
 
                     }).addOnFailureListener(new OnFailureListener() {
@@ -221,7 +222,7 @@ public class PremiumUserInfoFragment extends Fragment {
         btnSubscribe.setVisibility(View.VISIBLE);
         FirebaseFirestore.getInstance().collection("premiumUsersSubscriptions")
                 .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .whereEqualTo("storeName", premiumId)
+                .whereEqualTo("storeName", clientIdPremium)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
