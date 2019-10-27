@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.mylook.mylook.R;
@@ -42,6 +43,7 @@ public class EditInfoActivity extends AppCompatActivity {
     private User userInDB;
     private int CHANGE_SUCCESS = 0, CHANGE_NOT_SUCCESS = 2;
     final Calendar myCalendar = Calendar.getInstance();
+    private boolean validDNI = true;
 
 
     @Override
@@ -132,7 +134,37 @@ public class EditInfoActivity extends AppCompatActivity {
 
         btnSaveChanges = findViewById(R.id.btn_changePassword);
         mProgressBar = findViewById(R.id.progressbar);
+
+        txtDNI.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                checkExistingDNI(txtDNI.getText().toString());
+            } else {
+                txtDNI.setTextColor(getResources().getColor(R.color.black));
+                validDNI = true;
+            }
+        });
     }
+    private void checkExistingDNI(String dni) {
+        btnSaveChanges.setEnabled(false);
+        FirebaseFirestore.getInstance().collection("clients").whereEqualTo("dni", dni)
+                .get()
+                .addOnCompleteListener(task -> {
+                    Log.e(TAG, "Check Existing DNI, mail en firebase" + task.getResult().getDocuments().toString());
+                    if (task.getResult().getDocuments().size() > 0) {
+                        if (task.getResult().getDocuments().get(0).get("userId") != FirebaseAuth.getInstance().getCurrentUser().getUid()) {
+                            validDNI = false;
+                            txtDNI.setTextColor(getResources().getColor(R.color.red));
+                            displayMessage("El DNI ya está en uso");
+                            btnSaveChanges.setEnabled(false);
+                        }
+                    } else {
+                        btnSaveChanges.setEnabled(true);
+                    }
+                    mProgressBar.setVisibility(View.GONE);
+
+                });
+    }
+
 
     private void loadCmbSexo() {
         ArrayList<String> sexos =new ArrayList<>();
@@ -187,6 +219,14 @@ public class EditInfoActivity extends AppCompatActivity {
         }
         if (isStringNull(txtDNI.getText().toString())) {
             displayMessage("Debes ingresar un DNI");
+            return false;
+        }
+        if (!validDNI) {
+            displayMessage("El DNI seleccionado ya está en uso");
+            return false;
+        }
+        if (txtDNI.getText().toString().length()>8 || txtDNI.getText().toString().length()<7) {
+            displayMessage("El DNI ingresado es invalido");
             return false;
         }
 
