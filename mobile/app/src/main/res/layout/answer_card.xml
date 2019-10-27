@@ -25,15 +25,14 @@
                 android:id="@+id/txtDescription"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/txtStore"
-                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:layout_toRightOf="@+id/imgArticle"
-                android:padding="8dp"
+                android:justificationMode="inter_word"
                 android:textColor="@color/primary_text"
                 android:textSize="17dp"
-                android:justificationMode="inter_word"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/imgStore"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imgArticle" />
 
             <ImageView
@@ -44,22 +43,20 @@
                 android:layout_alignParentTop="false"
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/imgStore"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/imgStore" />
 
             <TextView
                 android:id="@+id/txtScore"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:padding="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:text="Tu calificación:"
                 android:textColor="@color/primary_dark"
                 android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@id/ratingBar"
-                app:layout_constraintStart_toStartOf="@+id/imgStore"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txtDescription" />
 
             <me.zhanghai.android.materialratingbar.MaterialRatingBar
@@ -67,30 +64,31 @@
                 style="@style/Widget.MaterialRatingBar.RatingBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_marginBottom="8dp"
                 android:maxHeight="24dp"
                 android:minHeight="24dp"
-                android:paddingLeft="8dp"
                 android:textAlignment="center"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/imgStore"
-                app:layout_constraintTop_toBottomOf="@+id/textView" />
-              
-          <TextView
-                    android:id="@+id/lblVisitArticle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:text="VER PRENDA"
-                    android:paddingLeft="8dp"
-                    android:textColor="@color/primary"
-                    android:textSize="17dp"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent" 
-                    app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/txtScore" />
+
+            <TextView
+                android:id="@+id/lblVisitArticle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:paddingLeft="8dp"
+                android:text="VER PRENDA"
+                android:textColor="@color/primary"
+                android:textSize="17dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/txtDescription" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imgStore"
