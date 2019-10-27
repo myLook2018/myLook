@@ -1,19 +1,34 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { VoucherDialogComponent } from './modal/voucher-dialog';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatTableDataSource } from '@angular/material';
+import { AnyliticService } from 'src/app/anylitics/services/anylitics.service';
+import { PromotionsService } from 'src/app/anylitics/services/promotions.service';
 
 @Component({
   selector: 'app-voucher',
   templateUrl: './voucher.component.html',
   styleUrls: ['./voucher.component.scss']
 })
-export class VoucherComponent implements OnInit {
+export class VoucherComponent implements OnInit, OnChanges {
   @Input() userStore;
+  voucherCampaigns: any;
+  campaignsTableDataSource: MatTableDataSource<unknown>;
+  displayedColumns = ['Titulo', 'FechaInicio', 'FechaFin', 'TipoCampania', 'PrecioFinal', 'Descargar'];
   constructor(
-    public dialog: MatDialog
-  ) { }
+    public dialog: MatDialog,
+    private analyticsService: AnyliticService,
+    private promotionsService: PromotionsService
+  ) {}
 
   ngOnInit() {
+  }
+
+  ngOnChanges() {
+    this.analyticsService.getVoucherCampaings(this.userStore.firebaseUID).then( campaings => {
+      this.voucherCampaigns = campaings;
+      console.log('estas son las campañas para esta tienda ', this.voucherCampaigns);
+      this.campaignsTableDataSource = new MatTableDataSource(this.voucherCampaigns);
+    });
   }
 
   openNewVoucher() {
@@ -45,10 +60,22 @@ export class VoucherComponent implements OnInit {
     });
   }
 
-  // promoteArticle(data, article, storeUID) {
-  //   console.log(data);
-  //   console.log(article);
-  //   this.articleService.promoteArticle(data, article, storeUID);
-  // }
+  // Comportamiento para la tabla de descarga
+
+  getCampaignType( type ) {
+    return type === 0 ? 'Campaña Estandar' : 'Campaña Premium';
+  }
+
+  getTotalCost() {
+    return this.voucherCampaigns.map(campaing => campaing.campaingCost).reduce((acc, value) => acc + value, 0);
+  }
+
+  downloadCampaign( element: any ) {
+    console.log(element);
+    const data = {info: element, store: this.userStore };
+    this.promotionsService.downloadDocument(data, 'campaigns');
+  }
+
+
 
 }
