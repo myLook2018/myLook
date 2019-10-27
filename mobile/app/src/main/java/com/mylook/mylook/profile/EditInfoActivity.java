@@ -4,25 +4,20 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.mylook.mylook.R;
 import com.mylook.mylook.dialogs.DialogManager;
@@ -36,17 +31,16 @@ import java.util.Calendar;
 
 public class EditInfoActivity extends AppCompatActivity {
 
-    private EditText txtName, txtSurname, txtBirthdate;
+    private static final String TAG = "EditInfoActivity";
+    private EditText txtName, txtSurname, txtBirthdate,txtDNI;
     private MaterialBetterSpinner cmbSexo;
-    private TextView txtChangePassword, txtChangeEmail,txtPrivAcc;
+    private TextView txtChangePassword,txtPrivAcc;
     private ImageView btnSaveChanges;
-    private Toolbar tb;
     private User oldUser = null;
     private ProgressBar mProgressBar;
     private Context mContext;
     private User userInDB;
-    private int USER_CHANGED=1, USER_NOT_CHANGED=2;
-    private EditText txtDNI;
+    private int CHANGE_SUCCESS = 0, CHANGE_NOT_SUCCESS = 2;
     final Calendar myCalendar = Calendar.getInstance();
 
 
@@ -62,80 +56,59 @@ public class EditInfoActivity extends AppCompatActivity {
 
     private void initCalendar() {
 
-        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth) {
-                myCalendar.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
-                txtBirthdate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-            }
+        final DatePickerDialog.OnDateSetListener date = (view, year, monthOfYear, dayOfMonth) -> {
+            myCalendar.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
+            txtBirthdate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
         };
 
-        txtBirthdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        txtBirthdate.setOnClickListener(view ->
                 new DatePickerDialog(EditInfoActivity.this, date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-            }
-        });
+                myCalendar.get(Calendar.DAY_OF_MONTH)).show());
     }
 
     private void setOnClickListener() {
 
-        btnSaveChanges.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(validateFields()){
-                    final User newUser = new User ();
+        btnSaveChanges.setOnClickListener(v -> {
+            if(validateFields()){
+                final User newUser = new User ();
 
-                    newUser.setBirthday(myCalendar.getTimeInMillis());
-                    newUser.setEmail(Session.mail); //cambiar aparte
-                    newUser.setDni(txtDNI.getText().toString()); //cambiar aparte
-                    newUser.setName(txtName.getText().toString());
-                    newUser.setSurname(txtSurname.getText().toString());
-                    newUser.setGender(cmbSexo.getText().toString());
-                    newUser.setUserId(oldUser.getUserId());
-                    newUser.setInstallToken(oldUser.getInstallToken());
-                    newUser.setPremium(oldUser.isPremium());
-                    if (newUser.compareTo(oldUser) != 0) {
-                        FirebaseFirestore.getInstance().collection("clients").whereEqualTo("userId", oldUser.getUserId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                FirebaseFirestore.getInstance().collection("clients").document(task.getResult().getDocuments().get(0).getId())
-                                        .set(newUser.toMap(), SetOptions.merge())
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                Toast.makeText(EditInfoActivity.this, "Tu usuario ha sido actualizado", Toast.LENGTH_LONG).show();
-                                                Session.updateData();
-                                                Intent returnIntent = new Intent();
-                                                returnIntent.putExtra("name",txtName.getText());
-                                                returnIntent.putExtra("email","gisigimenez@blabla");
-                                                setResult(USER_CHANGED,returnIntent);
-                                                finish();
-                                            }
-                                        });
-                            }
-                        });
-                    }else{
-                        setResult(USER_NOT_CHANGED);
-                        finish();
-                    }
+                newUser.setBirthday(myCalendar.getTimeInMillis());
+                newUser.setName(txtName.getText().toString());
+                newUser.setDni(txtDNI.getText().toString()); //cambiar aparte
+                newUser.setSurname(txtSurname.getText().toString());
+                newUser.setGender(cmbSexo.getText().toString());
+                newUser.setUserId(oldUser.getUserId());
+                newUser.setInstallToken(oldUser.getInstallToken());
+                newUser.setPremium(oldUser.isPremium());
+                newUser.setEmail(oldUser.getEmail());
+                if (newUser.compareTo(oldUser) != 0) {
+                    FirebaseFirestore.getInstance().collection("clients").whereEqualTo("userId", oldUser.getUserId()).get()
+                            .addOnCompleteListener(task -> FirebaseFirestore.getInstance().collection("clients"
+                            ).document(task.getResult().getDocuments().get(0).getId())
+                            .set(newUser.toMap(), SetOptions.merge())
+                            .addOnCompleteListener(task1 -> {
+                                Toast.makeText(EditInfoActivity.this, "Tus datos han sido actualizados", Toast.LENGTH_LONG).show();
+                                Session.updateData();
+                                Intent returnIntent = new Intent();
+                                returnIntent.putExtra("name",txtName.getText()+" "+txtSurname.getText());
+                                setResult(CHANGE_SUCCESS,returnIntent);
+                                finish();
+                            }));
+                }else{
+                    setResult(CHANGE_NOT_SUCCESS);
+                    finish();
                 }
             }
         });
-            txtChangePassword.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    DialogManager dm = DialogManager.getInstance();
-                    dm.createChangePasswordDialog(
-                            EditInfoActivity.this,
-                            "Cambiar Contraseña",
-                            "¿Estas seguro que quieres cambiar tu contraseña?",
-                            "Si",
-                            "No").show();
+            txtChangePassword.setOnClickListener(v -> {
+                DialogManager dm = DialogManager.getInstance();
+                dm.createChangePasswordDialog(
+                        EditInfoActivity.this,
+                        "Cambiar Contraseña",
+                        "¿Estas seguro que quieres cambiar tu contraseña?",
+                        "Cambiar",
+                        "Cancelar").show();
 
-                }
             });
 
 
@@ -156,7 +129,6 @@ public class EditInfoActivity extends AppCompatActivity {
         txtPrivAcc= findViewById(R.id.txtPrivAccount);
         loadCmbSexo();
         txtChangePassword = findViewById(R.id.txtPassword);
-        txtChangeEmail = findViewById(R.id.txtEmail);
 
         btnSaveChanges = findViewById(R.id.btn_changePassword);
         mProgressBar = findViewById(R.id.progressbar);
@@ -171,53 +143,40 @@ public class EditInfoActivity extends AppCompatActivity {
     }
 
     private void setData() {
-        Log.e("EDIT INFO ACTIVITY ", "set data");
+        Log.e(TAG, "set data");
 
         FirebaseFirestore.getInstance().collection("clients").document(Session.clientId)
-                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        userInDB =task.getResult().toObject(User.class);
-                        if(userInDB !=null){
-                            userInDB.setPremium((boolean)task.getResult().get("isPremium"));
+                .get().addOnCompleteListener(task -> {
+                    userInDB =task.getResult().toObject(User.class);
+                    if(userInDB !=null){
+                        userInDB.setPremium((boolean)task.getResult().get("isPremium"));
+                        txtDNI.setText(userInDB.getDni());
+                        txtName.setText(userInDB.getName());
+                        txtSurname.setText(userInDB.getSurname());
+                        myCalendar.setTimeInMillis(userInDB.getBirthday());
+                        int mes = myCalendar.get(Calendar.MONTH) + 1;
+                        final String dateFormat = myCalendar.get(Calendar.DAY_OF_MONTH) + "/" + mes + "/" + myCalendar.get(Calendar.YEAR);
+                        txtBirthdate.setText(dateFormat);
+                        cmbSexo.setText(userInDB.getGender());
+                        oldUser = userInDB;
+                        mProgressBar.setVisibility(View.GONE);
+                        if(userInDB.getProvider() == null){
+                            txtPrivAcc.setVisibility(View.VISIBLE);
+                            txtChangePassword.setEnabled(true);
+                            txtChangePassword.setVisibility(View.VISIBLE);
+                        }
+                }
 
-                            //txtEmail.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
-                            //txtEmail.setEnabled(false);
-                            txtDNI.setText(userInDB.getDni());
-                            txtName.setText(userInDB.getName());
-                            txtSurname.setText(userInDB.getSurname());
-                            myCalendar.setTimeInMillis(userInDB.getBirthday());
-                            int mes = myCalendar.get(Calendar.MONTH) + 1;
-                            final String dateFormat = myCalendar.get(Calendar.DAY_OF_MONTH) + "/" + mes + "/" + myCalendar.get(Calendar.YEAR);
-                            txtBirthdate.setText(dateFormat);
-                            cmbSexo.setText(userInDB.getGender());
-                            oldUser = userInDB;
-                            mProgressBar.setVisibility(View.GONE);
-                            if(userInDB.getProvider() != null){
-                                txtPrivAcc.setVisibility(View.GONE);
-                                txtChangePassword.setEnabled(false);
-                                txtChangePassword.setVisibility(View.GONE);
-                            }
-                    }
-
-                }});
+            });
 
         }
     @Override
     public void onBackPressed() {
+        setResult(CHANGE_NOT_SUCCESS);
         finish();
     }
 
     private boolean validateFields() {
-       /* if (isStringNull(txtEmail.getText().toString())) {
-            displayMessage("El campo Email es obligatorio");
-            return false;
-        }
-        if(!validMail){
-            displayMessage("El Mail seleccionado ya está en uso");
-            return false;
-        }*/
-
         if (isStringNull(txtName.getText().toString())) {
             displayMessage("El campo Nombre es obligatorio");
             return false;

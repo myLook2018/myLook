@@ -82,11 +82,11 @@ public class ReputationPremiumFragment extends Fragment {
 
     public void countSubscribers() {
         FirebaseFirestore.getInstance().collection("premiumUsersSubscriptions")
-                .whereEqualTo("userId", userId).get()
+                .whereEqualTo("storeName", userId).get()
                 .addOnCompleteListener(task -> {
                     int cant=task.getResult().getDocuments().size();
                     if(cant==0)
-                        lblCant.setText("Todavia no tiene suscriptores");
+                        lblCant.setText("Todavía no tiene suscriptores");
                     else if(cant==1)
                         lblCant.setText("1 suscriptor");
                         else

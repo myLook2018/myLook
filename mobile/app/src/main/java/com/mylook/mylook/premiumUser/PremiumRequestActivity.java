@@ -25,7 +25,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.SuccessContinuation;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
@@ -38,8 +37,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.PremiumUser;
-import com.mylook.mylook.home.MyLookActivity;
-import com.mylook.mylook.profile.AccountActivity;
 import com.mylook.mylook.session.Session;
 import com.theartofdev.edmodo.cropper.CropImage;
 
@@ -53,6 +50,7 @@ import java.util.Objects;
 public class PremiumRequestActivity extends AppCompatActivity {
 
     private static final int SUCCESS_CODE = 0;
+    private static final int UNSUCCESS_CODE = 2;
     private final int SELECT_FILE = 0;
     private TextView txtProfilePhoto;
     private ImageView imgProfilePhoto;
@@ -412,5 +410,11 @@ public class PremiumRequestActivity extends AppCompatActivity {
         txtFacebook = findViewById(R.id.txtFacebook);
         btnRequest = findViewById(R.id.btnRequest);
         mProgressBar = findViewById(R.id.progressBar);
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(UNSUCCESS_CODE);
+        this.finish();
     }
 }

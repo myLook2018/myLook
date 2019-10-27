@@ -1,6 +1,5 @@
 package com.mylook.mylook.session;
 
-import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
@@ -13,7 +12,6 @@ import com.mylook.mylook.closet.ClosetFragment;
 import com.mylook.mylook.profile.PremiumOptionsFragment;
 import com.mylook.mylook.explore.ExploreFragment;
 import com.mylook.mylook.home.HomeFragment;
-import com.mylook.mylook.login.RegisterActivity;
 import com.mylook.mylook.recommend.RecommendFragment;
 
 /**
@@ -28,7 +26,7 @@ public class Session {
     public static final int RECOMEND_FRAGMENT = 3;
     public static final int CLOSET_FRAGMENT = 4;
     public static final int PREMIUM_OPTIONS_FRAGMENT = 5;
-    public static final String TAG = "Sesion";
+    public static final String TAG = "Session";
     public static String userId = null;
     public static boolean isPremium;
     public static String name= "";
@@ -119,14 +117,14 @@ public class Session {
     }
 
     public static boolean updateData(){
-        Log.e("SESION", "clientId: "+clientId);
+        Log.e(TAG, "clientId: "+clientId);
         if (!Strings.isNullOrEmpty(clientId)){
             FirebaseFirestore.getInstance().collection("clients").document(clientId).get()
                     .addOnSuccessListener(document -> {
                         isPremium = (boolean) document.get("isPremium");
-                        Log.e("SESSION","is premium: "+isPremium);
+                        Log.e(TAG,"is premium: "+isPremium);
                         name = document.get("name").toString() + " " + document.get("surname").toString();
-                        mail = (String) document.get("email");
+                        mail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                     });
             return true;
         }else{
@@ -146,5 +144,8 @@ public class Session {
         name= "";
         mail= "";
         clientId= "";
+    }
+    public static void setChange(String nameChanged){
+        name=nameChanged;
     }
 }
