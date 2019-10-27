@@ -2,6 +2,8 @@ package com.mylook.mylook.entities;
 
 import com.google.firebase.Timestamp;
 
+import javax.annotation.Nullable;
+
 public class Coupon {
     private Timestamp dueDate;
     private Timestamp creationDate;
@@ -90,7 +92,7 @@ public class Coupon {
         return dni;
     }
 
-    public void setDni(int dni) {
+    public void setDni(@Nullable int dni) {
         this.dni = dni;
     }
 
@@ -98,7 +100,7 @@ public class Coupon {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(@Nullable int  age) {
         this.age = age;
     }
 

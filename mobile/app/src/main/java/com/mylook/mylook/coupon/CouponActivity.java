@@ -34,7 +34,7 @@ public class CouponActivity extends AppCompatActivity {
         getRemoteCoupon();
     }
 
-    private void initializeScreenFields(){
+    private void initializeScreenFields() {
         setContentView(R.layout.activity_coupon);
         Toolbar tb = findViewById(R.id.toolbar);
         setSupportActionBar(tb);
@@ -51,13 +51,25 @@ public class CouponActivity extends AppCompatActivity {
         mProgressBarr.setVisibility(View.VISIBLE);
     }
 
-    private void getRemoteCoupon(){
+    private void getRemoteCoupon() {
         Intent thisIntent = getIntent();
         couponId = thisIntent.getStringExtra("couponId");
         FirebaseFirestore.getInstance().collection(getResources().getString(R.string.vouchersCollection)).document(couponId).
-                get().addOnSuccessListener( l -> {
-                    coupon = l.toObject(Coupon.class);
-                    setCouponValues();
+                get().addOnSuccessListener(l -> {
+            try {
+                coupon = l.toObject(Coupon.class);
+            } catch (IllegalArgumentException exception) {
+                coupon = new Coupon();
+                coupon.setCode((String) l.get("code"));
+                coupon.setTitle((String) l.get("title"));
+                coupon.setDescription((String) l.get("description"));
+                coupon.setDueDate((Timestamp) l.get("dueDate"));
+                coupon.setStoreId((String) l.get("storeId"));
+                coupon.setStoreName((String) l.get("storeName"));
+                coupon.setClientId((String) l.get("clientId"));
+                coupon.setVoucherType((int)(long) l.get("voucherType"));
+            }
+            setCouponValues();
         });
     }
 
@@ -68,16 +80,16 @@ public class CouponActivity extends AppCompatActivity {
         return "Vence el " + calendar.get(Calendar.DAY_OF_MONTH) + " de " + meses[calendar.get(Calendar.MONTH)];
     }
 
-    private void setCouponValues(){
-        title.setText(coupon!=null ? coupon.getTitle():"Super mega 99,99% de descuento");
-        description.setText((coupon != null ? coupon.getDescription(): "Esta sería la descripción del cupón. Si Mateo hubiese hecho la cloud function se podría probar" +
+    private void setCouponValues() {
+        title.setText(coupon != null ? coupon.getTitle() : "Super mega 99,99% de descuento");
+        description.setText((coupon != null ? coupon.getDescription() : "Esta sería la descripción del cupón. Si Mateo hubiese hecho la cloud function se podría probar" +
                 ", pero adivinen quien no hizo la cloud function ehhhhhh"));
-        code.setText(coupon != null? coupon.getCode(): "0512RECI");
+        code.setText(coupon != null ? coupon.getCode() : "0512RECI");
         duedate.setText(coupon != null ? formatDate(coupon.getDueDate()) : "Vence el 19/12");
-        storeName.setText(coupon != null ? coupon.getStoreName(): "AUKA siempre AUKA");
+        storeName.setText(coupon != null ? coupon.getStoreName() : "AUKA siempre AUKA");
         code.setVisibility(View.VISIBLE);
         imgStore.setVisibility(View.VISIBLE);
-        this.setTitle("Cupón "+getResources().getStringArray(R.array.voucherTypes)[coupon.getVoucherType()]);
+        this.setTitle("Cupón " + getResources().getStringArray(R.array.voucherTypes)[coupon.getVoucherType()]);
         mProgressBarr.setVisibility(View.GONE);
     }
 
@@ -91,6 +103,7 @@ public class CouponActivity extends AppCompatActivity {
     public void onBackPressed() {
         finish();
     }
+
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();

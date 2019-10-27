@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -80,7 +81,21 @@ public class MyCoupons extends AppCompatActivity {
                 .get().addOnSuccessListener(l -> {
 
             for (DocumentSnapshot doc : l.getDocuments()) {
-                Coupon newCoupon = doc.toObject(Coupon.class);
+                Coupon middleCoupon;
+                try {
+                    middleCoupon = doc.toObject(Coupon.class);
+                }catch(IllegalArgumentException exception){
+                    middleCoupon = new Coupon();
+                    middleCoupon.setCode((String)doc.get("code"));
+                    middleCoupon.setTitle((String)doc.get("title"));
+                    middleCoupon.setDescription((String)doc.get("description"));
+                    middleCoupon.setDueDate((Timestamp)doc.get("dueDate"));
+                    middleCoupon.setStoreId((String)doc.get("storeId"));
+                    middleCoupon.setStoreName((String)doc.get("storeName"));
+                    middleCoupon.setClientId((String)doc.get("clientId"));
+
+                }
+                Coupon newCoupon = middleCoupon;
                 FirebaseFirestore.getInstance().collection(getResources().getString(R.string.storesCollection)).document((String) doc.get("storeId"))
                         .get().addOnSuccessListener(storeTask -> {
                     newCoupon.setImgStoreUrl((String)storeTask.get("profilePh"));

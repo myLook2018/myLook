@@ -363,7 +363,7 @@ exports.closePromotions = functions.https.onRequest((req, res) => {
           console.log(snap.data().endOfPromotion.seconds)
           console.log(admin.firestore.Timestamp.now().seconds)
           return snap.data().endOfPromotion.seconds < admin.firestore.Timestamp.now().seconds
-          
+
         })
         .forEach(element => {
           admin
@@ -378,8 +378,77 @@ exports.closePromotions = functions.https.onRequest((req, res) => {
               });
             }).catch(error => {
               console.log("Error: " + error);
-              
+
+            });
         });
     });
 });
-});
+
+
+function createVoucherCode(){
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+  let code = ''
+  for (let i = 0; i < 8; i++) {
+    let index = Math.random()*characters.length
+    code = code + (characters.charAt(index))
+  }
+  return code
+}
+ exports.createCampaignCoupons = functions.firestore.document('voucherCampaing/{voucherCampaignId}')
+  .onUpdate( async (snap, context) => {
+    const newCampaign = snap.after.data();
+
+    if (newCampaign.idMercadoPago && newCampaign.idMercadoPago != null && newCampaign.idMercadoPago != 0 && newCampaign.idMercadoPago != '') {
+      admin.firestore().collection("subscriptions").where("storeName", '==', newCampaign.storeName ).get().then( subscriptionSnap => {
+        let suscribedUsersId = subscriptionSnap.docs.map(suscription => {
+          return suscription.get("userId")
+        })
+
+          newCampaign.clientsId.forEach((clientId) => {
+            console.log("Client id")
+            console.log(clientId)
+            admin.firestore().collection("clients").doc(clientId).get().then(async(clientSnap) => {
+              console.log("ClientSnap")
+              console.log(clientSnap.data())
+              let voucher = {
+                storeName: newCampaign.storeName, 
+                storeId: newCampaign.storeId,
+                description:newCampaign.description,
+                title: newCampaign.title,
+                startDate: newCampaign.startDate,
+                dueDate: newCampaign.dueDate,
+                voucherType: newCampaign.voucherType,
+                campaignType: newCampaign.campaignType,
+                used:false,
+                usedDate: null,
+                code: '',
+                clientId: clientId,
+                subscribed: suscribedUsersId.includes(clientSnap.get("userId")),
+                dni: clientSnap.get("dni"),
+                installToken: clientSnap.get("installToken"),
+                birthday: clientSnap.get("birthday"),
+                gender: null,
+                age: null
+              }
+              let created = false;
+              while (!created) {
+                let code = createVoucherCode()
+                voucher.code = code
+                console.log("Voucher"+JSON.stringify(voucher))
+                await admin.firestore().collection("vouchers").doc(code).create(voucher).then(voucherResponse => {
+                  console.log("Created new Voucher:"+ voucherResponse.id)
+                  created = true
+                }).catch(error => {
+                  console.log("Voucher could not be created "+error)
+                })
+                
+              }
+              
+            });
+    
+          });
+        })
+
+    }
+
+  })
