@@ -183,7 +183,8 @@
             <mat-form-field class="inputs" appearance="outline">
               <mat-label>Código de Identificación</mat-label>
               <input matInput formControlName="code" required>
-              <mat-error *ngIf="articleForm.get('code').hasError">Campo obligatorio.</mat-error>
+              <mat-error *ngIf="articleForm.get('code').hasError('required')">Campo obligatorio.</mat-error>
+              <mat-error *ngIf="articleForm.get('code').hasError('notUnique')">El código ya se encuentra en uso.</mat-error>
             </mat-form-field>
           </div>
           <div class="article-dat">
