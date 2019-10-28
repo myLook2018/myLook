@@ -76,7 +76,7 @@ mat-header-cell {
 }
 
 .stickyNavbar{
-  background-color: #E1BEE7;
+  background-color: #fbeaff;
   height: 56px;
 }
 
@@ -108,8 +108,8 @@ margin: 8px 0 8px 8px;
     display: block;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
     text-align: center;
+    font-size: 16px;
   }
 
 .backgroundColor {
@@ -121,4 +121,8 @@ margin: 8px 0 8px 8px;
   background: -ms-linear-gradient(top, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
   background: linear-gradient(to bottom, rgba(252,236,252,0.14) 0%, rgba(251,166,225,0.16) 49%, rgba(255,124,216,0.18) 85%, rgba(253,137,215,0.19) 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', endColorstr='#fd89d7', GradientType=0 );
+}
+
+.mat-header-cell {
+  font-size: 18px;
 }
