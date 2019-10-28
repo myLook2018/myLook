@@ -61,6 +61,7 @@ export class ArticleService {
       console.log(`estamos preguntando por ` + storeName);
       const res = this.db.collection(this.collectionPath).where('storeName', '==', storeName)
         .get().then((querySnapshot) => {
+          this.articlesCopado = [];
           querySnapshot.forEach((doc) => {
             const data = doc.data();
             data.articleId = doc.id;

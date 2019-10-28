@@ -1,7 +1,7 @@
 <div class="main-container  mat-typography">
   <mat-card class="main-card">
     <div class="title">
-        <h1>Selecciona tu Vidriera</h1>
+        <h1>Seleccioná tu Vidriera</h1>
     <div class="selectionRow" style="display: inline-flex;">
       <form autocomplete="off" class="formCss" [formGroup]="storefrontForm">
         <mat-form-field class="inputs" appearance="outline">
@@ -21,10 +21,10 @@
             </button>
         </div>
       </form>
-      <mat-form-field class="searchBar" appearance="outline" style="margin-left: 4.2rem; width: 27rem">
+      <mat-form-field class="searchBar" appearance="outline" style="margin-left: 4.2rem; width: 55rem">
           <mat-label>Nuevo nombre de la vidriera</mat-label>
           <input required type="text" matInput  [(ngModel)]="this.activeStorefront" (ngModelChange)="changeStorefrontName($event)"  [disabled]="this.isUpLoading">
-          <mat-hint align="end">Ninguna de tus vidrieras puede tener el nombre por defecto "Nueva Vidriera".</mat-hint>
+          <!-- <mat-hint align="end">Ninguna de tus vidrieras puede tener el nombre por defecto "Nueva Vidriera".</mat-hint> -->
       </mat-form-field>
     </div>
 
@@ -32,7 +32,7 @@
     <div class="content">
       <div class="front-example">
         <mat-card>
-        <h2>Aqui verás una vista previa de cómo lucira tu vidriera</h2>
+        <h2>Vista previa</h2>
         <div class="images">
             <img class="coverPh" src={{actualStore?.coverPh}}>
             <img class="profilePh" src={{actualStore?.profilePh}}>
@@ -47,9 +47,9 @@
       <div class="articles-selector">
         <mat-card>
           <div class="selectHeader">
-        <h2>Selecciona los articulos de tu vidriera</h2>
+        <h2>Seleccioná los articulos de tu vidriera</h2>
         <mat-form-field class="searchBar" appearance="outline">
-            <mat-label>Buscar por Código ó Nombre</mat-label>
+            <mat-label>Buscar por Código o Nombre</mat-label>
             <input type="text" matInput [(ngModel)]="this.filterText" (ngModelChange)="filterArticles($event)"  [disabled]="this.isUpLoading">
             <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
@@ -68,7 +68,7 @@
           </ng-container>
           <!-- title Column -->
           <ng-container matColumnDef="title">
-              <mat-header-cell *matHeaderCellDef > Titulo </mat-header-cell>
+              <mat-header-cell *matHeaderCellDef > Título </mat-header-cell>
               <mat-cell *matCellDef="let element"> {{element.title}} </mat-cell>
           </ng-container>
 
@@ -76,7 +76,7 @@
           <ng-container matColumnDef="actions">
             <mat-header-cell *matHeaderCellDef> Seleccionar </mat-header-cell>
             <mat-cell *matCellDef="let element; let i = index">
-                <mat-checkbox (change)="addIdToSelecteds(element, $event)" [checked]="isInSelected(element)" [disabled]="(!isInSelected(element) && (this.selectedIndexes.length > 5)) || this.isUpLoading"></mat-checkbox>
+                <mat-checkbox (change)="addIdToSelecteds(element, $event)" [checked]="isInSelected(element)" [disabled]="(!isInSelected(element) && (this.selectedIndexes.length > 5)) || this.isUpLoading" (click)="checkFrontFull(element, $event)"></mat-checkbox>
             </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
