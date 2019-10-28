@@ -16,6 +16,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.mylook.mylook.R;
+import com.mylook.mylook.coupon.CouponActivity;
 import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.recommend.RequestRecommendActivity;
 import com.mylook.mylook.session.MainActivity;
@@ -69,6 +70,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 notif.setUserId(FirebaseAuth.getInstance().getUid());
                 FirebaseFirestore.getInstance().collection("notifications").add(notif);
             }
+            if(remoteMessage.getData().containsKey("voucherCode")){
+                id = remoteMessage.getData().get("voucherCode");
+                activity = CouponActivity.class;
+            }
 
         }
 
@@ -92,6 +97,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             newIntent.putExtra("storeId", id);
         if (activity == ArticleInfoActivity.class)
             newIntent.putExtra("articleId", id);
+        if(activity==CouponActivity.class)
+            newIntent.putExtra("couponId", id);
         newIntent.putExtra("fromDeepLink", true);
         PendingIntent pendingIntent =  PendingIntent.getActivity(getApplicationContext(), 0, newIntent,  PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
         return pendingIntent;

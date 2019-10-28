@@ -450,5 +450,33 @@ function createVoucherCode(){
         })
 
     }
-
   })
+
+  exports.newVoucherNotification = functions.firestore.document('vouchers/{docId}')
+  .onWrite((snap, context) => {
+    console.log("New voucher")
+      const registrationToken = snap.after.data().installToken;
+      var message = {
+          data: {
+              "title": "¡"+snap.after.data().storeName+" te mandó un nuevo cupón!",
+              "deepLink": "www.mylook.com/coupon",
+              "body": snap.after.data().description,
+              "sound": "default",
+              "voucherCode": snap.after.data().code,
+              "storeId": snap.after.data().storeId,
+              "storeName": snap.after.data().storeName
+          },
+          "token": registrationToken
+      };
+      console.log(JSON.stringify(message))
+      return admin.messaging().send(message)
+          .then((response) => {
+              // Response is a message ID string.
+              console.log('Successfully sent message:', response);
+          })
+          .catch((error) => {
+              console.log('Error sending message:', error);
+          });
+      
+    
+  });
