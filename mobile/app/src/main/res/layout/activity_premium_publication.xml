@@ -60,7 +60,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:padding="10dp"
-                    android:text="Añade una foto para la publicación"
+                    android:text="Añade una foto para el Post"
                     android:textAlignment="center"
                     android:textColor="@color/black"
                     android:textSize="17sp" />

@@ -85,7 +85,7 @@ public class PremiumRequestActivity extends AppCompatActivity {
         userName = getIntent().getStringExtra("userName");
         if(getIntent().hasExtra("isChange")){
             isChange= getIntent().getBooleanExtra("isChange",true);
-            tb.setTitle("Edita tus datos publicos");
+            tb.setTitle("Editar Datos Públicos");
             setPremiumUserData();
         }else{
             tb.setTitle("Cuenta Destacada");

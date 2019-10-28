@@ -2,6 +2,7 @@ package com.mylook.mylook.profile;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,9 +24,13 @@ import com.mylook.mylook.premiumUser.PremiumUserProfileActivity;
 import com.mylook.mylook.session.Session;
 
 import static com.mylook.mylook.R.drawable.ic_channel;
+import static com.mylook.mylook.R.drawable.ic_megaf;
 import static com.mylook.mylook.R.drawable.ic_new_diffusion;
+import static com.mylook.mylook.R.drawable.ic_portrait;
 import static com.mylook.mylook.R.drawable.ic_premium_profile;
 import static com.mylook.mylook.R.drawable.ic_premium_publication;
+import static com.mylook.mylook.R.drawable.ic_settings;
+import static com.mylook.mylook.R.drawable.ic_usuario_verificado;
 
 public class PremiumOptionsFragment extends ListFragment {
 
@@ -69,7 +74,7 @@ public class PremiumOptionsFragment extends ListFragment {
         TextView lblNameOption = (TextView) myProfile.findViewById(R.id.lblNameOption);
         lblNameOption.setText("Mi Perfil");
         ImageView imgProfile= myProfile.findViewById(R.id.iconPremiumOption);
-        imgProfile.setImageDrawable(getResources().getDrawable(ic_premium_profile));
+        imgProfile.setImageDrawable(getResources().getDrawable(ic_usuario_verificado));
         myProfile.setOnClickListener(v -> {
             Intent intent= new Intent(mContext, PremiumUserProfileActivity.class);
             intent.putExtra("clientId", Session.clientId);
@@ -79,9 +84,9 @@ public class PremiumOptionsFragment extends ListFragment {
 
         LinearLayout newPub = view.findViewById(R.id.incNewPublication);
         TextView lblNewPublication = (TextView) newPub.findViewById(R.id.lblNameOption);
-        lblNewPublication.setText("Nueva Publicacion");
+        lblNewPublication.setText("Nuevo Post");
         ImageView imgNewPublication= newPub.findViewById(R.id.iconPremiumOption);
-        imgNewPublication.setImageDrawable(getResources().getDrawable(ic_premium_publication));
+        imgNewPublication.setImageDrawable(getResources().getDrawable(ic_portrait));
         newPub.setOnClickListener(v -> {
             Intent intent= new Intent(mContext, NewPublicationActivity.class);
             intent.putExtra("clientId", Session.clientId);
@@ -90,9 +95,9 @@ public class PremiumOptionsFragment extends ListFragment {
 
         LinearLayout newGroup = view.findViewById(R.id.incNewGroup);
         TextView lblNewGroup = (TextView) newGroup.findViewById(R.id.lblNameOption);
-        lblNewGroup.setText("Tus datos publicos");
+        lblNewGroup.setText("Tus Datos Públicos");
         ImageView imgNewGroup= newGroup.findViewById(R.id.iconPremiumOption);
-        imgNewGroup.setImageDrawable(getResources().getDrawable(ic_channel));
+        imgNewGroup.setImageDrawable(getResources().getDrawable(ic_settings));
         newGroup.setOnClickListener(v -> {
             Intent intent = new Intent(mContext, PremiumRequestActivity.class);
             intent.putExtra("clientId", Session.clientId);
@@ -102,9 +107,9 @@ public class PremiumOptionsFragment extends ListFragment {
 
         LinearLayout newMess = view.findViewById(R.id.incNewMess);
         TextView lblNewMess = (TextView) newMess.findViewById(R.id.lblNameOption);
-        lblNewMess.setText("Enviar Mensaje");
+        lblNewMess.setText("Enviar Difusión");
         ImageView imgNewDiffusion= newMess.findViewById(R.id.iconPremiumOption);
-        imgNewDiffusion.setImageDrawable(getResources().getDrawable(ic_new_diffusion));
+        imgNewDiffusion.setImageDrawable(getResources().getDrawable(ic_megaf));
         newMess.setOnClickListener(v -> {
             startActivity(new Intent(mContext, NewDiffusionMessage.class));
         });
