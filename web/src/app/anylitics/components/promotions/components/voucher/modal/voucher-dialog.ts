@@ -71,7 +71,7 @@ export class VoucherDialogComponent implements OnInit {
     { value: 18, viewValue: '18 días'},
     { value: 19, viewValue: '19 días'},
     { value: 20, viewValue: '20 días'},
-    { value: 21, viewValue: '21 día'},
+    { value: 21, viewValue: '21 días'},
     { value: 28, viewValue: '1 mes'},
   ];
 
