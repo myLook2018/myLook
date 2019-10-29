@@ -1,33 +1,26 @@
-.dashboard {
-  width: calc(100% - 2rem);
-  margin: 1% 1% 0;
 
-  .page {
+.graficos {
+  display: flex;
+  place-content: center;
 
-    .graficos {
-      display: flex;
-      place-content: center;
-
-      .barras-by-promocion {
-        margin: 1rem 1%;
-      }
-
-      .torta-reacciones {
-        margin: 1rem 1%;
-      }
-    }
-
-    .historico {
-      margin: 1rem;
-
-      .tablita {
-        max-height: calc(90vh);
-        overflow: auto;
-      }
-
-
-    }
+  .barras-by-promocion {
+    margin: 1rem 1%;
   }
+
+  .torta-reacciones {
+    margin: 1rem 1%;
+  }
+}
+
+.historico {
+  margin-top: 1rem;
+
+  .tablita {
+    max-height: calc(90vh);
+    overflow: auto;
+  }
+
+
 }
 
 .myLookPink {
@@ -63,7 +56,16 @@ color: rgb(189, 132, 199)
   height: calc(83vh);
 }
 
-/deep/.mat-tab-label {
-  font-size: 18px !important;
-  width: 250px;
+
+.actions {
+  text-align: end;
+  margin-top: 1rem;
+
+  .activated-button {
+    background-color: #bd84c7; color: white;
+  }
+
+  .button-disabled {
+    background-color: grey; color: white;
+  }
 }

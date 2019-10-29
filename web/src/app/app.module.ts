@@ -102,6 +102,11 @@ import { ConfigurationsComponent } from './store/components/configurations/confi
 import { LOCALE_ID } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 import localeAR from '@angular/common/locales/es-AR';
+import { VoucherComponent } from './anylitics/components/promotions/components/voucher/voucher.component';
+import {MatTabsModule} from '@angular/material/tabs';
+import {VoucherDialogComponent} from 'src/app/anylitics/components/promotions/components/voucher/modal/voucher-dialog';
+
+
 
 registerLocaleData(localeAR);
 
@@ -114,6 +119,7 @@ registerLocaleData(localeAR);
     InventoryComponent,
     SignupComponent,
     DialogAlertComponent,
+    VoucherDialogComponent,
     StoreFrontComponent,
     SuccesfulDialogComponent,
     DeleteConfirmationDialogComponent,
@@ -138,7 +144,8 @@ registerLocaleData(localeAR);
     NewArticleComponent,
     AnyliticsDashboardComponent,
     ViewsByPromotionsComponent,
-    ReactionsPieComponent
+    ReactionsPieComponent,
+    VoucherComponent
   ],
   imports: [
     HttpClientModule,
@@ -186,6 +193,7 @@ registerLocaleData(localeAR);
     LyIconModule,
     FontAwesomeModule,
     MatProgressSpinnerModule,
+    MatTabsModule,
     LyThemeModule.setTheme('minima-light'),
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyDmuhZx-ew-zpQzQcjiqk2yJu5OonBuSMc',
@@ -204,7 +212,7 @@ registerLocaleData(localeAR);
     // ArticleResolver, StoreResolver,
     NewStoreService],
   entryComponents: [FrontDialogComponent, PromoteDialogComponent, DialogAlertComponent, SuccesfulDialogComponent,
-    DeleteConfirmationDialogComponent, MapsDialogComponent, EditStoreComponent],
+    DeleteConfirmationDialogComponent, MapsDialogComponent, VoucherDialogComponent, EditStoreComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {
