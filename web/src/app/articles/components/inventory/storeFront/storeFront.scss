@@ -109,7 +109,7 @@ mat-table {
   margin-top: 1rem;
 
   .activatedButton {
-    background-color: #9C27B0; color: white;
+    background-color: #bd84c7; color: white;
   }
 
   .buttonDisabled {
@@ -130,10 +130,12 @@ mat-table {
   text-overflow: ellipsis;
   white-space: nowrap;
   text-align: center;
+  padding-top: 0.9rem;
 }
 
 mat-header-cell {
   padding-top: 18px !important;
+  font-size: 20px;
 }
 
 mat-form-field {
@@ -155,4 +157,10 @@ mat-form-field {
 
 .frontActions {
   align-self: flex-end;
+  height: 4rem;
+  padding-top: 0.55rem;
+}
+
+/deep/.mat-checkbox-checked.mat-accent .mat-checkbox-background, .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+  background-color: #bd84c7 !important;
 }
