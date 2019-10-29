@@ -285,7 +285,7 @@ export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   // ----------- Fin Metodos de cortar imagenes  ---------------------------
   // ----------- Inicia el metodo para cargar la prenda  ---------------------------
-  startUpload() {
+  async startUpload() {
     this.isUpLoading = true;
     if ( !this.checkImagenLoaded() ) {
       this.isUpLoading = false;
@@ -293,6 +293,18 @@ export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
         duration: 3000,
         panelClass: ['blue-snackbar']
       });
+      return;
+    }
+
+    const isCodeUsed = await this.checkIfArticleCodeExists(this.articleForm.get('code').value);
+
+    if (isCodeUsed.length > 0) {
+      this.isUpLoading = false;
+      this.snackBar.open('El código de la prenda ya se encuentra en uso. Por favor, seleccione uno diferente.', '', {
+        duration: 3000,
+        panelClass: ['blue-snackbar']
+      });
+      this.articleForm.get('code').setErrors({ notUnique: true});
       return;
     }
 
@@ -423,5 +435,9 @@ export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
       this.articleForm.get('tags').setValue('');
       this.articleForm.get('tags').enable();
       this.articleForm.get('title').enable();
+    }
+
+    checkIfArticleCodeExists( articleCode ) {
+      return this.articleService.getArticleByCode( this.actualStore.storeName , articleCode);
     }
 }
