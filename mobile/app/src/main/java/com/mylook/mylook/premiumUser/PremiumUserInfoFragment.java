@@ -204,18 +204,22 @@ public class PremiumUserInfoFragment extends Fragment {
     }
 
     private void setupButtonSubscribe(boolean subscribed) {
+        try{
+            if (subscribed) {
+                btnSubscribe.setText("Desuscribirse");
+                btnSubscribe.setBackgroundColor(getResources().getColor(R.color.primary_dark));
+                mSubscribed = true;
+            } else {
+                btnSubscribe.setText("Suscribirse");
+                btnSubscribe.setBackgroundColor(getResources().getColor(R.color.accent));
+                mSubscribed = false;
+            }
 
-        if (subscribed) {
-            btnSubscribe.setText("Desuscribirse");
-            btnSubscribe.setBackgroundColor(getResources().getColor(R.color.primary_dark));
-            mSubscribed = true;
-        } else {
-            btnSubscribe.setText("Suscribirse");
-            btnSubscribe.setBackgroundColor(getResources().getColor(R.color.accent));
-            mSubscribed = false;
+            btnSubscribe.setEnabled(true);
+        }catch (Exception e){
+            Log.e("PremiumUserInfoFragment","Exception: "+e.getMessage());
         }
 
-        btnSubscribe.setEnabled(true);
     }
 
     public void checkFollow() {

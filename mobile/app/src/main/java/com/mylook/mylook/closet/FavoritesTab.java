@@ -36,7 +36,9 @@ public class FavoritesTab extends Fragment {
     private ProgressBar mProgressBar;
 
     public static void refreshStatus() {
-        closet.reloadFavorites();
+        if(closet!=null){
+            closet.reloadFavorites();
+        }
     }
 
     @Override

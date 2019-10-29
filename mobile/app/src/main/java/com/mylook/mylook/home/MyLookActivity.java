@@ -2,6 +2,7 @@ package com.mylook.mylook.home;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -52,7 +53,14 @@ public class MyLookActivity extends AppCompatActivity implements BottomNavigatio
 
     @Override
     protected void onResume() {
+
         super.onResume();
+        if(Session.getInstance().isPremiumUser() || isPremium )
+            navigation.getMenu().findItem(R.id.ic_premium).setVisible(true);
+        else
+            navigation.getMenu().findItem(R.id.ic_premium).setVisible(false);
+
+        Log.e(TAG,"On Resume MyLookActivity");
     }
     public void setPremiumMenu(){
         navigation.getMenu().findItem(R.id.ic_premium).setVisible(true);

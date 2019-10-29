@@ -147,6 +147,7 @@ public class RecommendFragment extends Fragment {
             Log.e("Recom","No carga");
         }
         Log.e(TAG, "getRequestRecommendations");
+        //TODO esta consulta deberia traer directamente los menores a una semana, no calcularlo asi
         FirebaseFirestore.getInstance().collection("requestRecommendations")
                 .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .orderBy("isClosed", Query.Direction.ASCENDING)
