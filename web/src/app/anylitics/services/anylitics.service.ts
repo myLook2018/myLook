@@ -26,13 +26,16 @@ export class AnyliticService {
   subPath = 'subscriptions';
   answeredRecomPath = 'answeredRecommendations';
   promotionsPath = 'promotions';
+  campaingsPath = 'voucherCampaing';
   db: any;
   require: any;
   isVisitsCached: boolean;
   isInteractionsCached: boolean;
-  isSubsCached: any;
-  isRecoCached: any;
-  isPromotedCached: any;
+  isSubsCached = false;
+  isRecoCached = false;
+  isPromotedCached = false;
+  isCampaingsCached = false;
+  campaings = [];
 
   constructor(public fst: AngularFirestore) {
     console.log(`en el collector de analytics`);
@@ -184,5 +187,33 @@ export class AnyliticService {
     this.isSubsCached = false;
     this.isVisitsCached = false;
     this.isPromotedCached = false;
+  }
+
+  getVoucherCampaings( storeId ) {
+    console.log('Obteniendo Campañas de cupones');
+    return new Promise<any>((resolve, reject) => {
+      if (!this.isCampaingsCached) {
+        console.log(`estamos preguntando campañas de cupones de ` + storeId);
+        const res = this.db.collection(this.campaingsPath).where('storeId', '==', storeId)
+        .get().then(queryRes => {
+          queryRes.forEach(doc => {
+            const data = doc.data();
+            data.id = doc.id;
+            if ( data.idMercadoPago ) {
+              this.campaings.push(data);
+            }
+          });
+        }).then(() => {
+            this.isCampaingsCached = true;
+            resolve(this.campaings);
+          }).catch(function (error) {
+            console.log('Error getting documents: ', error);
+            reject(error);
+          });
+        } else {
+        console.log('devolviendo capaings cached');
+        resolve(this.campaings);
+      }
+    });
   }
 }
