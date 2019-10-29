@@ -6,14 +6,18 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.ShareActionProvider;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuItemCompat;
+import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
@@ -25,6 +29,7 @@ import com.mylook.mylook.entities.Store;
 import com.mylook.mylook.entities.Visit;
 import com.mylook.mylook.session.MainActivity;
 import com.mylook.mylook.utils.SectionsPagerAdapter;
+import com.viewpagerindicator.CirclePageIndicator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -189,10 +194,14 @@ public class StoreActivity extends AppCompatActivity {
 
     private void setupViewPagerInfo(ViewPager viewPager) {
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(infoStoreFragment);
         adapter.addFragment(contactStoreFragment);
+        adapter.addFragment(infoStoreFragment);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(0);
+        CirclePageIndicator indicator = findViewById(R.id.circle_page_indicator);
+        indicator.setViewPager(viewPager);
+        indicator.setRadius(5 * getResources().getDisplayMetrics().density);
+
     }
 
     private void setupViewPagerArticles(ViewPager viewPager) {

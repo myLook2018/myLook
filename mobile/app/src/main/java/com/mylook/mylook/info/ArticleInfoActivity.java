@@ -28,6 +28,7 @@ import com.google.firebase.firestore.WriteBatch;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Article;
 import com.mylook.mylook.session.MainActivity;
+import com.mylook.mylook.session.Session;
 import com.mylook.mylook.storeProfile.StoreActivity;
 import com.mylook.mylook.utils.SlidingImageAdapter;
 import com.viewpagerindicator.CirclePageIndicator;
@@ -148,6 +149,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
                             setResult(RESULT_OK, new Intent().putExtra("removed", false)
                                     .putExtra("id", article.getArticleId()));
                             displayMessage("El artículo se añadió a tu ropero");
+                            Session.getInstance().updateActivitiesStatus(Session.CLOSET_FRAGMENT);
                         } else {
                             setResult(RESULT_OK, new Intent().putExtra("removed", true)
                                     .putExtra("id", article.getArticleId()));
@@ -161,12 +163,13 @@ public class ArticleInfoActivity extends AppCompatActivity {
                                             outfitsToChange.addAll(task1.getResult().getDocuments().stream().map(doc -> doc.getId()).collect(Collectors.toList()));
                                             if (outfitsToChange.size() != 0) {
                                                 WriteBatch batch = FirebaseFirestore.getInstance().batch();
-                                                outfitsToChange.forEach(outfitDoc -> batch.update(FirebaseFirestore.getInstance()
-                                                                .collection("outfits").document(outfitDoc),
-                                                        "favorites", FieldValue.arrayRemove(article.getArticleId())));
+                                                outfitsToChange.forEach(outfitDoc -> batch.delete(FirebaseFirestore.getInstance()
+                                                        .collection("outfits").document(outfitDoc)));
                                                 batch.commit().addOnCompleteListener(task2 -> {
                                                     if (task2.isSuccessful()) {
-                                                        displayMessage(outfitsToChange.size() + " conjuntos fueron actualizados");
+                                                        displayMessage(outfitsToChange.size() + " conjuntos fueron eliminados");
+                                                        Session.getInstance().updateActivitiesStatus(Session.CLOSET_FRAGMENT);
+
                                                     }
                                                 });
                                             }
@@ -183,7 +186,6 @@ public class ArticleInfoActivity extends AppCompatActivity {
                     }
                     btnCloset.setEnabled(true);
                 });
-
     }
     private Chip getChip(final ChipGroup entryChipGroup, String text) {
         final Chip chip = new Chip(this);
@@ -233,14 +235,20 @@ public class ArticleInfoActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Article art = task.getResult().toObject(Article.class);
-                        if (art.getFavorites() != null) {
-                            initialInCloset = art.getFavorites().contains(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                        } else {
-                            initialInCloset = false;
+                        if(art!=null){
+                            if (art.getFavorites() != null) {
+                                initialInCloset = art.getFavorites().contains(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            } else {
+                                initialInCloset = false;
+                            }
+                            inCloset = initialInCloset;
+                            setFavoriteFabIcon(inCloset);
+                            btnCloset.setEnabled(true);
+                        }else{
+                            displayMessage("Esta prenda ya no existe :(");
+                            finish();
                         }
-                        inCloset = initialInCloset;
-                        setFavoriteFabIcon(inCloset);
-                        btnCloset.setEnabled(true);
+
                     } else {
                         btnCloset.setEnabled(false);
                     }

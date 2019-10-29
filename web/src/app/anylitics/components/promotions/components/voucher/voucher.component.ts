@@ -76,6 +76,4 @@ export class VoucherComponent implements OnInit, OnChanges {
     this.promotionsService.downloadDocument(data, 'campaigns');
   }
 
-
-
 }

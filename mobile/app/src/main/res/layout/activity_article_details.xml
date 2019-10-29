@@ -39,7 +39,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/btnCloset"
                     android:layout_toStartOf="@+id/btnCloset"
-                    android:src="@drawable/ic_connections"
+                    android:src="@drawable/ic_share_new"
                     android:tint="@color/white"
                     app:layout_anchorGravity="end|bottom"
                     app:rippleColor="@color/white" />

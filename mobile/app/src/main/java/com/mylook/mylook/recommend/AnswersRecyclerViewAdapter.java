@@ -3,6 +3,7 @@ package com.mylook.mylook.recommend;
 import android.content.Context;
 import android.content.Intent;
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +29,8 @@ import com.mylook.mylook.storeProfile.StoreActivity;
 
 import java.util.HashMap;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecyclerViewAdapter.ViewHolder> {
@@ -56,11 +59,12 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
         Log.d("CardAnswer", "onBindViewHolder: called.");
 
         final HashMap<String,String> answer = answersList.get(position);
-
+        holder.cv.setVisibility(View.VISIBLE);
         Glide.with(mContext).asBitmap().load(answer.get("storePhoto")).into(holder.imgStore);
         Glide.with(mContext).asBitmap().load(answer.get("articlePhoto")).into(holder.imgArticle);
         holder.txtStore.setText(answer.get("storeName"));
         holder.txtDescription.setText(answer.get("description"));
+        holder.txtScore.setVisibility(View.VISIBLE);
         if(answer.containsKey("feedBack") && !answer.get("feedBack").equals("")) {
             holder.ratingBar.setVisibility(View.VISIBLE);
             holder.ratingBar.setRating(Float.parseFloat(answer.get("feedBack")));
@@ -125,11 +129,12 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
     }
     public class ViewHolder extends RecyclerView.ViewHolder{
         ImageView imgArticle;
-        TextView txtStore;
+        TextView txtStore, txtScore;
         TextView txtDescription;
         RatingBar ratingBar;
         RelativeLayout parentLayout;
-        ImageView imgStore;
+        CircleImageView imgStore;
+        CardView cv;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -140,6 +145,8 @@ public class AnswersRecyclerViewAdapter extends RecyclerView.Adapter<AnswersRecy
             txtDescription= itemView.findViewById(R.id.txtDescription);
             parentLayout=itemView.findViewById(R.id.parentLayout);
             imgStore=itemView.findViewById(R.id.imgStore);
+            txtScore=itemView.findViewById(R.id.txtScore);
+            cv=itemView.findViewById(R.id.cv);
 
 
 

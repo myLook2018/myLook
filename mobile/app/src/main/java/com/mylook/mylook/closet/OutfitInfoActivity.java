@@ -19,6 +19,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
+import com.mylook.mylook.dialogs.DialogManager;
 import com.mylook.mylook.entities.Outfit;
 import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.utils.ArticlesGridAdapter;
@@ -112,11 +113,10 @@ public class OutfitInfoActivity extends AppCompatActivity {
     }
 
     private void deleteOutfit() {
-        new AlertDialog.Builder(this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
+        android.app.AlertDialog alert = new android.app.AlertDialog.Builder(this, R.style.AlertDialogTheme)
                 .setTitle("Eliminar conjunto")
                 .setMessage("Estás seguro de que querés eliminar el conjunto?")
-                .setPositiveButton("Eliminar", (dialog, which) -> {
+                .setPositiveButton("Si", (paramDialogInterface, paramInt) -> {
                             progressBar.setVisibility(View.VISIBLE);
                             FirebaseFirestore.getInstance().collection("outfits")
                                     .document(outfit.getOutfitId()).delete()
@@ -128,8 +128,12 @@ public class OutfitInfoActivity extends AppCompatActivity {
                                             displayToast("Error al eliminar conjunto"));
                         }
                 )
-                .setNegativeButton("Cancelar", null)
-                .show();
+                .setNegativeButton("No", null).create();
+        alert.setOnShowListener(dialog1 -> {
+            alert.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(this.getResources().getColor(R.color.purple));
+            alert.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(this.getResources().getColor(R.color.purple));
+        });
+        alert.show();
     }
 
     private void displayToast(String message) {

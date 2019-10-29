@@ -21,8 +21,8 @@
         <!--android:title="@string/delete_req"-->
         <!--app:showAsAction="never"/>-->
 
-    <item android:id="@+id/help"
-        android:icon="@drawable/ic_help"
-        android:title="@string/help"
-        app:showAsAction=""/>
+<!--    <item android:id="@+id/help"-->
+<!--        android:icon="@drawable/ic_help"-->
+<!--        android:title="@string/help"-->
+<!--        app:showAsAction=""/>-->
 </menu>

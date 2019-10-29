@@ -36,11 +36,11 @@ exports.premiumUserBroadcast = functions.firestore
     const newPublication = snap.after.data();
     const topic = newPublication.topic
     console.log(JSON.stringify(newPublication))
-    return admin.firestore().doc('clients/'+newPublication.clientId).get().then( snapshot => {
+    return admin.firestore().doc('clients/' + newPublication.clientId).get().then(snapshot => {
       console.log(newPublication.creationDate.seconds)
       const message = {
-        data:{
-          "title": newPublication.premiumUserName+' publicó en su canal!',
+        data: {
+          "title": newPublication.premiumUserName + ' publicó en su canal!',
           "deepLink": "www.mylook.com/diffusionChannel",
           "sound": "default",
           "topic": topic,
@@ -52,15 +52,15 @@ exports.premiumUserBroadcast = functions.firestore
       }
 
       return admin
-      .messaging()
+        .messaging()
         .send(message)
-          .then((response) => {
-              // Response is a message ID string.
-              console.log('Successfully sent message:', response);
-          })
-          .catch((error) => {
-              console.log('Error sending message:', error);
-          });
+        .then((response) => {
+          // Response is a message ID string.
+          console.log('Successfully sent message:', response);
+        })
+        .catch((error) => {
+          console.log('Error sending message:', error);
+        });
 
     })
   });
@@ -97,11 +97,11 @@ exports.newAnswerNotification = functions.firestore
             console.log(
               'user',
               'userId ' +
-                userId +
-                ' - Doc user Id' +
-                doc.data().userId +
-                ' - docId ' +
-                doc.id
+              userId +
+              ' - Doc user Id' +
+              doc.data().userId +
+              ' - docId ' +
+              doc.id
             );
             if (userId == doc.data().userId || userId == doc.id) {
               console.log('Es este Usuario!!! ' + userId);
@@ -133,7 +133,7 @@ exports.closeRecommendations = functions.https.onRequest((req, res) => {
       .status(403)
       .send(
         'Security key does not match. Make sure your "key" URL query parameter matches the ' +
-          'cron.key environment variable.'
+        'cron.key environment variable.'
       );
     return null;
   }
@@ -178,7 +178,7 @@ exports.accountcleanup = functions.https.onRequest((req, res) => {
       .status(403)
       .send(
         'Security key does not match. Make sure your "key" URL query parameter matches the ' +
-          'cron.key environment variable.'
+        'cron.key environment variable.'
       );
     return null;
   }
@@ -260,18 +260,18 @@ exports.postMercadopagoCheckout = functions.https.onRequest((req, res) => {
       });
     }
 
-    mercadopago.preferences.create(req.body).then( response => {
-        return res.status(200).json({
-          message: 'checkout created',
-          initPoint: response.body.init_point
-        });
-      }).catch(error => {
-        console.log('error', error);
-        return res.status(500).json({
-          message: 'Algo salio mal con mercadopago',
-          error: error.message
-        });
+    mercadopago.preferences.create(req.body).then(response => {
+      return res.status(200).json({
+        message: 'checkout created',
+        initPoint: response.body.init_point
       });
+    }).catch(error => {
+      console.log('error', error);
+      return res.status(500).json({
+        message: 'Algo salio mal con mercadopago',
+        error: error.message
+      });
+    });
   });
 });
 
@@ -280,7 +280,7 @@ exports.getMercadoPagoNotification = functions.https.onRequest((req, res) => {
 
     https.get(`https://api.mercadopago.com/v1/payments/${req.query.id}?access_token=APP_USR-1059447032112952-040618-c6e69a975167f3e9a01ca5939306a4b6-181044052`, (resp) => {
 
-      resp.on("data", function(d) {
+      resp.on("data", function (d) {
         //d.external_reference tiene el id del doc y los codigos de nivel de promocion
 
         const laData = JSON.parse(d.toString());
@@ -323,7 +323,7 @@ exports.getMercadoPagoNotification = functions.https.onRequest((req, res) => {
 
         if (!voucherReference) {
         admin.firestore().collection('articles').doc(articleToPromoteId).update({ promotionLevel: articlePromotionLevel }).then(result => {
-          admin.firestore().collection('stores').where('storeName', '==', storeName ).get().then(snapshot => {
+          admin.firestore().collection('stores').where('storeName', '==', storeName).get().then(snapshot => {
             snapshot.forEach(doc => {
 
               let end = new Date;
@@ -346,7 +346,7 @@ exports.getMercadoPagoNotification = functions.https.onRequest((req, res) => {
 
               admin.firestore().collection('promotions').add(promotion).then((docRef) => {
                 return res.status(200).json({
-                  message:'OK'
+                  message: 'OK'
                 });
               });
 
@@ -372,4 +372,35 @@ exports.getMercadoPagoNotification = functions.https.onRequest((req, res) => {
 
     });
   });
+});
+exports.closePromotions = functions.https.onRequest((req, res) => {
+  admin
+    .firestore()
+    .collection('promotions')
+    .get()
+    .then(snapshot => {
+      snapshot.docs
+        .filter(snap => {
+          console.log(snap.data().endOfPromotion.seconds)
+          console.log(admin.firestore.Timestamp.now().seconds)
+          return snap.data().endOfPromotion.seconds < admin.firestore.Timestamp.now().seconds
+          
+        })
+        .forEach(element => {
+          admin
+            .firestore()
+            .collection('articles')
+            .doc(element.data().articleId)
+            .update({ promotionLevel: 1 })
+            .then(result => {
+              console.log('Nivel de promoción de prenda modificado', result);
+              return res.status(200).json({
+                message: 'OK'
+              });
+            }).catch(error => {
+              console.log("Error: " + error);
+              
+        });
+    });
+});
 });

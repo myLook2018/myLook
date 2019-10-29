@@ -5,6 +5,32 @@
     android:layout_height="match_parent"
     android:background="@color/greyBackground">
 
+    <ImageView
+        android:id="@+id/noRecommendationsImage"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:foregroundTint="@color/grey"
+        android:tint="@color/grey"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/noRecommendationsText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_add" />
+
+    <TextView
+        android:id="@+id/noRecommendationsText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:text="Presioná en + para pedir ayuda a las Tiendas sobre  cómo vestirte"
+        android:textAlignment="center"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewRecommend"
         android:layout_width="match_parent"
