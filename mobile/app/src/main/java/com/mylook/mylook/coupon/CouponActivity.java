@@ -16,6 +16,7 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Coupon;
+import com.mylook.mylook.storeProfile.StoreActivity;
 
 import java.util.Calendar;
 
@@ -31,6 +32,7 @@ public class CouponActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initializeScreenFields();
+
         getRemoteCoupon();
     }
 
@@ -69,6 +71,7 @@ public class CouponActivity extends AppCompatActivity {
                 coupon.setClientId((String) l.get("clientId"));
                 coupon.setVoucherType((int)(long) l.get("voucherType"));
             }
+            setClickListeners();
             setCouponValues();
         });
     }
@@ -78,6 +81,14 @@ public class CouponActivity extends AppCompatActivity {
         calendar.setTime(remoteDate.toDate());
         String[] meses = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
         return "Vence el " + calendar.get(Calendar.DAY_OF_MONTH) + " de " + meses[calendar.get(Calendar.MONTH)];
+    }
+
+    private void setClickListeners(){
+        storeName.setOnClickListener(onClick -> {
+            Intent storeIntent = new Intent(getApplicationContext(), StoreActivity.class);
+            storeIntent.putExtra("store", coupon.getStoreName());
+            startActivity(storeIntent);
+        });
     }
 
     private void setCouponValues() {

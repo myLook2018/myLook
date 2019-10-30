@@ -97,15 +97,12 @@ public class StoreActivity extends AppCompatActivity {
         }
         else {
             try {
-                Log.e("DEeploink", getIntent().getData().toString());
                 fromDeepLink = true;
                 if(intentStore.getData().getQueryParameter("storeName")!=null) {
                     return Uri.decode(intentStore.getData().getQueryParameter("storeName"));
                 }
                 return "";
             } catch (Exception e){
-
-                Log.e("Exvpetions", getIntent().getData().toString());
                 return Uri.decode(intentStore.getStringExtra("storeName").replace("%20"," "));
             }
         }

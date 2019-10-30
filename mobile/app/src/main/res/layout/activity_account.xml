@@ -103,7 +103,7 @@
             android:layout_marginTop="8dp"
             android:tint="@color/primary_light"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/image_account"
+            app:layout_constraintTop_toBottomOf="@+id/image_destacado"
             app:srcCompat="@drawable/ic_coupon" />
 
         <TextView

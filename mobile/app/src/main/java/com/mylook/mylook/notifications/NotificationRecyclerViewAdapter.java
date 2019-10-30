@@ -1,6 +1,8 @@
 package com.mylook.mylook.notifications;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +12,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.mylook.mylook.R;
+import com.mylook.mylook.coupon.CouponActivity;
+import com.mylook.mylook.entities.Coupon;
 import com.mylook.mylook.entities.Notification;
+import com.mylook.mylook.entities.RequestRecommendation;
+import com.mylook.mylook.premiumUser.PremiumUserProfileActivity;
+import com.mylook.mylook.recommend.RequestRecommendActivity;
 
 
 import java.util.ArrayList;
@@ -48,6 +56,34 @@ public class NotificationRecyclerViewAdapter extends RecyclerView.Adapter<Notifi
         Glide.with(mContext).asBitmap().load(notif.getUserPhotoUrl()).into(holder.leftPhoto);
         if(notif.getImageUrl() !=  null && !notif.getImageUrl().isEmpty())
             Glide.with(mContext).asBitmap().load(notif.getImageUrl()).into(holder.rigthPhoto);
+        if (notif.getOpenClass()!= null && !notif.getOpenClass().isEmpty() && notif.getElementId()!=null && !notif.getElementId().isEmpty()){
+            holder.itemView.setOnClickListener( l-> {
+                Class activity;
+                String elementId;
+                String premiumClass = holder.itemView.getContext().getResources().getString(R.string.PremiumUserClass);
+                String requestClass = holder.itemView.getContext().getResources().getString(R.string.RecommendClass);
+                String couponClass = holder.itemView.getContext().getResources().getString(R.string.CouponClass);
+                elementId = notif.getElementId();
+                Intent newIntent = null;
+                if (notif.getOpenClass().equals(premiumClass)){
+                    activity = PremiumUserProfileActivity.class;
+                    newIntent = new Intent(holder.itemView.getContext(), activity);
+                    newIntent.putExtra("clientId", elementId);
+                } else if (notif.getOpenClass().equals(requestClass)){
+                    activity = RequestRecommendActivity.class;
+                    newIntent = new Intent(holder.itemView.getContext(), activity);
+                    newIntent.putExtra("requestId", elementId);
+                } else if(notif.getOpenClass().equals(couponClass)){
+                    activity = CouponActivity.class;
+                    newIntent = new Intent(holder.itemView.getContext(), activity);
+                    newIntent.putExtra("couponId", elementId);
+                }
+                if(newIntent!=null)
+                    Log.e("Notification Recycler", "Element Id: "+elementId);
+                    Log.e("Notification Recycler", "Element Class: "+notif.getOpenClass());
+                    holder.itemView.getContext().startActivity(newIntent);
+            });
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -64,9 +100,8 @@ public class NotificationRecyclerViewAdapter extends RecyclerView.Adapter<Notifi
             dayMessage = itemView.findViewById(R.id.dayMessage);
             notificationMessage = itemView.findViewById(R.id.notificationMessage);
             notificationName = itemView.findViewById(R.id.notificationName);
-
-
         }
+
     }
     @Override
     public int getItemCount() {

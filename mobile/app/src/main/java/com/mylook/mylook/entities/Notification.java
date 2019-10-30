@@ -13,7 +13,25 @@ public class Notification {
     private String topic;
     private String userPhotoUrl;
     private String premiumUserName;
+    private String openClass;
+    private String elementId;
     private boolean openedNotification;
+
+    public String getOpenClass() {
+        return openClass;
+    }
+
+    public void setOpenClass(String openClass) {
+        this.openClass = openClass;
+    }
+
+    public String getElementId() {
+        return elementId;
+    }
+
+    public void setElementId(String elementId) {
+        this.elementId = elementId;
+    }
 
     public String getUserId() {
         return userId;

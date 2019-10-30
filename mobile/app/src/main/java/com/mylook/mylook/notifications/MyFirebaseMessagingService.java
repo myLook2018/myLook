@@ -34,8 +34,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         // Check if message contains a notification payload.
         if (remoteMessage.getData() != null) {
-            for (String key: remoteMessage.getData().keySet()) {
-                Log.e(TAG, key+": "+remoteMessage.getData().get(key));
+            for (String key : remoteMessage.getData().keySet()) {
+                Log.e(TAG, key + ": " + remoteMessage.getData().get(key));
             }
             Log.e(TAG, remoteMessage.getData().toString());
             Log.e(TAG, "Message Notification Body: " + remoteMessage.getData().get("body"));
@@ -46,19 +46,36 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Class activity = null;
         com.mylook.mylook.entities.Notification notif = new com.mylook.mylook.entities.Notification();
         if (!remoteMessage.getData().isEmpty()) {
-            if(remoteMessage.getData().containsKey("requestId")) {
+            if (remoteMessage.getData().containsKey("requestId")) {
                 id = remoteMessage.getData().get("requestId");
+                notif.setMessage(notificationBody);
+                notif.setCreationDate(Timestamp.now());
+                notif.setOpenedNotification(false);
+                notif.setPremiumUserName(remoteMessage.getData().get("storeName"));
+                notif.setUserId(FirebaseAuth.getInstance().getUid());
+                notif.setElementId(id);
+                notif.setOpenClass(getResources().getString(R.string.RecommendClass));
+                try {
+                    FirebaseFirestore.getInstance().collection("stores")
+                            .document(remoteMessage.getData().get("storeId")).get().addOnSuccessListener(l -> {
+
+                        String storePhoto = (String) l.get("profilePh");
+                        notif.setUserPhotoUrl(storePhoto);
+                        FirebaseFirestore.getInstance().collection("notifications").add(notif);
+
+                    });
+                } catch (Exception e) {
+                    FirebaseFirestore.getInstance().collection("notifications").add(notif);
+
+                }
                 activity = RequestRecommendActivity.class;
-            }
-            if(remoteMessage.getData().containsKey("articleId")) {
+            } else if (remoteMessage.getData().containsKey("articleId")) {
                 id = remoteMessage.getData().get("articleId");
                 activity = ArticleInfoActivity.class;
-            }
-            if(remoteMessage.getData().containsKey("storeId")) {
+            } else if (remoteMessage.getData().containsKey("storeId") && !remoteMessage.getData().containsKey("voucherCode")) {
                 id = remoteMessage.getData().get("storeId");
                 activity = StoreActivity.class;
-            }
-            if(remoteMessage.getData().containsKey("topic")){
+            } else if (remoteMessage.getData().containsKey("topic")) {
                 activity = NotificationCenter.class;
                 notif.setMessage(notificationBody);
                 notif.setTopic(remoteMessage.getData().get("topic"));
@@ -68,18 +85,39 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 notif.setPremiumUserName(remoteMessage.getData().get("premiumUserName"));
                 notif.setUserPhotoUrl(remoteMessage.getData().get("userImage"));
                 notif.setUserId(FirebaseAuth.getInstance().getUid());
-                FirebaseFirestore.getInstance().collection("notifications").add(notif);
-            }
-            if(remoteMessage.getData().containsKey("voucherCode")){
+                FirebaseFirestore.getInstance().collection("clients")
+                        .whereEqualTo("userId",remoteMessage.getData().get("premiumUserId") ).get().addOnSuccessListener(l -> {
+                    notif.setElementId(l.getDocuments().get(0).getId());
+                    notif.setOpenClass(getResources().getString(R.string.PremiumUserClass));
+                    FirebaseFirestore.getInstance().collection("notifications").add(notif);
+                });
+            } else if (remoteMessage.getData().containsKey("voucherCode")) {
                 id = remoteMessage.getData().get("voucherCode");
                 activity = CouponActivity.class;
+                notif.setMessage(remoteMessage.getData().get("couponTitle"));
+                notificationBody = notif.getMessage();
+                notif.setCreationDate(Timestamp.now());
+                notif.setOpenedNotification(false);
+                notif.setPremiumUserName(remoteMessage.getData().get("storeName"));
+                notif.setUserId(FirebaseAuth.getInstance().getUid());
+                notif.setElementId(remoteMessage.getData().get("voucherCode"));
+                notif.setOpenClass(getResources().getString(R.string.CouponClass));
+                try {
+                    FirebaseFirestore.getInstance().collection("stores")
+                            .document(remoteMessage.getData().get("storeId")).get().addOnSuccessListener(l -> {
+
+                        String storePhoto = (String) l.get("profilePh");
+                        notif.setUserPhotoUrl(storePhoto);
+                        FirebaseFirestore.getInstance().collection("notifications").add(notif);
+
+                    });
+                } catch (Exception e) {
+                    FirebaseFirestore.getInstance().collection("notifications").add(notif);
+
+                }
             }
 
         }
-
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
-
         sendNotification(notificationTitle, notificationBody, id, activity);
     }
 
@@ -89,7 +127,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.e(TAG, "Entered in deleted messages");
     }
 
-    private PendingIntent createIntent(String id, Class activity){
+    private PendingIntent createIntent(String id, Class activity) {
         Intent newIntent = new Intent(getBaseContext(), activity);
         if (activity == RequestRecommendActivity.class)
             newIntent.putExtra("requestId", id);
@@ -97,10 +135,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             newIntent.putExtra("storeId", id);
         if (activity == ArticleInfoActivity.class)
             newIntent.putExtra("articleId", id);
-        if(activity==CouponActivity.class)
+        if (activity == CouponActivity.class)
             newIntent.putExtra("couponId", id);
         newIntent.putExtra("fromDeepLink", true);
-        PendingIntent pendingIntent =  PendingIntent.getActivity(getApplicationContext(), 0, newIntent,  PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
         return pendingIntent;
     }
 
@@ -128,7 +166,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     .setChannelId(CHANNEL_ID)
                     .setAutoCancel(true)
                     .build();
-            mNotificationManager.notify(notifyID , notification);
+            mNotificationManager.notify(notifyID, notification);
         } else {
             Log.e(TAG, "Version < Oreo");
             Notification.Builder notificationBuilder = new Notification.Builder(getApplicationContext())
@@ -142,7 +180,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             notification = notificationBuilder.build();
             Log.e("Notification", notification.toString());
             NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            manager.notify( 123, notification);
+            manager.notify(123, notification);
         }
 
     }

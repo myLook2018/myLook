@@ -84,6 +84,11 @@
     <string name="facebook_app_id">2265525280404446</string>
     <string name="fb_login_protocol_scheme">fb2265525280404446</string>
 
+    <!--To open Notifications-->
+    <string name="RecommendClass">Recommendation</string>
+    <string name="CouponClass">Coupon</string>
+    <string name="PremiumUserClass">PremiumUser</string>
+
 
 </resources>
 

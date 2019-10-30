@@ -464,7 +464,8 @@ function createVoucherCode(){
               "sound": "default",
               "voucherCode": snap.after.data().code,
               "storeId": snap.after.data().storeId,
-              "storeName": snap.after.data().storeName
+              "storeName": snap.after.data().storeName, 
+              "couponTitle":snap.after.data().title
           },
           "token": registrationToken
       };

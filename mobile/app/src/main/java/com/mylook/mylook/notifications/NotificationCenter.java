@@ -83,7 +83,6 @@ public class NotificationCenter extends AppCompatActivity {
                             notif.setDocumentId(doc.getId());
                             notifications.add(notif);
                         }
-                        Log.e("Notifications", ""+notifications.size());
                         adapter.notifyDataSetChanged();
                     }
         });

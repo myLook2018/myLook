@@ -5,6 +5,7 @@
     android:id="@+id/linearLayout13"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,6 +30,7 @@
         android:id="@+id/constraintLayout6"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,6 +45,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
+            android:textColor="@color/black"
             android:textSize="24sp"
             app:layout_constraintEnd_toStartOf="@+id/couponImage"
             app:layout_constraintStart_toStartOf="parent"
@@ -92,6 +95,7 @@
             android:textSize="36sp"
             android:textStyle="bold"
             android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/couponDueDate"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/couponStoreName"
@@ -102,12 +106,13 @@
             android:id="@+id/couponDueDate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:textColor="@color/black"
             android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@+id/couponDescription"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/couponTitle"
-            app:layout_constraintTop_toBottomOf="@+id/couponCode"
             tools:layout_conversion_absoluteHeight="19dp"
             tools:layout_conversion_absoluteWidth="0dp" />
 
@@ -115,16 +120,17 @@
             android:id="@+id/couponDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            android:justificationMode="inter_word"
             android:lines="5"
-            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/couponTitle"
-            app:layout_constraintTop_toBottomOf="@+id/couponDueDate"
             tools:layout_conversion_absoluteHeight="86dp"
-            tools:layout_conversion_absoluteWidth="0dp"
-            android:justificationMode="inter_word"/>
+            tools:layout_conversion_absoluteWidth="0dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
