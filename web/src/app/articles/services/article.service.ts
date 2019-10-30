@@ -31,6 +31,7 @@ export class ArticleService {
   storeCollectionPath = 'stores';
   db: any;
   require: any;
+  articlesByCode: any[];
 
   constructor(public fst: AngularFirestore, private http: HttpClient) {
     console.log(`en el collector`);
@@ -61,6 +62,7 @@ export class ArticleService {
       console.log(`estamos preguntando por ` + storeName);
       const res = this.db.collection(this.collectionPath).where('storeName', '==', storeName)
         .get().then((querySnapshot) => {
+          this.articlesCopado = [];
           querySnapshot.forEach((doc) => {
             const data = doc.data();
             data.articleId = doc.id;
@@ -137,7 +139,7 @@ export class ArticleService {
   promoteArticle(data, article: Article, storeUID) {
     console.log('la data', data);
     console.log('el article', article);
-    let end = new Date;
+    const end = new Date;
     end.setDate(end.getDate() + data.duration);
     const promotion = {
       articleId: article.articleId,
@@ -247,5 +249,31 @@ export class ArticleService {
         // The document probably doesn't exist.
         console.error('Error updating document: ', error);
       });
+  }
+
+  getArticleByCode( storeName, articleCode ) {
+    this.articlesByCode = [];
+    // tslint:disable-next-line:no-shadowed-variable
+    return new Promise<any>((resolve, reject) => {
+      console.log(`estamos preguntando por articleCode: ` + articleCode);
+      const res = this.db.collection(this.collectionPath).where('storeName', '==', storeName)
+        .get().then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            console.log('docs parcial ', data);
+            data.articleId = doc.id;
+            if ( data.code === articleCode ) {
+              console.log('entro este ------------------------------------------');
+              this.articlesByCode.push(data);
+            }
+          });
+        }).then(() => {
+          resolve(this.articlesByCode);
+        })
+        .catch(function (error) {
+          console.log('Error getting documents: ', error);
+          reject(error);
+        });
+    });
   }
 }

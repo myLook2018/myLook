@@ -143,7 +143,7 @@ export class StoreFrontComponent {
 
     });
     this.articleService.updateStorefront(this.actualStore.firebaseUID, this.storefrontArray.value).then(() => {
-      this.openSnackBar('Vidriera actualizada en MyLook!', 'x');
+      this.openSnackBar('Vidriera actualizada en MyLook!', '');
       this.isUpLoading = false;
     });
   }
@@ -215,6 +215,13 @@ export class StoreFrontComponent {
     } else {
       this.tooltipMessage = 'Agrega una nueva vidriera';
       return false;
+    }
+  }
+
+  checkFrontFull(element, $event) {
+    console.log('laskmdlkasdmlaksmdlkmsadlm');
+    if (!this.isInSelected(element) && (this.selectedIndexes.length > 5)) {
+      this.openSnackBar('Solo puede seleccionar hasta 6 prendas por vidriera.', '');
     }
   }
 }

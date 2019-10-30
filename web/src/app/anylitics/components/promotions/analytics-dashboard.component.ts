@@ -152,8 +152,8 @@ export class AnyliticsDashboardComponent implements OnInit, OnDestroy {
 
   downloadPromotion( element: any ) {
     console.log(element);
-    const data = {promotion: element, store: this.actualStore };
-    this.promotionsService.downloadPromotion(data);
+    const data = {info: element, store: this.actualStore };
+    this.promotionsService.downloadDocument(data, 'promotion');
   }
 
 }

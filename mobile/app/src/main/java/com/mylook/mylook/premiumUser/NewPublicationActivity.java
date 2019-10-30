@@ -69,7 +69,7 @@ public class NewPublicationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_premium_publication);
         Toolbar tb = findViewById(R.id.toolbar);
-        tb.setTitle("Tu publicación");
+        tb.setTitle("Tu Post");
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
@@ -255,7 +255,7 @@ public class NewPublicationActivity extends AppCompatActivity {
                         }
                         else{
                             if ( selectImageUri == null) {
-                                displayMessage("Debe añadir una foto a la publicación");
+                                displayMessage("Debe añadir una foto al Post");
                                 return;
                             } else {
                                 articleId=task1.getResult().getDocuments().get(0).getId();
@@ -288,7 +288,7 @@ public class NewPublicationActivity extends AppCompatActivity {
 
             FirebaseFirestore.getInstance().collection("premiumPublications")
                     .add(premiumPublication).addOnSuccessListener(documentReference -> {
-                        displayMessage("Tu publicación fue guardada");
+                        displayMessage("Tu Post fue guardado");
                         finish();
 
                     }).addOnFailureListener(new OnFailureListener() {
@@ -296,7 +296,7 @@ public class NewPublicationActivity extends AppCompatActivity {
                 public void onFailure(@NonNull Exception e) {
                     mProgressBar.setVisibility(View.GONE);
                     btnSave.setEnabled(true);
-                    displayMessage("Ha ocurrido un problema con tu publicación");
+                    displayMessage("Ha ocurrido un problema con tu Post");
                 }
             });
         } else {

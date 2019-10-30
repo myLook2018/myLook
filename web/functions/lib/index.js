@@ -287,11 +287,19 @@ exports.getMercadoPagoNotification = functions.https.onRequest((req, res) => {
         const external_reference = laData.external_reference
 
         // 0:promotionLevel - 1:duracion en dias - 2:uid del articulo
-        var articleInformation = external_reference.split("-");
+        var articlePromotionLevel = '';
+        var promotionDuration = '';
+        var articleToPromoteId = '';
+        var voucherReference = '';
+        if (external_reference.includes('-')) {
+          var articleInformation = external_reference.split("-");
+          articlePromotionLevel = parseInt(articleInformation[0]);
+          promotionDuration = parseInt(articleInformation[1]);
+          articleToPromoteId = articleInformation[2];
+        } else {
+          voucherReference = external_reference;
+        }
 
-        const articlePromotionLevel = parseInt(articleInformation[0]);
-        const promotionDuration = parseInt(articleInformation[1]);
-        const articleToPromoteId = articleInformation[2];
 
         // La platita que nos ingresó
         const promotionCost = parseInt(laData.transaction_amount);
@@ -313,7 +321,7 @@ exports.getMercadoPagoNotification = functions.https.onRequest((req, res) => {
         const idMercadoPago = laData.id
 
 
-
+        if (!voucherReference) {
         admin.firestore().collection('articles').doc(articleToPromoteId).update({ promotionLevel: articlePromotionLevel }).then(result => {
           admin.firestore().collection('stores').where('storeName', '==', storeName).get().then(snapshot => {
             snapshot.forEach(doc => {
@@ -345,6 +353,19 @@ exports.getMercadoPagoNotification = functions.https.onRequest((req, res) => {
             });
           });
         });
+      } else {
+        admin.firestore().collection('voucherCampaing').doc(voucherReference).update({
+          idMercadoPago: idMercadoPago,
+          paymentMethod: paymentMethod,
+          lastFourDigits: lastFourDigits,
+          cardOwner: cardOwner,
+          payMethod: payMethod
+        }).then(() => {
+          return res.status(200).json({
+            message:'OK'
+          });
+        })
+      }
       }).on("error", (err) => {
         console.log("Error: " + err.message);
       });;

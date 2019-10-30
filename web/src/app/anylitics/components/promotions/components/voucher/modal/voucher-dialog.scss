@@ -1,0 +1,155 @@
+::ng-deep mat-horizontal-content-container {
+  padding: 0;
+}
+
+::ng-deep mat-stepper-horizontal, mat-stepper-horizontal {
+  padding: 0;
+}
+
+.lala{
+  color: red;
+}
+
+::ng-deep .mat-step-header .mat-step-icon {
+  background-color: #9C27B0;
+  color: rgba(255,255,255,.87);
+}
+
+::ng-deep .mat-progress-bar-fill::after {
+  background-color: #9C27B0;
+}
+
+::ng-deep .mat-progress-bar-buffer {
+  background: rgb(218, 154, 230);
+}
+
+::ng-deep .mat-progress-bar {
+  border-radius: 0px;
+}
+
+.orangeButton {
+  background-color: #ff9800;
+  color: #ffffff;
+}
+
+.articleName {
+  font-weight: bold;
+  color: #9C27B0;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.promotionPicture {
+  display: block;
+  margin-right: auto;
+  margin-bottom: 10px;
+}
+
+.finalCost {
+  font-size: 1.5rem;
+  color: #9C27B0;
+  text-align: end;
+}
+
+.formButtons {
+  width: 100%
+}
+
+.mat-dialog-actions {
+  justify-content: flex-end;
+  padding-bottom: 2rem;
+}
+
+.disabledButton {
+  background-color: rgba(197, 127, 169, 0.5);
+  color: white;
+
+}
+
+.confirmButton {
+  background-color: #9C27B0;
+  color: #ffffff;
+
+}
+
+::ng-deep .mat-progress-bar-fill::after {
+  background-color: #9c27b0;
+}
+
+::ng-deep .mat-progress-bar-buffer {
+  background: rgb(218, 154, 230);
+}
+
+::ng-deep .mat-progress-bar {
+  border-radius: 2px;
+}
+
+.proggressBar {
+  margin-bottom: 0rem;
+  margin-top: 2rem;
+  width: 59.4rem;
+  margin-left: 24px;
+  position: absolute;
+}
+
+.formArea {
+  width: 24rem;
+  margin-left: 1rem;
+}
+
+.disclaimer {
+  width: 44.8rem;
+  text-align: justify;
+}
+
+.first-row {
+  display: inline-flex;
+  width: 100%;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+.my-form-input {
+  padding: 0 1rem;
+}
+
+.my-divider {
+  margin: 0 0 1rem 1rem;
+  padding: 0 1rem !important;
+  width: calc(100% - 2rem);
+}
+
+.center-error {
+  color: red;
+  margin-top: 0.5rem;
+  text-align-last: center;
+
+}
+
+.mat-slider-horizontal {
+  width: 55rem;
+}
+
+::ng-deep .mat-slider-thumb {
+  background-color: rgb(189, 132, 199) !important;
+}
+::ng-deep .mat-slider-thumb-label {
+  background-color: rgb(189, 132, 199) !important;
+}
+
+::ng-deep .mat-slider-track-fill {
+  background-color: rgb(189, 132, 199) !important;
+}
+
+.slider-help {
+  text-align: center;
+  font-size: 16px;
+  margin-bottom: 1.2rem;
+}
+
+.slider-content {
+  text-align-last: center;
+}
+
+.title {
+  text-align: center;
+}

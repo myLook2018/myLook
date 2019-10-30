@@ -1,0 +1,90 @@
+<div class="page-content">
+  <div class="actions">
+      <button mat-raised-button
+              class="activated-button"
+              (click)="openNewVoucher()"
+              >Nueva Campaña
+      </button>
+  </div>
+  <div class="graficos">
+    <div class="non-subcribers-likes">
+
+    </div>
+    <div class="likes-by-age">
+
+    </div>
+    <div class="likes-by-gender">
+
+    </div>
+  </div>
+  <div class="lines-used-by-day">
+
+  </div>
+  <div class="table-download">
+    <mat-card class="vouchers-table">
+      <mat-card-header>
+        <mat-card-title>Información de las campañas de cupones</mat-card-title>
+        <mat-card-subtitle> En la siguiente tabla encontrará Información referida a todas las operaciones de campañas de cupones que ha realizado en myLook.</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="tablita mat-elevation-z1" *ngIf="campaignsTableDataSource">
+            <table mat-table [dataSource]="campaignsTableDataSource" style="width: 100%;">
+
+              <!-- Inicio Column -->
+              <ng-container matColumnDef="Titulo">
+                <th mat-header-cell *matHeaderCellDef> Título </th>
+                <td mat-cell *matCellDef="let element"> {{element.title}} </td>
+                <td mat-footer-cell *matFooterCellDef> Total </td>
+              </ng-container>
+              <!-- Inicio Column -->
+              <ng-container matColumnDef="FechaInicio">
+                <th mat-header-cell *matHeaderCellDef> Fecha de Inicio </th>
+                <td mat-cell *matCellDef="let element"> {{element.startDate.toDate() | date: 'fullDate'}} </td>
+                <td mat-footer-cell *matFooterCellDef>  </td>
+
+              </ng-container>
+
+              <!-- Fin Column -->
+              <ng-container matColumnDef="FechaFin">
+                <th mat-header-cell *matHeaderCellDef> Fecha de Fin </th>
+                <td mat-cell *matCellDef="let element"> {{ element.dueDate.toDate() | date: 'fullDate'}}</td>
+                <td mat-footer-cell *matFooterCellDef>  </td>
+
+              </ng-container>
+
+              <!-- Nivle de promocion Column -->
+              <ng-container matColumnDef="TipoCampania">
+                <th mat-header-cell *matHeaderCellDef> Tipo de Campaña </th>
+                <td mat-cell *matCellDef="let element"> {{getCampaignType(element.campaignType)}} </td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+              </ng-container>
+
+              <!-- Precio Final de promocion Column -->
+              <ng-container matColumnDef="PrecioFinal">
+                <th mat-header-cell *matHeaderCellDef> Precio Final </th>
+                <td mat-cell *matCellDef="let element"> {{element.campaignCost | currency:'ARS'}} </td>
+                <td mat-footer-cell *matFooterCellDef> {{ getTotalCost() | currency:'ARS'}} </td>
+              </ng-container>
+
+              <!-- Descargar Column -->
+              <ng-container matColumnDef="Descargar">
+                <th mat-header-cell *matHeaderCellDef> Descargar </th>
+                <td mat-cell *matCellDef="let element">
+                  <button  mat-icon-button (click)="downloadCampaign(element)">
+                      <mat-icon class="myLookPink">cloud_download</mat-icon>
+                  </button>
+                </td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              <tr mat-footer-row *matFooterRowDef="displayedColumns; sticky: true"></tr>
+
+            </table>
+          </div>
+      </mat-card-content>
+
+    </mat-card>
+  </div>
+</div>
