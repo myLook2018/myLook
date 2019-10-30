@@ -5,6 +5,7 @@
     android:id="@+id/constraintLayout7"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/greyBackground"
     android:orientation="vertical">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -13,6 +14,7 @@
         android:layout_height="0dp"
         android:layout_marginStart="4dp"
         android:layout_marginEnd="4dp"
+        android:layout_marginBottom="8dp"
         android:orientation="vertical"
         android:textAlignment="textEnd"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
@@ -45,24 +47,25 @@
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <Button
+        <ImageButton
             android:id="@+id/send_new_message"
             android:layout_width="53dp"
             android:layout_height="59dp"
             android:layout_marginEnd="4dp"
             android:layout_weight="1"
-            android:backgroundTint="@color/colorAccent"
+            android:backgroundTint="@color/white"
             android:foreground="@drawable/ic_send"
             android:foregroundGravity="center"
-            android:foregroundTint="#FFFFFF"
+            android:foregroundTint="@color/accent"
             android:textAlignment="viewEnd"
             android:textSize="10sp"
+            android:tint="@color/white"
             app:cornerRadius="8dp"
-            app:iconTint="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -73,7 +76,7 @@
             android:layout_height="0dp"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
-            android:background="@android:color/transparent"
+            android:background="@color/white"
             android:ems="10"
             android:gravity="start|top"
             android:hint="Escribí tu nuevo mensaje de difusión"

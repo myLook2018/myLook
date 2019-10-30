@@ -51,7 +51,11 @@ public class CatalogFragment extends Fragment {
                         art.setArticleId(document.getId());
                         storeArticles.add(art);
                     }
-                    grid.setAdapter(new GridImageAdapter(getActivity(), R.layout.ripple_image_view, storeArticles));
+                    try{
+                        grid.setAdapter(new GridImageAdapter(getActivity(), R.layout.ripple_image_view, storeArticles));
+                    }catch (Exception e){
+                        Log.e("CatalogFragment", "Exception: "+e.getMessage());
+                    }
                 })
                 .addOnFailureListener(err -> Log.e("Firestore task", "onFailure: " + err));
     }

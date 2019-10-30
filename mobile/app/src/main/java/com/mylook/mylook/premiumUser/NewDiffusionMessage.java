@@ -5,7 +5,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.Nullable;
@@ -27,10 +31,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class NewDiffusionMessage extends Activity {
+public class NewDiffusionMessage extends AppCompatActivity {
 
     private TextView newMessage;
-    private Button sendMessage;
+    private ImageButton sendMessage;
     private Toolbar toolbar;
     private RecyclerView recyclerView;
     private String userId = FirebaseAuth.getInstance().getUid();
@@ -53,6 +57,9 @@ public class NewDiffusionMessage extends Activity {
         setContentView(R.layout.activity_premium_messages);
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Difusiones");
+        setSupportActionBar(toolbar);
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
         newMessage = findViewById(R.id.new_message_text);
         sendMessage = findViewById(R.id.send_new_message);
         recyclerView = findViewById(R.id.sent_premium_messages);
@@ -141,6 +148,11 @@ public class NewDiffusionMessage extends Activity {
             return false;
         }
 
+        return true;
+    }
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
         return true;
     }
 }

@@ -112,7 +112,7 @@ public class PremiumUserProfileActivity extends AppCompatActivity {
         publicDifusionFragment = new PremiumDiffusionFragment(premiumUserId);
         publicDifusionFragment.setArguments(bundle);
 
-        reputationFragment = new ReputationPremiumFragment(FirebaseAuth.getInstance().getUid());
+        reputationFragment = new ReputationPremiumFragment(clientId);
         reputationFragment.setArguments(bundle);
 
         ViewPager viewPagerUserPublications = findViewById(R.id.storeViewPager);

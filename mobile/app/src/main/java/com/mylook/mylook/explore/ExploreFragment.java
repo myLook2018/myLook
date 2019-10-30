@@ -115,6 +115,10 @@ public class ExploreFragment extends Fragment implements CardStackListener, Card
         visitPremiumPublication();
     }
 
+    public void clear() {
+        exploreInstance=null;
+    }
+
     private enum ViewName {
         PROGRESS_BAR,
         MESSAGE,
