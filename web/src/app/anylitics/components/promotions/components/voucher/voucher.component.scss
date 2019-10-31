@@ -59,7 +59,7 @@ color: rgb(189, 132, 199)
 
 .actions {
   text-align: end;
-  margin-top: 1rem;
+  margin: 1rem;
 
   .activated-button {
     background-color: #bd84c7; color: white;
@@ -68,4 +68,8 @@ color: rgb(189, 132, 199)
   .button-disabled {
     background-color: grey; color: white;
   }
+}
+
+button {
+  margin-left: 1rem;
 }

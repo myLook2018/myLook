@@ -179,9 +179,20 @@ export class DataService {
             const data = doc.data();
             data.id = doc.id;
             subscritors.push(data);
+
           });
-        }).then(() => {
+        }).then(async () => {
+
+          await Promise.all(subscritors.map(async (subs) => {
+            await this.getClientDocIdFromUserID(subs.userId).then(id => subs.idClientDocument = id);
+            console.log(subs);
+          }));
           return resolve(subscritors);
+
+          // asyncForEach();
+          // this.getClientDocIdFromUserID(data.userId).then(docId => {
+          //   data.clientDocumentId = docId;
+          // });
         })
         .catch(function (error) {
           console.log('Error getting clients: ', error);
@@ -194,5 +205,55 @@ export class DataService {
   addNewVoucherCollection(voucherData) {
     console.log(voucherData);
     return this.voucherCollection.add(voucherData);
+  }
+
+  tryActivateVoucher( voucherCode ) {
+    let result = {
+      title: '',
+      usedDate: ''
+    };
+    return new Promise<any>((resolve, reject) => {
+      this.db.collection('vouchers').doc(voucherCode)
+        .get().then((doc) => {
+          if (doc.exists) {
+            result.title = doc.data().usedDate ? 'used' : 'success';
+            if (result.title === 'success') {
+              doc.ref.update({usedDate: new Date, used: true });
+            } else {
+              result.usedDate = doc.data().usedDate;
+            }
+          } else {
+            result.title = 'invalid';
+          }
+        }).then(() => {
+          return resolve(result);
+        })
+        .catch(function (error) {
+          console.log('Error getting clients: ', error);
+          reject(error);
+        });
+      console.log(`y el resultado fue ` + result);
+    });
+  }
+
+  getClientDocIdFromUserID( userIdRequired ) {
+    let clientDocID = '';
+    return new Promise<any>((resolve, reject) => {
+      this.db.collection('clients').where('userId', '==', userIdRequired)
+        .get().then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            data.id = doc.id;
+            clientDocID = data.id;
+          });
+        }).then(() => {
+          return resolve(clientDocID);
+        })
+        .catch(function (error) {
+          console.log('Error getting clients: ', error);
+          reject(error);
+        });
+      console.log(`subscritors ` + clientDocID);
+    });
   }
 }

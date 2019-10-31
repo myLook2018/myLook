@@ -105,6 +105,9 @@ import localeAR from '@angular/common/locales/es-AR';
 import { VoucherComponent } from './anylitics/components/promotions/components/voucher/voucher.component';
 import {MatTabsModule} from '@angular/material/tabs';
 import {VoucherDialogComponent} from 'src/app/anylitics/components/promotions/components/voucher/modal/voucher-dialog';
+import { ModalCheckComponent } from './anylitics/components/promotions/components/voucher/modal-check/modal-check.component';
+import {ToastModule} from 'primeng/toast';
+import {MessageService} from 'primeng/api';
 
 
 
@@ -145,7 +148,8 @@ registerLocaleData(localeAR);
     AnyliticsDashboardComponent,
     ViewsByPromotionsComponent,
     ReactionsPieComponent,
-    VoucherComponent
+    VoucherComponent,
+    ModalCheckComponent
   ],
   imports: [
     HttpClientModule,
@@ -193,6 +197,7 @@ registerLocaleData(localeAR);
     LyIconModule,
     FontAwesomeModule,
     MatProgressSpinnerModule,
+    ToastModule,
     MatTabsModule,
     LyThemeModule.setTheme('minima-light'),
     AgmCoreModule.forRoot({
@@ -203,7 +208,7 @@ registerLocaleData(localeAR);
   ],
   exports: [RouterModule],
   providers: [MatDatepickerModule, RecomendationService, DataService, AuthService,
-    UserService, UserResolver, AuthGuard, StoreService,
+    UserService, UserResolver, AuthGuard, StoreService,MessageService,
     ArticleService, TagsService, AnyliticService, MatTooltipModule, PromotionsService,
     { provide: LY_THEME, useClass: MinimaLight, multi: true }, // name: `minima-light`
     { provide: LY_THEME, useClass: MinimaDark, multi: true }, // name: `minima-dark`
@@ -212,7 +217,7 @@ registerLocaleData(localeAR);
     // ArticleResolver, StoreResolver,
     NewStoreService],
   entryComponents: [FrontDialogComponent, PromoteDialogComponent, DialogAlertComponent, SuccesfulDialogComponent,
-    DeleteConfirmationDialogComponent, MapsDialogComponent, VoucherDialogComponent, EditStoreComponent],
+    DeleteConfirmationDialogComponent, MapsDialogComponent, VoucherDialogComponent, EditStoreComponent, ModalCheckComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {

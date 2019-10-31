@@ -3,6 +3,7 @@ import { VoucherDialogComponent } from './modal/voucher-dialog';
 import { MatDialog, MatTableDataSource } from '@angular/material';
 import { AnyliticService } from 'src/app/anylitics/services/anylitics.service';
 import { PromotionsService } from 'src/app/anylitics/services/promotions.service';
+import { ModalCheckComponent } from './modal-check/modal-check.component';
 
 @Component({
   selector: 'app-voucher',
@@ -57,6 +58,22 @@ export class VoucherComponent implements OnInit, OnChanges {
     promoteRef.afterClosed().subscribe(result => {
       console.log(`resutl close ` + result);
       sub.unsubscribe();
+    });
+  }
+
+  openCheckVoucher() {
+    const dataToSend = {
+      storeId: this.userStore.firebaseUID,
+      storeName: this.userStore.storeName,
+    };
+    const promoteRef = this.dialog.open(ModalCheckComponent, {
+      width: '600px',
+      disableClose: true,
+      data: dataToSend
+    });
+
+    promoteRef.afterClosed().subscribe(result => {
+      console.log(`resutl close ` + result);
     });
   }
 
