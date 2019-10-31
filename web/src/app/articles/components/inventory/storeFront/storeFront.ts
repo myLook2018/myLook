@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
-import { MatTableDataSource, MatSnackBar } from '@angular/material';
+import { MatTableDataSource } from '@angular/material';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { ArticleService } from '../../../services/article.service';
 import { Observable } from 'rxjs';
 import { DataService } from 'src/app/service/dataService';
 import { StoreModel } from 'src/app/auth/models/store.model';
 import { Router } from '@angular/router';
+import { ToastsService, TOASTSTYPES} from 'src/app/service/toasts.service';
 
 @Component({
   selector: 'app-storefront',
@@ -45,7 +46,7 @@ export class StoreFrontComponent {
     private dataService: DataService,
     private router: Router,
     private formBuilder: FormBuilder,
-    public snackBar: MatSnackBar
+    private toastsService: ToastsService
     // @Inject(MAT_DIALOG_DATA) public data
     ) {
       this.storefrontForm = this.formBuilder.group({
@@ -143,14 +144,8 @@ export class StoreFrontComponent {
 
     });
     this.articleService.updateStorefront(this.actualStore.firebaseUID, this.storefrontArray.value).then(() => {
-      this.openSnackBar('Vidriera actualizada en MyLook!', '');
+      this.toastsService.showToastMessage('Vidriera actualizada', TOASTSTYPES.SUCCESS, 'Se ha actualizado su vidriera con éxito.');
       this.isUpLoading = false;
-    });
-  }
-
-  openSnackBar(message: string, action: string) {
-    this.snackBar.open(message, action, {
-      duration: 3000
     });
   }
 
@@ -221,7 +216,7 @@ export class StoreFrontComponent {
   checkFrontFull(element, $event) {
     console.log('laskmdlkasdmlaksmdlkmsadlm');
     if (!this.isInSelected(element) && (this.selectedIndexes.length > 5)) {
-      this.openSnackBar('Solo puede seleccionar hasta 6 prendas por vidriera.', '');
+      this.toastsService.showToastMessage('Límite de vidriera', TOASTSTYPES.WARN, 'Solo puede seleccionar hasta 6 prendas por vidriera.');
     }
   }
 }

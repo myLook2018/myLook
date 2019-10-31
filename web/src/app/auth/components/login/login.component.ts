@@ -6,7 +6,7 @@ import {FormControl, FormGroupDirective, NgForm } from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {UserService} from '../../services/user.service';
 import { Subscription } from 'rxjs';
-import { MatSnackBar } from '@angular/material';
+import { ToastsService, TOASTSTYPES } from 'src/app/service/toasts.service';
 
 @Component({
   selector: 'app-login',
@@ -29,7 +29,7 @@ export class LoginComponent implements OnDestroy{
   matcher = new MyErrorStateMatcher();
 
   constructor(
-    public snackBar: MatSnackBar,
+    public toastService: ToastsService,
     public userService: UserService,
     public authService: AuthService,
     private router: Router,
@@ -168,16 +168,10 @@ export class LoginComponent implements OnDestroy{
   restartPassword() {
     this.authService.sendResetPasswordEmail(this.loginForm.get('email').value).then( res => {
       console.log('res', res);
-      this.openSnackBar('Te hemos enviado un email para reestablecer tu contraseña!', 'cerrar');
+      this.toastService.showToastMessage('Email enviado', TOASTSTYPES.INFO, 'Te hemos enviado un email para reestablecer tu contraseña.');
     }).catch(error => {
       console.log('el error', error);
-      this.openSnackBar(this.translateError(error.code), 'cerrar');
-    });
-  }
-
-  openSnackBar(message: string, action: string) {
-    this.snackBar.open(message, action, {
-      duration: 2000
+      this.toastService.showToastMessage('Error', TOASTSTYPES.ERROR, this.translateError(error.code));
     });
   }
 }

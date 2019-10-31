@@ -181,14 +181,8 @@ export class DataService {
             subscritors.push(data);
 
           });
-        }).then(async () => {
-
-          await Promise.all(subscritors.map(async (subs) => {
-            await this.getClientDocIdFromUserID(subs.userId).then(id => subs.idClientDocument = id);
-            console.log(subs);
-          }));
+        }).then(() => {
           return resolve(subscritors);
-
           // asyncForEach();
           // this.getClientDocIdFromUserID(data.userId).then(docId => {
           //   data.clientDocumentId = docId;

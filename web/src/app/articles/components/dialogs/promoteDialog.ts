@@ -77,7 +77,8 @@ export class PromoteDialogComponent {
         'quantity': 1,
         'currency_id': 'ARS',
         'picture_url': this.userData.picturesArray[0],
-        'unit_price': this.promotionCost
+        // 'unit_price': this.promotionCost //este es el real, pero para pruebas ponemos en 1
+        'unit_price': 1
         }],
       'payer': {
           'name': this.userData.storeName,

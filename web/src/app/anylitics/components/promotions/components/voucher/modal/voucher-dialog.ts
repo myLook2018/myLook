@@ -119,6 +119,7 @@ export class VoucherDialogComponent implements OnInit {
            this.subscritorsTotal = subscriptos;
            console.log('estos son mis subs', this.subscritorsTotal);
            console.log('estos son mis subs lengt', this.subscritorsTotal.length);
+           this.addClientIDtoSubscriptors();
            this.allNonSubscribers = this.clientsTotal.filter(client => !this.subscritorsTotal.find(subs => {
              console.log(`${subs.userId} === ${client.userId}`);
              // tslint:disable-next-line: triple-equals
@@ -302,5 +303,14 @@ export class VoucherDialogComponent implements OnInit {
     });
     console.log('encontramos de filtrar a ' , this.filteredNonSubscribers.length);
     this.maxSlider = this.filteredNonSubscribers.length;
+  }
+
+  addClientIDtoSubscriptors() {
+    this.subscritorsTotal.map( subs => {
+      console.log('agregandole clientID a ', subs)
+      const clientDoc = this.clientsTotal.find( client => client.userId === subs.userId );
+      subs.idClientDocument = clientDoc.id;
+      console.log('Ahora quedo ', subs);
+    });
   }
 }

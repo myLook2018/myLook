@@ -27,7 +27,6 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
@@ -174,7 +173,6 @@ registerLocaleData(localeAR);
     MatTableModule,
     MatDialogModule,
     MatMenuModule,
-    MatSnackBarModule,
     MatSortModule,
     MatChipsModule,
     MatAutocompleteModule,
