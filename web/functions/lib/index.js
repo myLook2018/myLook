@@ -410,6 +410,8 @@ function createVoucherCode(){
             admin.firestore().collection("clients").doc(clientId).get().then(async(clientSnap) => {
               console.log("ClientSnap")
               console.log(clientSnap.data())
+              var age = new Date().getTime() - clientSnap.get("birthday")
+              age/=31536000000
               let voucher = {
                 storeName: newCampaign.storeName, 
                 storeId: newCampaign.storeId,
@@ -426,9 +428,9 @@ function createVoucherCode(){
                 subscribed: suscribedUsersId.includes(clientSnap.get("userId")),
                 dni: clientSnap.get("dni"),
                 installToken: clientSnap.get("installToken"),
-                birthday: clientSnap.get("birthday"),
-                gender: null,
-                age: null
+                campaignId: snap.after.id,
+                gender: clientSnap.get("gender"),
+                age: Number(age.toFixed(0))
               }
               let created = false;
               while (!created) {
@@ -465,7 +467,8 @@ function createVoucherCode(){
               "voucherCode": snap.after.data().code,
               "storeId": snap.after.data().storeId,
               "storeName": snap.after.data().storeName, 
-              "couponTitle":snap.after.data().title
+              "couponTitle":snap.after.data().title, 
+              "campaignId": snap.after.data().campaignId
           },
           "token": registrationToken
       };
