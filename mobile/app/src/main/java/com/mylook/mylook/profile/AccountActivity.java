@@ -22,7 +22,7 @@ public class AccountActivity extends AppCompatActivity {
 
     private static final int PREMIUM_REQUEST = 2;
     private static final int SUCCESS_CODE = 0;
-    private int USER_CHANGED=1;
+    private static final int CHANGE_USER =1;
     private TextView txtName;
     private TextView txtEmail;
     private ImageView imageDestacado;
@@ -30,15 +30,14 @@ public class AccountActivity extends AppCompatActivity {
     private ImageView imageAccount;
     private TextView txtAccount;
     private ImageView imageExit;
-    private TextView txtNotifications;
-    private ImageView imageNotifications;
+    //private TextView txtNotifications;
+    //private ImageView imageNotifications;
     private TextView txtExit;
     private Context mContext;
     private String clientId;
     private TextView txtCoupons;
     private ImageView imgCoupons;
-    private boolean isPremiumUser;
-    public final static String TAG = "PremiumOptionsFragment";
+    public final static String TAG = "AccountActivity";
 
 
     @Override
@@ -52,8 +51,7 @@ public class AccountActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e("ACC ACTIVITY","ON RESUME ACCOUNT ACTIVITY");
-        //initElements();
+        Log.e(TAG,"ON RESUME ACCOUNT ACTIVITY");
         setUserProfile();
         setOnClickListener();
     }
@@ -82,24 +80,21 @@ public class AccountActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==1){
-            if(resultCode==USER_CHANGED){
-                Session.updateData();
-                txtName.setText(data.getCharSequenceExtra("name"));
-                txtEmail.setText(data.getCharSequenceExtra("email"));
-                Log.e("ACCOUNT ACTIVITY", "El usuario cabio");
-                //onResume();
+        if(requestCode==CHANGE_USER){
+            if(resultCode== SUCCESS_CODE){
+                Session.setChange(data.getStringExtra("name"));
+                txtName.setText(Session.name);
+                //txtEmail.setText(Session.mail);
+                Log.e(TAG, "El usuario cambio");
             }
         }else if(requestCode==2){
             if (resultCode==SUCCESS_CODE){
-                finish();
-                Log.e("ON ACTIVITY RES", "req 2 success");
+                //finish();
+                Log.e(TAG, "Paso a destacado success");
                 txtDestacado.setVisibility(View.GONE);
                 imageDestacado.setVisibility(View.GONE);
             }
         }
-
-
     }
 
 
@@ -107,13 +102,13 @@ public class AccountActivity extends AppCompatActivity {
 
         txtAccount.setOnClickListener(v -> {
             Intent intent=new Intent(getApplicationContext(), EditInfoActivity.class);
-            startActivityForResult(intent,1);
+            startActivityForResult(intent,CHANGE_USER);
 
         });
 
         imageAccount.setOnClickListener(v -> {
             Intent intent = new Intent(mContext, EditInfoActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent,CHANGE_USER);
         });
         txtCoupons.setOnClickListener(v -> {
             Intent intent=new Intent(getApplicationContext(), MyCoupons.class);
@@ -156,8 +151,8 @@ public class AccountActivity extends AppCompatActivity {
             dm.createLogoutDialog(mContext,
                     "Cerrar Sesion",
                     "¿Estas seguro que quieres cerrar sesion?",
-                    "Si",
-                    "No").show();
+                    "Cerrar",
+                    "Cancelar").show();
         });
 
         imageExit.setOnClickListener(v -> {
@@ -167,8 +162,8 @@ public class AccountActivity extends AppCompatActivity {
                     mContext,
                     "Cerrar Sesion",
                     "¿Estas seguro que quieres cerrar sesion?",
-                    "Si",
-                    "No").show();
+                    "Cerrar",
+                    "Cancelar").show();
         });
 
 

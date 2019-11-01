@@ -168,7 +168,7 @@
                   </div>
                 </div>
               </div>
-              <h4 class="photos-subtitle" *ngIf="isEditMode || this.isNew">Por La primera foto será la primera que verán los usuarios</h4>
+              <h4 class="photos-subtitle" *ngIf="isEditMode || this.isNew">La primer foto será la primera que verán los usuarios</h4>
             </div>
 <!--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
         <div class="article-information">
@@ -183,7 +183,8 @@
             <mat-form-field class="inputs" appearance="outline">
               <mat-label>Código de Identificación</mat-label>
               <input matInput formControlName="code" required>
-              <mat-error *ngIf="articleForm.get('code').hasError">Campo obligatorio.</mat-error>
+              <mat-error *ngIf="articleForm.get('code').hasError('required')">Campo obligatorio.</mat-error>
+              <mat-error *ngIf="articleForm.get('code').hasError('notUnique')">El código ya se encuentra en uso.</mat-error>
             </mat-form-field>
           </div>
           <div class="article-dat">

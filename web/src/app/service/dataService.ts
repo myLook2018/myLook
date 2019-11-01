@@ -8,6 +8,8 @@ import {
 import { finalize, delay } from 'rxjs/operators';
 import { StoreModel } from '../auth/models/store.model';
 import { Subscription } from 'rxjs';
+import * as firebase from 'firebase';
+import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
 @Injectable()
 export class DataService {
   task: AngularFireUploadTask;
@@ -16,10 +18,17 @@ export class DataService {
   userFirebase;
   _subscription: Subscription;
   isNewUser = true;
+  db: firebase.firestore.Firestore;
+  voucherCollection: AngularFirestoreCollection;
   constructor(
     private storage: AngularFireStorage,
+    public fst: AngularFirestore,
     public userService: UserService
-    ) {}
+    ) {
+      this.db = firebase.firestore();
+      this.voucherCollection = this.fst.collection('voucherCampaing');
+
+    }
 
     uploadPictureFile(fileSelected) {
       return new Promise<any>((resolve, reject) => {
@@ -138,5 +147,52 @@ export class DataService {
 
   getFirebaseUser() {
     return this.userFirebase;
+  }
+
+  getNumberClients() {
+    const clients = [];
+    return new Promise<any>((resolve, reject) => {
+      this.db.collection('clients')
+        .get().then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            data.id = doc.id;
+            clients.push(data);
+          });
+        }).then(() => {
+          return resolve(clients);
+        })
+        .catch(function (error) {
+          console.log('Error getting clients: ', error);
+          reject(error);
+        });
+      console.log(`clients ` + clients);
+    });
+  }
+
+  getNumberOfSubscriptors() {
+    const subscritors = [];
+    return new Promise<any>((resolve, reject) => {
+      this.db.collection('subscriptions').where('storeName', '==', this.storeInfo.storeName)
+        .get().then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            data.id = doc.id;
+            subscritors.push(data);
+          });
+        }).then(() => {
+          return resolve(subscritors);
+        })
+        .catch(function (error) {
+          console.log('Error getting clients: ', error);
+          reject(error);
+        });
+      console.log(`subscritors ` + subscritors);
+    });
+  }
+
+  addNewVoucherCollection(voucherData) {
+    console.log(voucherData);
+    return this.voucherCollection.add(voucherData);
   }
 }

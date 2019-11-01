@@ -16,6 +16,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -33,6 +34,7 @@ import java.util.List;
 
 public class SearchableActivity extends AppCompatActivity {
     private List results;
+    private List<String> resultsStrings;
     private CardsHomeFeedAdapter adapter;
     private RecyclerView recyclerView;
     private ImageView backArrow;
@@ -49,8 +51,10 @@ public class SearchableActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         recyclerView = findViewById(R.id.recycler_view_content);
-
+        SwipeRefreshLayout refreshLayout =findViewById(R.id.refresh_layout_home);
+        refreshLayout.setEnabled(false);
         results = new ArrayList();
+        resultsStrings =new ArrayList<>();
         adapter = new CardsHomeFeedAdapter(this, results);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(mLayoutManager);
@@ -60,7 +64,7 @@ public class SearchableActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         emptyText = findViewById(R.id.emptyText);
         emptyText.setText("Ups! no encontramos nada relacionado a tu busqueda");
-        emptyText.setVisibility(View.GONE);
+        emptyText.setVisibility(View.VISIBLE);
 
 
 
@@ -71,17 +75,17 @@ public class SearchableActivity extends AppCompatActivity {
             recyclerView.removeAllViewsInLayout();
             recyclerView.removeAllViews();
             results.clear(); //new
+            resultsStrings.clear();
             doMySearchTags(query);
             doMySearchTitles(query);
             doMySearchStoreNames(query);
-            doMySearchStorePremium(query);
-
+            doMySearchPremiumUseres(query);
         }
         progressBar.setVisibility(View.INVISIBLE);
     }
 
-    private void doMySearchStorePremium(final String query) {
-        FirebaseFirestore.getInstance().collection("premiumUsers")
+    private void doMySearchPremiumUseres(final String query) {
+         FirebaseFirestore.getInstance().collection("premiumUsers")
                 //.whereEqualTo("storeName",query)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -92,6 +96,7 @@ public class SearchableActivity extends AppCompatActivity {
                                 if (documentSnapshot.get("userName").toString().toLowerCase().contains(query.toLowerCase())) {
                                     PremiumUser premiumUser = documentSnapshot.toObject(PremiumUser.class);
                                     results.add(premiumUser);
+                                    emptyText.setVisibility(View.GONE);
                                     Log.e("Usuario", premiumUser.getUserName());
                                 }
                             }
@@ -102,9 +107,6 @@ public class SearchableActivity extends AppCompatActivity {
                         } else {
                             Log.d("Firestore task", "onComplete: " + task.getException());
                         }
-                        if(results.isEmpty()){
-                            emptyText.setVisibility(View.VISIBLE);
-                        }
                     }
                 });
     }
@@ -112,7 +114,7 @@ public class SearchableActivity extends AppCompatActivity {
 
     private void doMySearchStoreNames(final String query) {
         //query = Character.toUpperCase(query.charAt(0)) + query.substring(1, query.length());
-        FirebaseFirestore.getInstance().collection("stores")
+         FirebaseFirestore.getInstance().collection("stores")
                 //.whereEqualTo("storeName",query)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -123,6 +125,7 @@ public class SearchableActivity extends AppCompatActivity {
                                 if (documentSnapshot.get("storeName").toString().toLowerCase().contains(query.toLowerCase())) {
                                     Store store = documentSnapshot.toObject(Store.class);
                                     results.add(store);
+                                    emptyText.setVisibility(View.GONE);
                                     Log.e("Tienda", store.getStoreName());
                                 }
                             }
@@ -139,7 +142,7 @@ public class SearchableActivity extends AppCompatActivity {
 
     private void doMySearchTitles(final String query) {
         //query = Character.toUpperCase(query.charAt(0)) + query.substring(1, query.length());
-        FirebaseFirestore.getInstance().collection("articles")
+         FirebaseFirestore.getInstance().collection("articles")
                 //.whereGreaterThanOrEqualTo("title", query)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -150,8 +153,12 @@ public class SearchableActivity extends AppCompatActivity {
                                 if(documentSnapshot.get("title").toString().toLowerCase().contains(query.toLowerCase())) {
                                     Article art = documentSnapshot.toObject(Article.class);
                                     art.setArticleId(documentSnapshot.getId());
-                                    if (!results.contains(art))
+                                    if (!resultsStrings.contains(documentSnapshot.getId()))
+                                    {
                                         results.add(art);
+                                        resultsStrings.add(documentSnapshot.getId());
+                                        emptyText.setVisibility(View.GONE);
+                                    }
                                 }
                             }
                             //articleList.addAll(task.getResult().toObjects(Article.class));
@@ -178,8 +185,12 @@ public class SearchableActivity extends AppCompatActivity {
                                 for (String tag : art.getTags()) {
                                     if(tag.toLowerCase().contains(query.toLowerCase())){
                                         art.setArticleId(documentSnapshot.getId());
-                                        if (!results.contains(art))
+                                        if (!resultsStrings.contains(documentSnapshot.getId()))
+                                        {
                                             results.add(art);
+                                            resultsStrings.add(documentSnapshot.getId());
+                                            emptyText.setVisibility(View.GONE);
+                                        }
                                     }
                                 }
 

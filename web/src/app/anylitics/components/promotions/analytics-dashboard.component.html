@@ -1,105 +1,110 @@
 <div class="mat-typography dashboard backgroundColor" style="top: 0">
   <mat-card class="page">
-    <div class="spinner-content" *ngIf="!renderInteractions">
-        <mat-spinner></mat-spinner>
-    </div>
-    <div class="page-content" *ngIf="renderInteractions">
-    <div class="graficos">
-      <mat-card class="barras-by-promocion mat-elevation-z4">
-        <mat-icon class="infoTooltip" [matTooltip]="this.barrasTooltip" matTooltipPosition="above" matTooltipClass="tooltip">info</mat-icon>
-        <app-views-by-promotions [level1Articles]="level1Articles" [level2Articles]="level2Articles" [level3Articles]="level3Articles"></app-views-by-promotions>
-      </mat-card>
-      <mat-card class="torta-reacciones mat-elevation-z4">
-        <mat-icon class="infoTooltip" [matTooltip]="this.tortaTooltip" matTooltipPosition="above" matTooltipClass="tooltip">info</mat-icon>
-        <app-reactions-pie [likes]="likes" [dislikes]="dislikes"></app-reactions-pie>
-      </mat-card>
-    </div>
-    <div class="historico">
-        <div class="marketingInformation">
-            <mat-card class="promotionsTable mat-elevation-z4">
-              <mat-card-header>
-                <mat-card-title>Información de promociones solicitadas</mat-card-title>
-                <mat-card-subtitle> En la siguiente tabla encontrará Información referida a todas las operaciones de promoción que ha realizado en myLook.</mat-card-subtitle>
-              </mat-card-header>
-              <mat-card-content>
+    <mat-tab-group mat-align-tabs="center">
+      <mat-tab label="Promociones de Prendas">
+        <div class="spinner-content" *ngIf="!renderInteractions">
+            <mat-spinner></mat-spinner>
+        </div>
+        <div class="page-content" *ngIf="renderInteractions">
+        <div class="graficos">
+          <mat-card class="barras-by-promocion mat-elevation-z4">
+            <mat-icon class="infoTooltip" [matTooltip]="this.barrasTooltip" matTooltipPosition="above" matTooltipClass="tooltip">info</mat-icon>
+            <app-views-by-promotions [level1Articles]="level1Articles" [level2Articles]="level2Articles" [level3Articles]="level3Articles"></app-views-by-promotions>
+          </mat-card>
+          <mat-card class="torta-reacciones mat-elevation-z4">
+            <mat-icon class="infoTooltip" [matTooltip]="this.tortaTooltip" matTooltipPosition="above" matTooltipClass="tooltip">info</mat-icon>
+            <app-reactions-pie [likes]="likes" [dislikes]="dislikes"></app-reactions-pie>
+          </mat-card>
+        </div>
+        <div class="historico">
+            <div class="marketingInformation">
+                <mat-card class="promotionsTable mat-elevation-z4">
+                  <mat-card-header>
+                    <mat-card-title>Información de promociones solicitadas</mat-card-title>
+                    <mat-card-subtitle> En la siguiente tabla encontrará Información referida a todas las operaciones de promoción que ha realizado en myLook.</mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-content>
 
 
-                  <div class="tablita mat-elevation-z1" *ngIf="promotionTableDataSource">
-                      <table mat-table [dataSource]="promotionTableDataSource" style="width: 100%;">
+                      <div class="tablita mat-elevation-z1" *ngIf="promotionTableDataSource">
+                          <table mat-table [dataSource]="promotionTableDataSource" style="width: 100%;">
 
-                        <!-- Articulo Column -->
-                        <ng-container matColumnDef="Articulo">
-                          <th mat-header-cell *matHeaderCellDef> Articulo Promocionado </th>
-                          <!-- <td mat-cell *matCellDef="let element"> {{element.articleId}} </td> -->
-                          <td mat-cell *matCellDef="let element"><img height="100" width="100" src={{element.image}}> </td>
-                          <td mat-footer-cell *matFooterCellDef> Total </td>
-                        </ng-container>
+                            <!-- Articulo Column -->
+                            <ng-container matColumnDef="Articulo">
+                              <th mat-header-cell *matHeaderCellDef> Articulo Promocionado </th>
+                              <!-- <td mat-cell *matCellDef="let element"> {{element.articleId}} </td> -->
+                              <td mat-cell *matCellDef="let element"><img height="100" width="100" src={{element.image}}> </td>
+                              <td mat-footer-cell *matFooterCellDef> Total </td>
+                            </ng-container>
 
-                        <!-- Inicio Column -->
-                        <ng-container matColumnDef="Codigo">
-                          <th mat-header-cell *matHeaderCellDef> Código </th>
-                          <td mat-cell *matCellDef="let element"> {{element.code}} </td>
-                          <td mat-footer-cell *matFooterCellDef>  </td>
+                            <!-- Inicio Column -->
+                            <ng-container matColumnDef="Codigo">
+                              <th mat-header-cell *matHeaderCellDef> Código </th>
+                              <td mat-cell *matCellDef="let element"> {{element.code}} </td>
+                              <td mat-footer-cell *matFooterCellDef>  </td>
 
-                        </ng-container>
-                        <!-- Inicio Column -->
-                        <ng-container matColumnDef="FechaInicio">
-                          <th mat-header-cell *matHeaderCellDef> Fecha de Inicio </th>
-                          <td mat-cell *matCellDef="let element"> {{element.startOfPromotion.toDate() | date: 'fullDate'}} </td>
-                          <td mat-footer-cell *matFooterCellDef>  </td>
+                            </ng-container>
+                            <!-- Inicio Column -->
+                            <ng-container matColumnDef="FechaInicio">
+                              <th mat-header-cell *matHeaderCellDef> Fecha de Inicio </th>
+                              <td mat-cell *matCellDef="let element"> {{element.startOfPromotion.toDate() | date: 'fullDate'}} </td>
+                              <td mat-footer-cell *matFooterCellDef>  </td>
 
-                        </ng-container>
+                            </ng-container>
 
-                        <!-- Fin Column -->
-                        <ng-container matColumnDef="FechaFin">
-                          <th mat-header-cell *matHeaderCellDef> Fecha de Fin </th>
-                          <td mat-cell *matCellDef="let element"> {{ element.endOfPromotion.toDate() | date: 'fullDate'}}</td>
-                          <td mat-footer-cell *matFooterCellDef>  </td>
+                            <!-- Fin Column -->
+                            <ng-container matColumnDef="FechaFin">
+                              <th mat-header-cell *matHeaderCellDef> Fecha de Fin </th>
+                              <td mat-cell *matCellDef="let element"> {{ element.endOfPromotion.toDate() | date: 'fullDate'}}</td>
+                              <td mat-footer-cell *matFooterCellDef>  </td>
 
-                        </ng-container>
+                            </ng-container>
 
-                        <!-- Nivle de promocion Column -->
-                        <ng-container matColumnDef="NivelPromocion">
-                          <th mat-header-cell *matHeaderCellDef> Nivel de Promoción </th>
-                          <td mat-cell *matCellDef="let element"> {{getPromotionLevel(element.promotionLevel)}} </td>
-                          <td mat-footer-cell *matFooterCellDef> </td>
-                        </ng-container>
+                            <!-- Nivle de promocion Column -->
+                            <ng-container matColumnDef="NivelPromocion">
+                              <th mat-header-cell *matHeaderCellDef> Nivel de Promoción </th>
+                              <td mat-cell *matCellDef="let element"> {{getPromotionLevel(element.promotionLevel)}} </td>
+                              <td mat-footer-cell *matFooterCellDef> </td>
+                            </ng-container>
 
-                        <!-- Precio Final de promocion Column -->
-                        <ng-container matColumnDef="PrecioFinal">
-                          <th mat-header-cell *matHeaderCellDef> Precio Final </th>
-                          <td mat-cell *matCellDef="let element"> {{element.promotionCost | currency:'ARS'}} </td>
-                          <td mat-footer-cell *matFooterCellDef> {{ getTotalCost() | currency:'ARS'}} </td>
-                        </ng-container>
+                            <!-- Precio Final de promocion Column -->
+                            <ng-container matColumnDef="PrecioFinal">
+                              <th mat-header-cell *matHeaderCellDef> Precio Final </th>
+                              <td mat-cell *matCellDef="let element"> {{element.promotionCost | currency:'ARS'}} </td>
+                              <td mat-footer-cell *matFooterCellDef> {{ getTotalCost() | currency:'ARS'}} </td>
+                            </ng-container>
 
-                        <!-- Descargar Column -->
-                        <ng-container matColumnDef="Descargar">
-                          <th mat-header-cell *matHeaderCellDef> Descargar </th>
-                          <td mat-cell *matCellDef="let element">
-                            <button  mat-icon-button (click)="downloadPromotion(element)">
-                                <mat-icon class="myLookPink">cloud_download</mat-icon>
-                            </button>
-                          </td>
-                          <td mat-footer-cell *matFooterCellDef> </td>
-                        </ng-container>
+                            <!-- Descargar Column -->
+                            <ng-container matColumnDef="Descargar">
+                              <th mat-header-cell *matHeaderCellDef> Descargar </th>
+                              <td mat-cell *matCellDef="let element">
+                                <button  mat-icon-button (click)="downloadPromotion(element)">
+                                    <mat-icon class="myLookPink">cloud_download</mat-icon>
+                                </button>
+                              </td>
+                              <td mat-footer-cell *matFooterCellDef> </td>
+                            </ng-container>
 
-                        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                        <tr mat-footer-row *matFooterRowDef="displayedColumns; sticky: true"></tr>
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                            <tr mat-footer-row *matFooterRowDef="displayedColumns; sticky: true"></tr>
 
-                      </table>
-                    </div>
+                          </table>
+                        </div>
 
 
 
-              </mat-card-content>
-              <!-- <mat-card-actions>
-                <button mat-button>LIKE</button>
-                <button mat-button>SHARE</button>
-              </mat-card-actions> -->
-            </mat-card>
-          </div>
-    </div>
-    </div>
+                  </mat-card-content>
+                  <!-- <mat-card-actions>
+                    <button mat-button>LIKE</button>
+                    <button mat-button>SHARE</button>
+                  </mat-card-actions> -->
+                </mat-card>
+              </div>
+        </div>
+        </div>
+      </mat-tab>
+      <mat-tab label="Campaña de Cupones"> <app-voucher [userStore]="this.actualStore"></app-voucher> </mat-tab>
+    </mat-tab-group>
   </mat-card>
 </div>

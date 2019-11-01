@@ -460,6 +460,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     public void clear() {
-        list.clear();
+        list=null;
+        homeInstance=null;
     }
 }
