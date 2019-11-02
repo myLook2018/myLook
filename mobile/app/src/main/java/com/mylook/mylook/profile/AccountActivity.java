@@ -13,7 +13,7 @@ import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
 
 import com.mylook.mylook.R;
-import com.mylook.mylook.coupon.MyCoupons;
+import com.mylook.mylook.coupon.MyCouponsActivity;
 import com.mylook.mylook.dialogs.DialogManager;
 import com.mylook.mylook.premiumUser.PremiumRequestActivity;
 import com.mylook.mylook.session.Session;
@@ -111,13 +111,13 @@ public class AccountActivity extends AppCompatActivity {
             startActivityForResult(intent,CHANGE_USER);
         });
         txtCoupons.setOnClickListener(v -> {
-            Intent intent=new Intent(getApplicationContext(), MyCoupons.class);
-            startActivityForResult(intent,1);
+            Intent intent=new Intent(getApplicationContext(), MyCouponsActivity.class);
+            startActivity(intent);
 
         });
 
         imgCoupons.setOnClickListener(v -> {
-            Intent intent = new Intent(mContext, MyCoupons.class);
+            Intent intent = new Intent(mContext, MyCouponsActivity.class);
             startActivity(intent);
         });
 
