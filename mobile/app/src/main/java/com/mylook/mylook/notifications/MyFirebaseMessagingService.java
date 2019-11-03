@@ -57,9 +57,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 notif.setOpenClass(getResources().getString(R.string.RecommendClass));
                 try {
                     FirebaseFirestore.getInstance().collection("stores")
-                            .document(remoteMessage.getData().get("storeId")).get().addOnSuccessListener(l -> {
+                            .whereEqualTo("storeName", remoteMessage.getData().get("storeName")).get().addOnSuccessListener(l -> {
 
-                        String storePhoto = (String) l.get("profilePh");
+                        String storePhoto = (String) l.getDocuments().get(0).get("profilePh");
                         notif.setUserPhotoUrl(storePhoto);
                         FirebaseFirestore.getInstance().collection("notifications").add(notif);
 
