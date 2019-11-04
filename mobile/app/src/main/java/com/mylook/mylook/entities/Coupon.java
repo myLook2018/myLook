@@ -18,7 +18,7 @@ public class Coupon {
     private String installToken;
     private String code;
     private String documentId;
-    private int dni;
+    private String dni;
     private int age;
     private int voucherType;
     private boolean used;
@@ -88,11 +88,11 @@ public class Coupon {
         this.code = code;
     }
 
-    public int getDni() {
+    public Object getDni() {
         return dni;
     }
 
-    public void setDni(@Nullable int dni) {
+    public void setDni(@Nullable String dni) {
         this.dni = dni;
     }
 

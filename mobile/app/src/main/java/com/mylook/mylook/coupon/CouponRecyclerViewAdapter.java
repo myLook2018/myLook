@@ -61,7 +61,11 @@ public class CouponRecyclerViewAdapter extends RecyclerView.Adapter<CouponRecycl
         final Coupon coupon = coupons.get(position);
         Glide.with(mContext).asBitmap().load(coupon.getImgStoreUrl()).into(holder.imgStore);
         holder.couponTitle.setText(coupon.getTitle());
-        holder.couponDueDate.setText(formatDate(coupon.getDueDate()));
+        if (coupon.isUsed()) {
+            holder.couponDueDate.setText("Ya usaste este cupón");
+        } else {
+            holder.couponDueDate.setText(formatDate(coupon.getDueDate()));
+        }
         holder.documentId = coupon.getDocumentId();
 
     }

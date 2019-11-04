@@ -479,6 +479,8 @@ function createVoucherCode(){
   .onWrite((snap, context) => {
     console.log("New voucher")
       const registrationToken = snap.after.data().installToken;
+      let isUsed = snap.after.data().used
+      if(!isUsed){
       var message = {
           data: {
               "title": "¡"+snap.after.data().storeName+" te mandó un nuevo cupón!",
@@ -488,8 +490,7 @@ function createVoucherCode(){
               "voucherCode": snap.after.data().code,
               "storeId": snap.after.data().storeId,
               "storeName": snap.after.data().storeName, 
-              "couponTitle":snap.after.data().title, 
-              "campaignId": snap.after.data().campaignId
+              "couponTitle":snap.after.data().title
           },
           "token": registrationToken
       };
@@ -502,6 +503,7 @@ function createVoucherCode(){
           .catch((error) => {
               console.log('Error sending message:', error);
           });
-      
-    
-  });
+      } else{
+        return "El cupón fue usado" 
+      }
+    });

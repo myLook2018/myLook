@@ -239,9 +239,8 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     public void readSubscriptions(boolean isRefresh) {
-        //Devuelve los ultimos meses, TODO Cambiar esto para probar en serio
         final Calendar myCalendar = Calendar.getInstance();
-        myCalendar.set(Calendar.MONTH, myCalendar.get(Calendar.MONTH) - 7);
+        myCalendar.set(Calendar.MONTH, myCalendar.get(Calendar.MONTH) - 1);
         Log.e(TAG, list.toString());
         Log.e(TAG, "Begin read Subscriptions- Uid:" + FirebaseAuth.getInstance().getCurrentUser());
         if(isRefresh){
@@ -273,8 +272,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                                 /*for (Article art : list) {
                                                     Log.e(TAG, (art.getArticleId() + " - " + art.getCreationDate() + " - Promo: " + art.getPromotionLevel()));
                                                 }*/
-                                                emptyArticles.setVisibility(View.GONE);
-                                                starImage.setVisibility(View.GONE);
+
                                                 adapter.notifyDataSetChanged();
                                             } else {
                                                 emptyArticles.setVisibility(View.VISIBLE);
@@ -285,9 +283,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                         }
                                     });
                                 }
-                            } else {
-                                emptyArticles.setVisibility(View.VISIBLE);
-                                starImage.setVisibility(View.VISIBLE);
                             }
                         }
                     });
@@ -326,6 +321,14 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                 }
                             });
                         }
+                    } else {
+                        if(list.isEmpty()){
+                            emptyArticles.setVisibility(View.VISIBLE);
+                            starImage.setVisibility(View.VISIBLE);
+                        } else {
+                            emptyArticles.setVisibility(View.GONE);
+                            starImage.setVisibility(View.GONE);
+                        }|
                     }
                 }
                 refreshLayout.setRefreshing(false);

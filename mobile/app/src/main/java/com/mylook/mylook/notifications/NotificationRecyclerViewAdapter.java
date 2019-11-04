@@ -7,20 +7,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RatingBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.mylook.mylook.R;
 import com.mylook.mylook.coupon.CouponActivity;
-import com.mylook.mylook.entities.Coupon;
 import com.mylook.mylook.entities.Notification;
-import com.mylook.mylook.entities.RequestRecommendation;
 import com.mylook.mylook.premiumUser.PremiumUserProfileActivity;
 import com.mylook.mylook.recommend.RequestRecommendActivity;
 
@@ -55,7 +50,7 @@ public class NotificationRecyclerViewAdapter extends RecyclerView.Adapter<Notifi
         holder.notificationName.setText(notif.getPremiumUserName());
         Glide.with(mContext).asBitmap().load(notif.getUserPhotoUrl()).into(holder.leftPhoto);
         if(notif.getImageUrl() !=  null && !notif.getImageUrl().isEmpty())
-            Glide.with(mContext).asBitmap().load(notif.getImageUrl()).into(holder.rigthPhoto);
+            Glide.with(mContext).asBitmap().load(notif.getImageUrl()).into(holder.rightPhoto);
         if (notif.getOpenClass()!= null && !notif.getOpenClass().isEmpty() && notif.getElementId()!=null && !notif.getElementId().isEmpty()){
             holder.itemView.setOnClickListener( l-> {
                 Class activity;
@@ -72,9 +67,14 @@ public class NotificationRecyclerViewAdapter extends RecyclerView.Adapter<Notifi
                 } else if (notif.getOpenClass().equals(requestClass)){
                     activity = RequestRecommendActivity.class;
                     newIntent = new Intent(holder.itemView.getContext(), activity);
+                    Glide.with(mContext).asDrawable().load(mContext.getResources().getDrawable(R.drawable.ic_recommend)).into(holder.rightPhoto);
+
+                    holder.rightPhoto.setVisibility(View.VISIBLE);
                     newIntent.putExtra("requestId", elementId);
                 } else if(notif.getOpenClass().equals(couponClass)){
                     activity = CouponActivity.class;
+                    holder.rightPhoto.setVisibility(View.VISIBLE);
+                    Glide.with(mContext).asDrawable().load(mContext.getResources().getDrawable(R.drawable.ic_coupon)).into(holder.rightPhoto);
                     newIntent = new Intent(holder.itemView.getContext(), activity);
                     newIntent.putExtra("couponId", elementId);
                 }
@@ -90,13 +90,13 @@ public class NotificationRecyclerViewAdapter extends RecyclerView.Adapter<Notifi
         ImageView leftPhoto;
         TextView notificationMessage;
         TextView dayMessage;
-        ImageView rigthPhoto;
+        ImageView rightPhoto;
         TextView notificationName;
 
         public ViewHolder(View itemView) {
             super(itemView);
             leftPhoto = itemView.findViewById(R.id.leftPhoto);
-            rigthPhoto= itemView.findViewById(R.id.rightPhoto);
+            rightPhoto = itemView.findViewById(R.id.rightPhoto);
             dayMessage = itemView.findViewById(R.id.dayMessage);
             notificationMessage = itemView.findViewById(R.id.notificationMessage);
             notificationName = itemView.findViewById(R.id.notificationName);

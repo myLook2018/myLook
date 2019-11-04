@@ -60,7 +60,7 @@ public class CouponActivity extends AppCompatActivity {
                 get().addOnSuccessListener(l -> {
             try {
                 coupon = l.toObject(Coupon.class);
-            } catch (IllegalArgumentException exception) {
+            } catch (Exception exception) {
                 coupon = new Coupon();
                 coupon.setCode((String) l.get("code"));
                 coupon.setTitle((String) l.get("title"));
@@ -70,6 +70,8 @@ public class CouponActivity extends AppCompatActivity {
                 coupon.setStoreName((String) l.get("storeName"));
                 coupon.setClientId((String) l.get("clientId"));
                 coupon.setVoucherType((int)(long) l.get("voucherType"));
+                coupon.setUsed((boolean)l.get("used"));
+                coupon.setUsedDate((Timestamp)l.get("usedDate"));
             }
             setClickListeners();
             setCouponValues();
@@ -80,6 +82,9 @@ public class CouponActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(remoteDate.toDate());
         String[] meses = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+        if (coupon.isUsed()){
+            return "Usaste este cupón el " + calendar.get(Calendar.DAY_OF_MONTH) + " de " + meses[calendar.get(Calendar.MONTH)];
+        }
         return "Vence el " + calendar.get(Calendar.DAY_OF_MONTH) + " de " + meses[calendar.get(Calendar.MONTH)];
     }
 
@@ -96,7 +101,11 @@ public class CouponActivity extends AppCompatActivity {
         description.setText((coupon != null ? coupon.getDescription() : "Esta sería la descripción del cupón. Si Mateo hubiese hecho la cloud function se podría probar" +
                 ", pero adivinen quien no hizo la cloud function ehhhhhh"));
         code.setText(coupon != null ? coupon.getCode() : "0512RECI");
-        duedate.setText(coupon != null ? formatDate(coupon.getDueDate()) : "Vence el 19/12");
+        if(coupon.isUsed()){
+            duedate.setText(formatDate(coupon.getUsedDate()));
+        } else {
+            duedate.setText(coupon != null ? formatDate(coupon.getDueDate()) : "Vence el 19/12");
+        }
         storeName.setText(coupon != null ? coupon.getStoreName() : "AUKA siempre AUKA");
         code.setVisibility(View.VISIBLE);
         imgStore.setVisibility(View.VISIBLE);

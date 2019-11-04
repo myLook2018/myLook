@@ -28,9 +28,10 @@
         android:layout_height="66dp"
         android:adjustViewBounds="false"
         android:cropToPadding="false"
+        android:foregroundTint="@color/primary_light"
+        android:tint="@color/primary_light"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/notificationName"

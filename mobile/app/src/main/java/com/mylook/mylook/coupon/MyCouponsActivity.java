@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Coupon;
 import com.mylook.mylook.session.Session;
@@ -73,6 +74,7 @@ public class MyCouponsActivity extends AppCompatActivity {
         coupons.clear();
         FirebaseFirestore.getInstance().collection(getResources().getString(R.string.vouchersCollection))
                 .whereEqualTo("clientId", clientId)
+                .orderBy("dueDate", Query.Direction.ASCENDING)
                 .get().addOnSuccessListener(l -> {
             if(l.getDocuments().size() == 0){
                 progressBar.setVisibility(View.GONE );
@@ -81,7 +83,7 @@ public class MyCouponsActivity extends AppCompatActivity {
                     Coupon middleCoupon;
                     try {
                         middleCoupon = doc.toObject(Coupon.class);
-                    } catch (IllegalArgumentException exception) {
+                    } catch (Exception exception) {
                         middleCoupon = new Coupon();
                         middleCoupon.setCode((String) doc.get("code"));
                         middleCoupon.setTitle((String) doc.get("title"));
@@ -90,6 +92,7 @@ public class MyCouponsActivity extends AppCompatActivity {
                         middleCoupon.setStoreId((String) doc.get("storeId"));
                         middleCoupon.setStoreName((String) doc.get("storeName"));
                         middleCoupon.setClientId((String) doc.get("clientId"));
+                        middleCoupon.setUsed((boolean)doc.get("used"));
 
                     }
                     Coupon newCoupon = middleCoupon;
