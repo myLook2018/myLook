@@ -24,12 +24,15 @@
 
     <ImageView
         android:id="@+id/rightPhoto"
-        android:layout_width="68dp"
-        android:layout_height="66dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="4dp"
         android:adjustViewBounds="false"
+        android:backgroundTint="@color/primary_light"
         android:cropToPadding="false"
         android:foregroundTint="@color/primary_light"
         android:tint="@color/primary_light"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -45,11 +48,14 @@
     <TextView
         android:id="@+id/notificationMessage"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:gravity="start"
+        android:justificationMode="inter_word"
+        android:overScrollMode="never"
         android:textAlignment="textStart"
+        app:layout_constraintBottom_toBottomOf="@+id/leftPhoto"
         app:layout_constraintEnd_toStartOf="@+id/rightPhoto"
         app:layout_constraintStart_toEndOf="@+id/leftPhoto"
         app:layout_constraintTop_toBottomOf="@+id/notificationName" />

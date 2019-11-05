@@ -48,16 +48,26 @@ public class NotificationRecyclerViewAdapter extends RecyclerView.Adapter<Notifi
         Notification notif = items.get(position);
         holder.notificationMessage.setText(notif.getMessage());
         holder.notificationName.setText(notif.getPremiumUserName());
-        Glide.with(mContext).asBitmap().load(notif.getUserPhotoUrl()).into(holder.leftPhoto);
+        String premiumClass = holder.itemView.getContext().getResources().getString(R.string.PremiumUserClass);
+        String requestClass = holder.itemView.getContext().getResources().getString(R.string.RecommendClass);
+        String couponClass = holder.itemView.getContext().getResources().getString(R.string.CouponClass);
+        if (notif.getOpenClass().equals(premiumClass)){
+            holder.rightPhoto.setImageDrawable(mContext.getDrawable(R.drawable.ic_new_diffusion));
+            holder.rightPhoto.setVisibility(View.VISIBLE);
+        } else if (notif.getOpenClass().equals(requestClass)){
+            holder.rightPhoto.setImageDrawable(mContext.getDrawable(R.drawable.ic_recommend));
+            holder.rightPhoto.setVisibility(View.VISIBLE);
+        } else if(notif.getOpenClass().equals(couponClass)) {
+            holder.rightPhoto.setVisibility(View.VISIBLE);
+            holder.rightPhoto.setImageDrawable(mContext.getDrawable(R.drawable.ic_coupon));
+        }
+            Glide.with(mContext).asBitmap().load(notif.getUserPhotoUrl()).into(holder.leftPhoto);
         if(notif.getImageUrl() !=  null && !notif.getImageUrl().isEmpty())
             Glide.with(mContext).asBitmap().load(notif.getImageUrl()).into(holder.rightPhoto);
         if (notif.getOpenClass()!= null && !notif.getOpenClass().isEmpty() && notif.getElementId()!=null && !notif.getElementId().isEmpty()){
             holder.itemView.setOnClickListener( l-> {
                 Class activity;
                 String elementId;
-                String premiumClass = holder.itemView.getContext().getResources().getString(R.string.PremiumUserClass);
-                String requestClass = holder.itemView.getContext().getResources().getString(R.string.RecommendClass);
-                String couponClass = holder.itemView.getContext().getResources().getString(R.string.CouponClass);
                 elementId = notif.getElementId();
                 Intent newIntent = null;
                 if (notif.getOpenClass().equals(premiumClass)){
@@ -67,14 +77,13 @@ public class NotificationRecyclerViewAdapter extends RecyclerView.Adapter<Notifi
                 } else if (notif.getOpenClass().equals(requestClass)){
                     activity = RequestRecommendActivity.class;
                     newIntent = new Intent(holder.itemView.getContext(), activity);
-                    Glide.with(mContext).asDrawable().load(mContext.getResources().getDrawable(R.drawable.ic_recommend)).into(holder.rightPhoto);
-
+                    holder.rightPhoto.setImageDrawable(mContext.getDrawable(R.drawable.ic_recommend));
                     holder.rightPhoto.setVisibility(View.VISIBLE);
                     newIntent.putExtra("requestId", elementId);
                 } else if(notif.getOpenClass().equals(couponClass)){
                     activity = CouponActivity.class;
                     holder.rightPhoto.setVisibility(View.VISIBLE);
-                    Glide.with(mContext).asDrawable().load(mContext.getResources().getDrawable(R.drawable.ic_coupon)).into(holder.rightPhoto);
+                    holder.rightPhoto.setImageDrawable(mContext.getDrawable(R.drawable.ic_coupon));
                     newIntent = new Intent(holder.itemView.getContext(), activity);
                     newIntent.putExtra("couponId", elementId);
                 }

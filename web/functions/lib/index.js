@@ -322,50 +322,50 @@ exports.getMercadoPagoNotification = functions.https.onRequest((req, res) => {
 
 
         if (!voucherReference) {
-        admin.firestore().collection('articles').doc(articleToPromoteId).update({ promotionLevel: articlePromotionLevel }).then(result => {
-          admin.firestore().collection('stores').where('storeName', '==', storeName).get().then(snapshot => {
-            snapshot.forEach(doc => {
+          admin.firestore().collection('articles').doc(articleToPromoteId).update({ promotionLevel: articlePromotionLevel }).then(result => {
+            admin.firestore().collection('stores').where('storeName', '==', storeName).get().then(snapshot => {
+              snapshot.forEach(doc => {
 
-              let end = new Date;
-              let duration = promotionDuration;
-              end.setDate(end.getDate() + duration);
-              const promotion = {
-                articleId: articleToPromoteId,
-                startOfPromotion: new Date,
-                endOfPromotion: end,
-                storeId: doc.id,
-                storeName: storeName,
-                payMethod: payMethod,
-                promotionLevel: articlePromotionLevel,
-                promotionCost: promotionCost,
-                idMercadoPago: idMercadoPago,
-                paymentMethod: paymentMethod,
-                lastFourDigits: lastFourDigits,
-                cardOwner: cardOwner
-              };
+                let end = new Date;
+                let duration = promotionDuration;
+                end.setDate(end.getDate() + duration);
+                const promotion = {
+                  articleId: articleToPromoteId,
+                  startOfPromotion: new Date,
+                  endOfPromotion: end,
+                  storeId: doc.id,
+                  storeName: storeName,
+                  payMethod: payMethod,
+                  promotionLevel: articlePromotionLevel,
+                  promotionCost: promotionCost,
+                  idMercadoPago: idMercadoPago,
+                  paymentMethod: paymentMethod,
+                  lastFourDigits: lastFourDigits,
+                  cardOwner: cardOwner
+                };
 
-              admin.firestore().collection('promotions').add(promotion).then((docRef) => {
-                return res.status(200).json({
-                  message: 'OK'
+                admin.firestore().collection('promotions').add(promotion).then((docRef) => {
+                  return res.status(200).json({
+                    message: 'OK'
+                  });
                 });
-              });
 
+              });
             });
           });
-        });
-      } else {
-        admin.firestore().collection('voucherCampaing').doc(voucherReference).update({
-          idMercadoPago: idMercadoPago,
-          paymentMethod: paymentMethod,
-          lastFourDigits: lastFourDigits,
-          cardOwner: cardOwner,
-          payMethod: payMethod
-        }).then(() => {
-          return res.status(200).json({
-            message:'OK'
-          });
-        })
-      }
+        } else {
+          admin.firestore().collection('voucherCampaing').doc(voucherReference).update({
+            idMercadoPago: idMercadoPago,
+            paymentMethod: paymentMethod,
+            lastFourDigits: lastFourDigits,
+            cardOwner: cardOwner,
+            payMethod: payMethod
+          }).then(() => {
+            return res.status(200).json({
+              message: 'OK'
+            });
+          })
+        }
       }).on("error", (err) => {
         console.log("Error: " + err.message);
       });;
@@ -406,104 +406,103 @@ exports.closePromotions = functions.https.onRequest((req, res) => {
 });
 
 
-function createVoucherCode(){
+function createVoucherCode() {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
   let code = ''
   for (let i = 0; i < 8; i++) {
-    let index = Math.random()*characters.length
+    let index = Math.random() * characters.length
     code = code + (characters.charAt(index))
   }
   return code
 }
- exports.createCampaignCoupons = functions.firestore.document('voucherCampaing/{voucherCampaignId}')
-  .onUpdate( async (snap, context) => {
+exports.createCampaignCoupons = functions.firestore.document('voucherCampaing/{voucherCampaignId}')
+  .onUpdate(async (snap, context) => {
     const newCampaign = snap.after.data();
 
     if (newCampaign.idMercadoPago && newCampaign.idMercadoPago != null && newCampaign.idMercadoPago != 0 && newCampaign.idMercadoPago != '') {
-      admin.firestore().collection("subscriptions").where("storeName", '==', newCampaign.storeName ).get().then( subscriptionSnap => {
+      admin.firestore().collection("subscriptions").where("storeName", '==', newCampaign.storeName).get().then(subscriptionSnap => {
         let suscribedUsersId = subscriptionSnap.docs.map(suscription => {
           return suscription.get("userId")
         })
 
-          newCampaign.clientsId.forEach((clientId) => {
-            console.log("Client id")
-            console.log(clientId)
-            admin.firestore().collection("clients").doc(clientId).get().then(async(clientSnap) => {
-              console.log("ClientSnap")
-              console.log(clientSnap.data())
-              var age = new Date().getTime() - clientSnap.get("birthday")
-              age/=31536000000
-              let voucher = {
-                storeName: newCampaign.storeName, 
-                storeId: newCampaign.storeId,
-                description:newCampaign.description,
-                title: newCampaign.title,
-                startDate: newCampaign.startDate,
-                dueDate: newCampaign.dueDate,
-                voucherType: newCampaign.voucherType,
-                campaignType: newCampaign.campaignType,
-                used:false,
-                usedDate: null,
-                code: '',
-                clientId: clientId,
-                subscribed: suscribedUsersId.includes(clientSnap.get("userId")),
-                dni: clientSnap.get("dni"),
-                installToken: clientSnap.get("installToken"),
-                campaignId: snap.after.id,
-                gender: clientSnap.get("gender"),
-                age: Number(age.toFixed(0))
-              }
-              let created = false;
-              while (!created) {
-                let code = createVoucherCode()
-                voucher.code = code
-                console.log("Voucher"+JSON.stringify(voucher))
-                await admin.firestore().collection("vouchers").doc(code).create(voucher).then(voucherResponse => {
-                  console.log("Created new Voucher:"+ voucherResponse.id)
-                  created = true
-                }).catch(error => {
-                  console.log("Voucher could not be created "+error)
-                })
-                
-              }
-              
-            });
-    
+        newCampaign.clientsId.forEach((clientId) => {
+          console.log("Client id")
+          console.log(clientId)
+          admin.firestore().collection("clients").doc(clientId).get().then(async (clientSnap) => {
+            console.log("ClientSnap")
+            console.log(clientSnap.data())
+            var age = new Date().getTime() - clientSnap.get("birthday")
+            age /= 31536000000
+            let voucher = {
+              storeName: newCampaign.storeName,
+              storeId: newCampaign.storeId,
+              description: newCampaign.description,
+              title: newCampaign.title,
+              startDate: newCampaign.startDate,
+              dueDate: newCampaign.dueDate,
+              voucherType: newCampaign.voucherType,
+              campaignType: newCampaign.campaignType,
+              used: false,
+              usedDate: null,
+              code: '',
+              clientId: clientId,
+              subscribed: suscribedUsersId.includes(clientSnap.get("userId")),
+              dni: clientSnap.get("dni"),
+              installToken: clientSnap.get("installToken"),
+              campaignId: snap.after.id,
+              gender: clientSnap.get("gender"),
+              age: Number(age.toFixed(0))
+            }
+            let created = false;
+            while (!created) {
+              let code = createVoucherCode()
+              voucher.code = code
+              console.log("Voucher" + JSON.stringify(voucher))
+              await admin.firestore().collection("vouchers").doc(code).create(voucher).then(voucherResponse => {
+                console.log("Created new Voucher:" + voucherResponse.id)
+                created = true
+              }).catch(error => {
+                console.log("Voucher could not be created " + error)
+              })
+
+            }
+
           });
-        })
+
+        });
+      })
 
     }
   })
 
-  exports.newVoucherNotification = functions.firestore.document('vouchers/{docId}')
+exports.newVoucherNotification = functions.firestore.document('vouchers/{docId}')
   .onWrite((snap, context) => {
     console.log("New voucher")
-      const registrationToken = snap.after.data().installToken;
-      let isUsed = snap.after.data().used
-      if(!isUsed){
+    const registrationToken = snap.after.data().installToken;
+    let isUsed = snap.after.data().used
+    if (!isUsed) {
       var message = {
-          data: {
-              "title": "¡"+snap.after.data().storeName+" te mandó un nuevo cupón!",
-              "deepLink": "www.mylook.com/coupon",
-              "body": snap.after.data().description,
-              "sound": "default",
-              "voucherCode": snap.after.data().code,
-              "storeId": snap.after.data().storeId,
-              "storeName": snap.after.data().storeName, 
-              "couponTitle":snap.after.data().title
-          },
-          "token": registrationToken
+        data: {
+          "title": "¡" + snap.after.data().storeName + " te mandó un nuevo cupón!",
+          "deepLink": "www.mylook.com/coupon",
+          "body": snap.after.data().description,
+          "sound": "default",
+          "voucherCode": snap.after.data().code,
+          "storeId": snap.after.data().storeId,
+          "storeName": snap.after.data().storeName,
+          "couponTitle": snap.after.data().title
+        },
+        "token": registrationToken
       };
       console.log(JSON.stringify(message))
       return admin.messaging().send(message)
-          .then((response) => {
-              // Response is a message ID string.
-              console.log('Successfully sent message:', response);
-          })
-          .catch((error) => {
-              console.log('Error sending message:', error);
-          });
-      } else{
-        return "El cupón fue usado" 
-      }
-    });
+        .then((response) => {
+          console.log('Successfully sent message:', response);
+        })
+        .catch((error) => {
+          console.log('Error sending message:', error);
+        });
+    } else {
+      return "El cupón fue usado"
+    }
+  });
