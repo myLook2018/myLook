@@ -107,8 +107,10 @@ import {VoucherDialogComponent} from 'src/app/anylitics/components/promotions/co
 import { ModalCheckComponent } from './anylitics/components/promotions/components/voucher/modal-check/modal-check.component';
 import {ToastModule} from 'primeng/toast';
 import {MessageService} from 'primeng/api';
-
-
+import { NonSubsSuccessComponent } from './anylitics/components/promotions/components/graphics/non-subs-success/non-subs-success.component';
+import { BarByAgeComponent } from './anylitics/components/promotions/components/graphics/bar-by-age/bar-by-age.component';
+import { LinesDaysUsedComponent } from './anylitics/components/promotions/components/graphics/lines-days-used/lines-days-used.component';
+import { PieByGenderComponent } from './anylitics/components/promotions/components/graphics/pie-by-gender/pie-by-gender.component';
 
 registerLocaleData(localeAR);
 
@@ -148,7 +150,11 @@ registerLocaleData(localeAR);
     ViewsByPromotionsComponent,
     ReactionsPieComponent,
     VoucherComponent,
-    ModalCheckComponent
+    ModalCheckComponent,
+    NonSubsSuccessComponent,
+    BarByAgeComponent,
+    LinesDaysUsedComponent,
+    PieByGenderComponent
   ],
   imports: [
     HttpClientModule,

@@ -108,8 +108,8 @@ export class VoucherDialogComponent implements OnInit {
       });
       this.userData = data;
       this.discountNumber = new FormControl(0, [Validators.max(100), Validators.min(0)]);
-      this.fromAge = new FormControl(0, [Validators.max(100), Validators.min(0)]);
-      this.toAge = new FormControl(0, [Validators.max(100), Validators.min(0)]);
+      this.fromAge = new FormControl(14, [Validators.max(100), Validators.min(14)]);
+      this.toAge = new FormControl(14, [Validators.max(100), Validators.min(14)]);
       this.description = new FormControl('');
       this.title = new FormControl('');
       this.dataService.getNumberClients().then( clients => {

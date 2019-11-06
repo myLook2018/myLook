@@ -36,6 +36,9 @@ export class AnyliticService {
   isPromotedCached = false;
   isCampaingsCached = false;
   campaings = [];
+  vouchers = [];
+  isVouchersCached: any;
+  vouchersPath = 'vouchers';
 
   constructor(public fst: AngularFirestore) {
     console.log(`en el collector de analytics`);
@@ -182,15 +185,20 @@ export class AnyliticService {
     this.subscriptions = [];
     this.answeredRecomendations = [];
     this.promotions = [];
+    this.vouchers = [];
+    this.campaings = [];
     this.isRecoCached = false;
     this.isInteractionsCached = false;
     this.isSubsCached = false;
     this.isVisitsCached = false;
     this.isPromotedCached = false;
+    this.isCampaingsCached = false;
+    this.isVouchersCached = false;
   }
 
   getVoucherCampaings( storeId ) {
     console.log('Obteniendo Campañas de cupones');
+    this.campaings = []
     return new Promise<any>((resolve, reject) => {
       if (!this.isCampaingsCached) {
         console.log(`estamos preguntando campañas de cupones de ` + storeId);
@@ -199,12 +207,13 @@ export class AnyliticService {
           queryRes.forEach(doc => {
             const data = doc.data();
             data.id = doc.id;
+            data.vouchers = [];
             if ( data.idMercadoPago ) {
               this.campaings.push(data);
             }
           });
         }).then(() => {
-            this.isCampaingsCached = true;
+            // this.isCampaingsCached = true;
             resolve(this.campaings);
           }).catch(function (error) {
             console.log('Error getting documents: ', error);
@@ -212,6 +221,34 @@ export class AnyliticService {
           });
         } else {
         console.log('devolviendo capaings cached');
+        resolve(this.campaings);
+      }
+    });
+  }
+
+  getAllVouchersForStore( storeId ) {
+    console.log('Obteniendo de cupones');
+    this.vouchers = [];
+    return new Promise<any>((resolve, reject) => {
+      if (!this.isVouchersCached) {
+        console.log(`estamos preguntando cupones de ` + storeId);
+        const res = this.db.collection(this.vouchersPath).where('storeId', '==', storeId)
+        .get().then(queryRes => {
+          console.log('cantidad de vouchers en la base de datos, ', queryRes);
+          queryRes.forEach(doc => {
+            const data = doc.data();
+            data.id = doc.id;
+            this.vouchers.push(data);
+          });
+        }).then(() => {
+            // this.isVouchersCached = true;
+            resolve(this.vouchers);
+          }).catch(function (error) {
+            console.log('Error getting documents: ', error);
+            reject(error);
+          });
+        } else {
+        console.log('devolviendo vouchers cached');
         resolve(this.campaings);
       }
     });

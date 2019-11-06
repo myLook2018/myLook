@@ -1,7 +1,8 @@
 <div class="mat-typography dashboard backgroundColor" style="top: 0">
   <mat-card class="page">
     <mat-tab-group mat-align-tabs="center">
-      <mat-tab label="Promociones de Prendas">
+      <mat-tab label="Prendas promocionadas">
+          <ng-template matTabContent>
         <div class="spinner-content" *ngIf="!renderInteractions">
             <mat-spinner></mat-spinner>
         </div>
@@ -31,7 +32,7 @@
 
                             <!-- Articulo Column -->
                             <ng-container matColumnDef="Articulo">
-                              <th mat-header-cell *matHeaderCellDef> Articulo Promocionado </th>
+                              <th mat-header-cell *matHeaderCellDef> Prenda Promocionado </th>
                               <!-- <td mat-cell *matCellDef="let element"> {{element.articleId}} </td> -->
                               <td mat-cell *matCellDef="let element"><img height="100" width="100" src={{element.image}}> </td>
                               <td mat-footer-cell *matFooterCellDef> Total </td>
@@ -103,8 +104,15 @@
               </div>
         </div>
         </div>
+      </ng-template>
       </mat-tab>
-      <mat-tab label="Campaña de Cupones"> <app-voucher [userStore]="this.actualStore"></app-voucher> </mat-tab>
+
+
+      <mat-tab label="Campaña de Cupones">
+        <ng-template matTabContent>
+          <app-voucher></app-voucher>
+        </ng-template>
+      </mat-tab>
     </mat-tab-group>
   </mat-card>
 </div>

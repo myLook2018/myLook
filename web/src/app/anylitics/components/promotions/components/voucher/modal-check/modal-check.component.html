@@ -1,7 +1,7 @@
 <div class="container mat-typography">
   <div class="disclaimer">
     <h2>
-      Por favor, ingrese el número del cupón para ser activado.
+        Ingresá el código del Cupón
     </h2>
   </div>
   <div class="checker">
@@ -23,9 +23,9 @@
           Cancelar
       </button>
       <button class="activated-button"
-              [ngClass]="{'button-disabled': this.isLoading}"
+              [ngClass]="{'button-disabled':( this.isLoading || this.voucherCode.invalid)}"
               mat-raised-button (click)="tryActivateVoucher()"
-              [disabled]="this.isLoading"
+              [disabled]="this.isLoading || this.voucherCode.invalid"
               >
           Activar Cupon
       </button>

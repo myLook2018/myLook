@@ -15,12 +15,12 @@
 .historico {
   margin-top: 1rem;
 
-  .tablita {
-    max-height: calc(90vh);
-    overflow: auto;
-  }
 
+}
 
+.tablita {
+  max-height: calc(30vh);
+  overflow: auto;
 }
 
 .myLookPink {
@@ -41,6 +41,14 @@ color: rgb(189, 132, 199)
 
 .spinner-content {
   height: calc(83vh);
+  vertical-align: middle;
+  text-align: -webkit-center;
+  display: table-cell;
+  width: calc(85vw);
+}
+
+.spinner-content-graph {
+  height: calc(25vw + 4.8rem);
   vertical-align: middle;
   text-align: -webkit-center;
   display: table-cell;
@@ -73,3 +81,25 @@ color: rgb(189, 132, 199)
 button {
   margin-left: 1rem;
 }
+
+.card-grafico {
+  margin: 1rem 1rem 1rem ;
+}
+
+.card-grafico-largo {
+  margin: 1rem;
+}
+
+.noDatsMessage {
+  text-align: -webkit-center;
+  margin: 3rem;
+  color: #bd84c7;
+}
+
+.selector {
+  position: absolute;
+  left: 43%;
+  width: 15rem;
+  top: 6px;
+}
+

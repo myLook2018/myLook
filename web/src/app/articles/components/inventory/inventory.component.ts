@@ -60,10 +60,10 @@ export class InventoryComponent implements OnInit, OnDestroy {
     'title',
     'code',
     'cost',
-    'size',
-    'material',
+    // 'size',
+    // 'material',
     'colors',
-    'initial_stock',
+    // 'initial_stock',
     'tags',
     'actions'
   ];
