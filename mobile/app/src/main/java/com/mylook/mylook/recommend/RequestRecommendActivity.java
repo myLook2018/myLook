@@ -169,11 +169,16 @@ public class RequestRecommendActivity extends AppCompatActivity {
 
     private void setImage(String imageUrl) {
         Log.d(TAG, "setImage: setting te image and name to widgets.");
+        try{
+            Glide.with(this)
+                    .asBitmap()
+                    .load(imageUrl)
+                    .into(imgRequestPhoto);
+        }catch (Exception e){
+            Log.e("RequestRecommActivity", "Exception: "+e.getMessage());
+        }
 
-        Glide.with(this)
-                .asBitmap()
-                .load(imageUrl)
-                .into(imgRequestPhoto);
+
     }
 
 
@@ -217,13 +222,15 @@ public class RequestRecommendActivity extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        for (HashMap<String,String> answer: answers ){
-                            for (DocumentSnapshot doc:task.getResult().getDocuments()){
-                                if(doc.get("storeName").equals(answer.get("storeName")))
-                                {
-                                    FirebaseFirestore.getInstance().collection("answeredRecommendations").document(doc.getId()).update("feedBack", answer.get("feedBack"));
-                                }
+                        if(answers!=null){
+                            for (HashMap<String,String> answer: answers ){
+                                for (DocumentSnapshot doc:task.getResult().getDocuments()){
+                                    if(doc.get("storeName").equals(answer.get("storeName")))
+                                    {
+                                        FirebaseFirestore.getInstance().collection("answeredRecommendations").document(doc.getId()).update("feedBack", answer.get("feedBack"));
+                                    }
 
+                                }
                             }
                         }
                     }

@@ -2,7 +2,7 @@ package com.mylook.mylook.premiumUser;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
+
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,17 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.mylook.mylook.R;
 
 import java.util.Calendar;
 import java.util.Date;
-
-import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 @SuppressLint("ValidFragment")
 public class ReputationPremiumFragment extends Fragment {
@@ -30,14 +24,14 @@ public class ReputationPremiumFragment extends Fragment {
     private float ratingSum=0;
     private int recommendCount=0;
     private String registerDate;
-    private String userId;
+    private String clientIdPremium;
 
     public ReputationPremiumFragment() {
     }
 
     @SuppressLint("ValidFragment")
     public ReputationPremiumFragment(String userId) {
-        this.userId=userId;
+        this.clientIdPremium =userId;
     }
 
     @Override
@@ -82,11 +76,11 @@ public class ReputationPremiumFragment extends Fragment {
 
     public void countSubscribers() {
         FirebaseFirestore.getInstance().collection("premiumUsersSubscriptions")
-                .whereEqualTo("userId", userId).get()
+                .whereEqualTo("storeName", clientIdPremium).get()
                 .addOnCompleteListener(task -> {
                     int cant=task.getResult().getDocuments().size();
                     if(cant==0)
-                        lblCant.setText("Todavia no tiene suscriptores");
+                        lblCant.setText("Todavía no tiene suscriptores");
                     else if(cant==1)
                         lblCant.setText("1 suscriptor");
                         else

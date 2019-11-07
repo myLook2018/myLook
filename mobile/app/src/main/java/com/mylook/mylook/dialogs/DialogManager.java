@@ -51,7 +51,6 @@ public class DialogManager {
                     FacebookSdk.sdkInitialize(context);
                     LoginManager.getInstance().logOut();
                     Toast.makeText(context, "Cerraste sesión :(", Toast.LENGTH_LONG).show();
-                    HomeFragment.getInstance().clear();
                     Session.clear();
                     Intent intent = new Intent(context, LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

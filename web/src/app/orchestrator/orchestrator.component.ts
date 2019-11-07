@@ -20,7 +20,7 @@ import { PromotionsService } from '../anylitics/services/promotions.service';
 @Component({
   selector: 'app-orchestrator',
   templateUrl: './orchestrator.component.html',
-  styleUrls: ['./orchestrator.component.css']
+  styleUrls: ['./orchestrator.component.scss']
 })
 export class OrchestratorComponent implements OnInit, OnDestroy {
   FirebaseUser = new StoreModel();

@@ -121,7 +121,8 @@
                 android:textAlignment="gravity"
                 android:textColor="@color/black"
                 android:textSize="17dp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/txtPassword"
@@ -135,7 +136,7 @@
                 android:textAlignment="viewStart"
                 android:textColor="@color/black"
                 android:textSize="17dp"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
         </LinearLayout>
     </ScrollView>

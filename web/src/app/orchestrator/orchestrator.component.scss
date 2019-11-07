@@ -123,3 +123,27 @@ height: 100%;
 .navigation-option:hover {
   background-color: rgba(251, 221, 255, 0.801);
 }
+
+/deep/.mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+  color: #bd84c7;
+}
+
+/deep/.mat-primary .mat-option.mat-selected:not(.mat-option-disabled) {
+  color: #bd84c7;
+}
+
+/deep/ .mat-form-field.mat-focused .mat-form-field-label {
+  color: #bd84c7;
+}
+
+:host /deep/ .mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+  background-color: #bd84c7;
+}
+
+/deep/ .mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+  background-color: #bd84c7 !important;
+}
+
+/deep/ .mat-form-field.mat-focused .mat-primary .mat-select-arrow {
+  color: #bd84c7;
+}

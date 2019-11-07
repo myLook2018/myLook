@@ -23,7 +23,7 @@ import {
 } from 'angularfire2/storage';
 import { DataService } from '../../../service/dataService';
 import { MapsAPILoader } from '@agm/core';
-import { MatSnackBar } from '@angular/material';
+import { ToastsService, TOASTSTYPES } from 'src/app/service/toasts.service';
 
 @Component({
   selector: 'app-register',
@@ -79,14 +79,16 @@ export class RegisterComponent implements OnInit {
     private storage: AngularFireStorage,
     private mapsAPILoader: MapsAPILoader,
     private ngZone: NgZone,
-    public snackBar: MatSnackBar,
+    public toastService: ToastsService,
   ) {
     try {
       this.email = authService.getEmailToRegister().toString();
       this.emailAndProvider = authService.getLoginEmailAndProvider();
       if (this.emailAndProvider) {
         this.normalRegister = false;
-        this.openSnackBar('Es necesario que completes la siguiente información para poder terminar tu registro.', 'x');
+        this.toastService.showToastMessage(
+          'Completar registro', TOASTSTYPES.INFO, 'Es necesario que completes la siguiente información para poder terminar tu registro.'
+          );
       }
     } catch (error) {
       console.log(error);
@@ -349,11 +351,5 @@ export class RegisterComponent implements OnInit {
       values[key] = new FormControl(elements[key]);
     }
     return new FormGroup(values);
-  }
-
-  openSnackBar(message: string, action: string) {
-    this.snackBar.open(message, action, {
-      duration: 7000
-    });
   }
 }

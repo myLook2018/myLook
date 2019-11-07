@@ -226,7 +226,9 @@ public class LoginActivity extends AppCompatActivity {
                                     startActivity(intent);
                                 } else {
                                     if (user != null && user.isEmailVerified()) {
+                                        boolean isPremium= (boolean) task.getResult().getDocuments().get(0).get("isPremium");
                                         Intent intent = new Intent(mContext, MyLookActivity.class);
+                                        intent.putExtra("isPremium", isPremium);
                                         displayMessage("Bienvenido a myLook!");
                                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startActivity(intent);

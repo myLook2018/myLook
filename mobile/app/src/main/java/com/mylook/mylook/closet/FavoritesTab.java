@@ -36,7 +36,9 @@ public class FavoritesTab extends Fragment {
     private ProgressBar mProgressBar;
 
     public static void refreshStatus() {
-        closet.reloadFavorites();
+        if(closet!=null){
+            closet.reloadFavorites();
+        }
     }
 
     @Override
@@ -99,11 +101,11 @@ public class FavoritesTab extends Fragment {
         android.app.AlertDialog alert = new android.app.AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
                 .setTitle("Eliminar favorito")
                 .setMessage("Estás seguro de que querés eliminar el favorito?")
-                .setPositiveButton("Si", (paramDialogInterface, paramInt) -> {
+                .setPositiveButton("Eliminar", (paramDialogInterface, paramInt) -> {
                           deleteFavorite(position);
                         }
                 )
-                .setNegativeButton("No", null).create();
+                .setNegativeButton("Cancelar", null).create();
         alert.setOnShowListener(dialog1 -> {
             alert.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(this.getResources().getColor(R.color.purple));
             alert.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(this.getResources().getColor(R.color.purple));

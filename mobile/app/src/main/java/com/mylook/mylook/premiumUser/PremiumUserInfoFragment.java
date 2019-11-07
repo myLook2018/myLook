@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,9 +34,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Subscription;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PremiumUserInfoFragment extends Fragment {
@@ -47,7 +43,7 @@ public class PremiumUserInfoFragment extends Fragment {
     private Button btnSubscribe, btnMoreInfo;
     private TextView txtEmail;
     private Context context;
-    private String clientId, userName;
+    private String clientIdPremium, userName;
     private boolean mSubscribed;
     private String documentId = "";
     private TextView txtLocalization;
@@ -55,10 +51,10 @@ public class PremiumUserInfoFragment extends Fragment {
     private TextView lblDate;
 
     @SuppressLint("ValidFragment")
-    public PremiumUserInfoFragment(String clientId, boolean isCurrentUser) {
+    public PremiumUserInfoFragment(String clientIdPremium, boolean isCurrentUser) {
         user = FirebaseAuth.getInstance().getCurrentUser();
-        Log.e("ClientId", clientId);
-        this.clientId = clientId;
+        Log.e("ClientId", clientIdPremium);
+        this.clientIdPremium = clientIdPremium;
         Log.e("FRAGMENT INFO ", String.valueOf(isCurrentUser));
         this.isCurrentUser = isCurrentUser;
     }
@@ -121,7 +117,7 @@ public class PremiumUserInfoFragment extends Fragment {
     }
 
     public void suscribeToTopic() {
-        FirebaseFirestore.getInstance().collection("clients").document(clientId).get().addOnSuccessListener(suc -> {
+        FirebaseFirestore.getInstance().collection("clients").document(clientIdPremium).get().addOnSuccessListener(suc -> {
             FirebaseFirestore.getInstance().collection("topics")
                     .whereEqualTo("userId", suc.get("userId")).get()
                     .addOnSuccessListener(v -> {
@@ -143,7 +139,7 @@ public class PremiumUserInfoFragment extends Fragment {
     }
 
     public void unsuscribeFromTopic() {
-        FirebaseFirestore.getInstance().collection("clients").document(clientId).get().addOnSuccessListener(suc -> {
+        FirebaseFirestore.getInstance().collection("clients").document(clientIdPremium).get().addOnSuccessListener(suc -> {
             FirebaseFirestore.getInstance().collection("topics")
                     .whereEqualTo("userId", suc.get("userId")).get()
                     .addOnSuccessListener(v -> {
@@ -171,7 +167,7 @@ public class PremiumUserInfoFragment extends Fragment {
                 btnSubscribe.setEnabled(false);
                 if (!mSubscribed) {
 
-                    Subscription newSubscription = new Subscription(clientId, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    Subscription newSubscription = new Subscription(clientIdPremium, FirebaseAuth.getInstance().getCurrentUser().getUid());
 
                     FirebaseFirestore.getInstance().collection("premiumUsersSubscriptions").add(newSubscription).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
@@ -179,6 +175,7 @@ public class PremiumUserInfoFragment extends Fragment {
                             Log.d("Firestore task", "DocumentSnapshot written with ID: " + documentReference.getId());
                             documentId = documentReference.getId();
                             suscribeToTopic();
+                            setupButtonSubscribe(true);
                         }
 
                     }).addOnFailureListener(new OnFailureListener() {
@@ -207,25 +204,29 @@ public class PremiumUserInfoFragment extends Fragment {
     }
 
     private void setupButtonSubscribe(boolean subscribed) {
+        try{
+            if (subscribed) {
+                btnSubscribe.setText("Desuscribirse");
+                btnSubscribe.setBackgroundColor(getResources().getColor(R.color.primary_dark));
+                mSubscribed = true;
+            } else {
+                btnSubscribe.setText("Suscribirse");
+                btnSubscribe.setBackgroundColor(getResources().getColor(R.color.accent));
+                mSubscribed = false;
+            }
 
-        if (subscribed) {
-            btnSubscribe.setText("Desuscribirse");
-            btnSubscribe.setBackgroundColor(getResources().getColor(R.color.primary_dark));
-            mSubscribed = true;
-        } else {
-            btnSubscribe.setText("Suscribirse");
-            btnSubscribe.setBackgroundColor(getResources().getColor(R.color.accent));
-            mSubscribed = false;
+            btnSubscribe.setEnabled(true);
+        }catch (Exception e){
+            Log.e("PremiumUserInfoFragment","Exception: "+e.getMessage());
         }
 
-        btnSubscribe.setEnabled(true);
     }
 
     public void checkFollow() {
         btnSubscribe.setVisibility(View.VISIBLE);
         FirebaseFirestore.getInstance().collection("premiumUsersSubscriptions")
                 .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .whereEqualTo("storeName", clientId)
+                .whereEqualTo("storeName", clientIdPremium)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {

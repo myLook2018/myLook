@@ -254,7 +254,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.favoriteByDay = [];
     let index;
     const today = new Date();
-    this.interactions.forEach((interaction) => {
+    const lastToWeekInteractions = this.interactions.filter(interaction => {
+      if (interaction.interactionTime !== undefined) {
+        const interactionDate = interaction.interactionTime.toDate();
+        const thisDate = new Date();
+        // To calculate the time difference of two dates
+        const Difference_In_Time = thisDate.getTime() - interactionDate.getTime();
+        // To calculate the no. of days between two dates
+        const Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+        console.log('Diferencia en dias', Math.floor(Difference_In_Days));
+        console.log('fecha', interactionDate);
+        if ( Math.floor(Difference_In_Days) <= 14) { return interaction; }
+      }
+    });
+
+    lastToWeekInteractions.forEach((interaction) => {
       if (interaction.interactionTime !== undefined) {
         const dateOfInteraction: Date = new Date(interaction.interactionTime.toDate());
         if (!this.daysOfTheWeek.includes(`${dateOfInteraction.getDate()}/${dateOfInteraction.getMonth() + 1}`)) {

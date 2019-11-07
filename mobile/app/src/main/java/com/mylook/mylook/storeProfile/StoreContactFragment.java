@@ -214,14 +214,19 @@ public class StoreContactFragment extends Fragment {
     }
 
     private void setupButtonSubscribe(boolean subscribed) {
-        if (subscribed) {
-            btnSubscribe.setText("Desuscribirse");
-            btnSubscribe.setBackgroundColor(getResources().getColor(R.color.primary_dark));
-            mSubscribed = true;
-        } else {
-            btnSubscribe.setText("Suscribirse");
-            btnSubscribe.setBackgroundColor(getResources().getColor(R.color.accent));
-            mSubscribed = false;
+        try{
+            if (subscribed) {
+                btnSubscribe.setText("Desuscribirse");
+                btnSubscribe.setBackgroundColor(getResources().getColor(R.color.primary_dark));
+                mSubscribed = true;
+            } else {
+                btnSubscribe.setText("Suscribirse");
+                btnSubscribe.setBackgroundColor(getResources().getColor(R.color.accent));
+                mSubscribed = false;
+            }
+        } catch (Exception e)
+        {
+            Log.e("StoreContactFragment", "Exception: "+e.getMessage());
         }
     }
 

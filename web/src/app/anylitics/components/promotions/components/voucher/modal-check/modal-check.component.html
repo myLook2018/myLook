@@ -1,0 +1,37 @@
+<div class="container mat-typography">
+  <div class="disclaimer">
+    <h2>
+        Ingresá el código del Cupón
+    </h2>
+  </div>
+  <div class="checker">
+    <mat-form-field class="my-form-input"  appearance="outline" style="width: 100%;">
+      <mat-label>Código del cupón</mat-label>
+      <input matInput
+             [formControl]="this.voucherCode"
+             type="text"
+             maxlength="8"
+             required
+        >
+        <mat-error>Campo requerido</mat-error>
+    </mat-form-field>
+    <div class="actions">
+      <button mat-raised-button (click)="closeModal()"
+              [ngClass]="{'button-disabled': this.isLoading}"
+              [disabled]="this.isLoading"
+      >
+          Cancelar
+      </button>
+      <button class="activated-button"
+              [ngClass]="{'button-disabled':( this.isLoading || this.voucherCode.invalid)}"
+              mat-raised-button (click)="tryActivateVoucher()"
+              [disabled]="this.isLoading || this.voucherCode.invalid"
+              >
+          Activar Cupon
+      </button>
+    </div>
+  </div>
+  <div class="proggressBar">
+      <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>
+  </div>
+</div>

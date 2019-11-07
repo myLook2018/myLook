@@ -1,0 +1,10 @@
+<p>
+  <p-chart type="pie" [data]="data"  [options]="options" width="22vw" height="25vw"></p-chart>
+</p>
+<div class="no-data mat-typography" *ngIf="isEmpty">
+  <div class="content">
+    <h1>
+      <strong> Sin datos </strong>
+    </h1>
+  </div>
+</div>

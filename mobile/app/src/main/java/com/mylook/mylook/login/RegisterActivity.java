@@ -48,6 +48,7 @@ public class RegisterActivity extends AppCompatActivity {
     final Calendar myCalendar = Calendar.getInstance();
     private String provider = null;
     private boolean validMail = true;
+    private boolean validDNI = true;
     private ArrayAdapter<String> adapterSex;
     private String LOG_LABEL = "[REGISTER]";
 
@@ -67,15 +68,20 @@ public class RegisterActivity extends AppCompatActivity {
         });
         getExtras();
         initCalendar();
-        txtEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    checkExistingEmail(txtEmail.getText().toString());
-                } else {
-                    txtEmail.setTextColor(getResources().getColor(R.color.black));
-                    validMail = true;
-                }
+        txtEmail.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                checkExistingEmail(txtEmail.getText().toString());
+            } else {
+                txtEmail.setTextColor(getResources().getColor(R.color.black));
+                validMail = true;
+            }
+        });
+        txtDNI.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                checkExistingDNI(txtDNI.getText().toString());
+            } else {
+                txtDNI.setTextColor(getResources().getColor(R.color.black));
+                validDNI = true;
             }
         });
         if (provider != null)
@@ -104,6 +110,24 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 });
     }
+    private void checkExistingDNI(String dni) {
+        btnRegister.setEnabled(false);
+        FirebaseFirestore.getInstance().collection("clients").whereEqualTo("dni", dni)
+                .get()
+                .addOnCompleteListener(task -> {
+                    Log.e(LOG_LABEL, "Check Existing DNI, mail en firebase" + task.getResult().getDocuments().toString());
+                    if (task.getResult().getDocuments().size() > 0) {
+                        validDNI = false;
+                        txtDNI.setTextColor(getResources().getColor(R.color.red));
+                        displayMessage("El DNI ya está en uso");
+                        btnRegister.setEnabled(false);
+                    } else {
+                        btnRegister.setEnabled(true);
+                    }
+                    mProgressBar.setVisibility(View.GONE);
+
+                });
+    }
 
     private void disableFields() {
         txtPasswd1.setEnabled(false);
@@ -128,6 +152,11 @@ public class RegisterActivity extends AppCompatActivity {
         if (isStringNull(txtEmail.getText().toString())) {
             displayMessage("El campo Email es obligatorio");
             return false;
+        }else{
+            if(!android.util.Patterns.EMAIL_ADDRESS.matcher(txtEmail.getText().toString()).matches()){
+                displayMessage("Email no valido");
+                return false;
+            }
         }
         if (!validMail) {
             displayMessage("El Mail seleccionado ya está en uso");
@@ -135,6 +164,14 @@ public class RegisterActivity extends AppCompatActivity {
         }
         if (isStringNull(txtDNI.getText().toString())) {
             displayMessage("Debes ingresar un DNI");
+            return false;
+        }
+        if (!validDNI) {
+            displayMessage("El DNI seleccionado ya está en uso");
+            return false;
+        }
+        if (txtDNI.getText().toString().length()>8 || txtDNI.getText().toString().length()<7) {
+            displayMessage("El DNI ingresado es invalido");
             return false;
         }
         if (isStringNull(spinner.getText().toString())) {
@@ -199,13 +236,10 @@ public class RegisterActivity extends AppCompatActivity {
                 final String email = txtEmail.getText().toString();
                 final String passwd = txtPasswd1.getText().toString();
                 FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, passwd)
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                FirebaseAuth.getInstance().signInWithEmailAndPassword(email, passwd);
-                                user = task.getResult().getUser();
-                                saveClient();
-                            }
+                        .addOnCompleteListener(task -> {
+                            FirebaseAuth.getInstance().signInWithEmailAndPassword(email, passwd);
+                            user = task.getResult().getUser();
+                            saveClient();
                         });
             } else {
                 saveClient();

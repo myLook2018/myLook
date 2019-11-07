@@ -8,6 +8,8 @@ import { NewStoreService } from '../../service/store.service';
 import { MapsAPILoader } from '@agm/core';
 import { Router } from '@angular/router';
 import { ChangePasswordDialogComponent } from '../dialogs/change-password/change-password-dialog';
+import { ToastsService, TOASTSTYPES} from 'src/app/service/toasts.service';
+
 // import { StoreService } from 'src/app/auth/services/store.service';
 
 @Component({
@@ -61,7 +63,7 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
 
   constructor(  private dataService: DataService,
                 private formBuilder: FormBuilder,
-                public snackBar: MatSnackBar,
+                public toastService: ToastsService,
                 private newStoreService: NewStoreService,
                 private mapsAPILoader: MapsAPILoader,
                 private ngZone: NgZone,
@@ -225,10 +227,9 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
       if ( !this.checkImagenLoaded() ) {
         this.enableForm();
         this.isUpLoading = false;
-        this.snackBar.open('Es necesario que cargue una foto de perfíl y una de portada para continuar.', '', {
-          duration: 3000,
-          panelClass: ['blue-snackbar']
-        });
+        this.toastService.showToastMessage(
+          'Error', TOASTSTYPES.ERROR, 'Es necesario que cargue una foto de perfíl y una de portada para continuar.'
+          );
         return;
       }
 
@@ -255,9 +256,7 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
         this.myFormGroup.get('storeLatitude').setValue( this.latitude);
         this.myFormGroup.get('storeLongitude').setValue( this.longitude);
           this.newStoreService.refreshStore( this.actualStore.firebaseUID, this.myFormGroup.getRawValue()).then( () => {
-            this.snackBar.open('Su Información ha sido actualizada', '', {
-              duration: 3000,
-              panelClass: ['blue-snackbar']});
+            this.toastService.showToastMessage('Perfil actualizado', TOASTSTYPES.SUCCESS, 'Su Información ha sido actualizada');
             this.isUpLoading = false;
             this.enableForm();
           });
