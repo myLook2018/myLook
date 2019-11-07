@@ -88,7 +88,7 @@ public class Coupon {
         this.code = code;
     }
 
-    public Object getDni() {
+    public String getDni() {
         return dni;
     }
 
@@ -103,7 +103,6 @@ public class Coupon {
     public void setAge(@Nullable int  age) {
         this.age = age;
     }
-
     public boolean isUsed() {
         return used;
     }
