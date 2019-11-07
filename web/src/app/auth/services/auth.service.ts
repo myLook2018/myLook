@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
 import * as firebase from 'firebase';
 import { AngularFirestore } from 'angularfire2/firestore';
-import { MatSnackBar } from '@angular/material';
+import { ToastsService, TOASTSTYPES } from 'src/app/service/toasts.service';
 
 @Injectable()
 export class AuthService {
 
   constructor(
-    public snackBar: MatSnackBar,
+    public toastService: ToastsService,
     public afAuth: AngularFireAuth,
     public db: AngularFirestore
   ) { }
@@ -41,7 +41,7 @@ export class AuthService {
           return reject(`Ya existe un usuario registrado con el mail ingresado.`);
         }
       }).catch(error => {
-        this.openSnackBar(this.translateError(error.code), 'x');
+        this.toastService.showToastMessage('Error', TOASTSTYPES.ERROR, this.translateError(error.code));
         reject();
       });
     });
@@ -95,10 +95,12 @@ export class AuthService {
     const user = firebase.auth().currentUser;
     user.sendEmailVerification().then( () => {
       // tslint:disable-next-line: max-line-length
-      this.openSnackBar('¡Se ha enviado un email a su correo electrónico! Es necesario que realice la verificación de la cuenta antes de seguir. ', 'x')
+      this.toastService.showToastMessage(
+        'Email de verificación', TOASTSTYPES.INFO,
+        '¡Se ha enviado un email a su correo electrónico! Es necesario que realice la verificación de la cuenta antes de seguir.');
       return('¡Se ha enviado un email a su correo electrónico! Es necesario que realice la verificación de la cuenta antes de seguir. ');
-    }).catch(function(error) {
-      this.openSnackBar(this.translateError(error.code), 'x');
+    }).catch( (error) => {
+      this.toastService.showToastMessage('Error', TOASTSTYPES.ERROR, this.translateError(error.code));
       return (error);
     });
   }
@@ -144,7 +146,7 @@ export class AuthService {
           }*/
           resolve(res);
         }, error => {
-          this.openSnackBar(this.translateError(error.code), 'x');
+        this.toastService.showToastMessage('Error', TOASTSTYPES.ERROR, this.translateError(error.code));
           reject(''); });
     });
   }
@@ -173,11 +175,11 @@ export class AuthService {
     return new Promise((resolve, reject) => {
     firebase.auth().sendPasswordResetEmail(email).then( res => {
       console.log('se envio el email para resetear');
-      this.openSnackBar('Te hemos enviado un email para reestablecer tu contraseña!', 'x');
+      this.toastService.showToastMessage('Email enviado', TOASTSTYPES.INFO, 'Te hemos enviado un email para reestablecer tu contraseña.');
       // resolve(res);
     }).catch( error => {
-      console.log ('ocurrio un error al intentar mandar mail. ', error);
-      this.openSnackBar(this.translateError(error.code), 'x');
+      console.log('error al enviar', error);
+      this.toastService.showToastMessage('Error', TOASTSTYPES.ERROR, 'ocurrio un error al intentar mandar mail.');
       // reject(error);
     });
   });
@@ -214,11 +216,5 @@ export class AuthService {
         break;
     }
     return message;
-  }
-
-  openSnackBar(message: string, action: string) {
-    this.snackBar.open(message, action, {
-      duration: 5000
-    });
   }
 }

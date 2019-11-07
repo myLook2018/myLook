@@ -6,7 +6,6 @@ import {
   MatDialog,
   MatTableDataSource,
   MatSort,
-  MatSnackBar,
   MatSortable
 } from '@angular/material';
 import { Router } from '@angular/router';
@@ -17,6 +16,7 @@ import { PromoteDialogComponent } from '../dialogs/promoteDialog';
 import { FrontDialogComponent } from '../dialogs/frontDialog';
 import { DataService } from 'src/app/service/dataService';
 import { Subscription } from 'rxjs';
+import { ToastsService, TOASTSTYPES } from 'src/app/service/toasts.service';
 
 declare var Mercadopago: any;
 @Component({
@@ -38,13 +38,13 @@ export class InventoryComponent implements OnInit, OnDestroy {
   selectedIndexes = [];
   articlesSubscription: Subscription;
   constructor(
-    public snackBar: MatSnackBar,
     public fb: FormBuilder,
     public articleService: ArticleService,
     public dataService: DataService,
     public dialog: MatDialog,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private toastsService: ToastsService
   ) {
     // this.createForm();
     this.options = fb.group({
@@ -60,10 +60,10 @@ export class InventoryComponent implements OnInit, OnDestroy {
     'title',
     'code',
     'cost',
-    'size',
-    'material',
+    // 'size',
+    // 'material',
     'colors',
-    'initial_stock',
+    // 'initial_stock',
     'tags',
     'actions'
   ];
@@ -218,14 +218,8 @@ export class InventoryComponent implements OnInit, OnDestroy {
       this.articleService.refreshVidrieraAttribute(idOfFrontsArticles[i], true);
     }
     this.articlesToGenerateFront = [];
-    this.openSnackBar('Su vidriera ha sido actualizada!', 'x');
+    this.toastsService.showToastMessage('Vidriera actualizada', TOASTSTYPES, 'Se ha actualizado su vidriera con éxito.');
     this.selectionMode = false;
-  }
-
-  openSnackBar(message: string, action: string) {
-    this.snackBar.open(message, action, {
-      duration: 2000
-    });
   }
 
   createSubCollection() {

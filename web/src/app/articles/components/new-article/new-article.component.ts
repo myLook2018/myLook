@@ -1,13 +1,14 @@
 import { OnInit, OnDestroy, Component, ViewEncapsulation, ViewChild, AfterViewInit,  } from '@angular/core';
 import { FormGroup, FormBuilder, Validators} from '@angular/forms';
 import { SPACE, ENTER, COMMA } from '@angular/cdk/keycodes';
-import { MatChipInputEvent, MatSnackBar } from '@angular/material';
+import { MatChipInputEvent } from '@angular/material';
 import { LyResizingCroppingImages, ImgCropperConfig } from '@alyle/ui/resizing-cropping-images';
 import { LyTheme2 } from '@alyle/ui';
 import { DataService } from 'src/app/service/dataService';
 import { ArticleService } from '../../services/article.service';
 import { StoreModel } from 'src/app/auth/models/store.model';
 import { Router, Route, ActivatedRoute } from '@angular/router';
+import { ToastsService, TOASTSTYPES} from 'src/app/service/toasts.service';
 
 @Component({
   selector: 'app-new-article',
@@ -71,7 +72,7 @@ export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor (
     private formBuilder: FormBuilder,
-    public snackBar: MatSnackBar,
+    public toastService: ToastsService,
     private dataService: DataService,
     private articleService: ArticleService,
     private router: Router,
@@ -166,12 +167,6 @@ export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
       input.value = '';
     }
     console.log(coleccion);
-  }
-
-  openSnackBar(message: string, action: string) {
-    this.snackBar.open(message, action, {
-      duration: 2000
-    });
   }
 
   goToInventory() {
@@ -289,21 +284,19 @@ export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isUpLoading = true;
     if ( !this.checkImagenLoaded() ) {
       this.isUpLoading = false;
-      this.snackBar.open('Es necesario que cargue al menos una imagen de la prenda para poder continuar.', '', {
-        duration: 3000,
-        panelClass: ['blue-snackbar']
-      });
+      this.toastService.showToastMessage(
+        'Imagen requerida', TOASTSTYPES.ERROR, 'Es necesario que cargue al menos una imagen de la prenda para poder continuar.'
+        );
       return;
     }
 
     const isCodeUsed = await this.checkIfArticleCodeExists(this.articleForm.get('code').value);
 
-    if (isCodeUsed.length > 0) {
+    if (isCodeUsed.length > 0 && !this.isEditMode) {
       this.isUpLoading = false;
-      this.snackBar.open('El código de la prenda ya se encuentra en uso. Por favor, seleccione uno diferente.', '', {
-        duration: 3000,
-        panelClass: ['blue-snackbar']
-      });
+      this.toastService.showToastMessage(
+        'Código en uso', TOASTSTYPES.ERROR, 'El código de la prenda ya se encuentra en uso. Por favor, seleccione uno diferente.'
+        );
       this.articleForm.get('code').setErrors({ notUnique: true});
       return;
     }
@@ -336,14 +329,16 @@ export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
       this.articleForm.get('picturesArray').setValue(picturesURL.map(x => x));
       if ( this.isEditMode ) {
         this.articleService.refreshArticle( this.articleForm.getRawValue(), this.route.snapshot.paramMap.get('id')).then( () => {
-          this.openSnackBar('Prenda actualizada en MyLook!', '');
+          this.toastService.showToastMessage(
+            'Prenda Actualizada', TOASTSTYPES.SUCCESS, 'La prenda fue actualizada correctamente en myLook.'
+            );
           this.isUpLoading = false;
         });
       } else {
         this.articleService.addArticle(this.articleForm.getRawValue()).then(() => {
           this.isUpLoading = false;
           console.log('prenda guardada');
-          this.openSnackBar('Prenda guardada en MyLook!', '');
+          this.toastService.showToastMessage('Prenda guardada', TOASTSTYPES.SUCCESS, 'La prenda fue guardada correctamente en myLook.');
           this.resetForm();
         });
       }

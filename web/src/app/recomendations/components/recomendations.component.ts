@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { RecomendationRequest } from '../model/recomendationRequest.model';
 import { Article } from '../../articles/models/article';
 import { ArticleService } from '../../articles/services/article.service';
-import { MatTableDataSource, MatSnackBar } from '@angular/material';
+import { MatTableDataSource } from '@angular/material';
 import {
   FormBuilder,
   FormGroup,
@@ -16,6 +16,7 @@ import { RecomendationAnswer } from '../model/recomendationAnswer.model';
 import { DataService } from 'src/app/service/dataService';
 import { getDistance } from 'geolib';
 import { GeolibInputCoordinates } from 'geolib/es/types';
+import { ToastsService, TOASTSTYPES } from 'src/app/service/toasts.service';
 
 @Component({
   selector: 'app-recomendations',
@@ -58,7 +59,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
   lastImagenLoadedAnswer: any;
 
   constructor(
-    public snackBar: MatSnackBar,
+    public toastService: ToastsService,
     public articleService: ArticleService,
     public dataService: DataService,
     public recomendationsService: RecomendationService,
@@ -220,7 +221,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
       this.error =
         'Se requiere que selecione una prenda de su catalogo para recomendar';
       console.log(this.error);
-      this.openSnackBar(this.error, 'x');
+      this.toastService.showToastMessage('Error', TOASTSTYPES.ERROR, this.error);
       return this.error;
     } else {
       this.disableSendRecomendation = true;
@@ -252,7 +253,7 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
             .storeAnswer(this.answerForm.value)
             .then(() => {
               console.log(6);
-              this.openSnackBar('Se ha enviado la sugerencia!', 'x');
+              this.toastService.showToastMessage('Sugerencia enviada', TOASTSTYPES.SUCCESS, 'Se ha enviado la sugerencia con éxito');
               if(this.recomendationsToAnswer.length > 0) {
                 this.showInformationRequest(this.recomendationsToAnswer[0]);
               }
@@ -288,12 +289,6 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
       }
     });
     return res;
-  }
-
-  openSnackBar(message: string, action: string) {
-    this.snackBar.open(message, action, {
-      duration: 2000
-    });
   }
 
   loadingSpinner() {

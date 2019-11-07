@@ -108,8 +108,8 @@ export class VoucherDialogComponent implements OnInit {
       });
       this.userData = data;
       this.discountNumber = new FormControl(0, [Validators.max(100), Validators.min(0)]);
-      this.fromAge = new FormControl(0, [Validators.max(100), Validators.min(0)]);
-      this.toAge = new FormControl(0, [Validators.max(100), Validators.min(0)]);
+      this.fromAge = new FormControl(14, [Validators.max(100), Validators.min(14)]);
+      this.toAge = new FormControl(14, [Validators.max(100), Validators.min(14)]);
       this.description = new FormControl('');
       this.title = new FormControl('');
       this.dataService.getNumberClients().then( clients => {
@@ -118,6 +118,8 @@ export class VoucherDialogComponent implements OnInit {
          this.dataService.getNumberOfSubscriptors().then( subscriptos => {
            this.subscritorsTotal = subscriptos;
            console.log('estos son mis subs', this.subscritorsTotal);
+           console.log('estos son mis subs lengt', this.subscritorsTotal.length);
+           this.addClientIDtoSubscriptors();
            this.allNonSubscribers = this.clientsTotal.filter(client => !this.subscritorsTotal.find(subs => {
              console.log(`${subs.userId} === ${client.userId}`);
              // tslint:disable-next-line: triple-equals
@@ -165,7 +167,7 @@ export class VoucherDialogComponent implements OnInit {
           }
       },
       'back_urls': {
-        'success': `https://app-mylook.firebaseapp.com/Tiendas${this.data.storeName}/Promociones`,
+        'success': `https://app-mylook.firebaseapp.com/Tiendas/${this.data.storeName}/Promociones`,
         'failure': 'https://app-mylook.firebaseapp.com/Tiendas/Error',
     },
     'auto_return': 'approved',
@@ -204,7 +206,9 @@ export class VoucherDialogComponent implements OnInit {
 
   selectRandomExtraClients() {
     for (let index = 0; index < this.sliderValue; index++) {
-      const randomClient = this.filteredNonSubscribers[Math.floor(Math.random() * this.filteredNonSubscribers.length)].id;
+      const randomNumber = Math.floor(Math.random() * this.filteredNonSubscribers.length);
+      const randomClient = this.filteredNonSubscribers[randomNumber].id;
+      this.filteredNonSubscribers.splice(randomNumber, 1);
       this.extraClients.push(randomClient);
     }
   }
@@ -234,12 +238,12 @@ export class VoucherDialogComponent implements OnInit {
     });
   }
 
-  generateDocumentNotPaid() {
+  async generateDocumentNotPaid() {
     const discount = this.voucherType === 0 ? null : this.discountNumber.value;
     const end = new Date;
     const subsIds = [];
     this.subscritorsTotal.forEach(subscriptor => {
-      subsIds.push(subscriptor.id);
+      subsIds.push(subscriptor.idClientDocument);
     });
     end.setDate(end.getDate() + this.duration);
     const documentData = {
@@ -252,7 +256,7 @@ export class VoucherDialogComponent implements OnInit {
       voucherType: this.voucherType,
       campaignType: this.selectedCampaing,
       discountValue: discount,
-      campaingCost: this.promotionCost,
+      campaignCost: this.promotionCost,
       idMercadoPago: null,
       paymentMethod: null,
       lastFourDigits: null,
@@ -264,6 +268,7 @@ export class VoucherDialogComponent implements OnInit {
       clientsId: subsIds.concat(this.extraClients)
     };
 
+    console.log('data a crear del voucher', documentData);
     return this.dataService.addNewVoucherCollection(documentData);
   }
 
@@ -273,7 +278,7 @@ export class VoucherDialogComponent implements OnInit {
     this.filteredNonSubscribers = this.allNonSubscribers.filter(nonSub => {
       // match del genero
       let isGender = true;
-      if (this.genderSelected !== 'Ambos') {
+      if (this.genderSelected !== 'Todos') {
         isGender = nonSub.gender === this.genderSelected;
       }
 
@@ -298,5 +303,14 @@ export class VoucherDialogComponent implements OnInit {
     });
     console.log('encontramos de filtrar a ' , this.filteredNonSubscribers.length);
     this.maxSlider = this.filteredNonSubscribers.length;
+  }
+
+  addClientIDtoSubscriptors() {
+    this.subscritorsTotal.map( subs => {
+      console.log('agregandole clientID a ', subs)
+      const clientDoc = this.clientsTotal.find( client => client.userId === subs.userId );
+      subs.idClientDocument = clientDoc.id;
+      console.log('Ahora quedo ', subs);
+    });
   }
 }

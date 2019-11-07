@@ -40,7 +40,7 @@
                 </mat-list-item>
                 <mat-list-item class="navigation-option" (click)="goToAnalyticsPromotions()" [ngClass]="{selected: clickedItem === 'promotions'}">
                   <mat-icon class="myLookPink" mat-list-icon>whatshot</mat-icon>
-                  <p mat-line>Promociones</p>
+                  <p mat-line>Publicidad</p>
                 </mat-list-item>
                 <mat-list-item class="navigation-option" (click)="gotToConfiguration()" [ngClass]="{selected: clickedItem === 'config'}">
                   <mat-icon class="myLookPink" mat-list-icon>settings</mat-icon>
@@ -50,7 +50,7 @@
         </mat-sidenav>
 
         <mat-sidenav-content class="main-content-container">
-            <ngx-spinner bdOpacity = 1bd bdColor="#fafafa" size="large" color="#9c27b0" type = "ball-grid-pulse" fullScreen="true">
+            <ngx-spinner bdOpacity = 1bd bdColor="#fafafa" size="large" color="#bd84c7" type = "ball-grid-pulse" fullScreen="true">
             </ngx-spinner>
             <div class="fade"></div>
           <router-outlet *ngIf="this.reload" class="content" (imReadyToDisplay)="hideSpinner($event)" ></router-outlet>
