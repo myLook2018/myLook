@@ -196,39 +196,13 @@
             </div>
           </div>
       </div>
-      <!-- <mat-divider style="position: relative !important;"></mat-divider>
-      <div class="passwordChange" style="padding: 1rem;">
-        <br>
-        <h1>Cambio de Contraseña</h1>
-        <p style="margin-left: 1rem;">
-            Para realizar un cambio de constraseña, debe cerrar sesión y solicitar el reestablecimiento de la contraseña por medio del link de ayuda: "<strong>¿Has olvidado tu contraseña?</strong>".
-        </p>
-      </div> -->
-      <!--
-        <p>
-          <mat-form-field appearance="outline" class="fullWidth">
-            <mat-label>Constraseña Actual</mat-label>
-            <input matInput formControlName="this.currentPassword" [disabled]="this.isUpLoading">
-          </mat-form-field>
-        </p>
-        <p>
-          <mat-form-field appearance="outline" class="fullWidth">
-            <mat-label>Nueva Contraseña</mat-label>
-            <input matInput placeholder="Ej: myLookTwitter" formControlName="this.newPassword" [disabled]="this.isUpLoading">
-          </mat-form-field>
-        </p>
-        <div>
-          asdasdasdasdasd
-        </div>
-      </div>
-    -->
-    <!-- <mat-divider style="position: relative !important;"></mat-divider> -->
+
       <mat-card-actions class="actions">
           <button
             [disabled]="isUpLoading"
             type="button"
 
-            [ngClass]="{buttonDisabled: isUpLoading}"
+            [ngClass]="{'button-disabled': isUpLoading}"
             mat-raised-button
             (click)="goToProfile()"
             >
@@ -236,10 +210,10 @@
           </button>
           <button
             [disabled]="myFormGroup.invalid || isUpLoading"
-            class="activatedButton"
+            class="activated-button"
             type="button"
 
-            [ngClass]="{buttonDisabled: (myFormGroup.invalid || isUpLoading)}"
+            [ngClass]="{'button-disabled': (myFormGroup.invalid || isUpLoading)}"
             mat-raised-button
             (click)="cropImages(cropping0, cropping1)"
             >
@@ -260,6 +234,24 @@
         <div class="proggressBar">
           <mat-progress-bar *ngIf="isUpLoading" mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>
         </div>
+      </mat-card>
+      <mat-card class="card-container">
+      <div class="passwordChange">
+        <div class="content">
+          <h1>Credenciales</h1>
+          <button
+            [disabled]="isUpLoading"
+            class="activated-button"
+            type="button"
+
+            [ngClass]="{'button-disabled': (isUpLoading)}"
+            mat-raised-button
+            (click)="this.openChangePasswordDialog()"
+            > Cambiar Contraseña
+        </button>
+        </div>
+      </div>
     </mat-card>
+
   </form>
 </div>

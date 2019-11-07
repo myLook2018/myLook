@@ -116,6 +116,16 @@ agm-map {
   text-align-last: center;
 }
 
-.activatedButton {
-  background-color: #9C27B0; color: white;
+.activated-button {
+  background-color: #bd84c7; color: white;
+}
+
+.button-disabled {
+  background-color: grey; color: white;
+}
+
+.content {
+  margin: 2rem 2rem 1.5rem;
+  text-align-last: center;
+
 }

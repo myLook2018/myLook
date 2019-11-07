@@ -3,10 +3,11 @@ import { DataService } from '../../../service/dataService';
 import { StoreModel } from 'src/app/auth/models/store.model';
 import { FormBuilder, FormGroup, Validators, FormControl} from '@angular/forms';
 import { ImgCropperConfig, LyResizingCroppingImages } from '@alyle/ui/resizing-cropping-images';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar, MatDialog } from '@angular/material';
 import { NewStoreService } from '../../service/store.service';
 import { MapsAPILoader } from '@agm/core';
 import { Router } from '@angular/router';
+import { ChangePasswordDialogComponent } from '../dialogs/change-password/change-password-dialog';
 // import { StoreService } from 'src/app/auth/services/store.service';
 
 @Component({
@@ -65,6 +66,8 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
                 private mapsAPILoader: MapsAPILoader,
                 private ngZone: NgZone,
                 private router: Router,
+                public dialog: MatDialog,
+
                 // private storeService: StoreService
     ) {
    }
@@ -394,4 +397,16 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
   // changePassword() {
     // this.storeService.changePassword('123456');
   // }
+
+  openChangePasswordDialog() {
+    const dataToSend = {
+      storeEmail: this.actualStore.storeMail,
+    };
+
+    this.dialog.open(ChangePasswordDialogComponent, {
+      width: '450px',
+      disableClose: true,
+      data: dataToSend
+    });
+  }
 }

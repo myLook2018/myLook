@@ -108,6 +108,9 @@ import {VoucherDialogComponent} from 'src/app/anylitics/components/promotions/co
 
 
 
+import { ChangePasswordDialogComponent } from 'src/app/store/components/dialogs/change-password/change-password-dialog';
+
+
 registerLocaleData(localeAR);
 
 @NgModule({
@@ -145,7 +148,8 @@ registerLocaleData(localeAR);
     AnyliticsDashboardComponent,
     ViewsByPromotionsComponent,
     ReactionsPieComponent,
-    VoucherComponent
+    VoucherComponent,
+    ChangePasswordDialogComponent
   ],
   imports: [
     HttpClientModule,
@@ -212,7 +216,7 @@ registerLocaleData(localeAR);
     // ArticleResolver, StoreResolver,
     NewStoreService],
   entryComponents: [FrontDialogComponent, PromoteDialogComponent, DialogAlertComponent, SuccesfulDialogComponent,
-    DeleteConfirmationDialogComponent, MapsDialogComponent, VoucherDialogComponent, EditStoreComponent],
+    DeleteConfirmationDialogComponent, MapsDialogComponent, VoucherDialogComponent, EditStoreComponent, ChangePasswordDialogComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {
