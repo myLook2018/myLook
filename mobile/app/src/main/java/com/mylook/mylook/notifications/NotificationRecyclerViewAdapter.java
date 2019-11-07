@@ -1,12 +1,12 @@
 package com.mylook.mylook.notifications;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RatingBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,7 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.mylook.mylook.R;
+import com.mylook.mylook.coupon.CouponActivity;
 import com.mylook.mylook.entities.Notification;
+import com.mylook.mylook.premiumUser.PremiumUserProfileActivity;
+import com.mylook.mylook.recommend.RequestRecommendActivity;
 
 
 import java.util.ArrayList;
@@ -45,28 +48,69 @@ public class NotificationRecyclerViewAdapter extends RecyclerView.Adapter<Notifi
         Notification notif = items.get(position);
         holder.notificationMessage.setText(notif.getMessage());
         holder.notificationName.setText(notif.getPremiumUserName());
-        Glide.with(mContext).asBitmap().load(notif.getUserPhotoUrl()).into(holder.leftPhoto);
+        String premiumClass = holder.itemView.getContext().getResources().getString(R.string.PremiumUserClass);
+        String requestClass = holder.itemView.getContext().getResources().getString(R.string.RecommendClass);
+        String couponClass = holder.itemView.getContext().getResources().getString(R.string.CouponClass);
+        if (notif.getOpenClass().equals(premiumClass)){
+            holder.rightPhoto.setImageDrawable(mContext.getDrawable(R.drawable.ic_new_diffusion));
+            holder.rightPhoto.setVisibility(View.VISIBLE);
+        } else if (notif.getOpenClass().equals(requestClass)){
+            holder.rightPhoto.setImageDrawable(mContext.getDrawable(R.drawable.ic_recommend));
+            holder.rightPhoto.setVisibility(View.VISIBLE);
+        } else if(notif.getOpenClass().equals(couponClass)) {
+            holder.rightPhoto.setVisibility(View.VISIBLE);
+            holder.rightPhoto.setImageDrawable(mContext.getDrawable(R.drawable.ic_coupon));
+        }
+            Glide.with(mContext).asBitmap().load(notif.getUserPhotoUrl()).into(holder.leftPhoto);
         if(notif.getImageUrl() !=  null && !notif.getImageUrl().isEmpty())
-            Glide.with(mContext).asBitmap().load(notif.getImageUrl()).into(holder.rigthPhoto);
+            Glide.with(mContext).asBitmap().load(notif.getImageUrl()).into(holder.rightPhoto);
+        if (notif.getOpenClass()!= null && !notif.getOpenClass().isEmpty() && notif.getElementId()!=null && !notif.getElementId().isEmpty()){
+            holder.itemView.setOnClickListener( l-> {
+                Class activity;
+                String elementId;
+                elementId = notif.getElementId();
+                Intent newIntent = null;
+                if (notif.getOpenClass().equals(premiumClass)){
+                    activity = PremiumUserProfileActivity.class;
+                    newIntent = new Intent(holder.itemView.getContext(), activity);
+                    newIntent.putExtra("clientId", elementId);
+                } else if (notif.getOpenClass().equals(requestClass)){
+                    activity = RequestRecommendActivity.class;
+                    newIntent = new Intent(holder.itemView.getContext(), activity);
+                    holder.rightPhoto.setImageDrawable(mContext.getDrawable(R.drawable.ic_recommend));
+                    holder.rightPhoto.setVisibility(View.VISIBLE);
+                    newIntent.putExtra("requestId", elementId);
+                } else if(notif.getOpenClass().equals(couponClass)){
+                    activity = CouponActivity.class;
+                    holder.rightPhoto.setVisibility(View.VISIBLE);
+                    holder.rightPhoto.setImageDrawable(mContext.getDrawable(R.drawable.ic_coupon));
+                    newIntent = new Intent(holder.itemView.getContext(), activity);
+                    newIntent.putExtra("couponId", elementId);
+                }
+                if(newIntent!=null)
+                    Log.e("Notification Recycler", "Element Id: "+elementId);
+                    Log.e("Notification Recycler", "Element Class: "+notif.getOpenClass());
+                    holder.itemView.getContext().startActivity(newIntent);
+            });
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         ImageView leftPhoto;
         TextView notificationMessage;
         TextView dayMessage;
-        ImageView rigthPhoto;
+        ImageView rightPhoto;
         TextView notificationName;
 
         public ViewHolder(View itemView) {
             super(itemView);
             leftPhoto = itemView.findViewById(R.id.leftPhoto);
-            rigthPhoto= itemView.findViewById(R.id.rightPhoto);
+            rightPhoto = itemView.findViewById(R.id.rightPhoto);
             dayMessage = itemView.findViewById(R.id.dayMessage);
             notificationMessage = itemView.findViewById(R.id.notificationMessage);
             notificationName = itemView.findViewById(R.id.notificationName);
-
-
         }
+
     }
     @Override
     public int getItemCount() {

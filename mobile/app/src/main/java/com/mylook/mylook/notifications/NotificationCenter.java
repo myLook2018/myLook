@@ -39,10 +39,9 @@ public class NotificationCenter extends AppCompatActivity {
         Intent intent = getIntent();
         if(intent.hasExtra("fromDeepLink"))
             fromDeepLink = true;
-        initElements();
     }
 
-    /*@Override
+    @Override
     protected void onResume() {
         super.onResume();
         setContentView(R.layout.activity_notification_center);
@@ -53,17 +52,9 @@ public class NotificationCenter extends AppCompatActivity {
         ab.setDisplayHomeAsUpEnabled(true);
         tb.setTitle("Notificaciones");
         initElements();
-    }*/
+    }
 
     private void initElements(){
-        setContentView(R.layout.activity_notification_center);
-        recyclerView = findViewById(R.id.notification_recycler);
-        tb = findViewById(R.id.toolbar);
-        setSupportActionBar(tb);
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-        tb.setTitle("Notificaciones");
-
         updateNotifications();
         getNotifications();
     }
@@ -91,7 +82,6 @@ public class NotificationCenter extends AppCompatActivity {
                             notif.setDocumentId(doc.getId());
                             notifications.add(notif);
                         }
-                        Log.e("Notifications", ""+notifications.size());
                         adapter.notifyDataSetChanged();
                     }
         });

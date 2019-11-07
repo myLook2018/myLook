@@ -238,12 +238,57 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             });
     }
 
+    private void readPremiumSubscriptions(){
+        FirebaseFirestore.getInstance().collection("premiumUsersSubscriptions")
+                .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                if (!task.getResult().isEmpty()) {
+                    subscriptionList = new ArrayList<>();
+                    subscriptionList.addAll(task.getResult().toObjects(Subscription.class));
+                    for (Subscription sub : subscriptionList) {
+                        FirebaseFirestore.getInstance().collection("premiumUsers")
+                                .whereEqualTo("clientId", sub.getStoreName())
+                                .get().addOnCompleteListener(task1 -> {
+                            if (task1.isSuccessful()) {
+                                for (QueryDocumentSnapshot documentSnapshot : task1.getResult()) {
+                                    Log.e("ROPERO", documentSnapshot.getId());
+                                    // TODO ver esto
+                                    PremiumUser premiumUser = documentSnapshot.toObject(PremiumUser.class);
+                                    list.add(premiumUser);
+                                }
+                                if(list.isEmpty()){
+                                    emptyArticles.setVisibility(View.VISIBLE);
+                                    starImage.setVisibility(View.VISIBLE);
+                                } else {
+                                    emptyArticles.setVisibility(View.GONE);
+                                    starImage.setVisibility(View.GONE);
+                                }
+                                adapter.notifyDataSetChanged();
+                                Log.e("On complete", "Tamaño adapter " + adapter.getItemCount());
+
+                            } else {
+                                Log.d("Firestore task", "onComplete: " + task1.getException());
+                            }
+                        });
+                    }
+                } else {
+                    if(list.isEmpty()){
+                        emptyArticles.setVisibility(View.VISIBLE);
+                        starImage.setVisibility(View.VISIBLE);
+                    } else {
+                        emptyArticles.setVisibility(View.GONE);
+                        starImage.setVisibility(View.GONE);
+                    }
+                }
+            }
+            refreshLayout.setRefreshing(false);
+        });
+    }
+
     public void readSubscriptions(boolean isRefresh) {
-        //Devuelve los ultimos meses, TODO Cambiar esto para probar en serio
         final Calendar myCalendar = Calendar.getInstance();
-        myCalendar.set(Calendar.MONTH, myCalendar.get(Calendar.MONTH) - 7);
-        Log.e(TAG, list.toString());
-        Log.e(TAG, "Begin read Subscriptions- Uid:" + FirebaseAuth.getInstance().getCurrentUser());
+        myCalendar.set(Calendar.DATE, myCalendar.get(Calendar.DATE) - 15);
         if(isRefresh){
             list.clear();
         }
@@ -273,63 +318,19 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                                 /*for (Article art : list) {
                                                     Log.e(TAG, (art.getArticleId() + " - " + art.getCreationDate() + " - Promo: " + art.getPromotionLevel()));
                                                 }*/
-                                                emptyArticles.setVisibility(View.GONE);
-                                                starImage.setVisibility(View.GONE);
+
                                                 adapter.notifyDataSetChanged();
-                                            } else {
-                                                emptyArticles.setVisibility(View.VISIBLE);
-                                                starImage.setVisibility(View.VISIBLE);
                                             }
                                         } else {
                                             Log.e("Firestore task", "onComplete: " + task12.getException());
                                         }
                                     });
                                 }
-                            } else {
-                                emptyArticles.setVisibility(View.VISIBLE);
-                                starImage.setVisibility(View.VISIBLE);
                             }
                         }
+                        readPremiumSubscriptions();
                     });
 
-            FirebaseFirestore.getInstance().collection("premiumUsersSubscriptions")
-                    .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    if (!task.getResult().isEmpty()) {
-                        subscriptionList = new ArrayList<>();
-                        subscriptionList.addAll(task.getResult().toObjects(Subscription.class));
-
-                        for (Subscription sub : subscriptionList) {
-                            FirebaseFirestore.getInstance().collection("premiumUsers")
-                                    .whereEqualTo("clientId", sub.getStoreName())
-                                    .get().addOnCompleteListener(task1 -> {
-                                if (task1.isSuccessful()) {
-                                    for (QueryDocumentSnapshot documentSnapshot : task1.getResult()) {
-                                        Log.e("ROPERO", documentSnapshot.getId());
-                                        // TODO ver esto
-                                        PremiumUser premiumUser = documentSnapshot.toObject(PremiumUser.class);
-                                        list.add(premiumUser);
-                                    }
-                                    if(list.isEmpty()){
-                                        emptyArticles.setVisibility(View.VISIBLE);
-                                        starImage.setVisibility(View.VISIBLE);
-                                    } else {
-                                        emptyArticles.setVisibility(View.GONE);
-                                        starImage.setVisibility(View.GONE);
-                                    }
-                                    adapter.notifyDataSetChanged();
-                                    Log.e("On complete", "Tamaño adapter " + adapter.getItemCount());
-
-                                } else {
-                                    Log.d("Firestore task", "onComplete: " + task1.getException());
-                                }
-                            });
-                        }
-                    }
-                }
-                refreshLayout.setRefreshing(false);
-            });
         }
     }
 

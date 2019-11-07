@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
 
 import com.mylook.mylook.R;
+import com.mylook.mylook.coupon.MyCouponsActivity;
 import com.mylook.mylook.dialogs.DialogManager;
 import com.mylook.mylook.premiumUser.PremiumRequestActivity;
 import com.mylook.mylook.session.Session;
@@ -34,6 +35,8 @@ public class AccountActivity extends AppCompatActivity {
     private TextView txtExit;
     private Context mContext;
     private String clientId;
+    private TextView txtCoupons;
+    private ImageView imgCoupons;
     public final static String TAG = "AccountActivity";
 
 
@@ -70,6 +73,8 @@ public class AccountActivity extends AppCompatActivity {
         txtDestacado = findViewById(R.id.txtSettingsDest);
         imageExit = findViewById(R.id.image_exit);
         txtExit = findViewById(R.id.txtExit);
+        txtCoupons = findViewById(R.id.txtCoupons);
+        imgCoupons = findViewById(R.id.image_coupon);
     }
 
     @Override
@@ -104,6 +109,16 @@ public class AccountActivity extends AppCompatActivity {
         imageAccount.setOnClickListener(v -> {
             Intent intent = new Intent(mContext, EditInfoActivity.class);
             startActivityForResult(intent,CHANGE_USER);
+        });
+        txtCoupons.setOnClickListener(v -> {
+            Intent intent=new Intent(getApplicationContext(), MyCouponsActivity.class);
+            startActivity(intent);
+
+        });
+
+        imgCoupons.setOnClickListener(v -> {
+            Intent intent = new Intent(mContext, MyCouponsActivity.class);
+            startActivity(intent);
         });
 
         /*txtNotifications.setOnClickListener(v -> {

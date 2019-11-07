@@ -64,7 +64,7 @@
                 <!-- Poner un data por cada link que se quiera relacionar-->
                 <data
                     android:host="www.mylook.com"
-                    android:pathPrefix="/store"
+                    android:pathPrefix="/storeName"
                     android:scheme="https" />
             </intent-filter>
         </activity>
@@ -178,6 +178,8 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+        <activity android:name=".coupon.MyCouponsActivity"/>
+        <activity android:name=".coupon.CouponActivity"/>
 
     </application>
 
