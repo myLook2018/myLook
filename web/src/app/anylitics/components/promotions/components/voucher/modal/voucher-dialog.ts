@@ -309,8 +309,10 @@ export class VoucherDialogComponent implements OnInit {
     this.subscritorsTotal.map( subs => {
       console.log('agregandole clientID a ', subs)
       const clientDoc = this.clientsTotal.find( client => client.userId === subs.userId );
-      subs.idClientDocument = clientDoc.id;
-      console.log('Ahora quedo ', subs);
+      if (clientDoc) {
+        subs.idClientDocument = clientDoc.id;
+        console.log('Ahora quedo ', subs);
+      }
     });
   }
 }

@@ -220,7 +220,9 @@ export class VoucherComponent implements OnInit, OnChanges {
   addClientIDtoSubscriptors() {
     this.mySubscriptors.map( subs => {
       const clientDoc = this.clientsTotal.find( client => client.userId === subs.userId );
-      subs.idClientDocument = clientDoc.id;
+      if (clientDoc) {
+        subs.idClientDocument = clientDoc.id;
+      }
     });
   }
 
@@ -282,15 +284,16 @@ export class VoucherComponent implements OnInit, OnChanges {
   getLinesByDayInfo() {
     this.campaingUsedByDay = [ 0, 0, 0, 0, 0, 0, 0];
 
-    this.selectedCampaing.vouchers.forEach((voucher) => {
-      if (voucher.usedDate !== null) {
-        const dayOfUsed = voucher.usedDate.toDate().getDay();
+    if (this.selectedCampaing) {
 
-        this.campaingUsedByDay[dayOfUsed]++;
-      }
-    });
-
-    console.log( 'campaing used', this.campaingUsedByDay);
+      this.selectedCampaing.vouchers.forEach((voucher) => {
+        if (voucher.usedDate !== null) {
+          const dayOfUsed = voucher.usedDate.toDate().getDay();
+          this.campaingUsedByDay[dayOfUsed]++;
+        }
+      });
+      console.log( 'campaing used', this.campaingUsedByDay);
+    }
   }
 
   getGlobalLinesByDayInfo() {

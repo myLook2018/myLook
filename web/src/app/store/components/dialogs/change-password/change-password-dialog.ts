@@ -2,6 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { FormControl } from '@angular/forms';
 import * as firebase from 'firebase';
+import { ToastsService, TOASTSTYPES} from 'src/app/service/toasts.service';
 
 @Component({
   selector: 'app-change-password',
@@ -19,6 +20,7 @@ export class ChangePasswordDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<ChangePasswordDialogComponent>,
+    private toastsService: ToastsService,
 
     @Inject(MAT_DIALOG_DATA) public data) {
       this.firebaseUser = firebase.auth().currentUser;
@@ -57,10 +59,13 @@ export class ChangePasswordDialogComponent implements OnInit {
         if ( this.newPassword.value !== this.confirmPassword.value) {
           // mostrar toast de alerta de que las contraseñas son incorrectas
           console.log('contraseñas incorrectas');
+          this.newPassword.setErrors({ passwordNotMatching: true });
+          this.confirmPassword.setErrors({ passwordNotMatching: true });
           this.isLoading = false;
         } else if ( this.newPassword.value.length < 6) {
           // mostrat toast de contraseña muy corta
           console.log('contraseña muy corta');
+          this.newPassword.setErrors({ passwordTooShort: true });
           this.isLoading = false;
         } else {
           // ahora mostramos que se cambia exitosamente
@@ -71,11 +76,13 @@ export class ChangePasswordDialogComponent implements OnInit {
           // Success
           // aca podriamos mostrar verdaderamente que revento
           console.log('salio todo beeeennnn');
+          this.toastsService.showToastMessage('Contraseña actualizada correctamente', TOASTSTYPES.SUCCESS);
           this.isLoading = false;
           this.closeModal();
         }).catch( error => {
           // Failed in firebase
           // mostrar de alguna forma el error en firebase
+          this.toastsService.showToastMessage('Error inesperado, intente nuevamente', TOASTSTYPES.ERROR);
           console.log('revento', error);
           this.isLoading = false;
         });
@@ -84,6 +91,7 @@ export class ChangePasswordDialogComponent implements OnInit {
       error => {
         console.log(error);
         if (error.code === 'auth/wrong-password') {
+          this.actualPassword.setErrors({ wrongPassword: true });
           // mostrar error que la contraseña no es valida
           console.log('metiste mal la pass');
           this.isLoading = false;
