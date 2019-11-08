@@ -7,7 +7,7 @@ import { MatSnackBar, MatDialog } from '@angular/material';
 import { NewStoreService } from '../../service/store.service';
 import { MapsAPILoader } from '@agm/core';
 import { Router } from '@angular/router';
-import { ChangePasswordDialogComponent } from '../dialogs/change-password/change-password-dialog';
+// import { ChangePasswordDialogComponent } from '../dialogs/change-password/change-password-dialog';
 import { ToastsService, TOASTSTYPES} from 'src/app/service/toasts.service';
 
 // import { StoreService } from 'src/app/auth/services/store.service';
@@ -55,6 +55,7 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
   zoom: number;
   address: string;
   private geoCoder;
+  dataToSend: { storeEmail: string; };
 
   // currentPassword = new FormControl('');
   // newPassword = new FormControl('');
@@ -79,6 +80,9 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
     this.dataService.getStoreInfo().then(store => {
       this.actualStore = store;
       this.actualFirebaseUser = this.dataService.getFirebaseUser();
+      this.dataToSend = {
+        storeEmail: this.actualStore.storeMail,
+      };
       // this.getPromotionsDone();
       console.log('+-'.repeat(15), this.actualStore);
       console.log('+-'.repeat(15), this.actualFirebaseUser);
@@ -398,14 +402,14 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
   // }
 
   openChangePasswordDialog() {
-    const dataToSend = {
-      storeEmail: this.actualStore.storeMail,
-    };
+    // this.dataToSend = {
+    //   storeEmail: this.actualStore.storeMail,
+    // };
 
-    this.dialog.open(ChangePasswordDialogComponent, {
-      width: '450px',
-      disableClose: true,
-      data: dataToSend
-    });
+    // this.dialog.open(ChangePasswordDialogComponent, {
+    //   width: '450px',
+    //   disableClose: true,
+    //   data: this.dataToSend
+    // });
   }
 }

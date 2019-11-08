@@ -197,6 +197,34 @@
           </div>
       </div>
 
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Cambiar contraseña
+            </mat-panel-title>
+            <mat-panel-description>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <!-- <mat-form-field>
+            <input matInput placeholder="First name">
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput placeholder="Age">
+          </mat-form-field> -->
+
+          <div class="change-password-container">
+
+            <app-change-password [data]="this.dataToSend"></app-change-password>
+
+          </div>
+
+        </mat-expansion-panel>
+      </mat-accordion>
+
+
       <mat-card-actions class="actions">
           <button
             [disabled]="isUpLoading"
@@ -234,8 +262,9 @@
         <div class="proggressBar">
           <mat-progress-bar *ngIf="isUpLoading" mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>
         </div>
+
       </mat-card>
-      <mat-card class="card-container">
+      <!-- <mat-card class="card-container">
       <div class="passwordChange">
         <div class="content">
           <h1>Credenciales</h1>
@@ -251,7 +280,7 @@
         </button>
         </div>
       </div>
-    </mat-card>
+    </mat-card> -->
 
   </form>
 </div>

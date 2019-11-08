@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, Input } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { FormControl } from '@angular/forms';
 import * as firebase from 'firebase';
@@ -10,6 +10,8 @@ import { ToastsService, TOASTSTYPES} from 'src/app/service/toasts.service';
   styleUrls: ['./change-password-dialog.scss']
 })
 export class ChangePasswordDialogComponent implements OnInit {
+  @Input() data;
+
   actualPassword: FormControl;
   newPassword: FormControl;
   confirmPassword: FormControl;
@@ -19,12 +21,13 @@ export class ChangePasswordDialogComponent implements OnInit {
   credential: firebase.auth.EmailAuthProvider;
 
   constructor(
-    public dialogRef: MatDialogRef<ChangePasswordDialogComponent>,
+    // public dialogRef: MatDialogRef<ChangePasswordDialogComponent>,
     private toastsService: ToastsService,
+    // @Inject(MAT_DIALOG_DATA) public data
 
-    @Inject(MAT_DIALOG_DATA) public data) {
+    ){
       this.firebaseUser = firebase.auth().currentUser;
-      this.userData = data;
+      this.userData = this.data;
       this.actualPassword = new FormControl('');
       this.newPassword = new FormControl('');
       this.confirmPassword = new FormControl('');
@@ -34,7 +37,7 @@ export class ChangePasswordDialogComponent implements OnInit {
   }
 
   closeModal(): void {
-    this.dialogRef.close();
+    // this.dialogRef.close();
     console.log('me cerraron el dialog');
   }
 

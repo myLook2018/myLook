@@ -113,7 +113,7 @@ import { LinesDaysUsedComponent } from './anylitics/components/promotions/compon
 import { PieByGenderComponent } from './anylitics/components/promotions/components/graphics/pie-by-gender/pie-by-gender.component';
 
 import { ChangePasswordDialogComponent } from 'src/app/store/components/dialogs/change-password/change-password-dialog';
-
+import { MatExpansionModule } from '@angular/material/expansion';
 
 registerLocaleData(localeAR);
 
@@ -206,6 +206,7 @@ registerLocaleData(localeAR);
     FontAwesomeModule,
     MatProgressSpinnerModule,
     ToastModule,
+    MatExpansionModule,
     MatTabsModule,
     LyThemeModule.setTheme('minima-light'),
     AgmCoreModule.forRoot({
