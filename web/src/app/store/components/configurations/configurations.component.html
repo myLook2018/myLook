@@ -206,19 +206,8 @@
             <mat-panel-description>
             </mat-panel-description>
           </mat-expansion-panel-header>
-
-          <!-- <mat-form-field>
-            <input matInput placeholder="First name">
-          </mat-form-field>
-
-          <mat-form-field>
-            <input matInput placeholder="Age">
-          </mat-form-field> -->
-
           <div class="change-password-container">
-
             <app-change-password [data]="this.dataToSend"></app-change-password>
-
           </div>
 
         </mat-expansion-panel>
@@ -247,40 +236,10 @@
             >
               Actualizar Datos
           </button>
-          <!-- <button
-            [disabled]="isUpLoading"
-            class="activatedButton"
-            type="button"
-
-            [ngClass]="{buttonDisabled: (isUpLoading)}"
-            mat-raised-button
-            (click)="changePassword()"
-            >
-              Cambiar Contraseña
-          </button> -->
         </mat-card-actions>
         <div class="proggressBar">
           <mat-progress-bar *ngIf="isUpLoading" mode="indeterminate" color="deeppurple-amber"></mat-progress-bar>
         </div>
-
       </mat-card>
-      <!-- <mat-card class="card-container">
-      <div class="passwordChange">
-        <div class="content">
-          <h1>Credenciales</h1>
-          <button
-            [disabled]="isUpLoading"
-            class="activated-button"
-            type="button"
-
-            [ngClass]="{'button-disabled': (isUpLoading)}"
-            mat-raised-button
-            (click)="this.openChangePasswordDialog()"
-            > Cambiar Contraseña
-        </button>
-        </div>
-      </div>
-    </mat-card> -->
-
   </form>
 </div>

@@ -17,6 +17,7 @@ import { DataService } from '../service/dataService';
 import { AuthGuard } from '../auth/services/auth.guard';
 import { AnyliticService } from '../anylitics/services/anylitics.service';
 import { PromotionsService } from '../anylitics/services/promotions.service';
+import { ToastsService, TOASTSTYPES } from '../service/toasts.service';
 @Component({
   selector: 'app-orchestrator',
   templateUrl: './orchestrator.component.html',
@@ -28,6 +29,7 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
   isLogedIn = false;
   clickedItem = 'profile';
   reload = true;
+  params: string;
 
   constructor(
     public userService: UserService,
@@ -38,7 +40,8 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private spinner: NgxSpinnerService,
     private anyliticsService: AnyliticService,
-    private promotionsService: PromotionsService
+    private promotionsService: PromotionsService,
+    private toastService: ToastsService
   ) {
     this.userStore.profilePh = '/assets/noProfilePic.png';
     this.router.events.subscribe((event: Event) => {
@@ -81,6 +84,21 @@ export class OrchestratorComponent implements OnInit, OnDestroy {
       }
     });
     console.log('iniciando orchestrator');
+
+    this.route.queryParamMap.subscribe(params => {
+      this.params = params.get('external_reference');
+      console.log('params', this.params);
+      if (this.params) {
+        this.router.navigate([]);
+        const isClothePromotion = this.params.includes('-');
+        const message = isClothePromotion ? 'Se ha promocionado su     prenda exitosamente.' : 'Campaña de cupones generada con éxito.';
+        setTimeout(() => {
+          this.toastService.showToastMessage(message, TOASTSTYPES.SUCCESS);
+        }, 2000);
+      }
+    });
+
+
 
   }
 

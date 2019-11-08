@@ -25,7 +25,7 @@ export class ChangePasswordDialogComponent implements OnInit {
     private toastsService: ToastsService,
     // @Inject(MAT_DIALOG_DATA) public data
 
-    ){
+    ) {
       this.firebaseUser = firebase.auth().currentUser;
       this.userData = this.data;
       this.actualPassword = new FormControl('');
