@@ -280,19 +280,19 @@ public class RequestRecommendActivity extends AppCompatActivity {
             final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(this, R.style.AlertDialogTheme);
             final android.app.AlertDialog alert = dialog.setTitle("Cerrar solicitud")
                     .setMessage("¿Estás seguro que querés cerrar esta solicitud?")
-                    .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                    .setPositiveButton("Cerrar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                             FirebaseFirestore.getInstance().collection("requestRecommendations").document(requestId).update("isClosed", true).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    Toast.makeText(getApplicationContext(),"Tu solicitud ha sido cerrado", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(),"Tu solicitud ha sido cerrada", Toast.LENGTH_LONG).show();
                                 }
 
                             });
                         }
                     })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface paramDialogInterface, int paramInt) {
 

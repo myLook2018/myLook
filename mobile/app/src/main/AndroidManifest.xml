@@ -64,7 +64,7 @@
                 <!-- Poner un data por cada link que se quiera relacionar-->
                 <data
                     android:host="www.mylook.com"
-                    android:pathPrefix="/storeName"
+                    android:pathPrefix="/store"
                     android:scheme="https" />
             </intent-filter>
         </activity>
