@@ -36,7 +36,7 @@ mat-cell:first-of-type, mat-footer-cell:first-of-type, mat-header-cell:first-of-
   padding-left: 0px;
 }
 #uploadArticle{
-  background-color: #bd84c7 ;
+  background-color: #803E8B ;
   color: #ffffff
 }
 
@@ -54,16 +54,16 @@ mat-header-cell {
 }
 
 .actionIcon{
-  color: rgb(211, 211, 211);
+  color: #e9d4ec;
   z-index: 9;
 
   &_colored {
-    color: #bd84c7;
+    color: #b471bf;
   }
 }
 
 .actionIcon-Promoted {
-  color: #bd84c7;
+  color: #b471bf;
   z-index: 9;
 }
 
@@ -76,7 +76,7 @@ mat-header-cell {
 }
 
 .stickyNavbar{
-  background-color: #fbeaff;
+  background-color: #e9d4ec;
   height: 56px;
 }
 

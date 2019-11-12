@@ -100,12 +100,12 @@
 }
 
 .purpleButton{
-  background-color: #9C27B0;
-  color: #ffffff
+  background-color: #803E8B;
+  color: white;
 }
 
 ::ng-deep .mat-step-header .mat-step-icon {
-  background-color: #9C27B0;
+  background-color: #803E8B;
   color: rgba(255,255,255,.87);
 }
 
@@ -174,4 +174,31 @@ agm-map {
   text-align: center;
   font-size: 1rem;
   margin-top: 1rem;
+}
+
+
+
+#crp1 {
+  max-width: 735px;
+  height: 245px;
+  margin-left: auto;
+  margin-right: auto;
+  border-style: double;
+  border-color: rgb(189, 132, 199);
+}
+
+.cropButtonOne {
+  position: absolute;
+  z-index: 99;
+  background: rgba(182, 182, 182, 0.9);
+  right: 10rem;
+  top: 0.3rem;
+}
+
+.cropButton {
+  position: absolute;
+  z-index: 99;
+  background: rgba(182, 182, 182, 0.9);
+  right: 0.3rem;
+  top: 3.3rem;
 }

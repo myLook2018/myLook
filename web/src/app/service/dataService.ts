@@ -201,19 +201,29 @@ export class DataService {
     return this.voucherCollection.add(voucherData);
   }
 
-  tryActivateVoucher( voucherCode ) {
+  tryActivateVoucher( voucherCode, actualStoreId ) {
     let result = {
       title: '',
-      usedDate: ''
+      usedDate: '',
+      dueDate: new Date(),
+      expired: false
     };
     return new Promise<any>((resolve, reject) => {
       this.db.collection('vouchers').doc(voucherCode)
         .get().then((doc) => {
-          if (doc.exists) {
-            result.title = doc.data().usedDate ? 'used' : 'success';
+          if (doc.exists && doc.data().storeId === actualStoreId) {
+            result.title = doc.data().usedDate ? 'fail' : 'success';
+            result.dueDate = doc.data().dueDate.toDate();
             if (result.title === 'success') {
-              doc.ref.update({usedDate: new Date, used: true });
+              if ( result.dueDate >= new Date()) {
+                doc.ref.update({usedDate: new Date, used: true });
+              } else {
+                console.log ('cupon expirado');
+                result.title = 'fail';
+                result.expired = true;
+              }
             } else {
+              result.title = 'fail';
               result.usedDate = doc.data().usedDate;
             }
           } else {

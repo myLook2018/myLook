@@ -54,6 +54,7 @@ export class VoucherComponent implements OnInit, OnChanges {
   campaingUsedByDay = [ 0, 0, 0, 0, 0, 0, 0];
   globalUsedByDay = [ 0, 0, 0, 0, 0, 0, 0];
   linesTooltip = 'Muestra los dias en los que los cupones son utilizados.';
+  disableRefreshButton = true;
   constructor(
     public dialog: MatDialog,
     private analyticsService: AnyliticService,
@@ -82,6 +83,7 @@ export class VoucherComponent implements OnInit, OnChanges {
               this.getGraphsInformation();
               this.totalCost = this.getTotalCost();
               this.getGlobalLinesByDayInfo();
+              this.disableRefreshButton = false;
             });
           });
         });
@@ -169,6 +171,7 @@ export class VoucherComponent implements OnInit, OnChanges {
 
     setTimeout(() => {
       this.graphsLoaded = true;
+      this.disableRefreshButton = false;
     }, 500);
   }
 
@@ -309,11 +312,35 @@ export class VoucherComponent implements OnInit, OnChanges {
   }
 
   campaingSelected( campaña ) {
+    this.disableRefreshButton = true;
     console.log('event ', campaña);
     this.selectedCampaing = campaña.value;
     console.log('se selecciono esta campaña ', this.selectedCampaing);
     this.graphsLoaded = false;
     this.getGraphsInformation();
+  }
+
+  refreshVouchers() {
+    console.log('refrescando');
+    this.disableRefreshButton = true;
+    this.graphsLoaded = false;
+    this.analyticsService.getAllVouchersForStore(this.userStore.firebaseUID).then( vouchers => {
+      console.log('estos son los vouchers de la tienda', vouchers);
+      this.vouchersTotal = vouchers;
+      this.dataService.getNumberClients().then( clients => {
+        this.clientsTotal = clients;
+        this.dataService.getNumberOfSubscriptors().then( subscriptos => {
+          this.mySubscriptors = subscriptos;
+          this.addClientIDtoSubscriptors();
+          this.asociateVouchersToCampaing();
+          // this.selectedCampaing = this.voucherCampaigns[0];
+          this.getGraphsInformation();
+          this.totalCost = this.getTotalCost();
+          this.getGlobalLinesByDayInfo();
+          // this.disableRefreshButton = false;
+        });
+      });
+    });
   }
 
 }

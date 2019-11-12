@@ -1,4 +1,4 @@
-<div class="mat-typography backgroundColor" style="top: 0">
+<div class="mat-typography backgroundColor" style="height: 100%; top: 0;overflow: hidden;">
   <div class="pageContent">
   <!-- Recomendations -->
       <div class="requestList">
@@ -19,12 +19,12 @@
                         <mat-option (click)="$event.stopPropagation()" *ngFor="let cat of categories" [value]="cat">{{cat}}</mat-option>
                       </mat-select>
                     </mat-form-field>
-                    <mat-form-field (click)="$event.stopPropagation()" floatLabel="never" style="font-size: 15px; margin-right: auto; margin-left: auto">
+                    <!-- <mat-form-field (click)="$event.stopPropagation()" floatLabel="never" style="font-size: 15px; margin-right: auto; margin-left: auto">
                       <mat-select (click)="$event.stopPropagation()" [(value)]="selectedSex" placeholder="Sexo">
                         <mat-option (click)="$event.stopPropagation()">Indistinto</mat-option>
                         <mat-option (click)="$event.stopPropagation()" *ngFor="let sex of sexes" [value]="sex">{{sex}}</mat-option>
                       </mat-select>
-                    </mat-form-field>
+                    </mat-form-field> -->
                     <button mat-raised-button (click)="filterRecos()" style=" margin-right: auto; margin-left: auto">Listo</button>
                   </div>
                 </mat-menu>
@@ -45,7 +45,7 @@
 
         <mat-table class="answeredTable mat-elevation-z2" [dataSource]="dataSourceAnswered" matSort>
           <ng-container matColumnDef="ListaPeticiones">
-            <mat-header-cell *matHeaderCellDef style="font-size: 16px !important;"> <strong>Tus recomendaciones</strong></mat-header-cell>
+            <mat-header-cell *matHeaderCellDef style="font-size: 18px !important;"> <strong>Tus recomendaciones</strong></mat-header-cell>
             <mat-cell *matCellDef="let element" style="height: 60px">{{element.title}}</mat-cell>
           </ng-container>
 
@@ -114,7 +114,10 @@
               </mat-form-field>
             </mat-card-content>
             <mat-card-actions align="end">
-              <button class="sendRecoButton" *ngIf="!disableSendRecomendation" [disabled]="(selectedArticle.picturesArray[0] === '')" mat-raised-button (click)="sendAnswer()">Enviar</button>
+              <button class="myLook-background" *ngIf="!disableSendRecomendation"
+                      [disabled]="(selectedArticle.picturesArray[0] === '')"
+                      [ngClass]="{'disabled-button': (selectedArticle.picturesArray[0] === '')}"
+                      mat-raised-button (click)="sendAnswer()">Enviar</button>
             </mat-card-actions>
           </mat-card>
         </form>
@@ -129,7 +132,7 @@
         <mat-table class="articleTable mat-elevation-z2 navbar" [dataSource]="dataSourceArticles" matSort [ngClass]="{tableDisabled: disableSendRecomendation}">
 
           <ng-container matColumnDef="PrendasCatalogo">
-            <mat-header-cell *matHeaderCellDef style="font-size: 16px !important;"> Tus Prendas </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef style="font-size: 18px !important;"> <strong> Tus Prendas </strong> </mat-header-cell>
             <mat-cell *matCellDef="let element; let i = index"><img height="150" width="150" src={{element.picturesArray[0]}}></mat-cell>
           </ng-container>
 

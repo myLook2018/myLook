@@ -73,11 +73,11 @@ export class RecomendationService {
     this.sexes = [];
     return new Promise<any>((resolve, reject) => {
       console.log(`estamos trayendo sexes`);
-      const res = this.db.collection(this.categoriesPath).where('name', '==', 'sexo')
+      const res = this.db.collection(this.categoriesPath).where('name', '==', 'gender')
         .get().then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
             const data = doc.data();
-            resolve(data.categories);
+            resolve(data.genders);
           });
         }).then(() => {
           resolve(this.sexes);

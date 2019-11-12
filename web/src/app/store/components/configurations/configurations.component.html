@@ -13,10 +13,12 @@
                           <div class="resize-image">
                             <div>
                               <button
+                                type="button"
+                                (keydown.enter)="$event.preventDefault()"
                                 class="cropButtonOne"
                                 *ngIf="!this.isUpLoading"
                                 (click)="cropping0.clean()"
-                                (click)="doClean(0)"
+                                (click)="doClean(0, $event)"
                                 ly-button
                                 appearance="icon"
                               >
@@ -36,6 +38,7 @@
                               <i class="material-icons"> add_photo_alternate </i> Añadir Foto
                             </ly-cropping>
                             <button
+                              type="button"
                               style="visibility: hidden; position: absolute"
                               color="accent"
                               (click)="cropping0.crop()"
@@ -63,10 +66,11 @@
                           <div class="resize-image">
                             <div>
                               <button
+                                type="button"
                                 class="cropButton"
                                 *ngIf="!this.isUpLoading"
                                 (click)="cropping1.clean()"
-                                (click)="doClean(1)"
+                                (click)="doClean(1 , $event)"
                                 ly-button
                                 appearance="icon"
                               >
@@ -86,6 +90,7 @@
                               <i class="material-icons"> add_photo_alternate </i> Añadir Foto
                             </ly-cropping>
                             <button
+                              type="button"
                               style="visibility: hidden; position: absolute"
                               color="accent"
                               (click)="cropping1.crop()"
@@ -111,6 +116,7 @@
                           <mat-form-field appearance="outline" class="description">
                             <mat-label>Descripción</mat-label>
                             <textarea matInput
+                                      required
                                       maxlength="180"
                                       placeholder="Agrega una breve reseña de tu tienda."
                                       formControlName="storeDescription"
@@ -121,6 +127,7 @@
                                       >
                             </textarea>
                             <mat-hint align="end">{{this.myFormGroup.get('storeDescription').value.length}} / 180</mat-hint>
+                            <mat-error *ngIf="this.myFormGroup.get('storeDescription').hasError"> Campo requerido </mat-error>
                           </mat-form-field>
                         </p>
                   </div>
@@ -128,8 +135,9 @@
                     <p>
                       <mat-form-field appearance="outline" class="fullWidth">
                         <mat-label>Dirección</mat-label>
-                        <input matInput placeholder="Ej: Avenida Colón 1234" formControlName="storeAddress" #search [disabled]="this.isUpLoading"
+                        <input matInput required placeholder="Ej: Avenida Colón 1234" formControlName="storeAddress" #search [disabled]="this.isUpLoading"
                         >
+                        <mat-error *ngIf="this.myFormGroup.get('storeAddress').hasError" > Campo requerido </mat-error>
                       </mat-form-field>
                     </p>
                         <div>
@@ -168,7 +176,9 @@
                     <p>
                       <mat-form-field appearance="outline" class="fullWidth">
                         <mat-label>Teléfono</mat-label>
-                        <input matInput placeholder="Ej: 012-3456789" formControlName="storePhone" [disabled]="this.isUpLoading">
+                        <input
+                        onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57"
+                        matInput placeholder="Ej: 012-3456789" formControlName="storePhone" [disabled]="this.isUpLoading">
                       </mat-form-field>
                     </p>
                     <p>
@@ -186,7 +196,7 @@
                       <p>
                         <mat-form-field appearance="outline" class="fullWidth">
                           <mat-label>Twitter</mat-label>
-                          <input matInput placeholder="Ej: myLookTwitter" formControlName="twitterLink" [disabled]="this.isUpLoading">
+                          <input autocomplete="new-password" matInput placeholder="Ej: myLookTwitter" formControlName="twitterLink" [disabled]="this.isUpLoading">
                         </mat-form-field>
                       </p>
 
@@ -198,7 +208,7 @@
       </div>
 
       <mat-accordion>
-        <mat-expansion-panel>
+        <mat-expansion-panel style="width: 46%; min-width: 500px;; margin-left: 2rem;">
           <mat-expansion-panel-header>
             <mat-panel-title>
               Cambiar contraseña
@@ -219,18 +229,18 @@
             [disabled]="isUpLoading"
             type="button"
 
-            [ngClass]="{'button-disabled': isUpLoading}"
+            [ngClass]="{'disabled-button': isUpLoading}"
             mat-raised-button
             (click)="goToProfile()"
             >
             Cancelar
           </button>
           <button
-            [disabled]="myFormGroup.invalid || isUpLoading"
-            class="activated-button"
+            [disabled]="myFormGroup.invalid || isUpLoading || !isLoadedImage[0] || !isLoadedImage[1] "
+            class="myLook-background"
             type="button"
 
-            [ngClass]="{'button-disabled': (myFormGroup.invalid || isUpLoading)}"
+            [ngClass]="{'disabled-button': (myFormGroup.invalid || isUpLoading)}"
             mat-raised-button
             (click)="cropImages(cropping0, cropping1)"
             >

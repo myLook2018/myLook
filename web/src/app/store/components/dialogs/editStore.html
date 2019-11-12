@@ -19,10 +19,10 @@
           <img class="profileImg" style="border-radius: 50%;
               outline: 0;
               margin: 8px 0 8px 8px;
-              width: 120px; 
+              width: 120px;
               height: 120px;"
             src={{store.profilePh}}>
-          <button [disabled]="isUpLoading" mat-mini-fab style="margin-left: -25px;margin-top: 85px;          
+          <button [disabled]="isUpLoading" mat-mini-fab style="margin-left: -25px;margin-top: 85px;
           position: absolute; background-color: #ff9800; ">
             <mat-icon>edit</mat-icon>
           </button>
@@ -93,7 +93,7 @@
   </div>
 </div>
 <div mat-dialog-actions align="end">
-  <button mat-raised-button [mat-dialog-close]="false" cdkFocusInitial (click)="onNoClick()">Cancelar</button>
-  <button mat-raised-button style="background-color: #9C27B0 ; color: #ffffff" [mat-dialog-close]="promotionData"
+  <button type="button" mat-raised-button [mat-dialog-close]="false" cdkFocusInitial (click)="onNoClick()">Cancelar</button>
+  <button type="button" mat-raised-button style="background-color: #9C27B0 ; color: #ffffff" [mat-dialog-close]="promotionData"
     cdkFocusInitial (click)="sendData()">Aceptar</button>
 </div>

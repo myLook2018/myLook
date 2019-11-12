@@ -95,10 +95,11 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
             console.log(categos);
             this.categories = categos;
           });
-          this.recomendationsService.getSexes().then(sexs => {
-            console.log(sexs);
-            this.sexes = sexs;
-          });
+          // this.recomendationsService.getSexes().then(sexs => {
+          //   console.log('esto me devuelve la bs sexs', sexs);
+          //   // genders
+          //   this.sexes = sexs;
+          // });
           this.recomendationSubscription = this.recomendationsService
             .getRecomendations()
             .subscribe(recomendations => {
@@ -266,10 +267,10 @@ export class RecomendationsComponent implements OnInit, OnDestroy {
     this.recomendationsToAnswer = [];
     this.recomendationsAnswered = [];
     this.recomendationsRequests.map(request => {
+      if (this.isInAnswers(request.answers)) {
+        this.recomendationsAnswered.push(request);
+      } else {
       if (request.isClosed === false) {
-        if (this.isInAnswers(request.answers)) {
-          this.recomendationsAnswered.push(request);
-        } else {
           request.distance = this.isNear(request);
           // tslint:disable-next-line: no-bitwise
           request.tooltip = `Esta solicitud se hizo a ${(~~((request.distance + 99) / 100) * 100)} metros.`;

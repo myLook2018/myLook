@@ -17,7 +17,7 @@ export class NonSubsSuccessComponent implements OnInit {
     this.options = {
       title: {
         display: true,
-        text: 'Utilización no Subscriptores',
+        text: 'Utilización no Suscriptores',
         fontSize: 24
       },
       legend: {

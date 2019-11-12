@@ -6,8 +6,9 @@
       <div class="row">
         <div class="col-md-6 col-md-offset-3">
           <form [formGroup]="signupForm" autocomplete="off">
-            <mat-form-field class="inputForm">
-              <input matInput placeholder="Email" required class="form-control" formControlName="email" [(ngModel)]="email" (change)="clearErrors()">
+            <mat-form-field appearance="outline" class="inputForm">
+              <mat-label>Ingrese su email</mat-label>
+              <input matInput required class="form-control" formControlName="email" [(ngModel)]="email" (change)="clearErrors()">
             </mat-form-field>
             <mat-error *ngIf="errorMessage">
               {{errorMessage}}

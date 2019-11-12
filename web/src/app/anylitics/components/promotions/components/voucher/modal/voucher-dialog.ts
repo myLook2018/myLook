@@ -146,7 +146,7 @@ export class VoucherDialogComponent implements OnInit {
       'items': [{
         // tslint:disable-next-line: max-line-length
         'id': this.voucherReference,
-        'title': 'Campaña de Cupones - MyLook',
+        'title': 'Campaña de Cupones - myLook',
         'quantity': 1,
         'currency_id': 'ARS',
         'unit_price': 1,
@@ -243,7 +243,9 @@ export class VoucherDialogComponent implements OnInit {
     const end = new Date;
     const subsIds = [];
     this.subscritorsTotal.forEach(subscriptor => {
-      subsIds.push(subscriptor.idClientDocument);
+      if (subscriptor.idClientDocument) {
+        subsIds.push(subscriptor.idClientDocument);
+      }
     });
     end.setDate(end.getDate() + this.duration);
     const documentData = {
@@ -307,7 +309,7 @@ export class VoucherDialogComponent implements OnInit {
 
   addClientIDtoSubscriptors() {
     this.subscritorsTotal.map( subs => {
-      console.log('agregandole clientID a ', subs)
+      console.log('agregandole clientID a ', subs);
       const clientDoc = this.clientsTotal.find( client => client.userId === subs.userId );
       if (clientDoc) {
         subs.idClientDocument = clientDoc.id;

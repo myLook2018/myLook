@@ -1,3 +1,28 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
+.actionIcon_colored {
+  color: #803E8B;
+}
+
+.disabled-action-icon { //mylook
+  color: #e9d4ec !important;
+}
+
+.myLook-color {
+  color: #803E8B;
+}
+
+.myLook-background {
+  background-color: #803E8B;
+  color: white;
+}
+
+.disabled-button { //mylook
+  background-color: #e9d4ec !important;
+  color: white;
+}
+
+.myLook-light-color {
+  color: #b471bf !important;
+}

@@ -23,34 +23,34 @@
         [fixedTopGap]="false" [fixedBottomGap]="false" class="mat-elevation-z2" [autoFocus]="true" >
             <mat-nav-list>
                 <mat-list-item class="navigation-option" (click)="goToProfile()" [ngClass]="{selected: clickedItem === 'profile'}">
-                  <mat-icon class="myLookPink" mat-list-icon>home</mat-icon>
+                  <mat-icon class="myLook-light-color" mat-list-icon>home</mat-icon>
                   <p mat-line>Perfil</p>
                 </mat-list-item>
                 <mat-list-item class="navigation-option" (click)="goToInventory()" [ngClass]="{selected: clickedItem === 'catalog'}">
-                  <mat-icon class="myLookPink" mat-list-icon>format_list_bulleted</mat-icon>
+                  <mat-icon class="myLook-light-color" mat-list-icon>format_list_bulleted</mat-icon>
                   <p mat-line>Catálogo</p>
                 </mat-list-item>
                 <mat-list-item class="navigation-option" (click)="goToRecomendations()" [ngClass]="{selected: clickedItem === 'recomendations'}">
-                  <mat-icon class="myLookPink" mat-list-icon>insert_comment</mat-icon>
+                  <mat-icon class="myLook-light-color" mat-list-icon>insert_comment</mat-icon>
                   <p mat-line>Recomendaciones</p>
                 </mat-list-item>
                 <mat-list-item class="navigation-option" (click)="goToAnalytics()" [ngClass]="{selected: clickedItem === 'analytics'}">
-                  <mat-icon class="myLookPink" mat-list-icon>insert_chart</mat-icon>
+                  <mat-icon class="myLook-light-color" mat-list-icon>insert_chart</mat-icon>
                   <p mat-line>Estadísticas</p>
                 </mat-list-item>
                 <mat-list-item class="navigation-option" (click)="goToAnalyticsPromotions()" [ngClass]="{selected: clickedItem === 'promotions'}">
-                  <mat-icon class="myLookPink" mat-list-icon>whatshot</mat-icon>
+                  <mat-icon class="myLook-light-color" mat-list-icon>whatshot</mat-icon>
                   <p mat-line>Publicidad</p>
                 </mat-list-item>
                 <mat-list-item class="navigation-option" (click)="gotToConfiguration()" [ngClass]="{selected: clickedItem === 'config'}">
-                  <mat-icon class="myLookPink" mat-list-icon>settings</mat-icon>
+                  <mat-icon class="myLook-light-color" mat-list-icon>settings</mat-icon>
                   <p mat-line>Configuración</p>
                 </mat-list-item>
             </mat-nav-list>
         </mat-sidenav>
 
         <mat-sidenav-content class="main-content-container">
-            <ngx-spinner bdOpacity = 1bd bdColor="#fafafa" size="large" color="#bd84c7" type = "ball-grid-pulse" fullScreen="true">
+            <ngx-spinner bdOpacity = 1bd bdColor="#fafafa" size="large" color="#b471bf" type = "ball-grid-pulse" fullScreen="true">
             </ngx-spinner>
             <div class="fade"></div>
           <router-outlet *ngIf="this.reload" class="content" (imReadyToDisplay)="hideSpinner($event)" ></router-outlet>

@@ -16,7 +16,7 @@
             <button mat-icon-button class="actionIcon_colored" (click)="addNewStoreFront()"  [disabled]="this.isUpLoading || isEmptyFront()" [matTooltip]="tooltipMessage">
                 <mat-icon>add</mat-icon>
             </button>
-            <button mat-icon-button class="actionIcon_colored" (click)="deleteItem()"  [disabled]="this.isUpLoading" [matTooltip]="deleteTooltip">
+            <button mat-icon-button class="actionIcon_colored" (click)="openConfirmationDialog()"  [disabled]="this.isUpLoading" [matTooltip]="deleteTooltip">
                 <mat-icon>delete</mat-icon>
             </button>
         </div>
@@ -90,7 +90,7 @@
           [disabled]="isUpLoading"
           type="button"
 
-          [ngClass]="{buttonDisabled: isUpLoading}"
+          [ngClass]="{'disabled-button': isUpLoading}"
           mat-raised-button
           (click)="goToInventory();"
           >
@@ -98,10 +98,10 @@
         </button>
         <button
           [disabled]="this.isUpLoading || isEmptyFront()"
-          class="activatedButton"
+          class="myLook-background"
           type="button"
 
-          [ngClass]="{buttonDisabled: (isUpLoading || isEmptyFront())}"
+          [ngClass]="{'disabled-button': (isUpLoading || isEmptyFront())}"
           mat-raised-button
           (click)="submitChanges()"
           >

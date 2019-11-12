@@ -180,6 +180,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     confirmationRef.afterClosed().subscribe(result => {
       if (result === true) {
         this.deleteArticle(article);
+        this.toastsService.showToastMessage('Borrado exitoso', TOASTSTYPES.SUCCESS, 'Se ha borrado la prenda de su catálogo');
       }
     });
   }

@@ -17,12 +17,12 @@
 
             <div #firstStep style="display: flex; height: 435px;">
               <div style="display: block;margin-left: auto; margin-right:auto;">
-                <mat-form-field style="display: block;">
+                <mat-form-field appearance="outline" style="display: block;">
+                  <mat-label>Nombre de la Tienda</mat-label>
                   <input
                     required
                     matInput
                     autofocus
-                    placeholder="Nombre de la Tienda"
                     formControlName="storeName"
                     [(ngModel)]="storeName"
                     (keypress)="clearErrors()"
@@ -77,11 +77,10 @@
                   </div>
 
                   <div style="display: grid; margin-top: 10px;">
-                    <mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Teléfono</mat-label>
                       <input
-                        required
                         matInput
-                        placeholder="Telefono"
                         formControlName="storePhone"
                         min="0"
                         type="text"
@@ -100,6 +99,8 @@
                   mat-mini-fab
                   class="nextButton orangeButton"
                   (click)="isStoreNameAvailable(stepper)"
+                  (click)="cropImages(cropping1)"
+
                 >
                   <mat-icon>navigate_next</mat-icon>
                 </button>
@@ -115,43 +116,68 @@
               <div
                 style="display: block; width: auto; height: auto; position: relative; margin-left: auto; margin-right: auto"
               >
-                <div #firstColumn>
-                  <div style="height: 200px;">
-                    <div *ngFor="let url of urlsPortada; let i = index">
-                      <img
-                        [src]="url"
-                        class="rounded mb-3"
-                        height="200"
-                        style="display: block; margin-left: auto; margin-right: auto;"
-                      />
+                <!-- ------------------------------------------------------------------------------------------- -->
+                <div lyTheme="minima-light" #FotoPortada>
+                    <h2 class="title">Foto de Portada</h2>
+                    <div class="resize-image">
+                      <div>
+                        <!-- *ngIf="!this.isUpLoading" -->
+                        <button
+                          type="button"
+                          class="cropButton"
+                          (click)="cropping1.clean()"
+                          (click)="doClean(1, $event)"
+                          ly-button
+                          appearance="icon"
+                        >
+                          <ly-icon>close</ly-icon>
+                        </button>
+                      </div>
+
+                      <ly-cropping class="crp1"
+                        #cropping1
+                        id="crp1"
+                        [config]="myConfigPortada"
+                        (cropped)="oncropped($event, 1)"
+                        (loaded)="onloaded(1)"
+                        (error)="onerror()"
+                        class="mat-typography"
+                      >
+                        <i class="material-icons"> add_photo_alternate </i> Añadir Foto
+                      </ly-cropping>
+                      <button
+                        type="button"
+                        style="visibility: hidden; position: absolute"
+                        color="accent"
+                        (click)="cropping1.crop()"
+                        ly-button
+                        raised
+                      >
+                        crop
+                      </button>
+
+                      <div lyTheme="minima-light">
+
+                        <input
+                          #_fileInput0
+                          type="file"
+                          (change)="cropping1.selectInputEvent($event)"
+                          accept="image/*"
+                          hidden
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div>
-                  <button
-                    class="purpleButton"
-                    type="button"
-                    mat-raised-button
-                    style="display: block; margin-left: auto; margin-right: auto; margin-top: 10px"
-                    (click)="imgPortada.click()"
-                  >
-                    Añade una portada a tu tienda
-                  </button>
-                  <input
-                    hidden
-                    class="file-input"
-                    #imgPortada
-                    type="file"
-                    (change)="detectFilesPortada($event)"
-                  />
-                </div>
+
+
               </div>
 
               <div class="full-length">
-                <mat-form-field class="full-length">
+                <mat-form-field appearance="outline" class="full-length">
+                  <mat-label>Descripción</mat-label>
                   <textarea
+                    required
                     matInput
-                    placeholder="Descripción"
                     formControlName="storeDescription"
                     type="text"
                     style="padding: 0"
@@ -165,11 +191,12 @@
 
             <div style="display: grid">
               <div>
-                <mat-form-field id="storeFloor" style="width: 100%;">
+                <mat-form-field appearance="outline" id="storeFloor" style="width: 100%;">
+                  <mat-label>Ingresar dirección</mat-label>
                   <input
+                    required
                     matInput
                     formControlName="storeAddress"
-                    placeholder="Ingresar Dirección"
                     (keydown.enter)="$event.preventDefault()"
                     autocorrect="off"
                     autocapitalize="off"
@@ -217,10 +244,10 @@
                 <input required matInput placeholder="N°" formControlName="storeAddressNumber" min='0' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57">
               </mat-form-field> -->
 
-              <mat-form-field id="OptionalInformation">
+              <mat-form-field appearance="outline" id="OptionalInformation">
+                <mat-label>Piso (Opcional)</mat-label>
                 <input
                   matInput
-                  placeholder="Piso (Opcional)"
                   formControlName="storeFloor"
                   min="0"
                   type="number"
@@ -228,18 +255,18 @@
                 />
               </mat-form-field>
 
-              <mat-form-field id="OptionalInformation">
+              <mat-form-field appearance="outline" id="OptionalInformation">
+                <mat-label>Departamento (Opcional)</mat-label>
                 <input
                   matInput
-                  placeholder="Departamento (Opcional)"
                   formControlName="storeDept"
                 />
               </mat-form-field>
 
-              <mat-form-field id="OptionalInformation">
+              <mat-form-field appearance="outline" id="OptionalInformation">
+               <mat-label>Torre (Opcional)</mat-label>
                 <input
                   matInput
-                  placeholder="Torre (Opcional)"
                   formControlName="storeTower"
                 />
               </mat-form-field>
@@ -285,11 +312,12 @@
                 </button>
                 <span class="fill-space"></span>
                 <button
-                  [disabled]="registerStoreFormGroupStep2.invalid || !portadaFile"
+                  [disabled]="registerStoreFormGroupStep2.invalid || !this.isLoadedImage[1]"
                   mat-mini-fab
                   matStepperNext
                   class="nextButton orangeButton"
                   (click)="stepper.next()"
+                  (click)="this.cropImages(cropping1)"
                 >
                   <mat-icon>navigate_next</mat-icon>
                 </button>
@@ -304,22 +332,22 @@
           <div class="normalRegister" *ngIf="normalRegister">
 
 
-          <mat-form-field class="full-length">
+          <mat-form-field appearance="outline" class="full-length">
+            <mat-label>Contraseña</mat-label>
             <input
               matInput
               [disabled]="isRegistering"
-              placeholder="Contraseña"
               [(ngModel)]="password"
               type="password"
               (keypress)="clearErrors()"
             />
           </mat-form-field>
 
-          <mat-form-field class="full-length">
+          <mat-form-field appearance="outline" class="full-length">
+              <mat-label>Confirmar contraseña</mat-label>
             <input
               matInput
               [disabled]="isRegistering"
-              placeholder="Confirmar contraseña"
               [(ngModel)]="confirmPassword"
               (keypress)="clearErrors()"
               type="password"

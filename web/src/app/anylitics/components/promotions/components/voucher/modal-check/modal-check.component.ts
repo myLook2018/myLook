@@ -21,6 +21,7 @@ export class ModalCheckComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data
     ) {
       this.voucherCode = new FormControl('');
+      console.log('la data al dialog', this.data);
     }
 
     ngOnInit() {
@@ -28,15 +29,23 @@ export class ModalCheckComponent implements OnInit {
 
     tryActivateVoucher() {
       this.isLoading = true;
-      this.dataService.tryActivateVoucher(this.voucherCode.value).then( result => {
+      this.dataService.tryActivateVoucher(this.voucherCode.value, this.data.storeId).then( result => {
         this.isLoading = false;
         if (result.title === 'success') {
           console.log('salio todo bien, activado');
           this.toastsService.showToastMessage('Cupón Activado', TOASTSTYPES.SUCCESS, 'Se registró el uso del cupón exitosamente.');
-        } else if (result.title === 'used') {
-          this.toastsService.showToastMessage('Cupón ya utilizado', TOASTSTYPES.WARN,
-                                              `El cupón fue utilizado el ${this.formatDate(result.usedDate.toDate())}.`);
-          console.log('Ya fue usado');
+        } else if (result.title === 'fail') {
+          if (result.usedDate) {
+
+            this.toastsService.showToastMessage('Cupón ya utilizado', TOASTSTYPES.WARN,
+            `El cupón fue utilizado el ${this.formatDate(result.usedDate.toDate())}`);
+            console.log('Ya fue usado');
+          } else if (result.expired) {
+            this.toastsService.showToastMessage('Cupón expirado', TOASTSTYPES.ERROR,
+            `El cupón ha expirado el ${this.formatDate(result.dueDate)}`);
+            console.log('Ya fue usado');
+          }
+
         } else {
           this.toastsService.showToastMessage('Error', TOASTSTYPES.ERROR, 'El código del cupón no es válido.');
           console.log('Codigo invalido');

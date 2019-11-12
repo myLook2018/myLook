@@ -87,12 +87,12 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
       console.log('+-'.repeat(15), this.actualStore);
       console.log('+-'.repeat(15), this.actualFirebaseUser);
       this.myFormGroup = this.formBuilder.group({
-        profilePh: [{value: this.actualStore.profilePh, disabled: this.isUpLoading}, Validators.nullValidator],
-        coverPh: [{value: this.actualStore.coverPh, disabled: this.isUpLoading}, Validators.nullValidator],
+        profilePh: [{value: this.actualStore.profilePh, disabled: this.isUpLoading}, Validators.required],
+        coverPh: [{value: this.actualStore.coverPh, disabled: this.isUpLoading}, Validators.required],
         storeLongitude: [{value: this.actualStore.storeLongitude, disabled: this.isUpLoading}, Validators.nullValidator],
         storeLatitude: [{value: this.actualStore.storeLatitude, disabled: this.isUpLoading}, Validators.nullValidator],
         storeName: [{value: this.actualStore.storeName, disabled: this.isUpLoading}, Validators.nullValidator],
-        storeAddress: [{value: this.actualStore.storeAddress, disabled: this.isUpLoading}, Validators.nullValidator],
+        storeAddress: [{value: this.actualStore.storeAddress, disabled: this.isUpLoading}, Validators.required],
         storeTower: [{value: this.actualStore.storeTower, disabled: this.isUpLoading}, Validators.nullValidator],
         storeFloor: [{value: this.actualStore.storeFloor, disabled: this.isUpLoading}, Validators.nullValidator],
         storeDept: [{value: this.actualStore.storeDept, disabled: this.isUpLoading}, Validators.nullValidator],
@@ -100,7 +100,7 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
         facebookLink: [{value: this.actualStore.facebookLink, disabled: this.isUpLoading}, Validators.nullValidator],
         instagramLink: [{value: this.actualStore.instagramLink, disabled: this.isUpLoading}, Validators.nullValidator],
         twitterLink: [{value: this.actualStore.twitterLink, disabled: this.isUpLoading}, Validators.nullValidator],
-        storeDescription: [{value: this.actualStore.storeDescription, disabled: this.isUpLoading}, Validators.nullValidator]
+        storeDescription: [{value: this.actualStore.storeDescription, disabled: this.isUpLoading}, Validators.required]
       });
       setTimeout( () => {
         this.mapsAPILoader.load().then(() => {
@@ -149,7 +149,7 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
     console.log('+-'.repeat(15), this.actualStore);
     console.log('+-'.repeat(15), this.actualFirebaseUser);
     this.myFormGroup = this.formBuilder.group({
-      storeAddress: [{value: this.actualStore.storeAddress, disabled: !this.isEditMode}, Validators.nullValidator],
+      storeAddress: [{value: this.actualStore.storeAddress, disabled: !this.isEditMode}, Validators.required],
       storeTower: [{value: this.actualStore.storeTower, disabled: !this.isEditMode}, Validators.nullValidator],
       storeFloor: [{value: this.actualStore.storeFloor, disabled: !this.isEditMode}, Validators.nullValidator],
       storeDept: [{value: this.actualStore.storeDept, disabled: !this.isEditMode}, Validators.nullValidator],
@@ -189,9 +189,14 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
     this.actualImageId = index;
   }
 
-  doClean(index) {
-    console.log('img cleared');
-    this.isLoadedImage[index] = false;
+  doClean(index, event) {
+    console.log('fue un', event);
+    if ( event.keyCode === 13 ) {
+      console.log('fue un enter');
+    } else {
+      console.log('img cleared');
+      this.isLoadedImage[index] = false;
+    }
   }
 
   loadImagesToCrop() {

@@ -159,13 +159,17 @@ export class PromotionsService {
   doc.text(`Código de Transacción:`, 6, 130);
   doc.text(`${idMercadoPago}`, 70, 130);
 
+  const fechaDeTransaccion = type === 'promotion' ? data.info.startOfPromotion.toDate() : data.info.startDate.toDate();
+  doc.text(`${formatDate(dateStart)}`, 70, 140);
+  doc.text(`Fecha de Transacción:`, 6, 140);
+
   // precio final
   doc.setFontStyle('bold');
-  doc.text(`Precio Final: $${data.info.promotionCost}`, 160, 140);
+  doc.text(`Precio Final: $${data.info.promotionCost}`, 160, 150);
 
   // lineas para rodear el precio final
-  doc.line(5, 135, 205, 135);
   doc.line(5, 145, 205, 145);
+  doc.line(5, 155, 205, 155);
 
   } else {
     // Aca van los datos extras de una campaña de cupones
@@ -197,14 +201,19 @@ export class PromotionsService {
   doc.text(`Código de Transacción:`, 6, 150);
   doc.text(`${idMercadoPago}`, 70, 150);
 
+  const fechaDeTransaccion = type === 'promotion' ? data.info.startOfPromotion.toDate() : data.info.startDate.toDate();
+  doc.text(`${formatDate(dateStart)}`, 70, 60);
+  doc.text(`Fecha de Transacción:`, 6, 160);
+  doc.text(`${idMercadoPago}`, 70, 160);
+
   // precio final
   doc.setFontStyle('bold');
   const totalCost = type === 'promotion' ? data.info.promotionCost : data.info.campaignCost;
-  doc.text(`Precio Final: $${totalCost}`, 160, 160);
+  doc.text(`Precio Final: $${totalCost}`, 160, 170);
 
   // lineas para rodear el precio final
-  doc.line(5, 155, 205, 155);
   doc.line(5, 165, 205, 165);
+  doc.line(5, 175, 205, 175);
   }
 
   // Footer

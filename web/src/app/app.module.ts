@@ -114,6 +114,8 @@ import { PieByGenderComponent } from './anylitics/components/promotions/componen
 
 import { ChangePasswordDialogComponent } from 'src/app/store/components/dialogs/change-password/change-password-dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
+// tslint:disable-next-line: max-line-length
+import { DeleteFrontConfirmationDialogComponent } from 'src/app/articles/components/inventory/storeFront/confirmModal/delete-front-confirmation-dialog';
 
 registerLocaleData(localeAR);
 
@@ -158,7 +160,8 @@ registerLocaleData(localeAR);
     NonSubsSuccessComponent,
     BarByAgeComponent,
     LinesDaysUsedComponent,
-    PieByGenderComponent
+    PieByGenderComponent,
+    DeleteFrontConfirmationDialogComponent
   ],
   imports: [
     HttpClientModule,
@@ -227,7 +230,7 @@ registerLocaleData(localeAR);
     NewStoreService],
   entryComponents: [FrontDialogComponent, PromoteDialogComponent, DialogAlertComponent, SuccesfulDialogComponent,
     DeleteConfirmationDialogComponent, MapsDialogComponent, VoucherDialogComponent, EditStoreComponent,
-    ChangePasswordDialogComponent, ModalCheckComponent],
+    ChangePasswordDialogComponent, ModalCheckComponent, DeleteFrontConfirmationDialogComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {

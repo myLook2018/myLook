@@ -118,9 +118,9 @@ export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
     this.articleForm = this.formBuilder.group({
       code: [{value: '', disabled: this.isFormDisabled}, Validators.required],
       colors: [{value: [], disabled: this.isFormDisabled}],
-      cost: [{value: '', disabled: this.isFormDisabled}, Validators.required],
+      cost: [{value: '', disabled: this.isFormDisabled}, [Validators.min(1), Validators.required]],
       creationDate: [new Date, Validators.required],
-      initial_stock: [{value: null, disabled: this.isFormDisabled}, Validators.required],
+      initial_stock: [{value: null, disabled: this.isFormDisabled}, [Validators.min(1), Validators.required]],
       material: [{value: '', disabled: this.isFormDisabled}, Validators.required],
       picturesArray: [[]],
       promotionLevel: [{value: 1, disabled: this.isFormDisabled}],
@@ -387,7 +387,6 @@ export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
   // ----------- Fin el metodo para cargar la prenda  ------------------------------
 
   resetForm() {
-    this.createForm();
     this.sizes = [];
     this.colors = [];
     this.tags = [];
@@ -402,6 +401,8 @@ export class NewArticleComponent implements OnInit, OnDestroy, AfterViewInit {
     this.viewArticleId = null;
     this.articleForm.reset();
     this.enableAllInputs();
+    this.createForm();
+
     }
 
     disableAllInputs() {

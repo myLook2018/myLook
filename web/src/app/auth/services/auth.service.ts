@@ -98,7 +98,7 @@ export class AuthService {
       this.toastService.showToastMessage(
         'Email de verificación', TOASTSTYPES.INFO,
         '¡Se ha enviado un email a su correo electrónico! Es necesario que realice la verificación de la cuenta antes de seguir.');
-      return('¡Se ha enviado un email a su correo electrónico! Es necesario que realice la verificación de la cuenta antes de seguir. ');
+      // return('¡Se ha enviado un email a su correo electrónico! Es necesario que realice la verificación de la cuenta antes de seguir. ');
     }).catch( (error) => {
       this.toastService.showToastMessage('Error', TOASTSTYPES.ERROR, this.translateError(error.code));
       return (error);

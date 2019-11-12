@@ -12,6 +12,7 @@
                     <br />
                     <div>
                       <button
+                        type="button"
                         class="closeIconButton"
                         *ngIf="isLoadedImage[0] && this.viewArticleId === null"
                         (click)="cropping0.clean()"
@@ -39,6 +40,7 @@
                       {{ addPhotoLabel }}
                     </ly-cropping>
                     <button
+                    type="button"
                       style="visibility: hidden"
                       color="accent"
                       (click)="cropping0.crop()"
@@ -66,6 +68,7 @@
                     <br />
                     <div>
                       <button
+                      type="button"
                         class="closeIconButton"
                         *ngIf="isLoadedImage[1] && this.viewArticleId === null"
                         (click)="cropping1.clean()"
@@ -91,6 +94,7 @@
                       > {{ addPhotoLabel }}
                     </ly-cropping>
                     <button
+                    type="button"
                       style="visibility: hidden"
                       color="accent"
                       (click)="cropping1.crop()"
@@ -118,6 +122,7 @@
                     <br />
                     <div>
                       <button
+                      type="button"
                         class="closeIconButton"
                         *ngIf="isLoadedImage[2] && this.viewArticleId === null"
                         (click)="cropping2.clean()"
@@ -145,6 +150,7 @@
                     </ly-cropping>
 
                     <button
+                    type="button"
                       style="visibility: hidden"
                       color="accent"
                       (click)="cropping2.crop()"
@@ -198,18 +204,22 @@
             <mat-form-field class="inputs" appearance="outline">
               <mat-label>Precio ($)</mat-label>
               <input
-              min='0' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57"
+              min='1' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57"
               matInput formControlName="cost" required>
-              <mat-error *ngIf="articleForm.get('cost').hasError">Campo obligatorio.</mat-error>
+              <mat-error *ngIf="articleForm.get('cost').hasError('required')">Campo obligatorio.</mat-error>
+              <mat-error *ngIf="articleForm.get('cost').hasError('min')">El valor debe ser mayor o igual a 1.</mat-error>
+
             </mat-form-field>
           </div>
           <div class="article-dat">
             <mat-form-field class="inputs" appearance="outline">
               <mat-label>Stock Inicial</mat-label>
               <input
-              min='0' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57"
+              min='1' type="number" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57"
               matInput formControlName="initial_stock" required>
-              <mat-error *ngIf="articleForm.get('initial_stock').hasError">Campo obligatorio.</mat-error>
+              <mat-error *ngIf="articleForm.get('initial_stock').hasError('required')">Campo obligatorio.</mat-error>
+              <mat-error *ngIf="articleForm.get('initial_stock').hasError('min')">El valor debe ser mayor o igual a 1.</mat-error>
+
             </mat-form-field>
           </div>
           <div class="article-dat">
@@ -295,7 +305,7 @@
             [disabled]="isUpLoading"
             type="button"
 
-            [ngClass]="{buttonDisabled: isUpLoading}"
+            [ngClass]="{'disabled-button': isUpLoading}"
             mat-raised-button
             (click)="goToInventory();"
             class="mat-elevation-z2"
@@ -315,10 +325,10 @@
           <button
             *ngIf="this.viewArticleId === null"
             [disabled]="articleForm.invalid || isUpLoading"
-            class="activatedButton mat-elevation-z2"
+            class="myLook-background mat-elevation-z2"
             type="button"
 
-            [ngClass]="{buttonDisabled: (articleForm.invalid || isUpLoading)}"
+            [ngClass]="{'disabled-button': (articleForm.invalid || isUpLoading)}"
             mat-raised-button
             (click)="cropImages(cropping0, cropping1, cropping2)"
             >

@@ -13,15 +13,21 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
+          <button mat-icon-button class="actionIcon_colored refresh-button" (click)="refreshVouchers()"
+          [disabled]="disableRefreshButton"
+          [ngClass]="{'disabled-action-icon': disableRefreshButton}"
+          >
+            <mat-icon>refresh</mat-icon>
+          </button>
         <span>
         </span>
         <button mat-raised-button
-                class="activated-button"
+                class="activated-button myLook-background"
                 (click)="openCheckVoucher()"
-                >Verificar Cupon
+                >Validar Cupón
         </button>
         <button mat-raised-button
-                class="activated-button"
+                class="activated-button myLook-background"
                 (click)="openNewVoucher()"
                 >Nueva Campaña
         </button>
@@ -33,27 +39,27 @@
   <div class="graficos" *ngIf="this.graphsLoaded">
     <div class="non-subcribers-likes">
       <mat-card class="card-grafico">
-        <mat-icon class="infoTooltip" [matTooltip]="this.nonSubSuccessTooltip" matTooltipPosition="above" matTooltipClass="tooltip">info</mat-icon>
+        <mat-icon class="infoTooltip myLook-light-color" [matTooltip]="this.nonSubSuccessTooltip" matTooltipPosition="above" matTooltipClass="tooltip">info</mat-icon>
         <app-non-subs-success [used]="usedCount" [nonUsed]="nonUsedCount"></app-non-subs-success>
         <!-- <app-views-by-promotions [level1Articles]="level1Articles" [level2Articles]="level2Articles" [level3Articles]="level3Articles"></app-views-by-promotions> -->
       </mat-card>
     </div>
     <div class="likes-by-age">
         <mat-card  class="card-grafico">
-          <mat-icon class="infoTooltip" [matTooltip]="this.byAgeTooltip" matTooltipPosition="above" matTooltipClass="tooltip">info</mat-icon>
+          <mat-icon class="infoTooltip myLook-light-color" [matTooltip]="this.byAgeTooltip" matTooltipPosition="above" matTooltipClass="tooltip">info</mat-icon>
           <app-bar-by-age [lessThan18]="lessThan18" [from18to21]="from18to21" [from22to25]="from22to25"  [from26to29]="from26to29"  [moreThan30]="moreThan30"></app-bar-by-age>
         </mat-card>
     </div>
     <div class="likes-by-gender">
       <mat-card  class="card-grafico">
-        <mat-icon class="infoTooltip" [matTooltip]="this.genderCounter" matTooltipPosition="above" matTooltipClass="tooltip">info</mat-icon>
+        <mat-icon class="infoTooltip myLook-light-color" [matTooltip]="this.genderCounter" matTooltipPosition="above" matTooltipClass="tooltip">info</mat-icon>
         <app-pie-by-gender [maleCounter]="maleCounter" [femaleCounter]="femaleCounter" [otherGenderCounter]="otherGenderCounter"></app-pie-by-gender>
       </mat-card>
     </div>
   </div>
   <div class="lines-used-by-day" *ngIf="this.graphsLoaded">
     <mat-card class="card-grafico-largo">
-      <mat-icon class="infoTooltip" [matTooltip]="this.linesTooltip" matTooltipPosition="above" matTooltipClass="tooltip">info</mat-icon>
+      <mat-icon class="infoTooltip myLook-light-color" [matTooltip]="this.linesTooltip" matTooltipPosition="above" matTooltipClass="tooltip">info</mat-icon>
       <app-lines-days-used [daysOfTheWeek]="this.daysOfTheWeek" [globalUsedByDay]="this.globalUsedByDay" [campaingUsedByDay]="this.campaingUsedByDay"></app-lines-days-used>
     </mat-card>
   </div>
@@ -108,7 +114,7 @@
                 <th mat-header-cell *matHeaderCellDef> Descargar </th>
                 <td mat-cell *matCellDef="let element">
                   <button  mat-icon-button (click)="downloadCampaign(element)">
-                      <mat-icon class="myLookPink">cloud_download</mat-icon>
+                      <mat-icon class="myLook-color">cloud_download</mat-icon>
                   </button>
                 </td>
                 <td mat-footer-cell *matFooterCellDef> </td>
@@ -132,7 +138,7 @@
         <span>
         </span>
         <button mat-raised-button
-                class="activated-button"
+                class="myLook-background"
                 (click)="openNewVoucher()"
                 >Nueva Campaña
         </button>

@@ -73,7 +73,7 @@ export class PromoteDialogComponent {
     this.preferenceMP =  {
       'items': [{
         'id': `${this.selectedPromotion}-${this.duration}-${this.userData.articleId}`,
-        'title': 'Promoción de prenda - MyLook',
+        'title': 'Promoción de prenda - myLook',
         'quantity': 1,
         'currency_id': 'ARS',
         'picture_url': this.userData.picturesArray[0],

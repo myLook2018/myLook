@@ -17,17 +17,17 @@
     </mat-form-field>
     <div class="actions">
       <button mat-raised-button (click)="closeModal()"
-              [ngClass]="{'button-disabled': this.isLoading}"
+              [ngClass]="{'disabled-button': this.isLoading}"
               [disabled]="this.isLoading"
       >
           Cancelar
       </button>
-      <button class="activated-button"
-              [ngClass]="{'button-disabled':( this.isLoading || this.voucherCode.invalid)}"
+      <button class="myLook-background"
+              [ngClass]="{'disabled-button':( this.isLoading || this.voucherCode.invalid)}"
               mat-raised-button (click)="tryActivateVoucher()"
               [disabled]="this.isLoading || this.voucherCode.invalid"
               >
-          Activar Cupon
+          Validar
       </button>
     </div>
   </div>

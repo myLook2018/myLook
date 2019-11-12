@@ -7,8 +7,9 @@
       </mat-card-title>
   <mat-card-title style="text-align: center;">Iniciar sesión</mat-card-title>
   <form [formGroup]="loginForm" autocomplete="off">
-    <mat-form-field class="inputForm">
-      <input matInput placeholder="Ingrese su email" class="form-control" formControlName="email">
+    <mat-form-field appearance="outline" class="inputForm">
+      <mat-label>Ingrese su email</mat-label>
+      <input matInput class="form-control" formControlName="email">
       <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
         Por favor ingrese un Email valido
       </mat-error>
@@ -17,8 +18,9 @@
         <strong>Email</strong>
       </mat-error>
     </mat-form-field>
-    <mat-form-field class="inputForm">
-      <input matInput placeholder="Contraseña" type="password" class="form-control" formControlName="password">
+    <mat-form-field appearance="outline" class="inputForm">
+      <mat-label>Contraseña</mat-label>
+      <input matInput type="password" class="form-control" formControlName="password">
     </mat-form-field>
     <label class="error">{{errorMessage}}</label>
   </form>

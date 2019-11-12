@@ -24,6 +24,7 @@ import {
 import { DataService } from '../../../service/dataService';
 import { MapsAPILoader } from '@agm/core';
 import { ToastsService, TOASTSTYPES } from 'src/app/service/toasts.service';
+import { ImgCropperConfig, LyResizingCroppingImages } from '@alyle/ui/resizing-cropping-images';
 
 @Component({
   selector: 'app-register',
@@ -67,7 +68,22 @@ export class RegisterComponent implements OnInit {
   emailAndProvider;
 
   @ViewChild('search')
+  @ViewChild('cropping0') cropping0: LyResizingCroppingImages;
+
   public searchElementRef: ElementRef;
+
+  croppedImage?: string[] = ['', ''];
+  myConfigPortada: ImgCropperConfig = {
+    width: 420, // Default `250`
+    height: 140, // Default `200`,
+    output: {
+      width: 1500,
+      height: 500
+    }
+  };
+
+  isLoadedImage = [false];
+  actualImageId: any;
 
   constructor(
     private fb: FormBuilder,
@@ -174,17 +190,17 @@ export class RegisterComponent implements OnInit {
     this.registerStoreFormGroupStep1 = this.fb.group({
       storeName: ['', Validators.required],
       storeMail: [this.email, Validators.email],
-      storePhone: ['', Validators.required],
+      storePhone: [''],
     });
     this.registerStoreFormGroupStep2 = this.fb.group({
       ownerName: [''],
-      storeAddress: [''],
+      storeAddress: ['', Validators.required],
       storeLatitude: [],
       storeLongitude: [],
       storeFloor: [''],
       storeDept: [''],
       storeTower: [''],
-      storeDescription: [''],
+      storeDescription: ['', Validators.required],
       facebookLink: [''],
       instagramLink: [''],
       twitterLink: [''],
@@ -251,8 +267,25 @@ export class RegisterComponent implements OnInit {
                 })
                 .then(() => {
                   console.log('subiendo imagen de portada');
+                  console.log('las imagenes ', this.croppedImage);
+                  const imagesToUpload: File[] = [];
+                  this.croppedImage.forEach(photo => {
+                      // delete
+                      if (photo) {
+                        console.log('photo ', photo);
+                        const sub: string = photo.substr(22);
+                        console.log('sub ', sub);
+                        const imageBlob = this.dataURItoBlob(sub);
+                        const imageFile = new File(
+                          [imageBlob],
+                          'portada',
+                          { type: 'image/jpeg' }
+                          );
+                          imagesToUpload.push(imageFile);
+                        }
+                    });
                   this.dataService
-                    .uploadPicture(this.portadaFile)
+                    .uploadPictureFile(imagesToUpload[0])
                     .then(fileURL => {
                       this.registerStoreFormGroupStep1.addControl(
                         'coverPh',
@@ -352,4 +385,64 @@ export class RegisterComponent implements OnInit {
     }
     return new FormGroup(values);
   }
+
+
+  // ------------------------------------- todo lo de cortar imagenes --------------------------
+  oncropped(e, index) {
+    console.log(`cropped `, e);
+    console.log(`cropped index`, index);
+    this.croppedImage[index] = e.dataURL;
+    this.portadaFile = e.dataURL;
+  }
+  onloaded(index) {
+    console.log('img loaded');
+    this.isLoadedImage[index] = true;
+    this.onSelectedImage(index);
+  }
+  onerror() {
+    console.warn('img not loaded');
+  }
+  onSelectedImage(index) {
+    console.log('se esta subiendo al indice ', index);
+    this.actualImageId = index;
+  }
+
+  doClean(index, event) {
+    console.log('fue un', event);
+    if ( event.keyCode === 13 ) {
+      console.log('fue un enter');
+    } else {
+      console.log('img cleared');
+      this.isLoadedImage[index] = false;
+    }
+  }
+
+    cropImages(crop2) {
+      const croppers = [crop2];
+      console.log('crops', croppers);
+      for (let index = 0; index < this.isLoadedImage.length; index++) {
+        if (this.isLoadedImage[index]) {
+          try {
+            // console.log()
+            crop2.crop();
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      }
+      // this.startUpload();
+    }
+
+    dataURItoBlob(dataURI) {
+      const byteString = atob(dataURI);
+      const arrayBuffer = new ArrayBuffer(byteString.length);
+      const int8Array = new Uint8Array(arrayBuffer);
+
+      for (let i = 0; i < byteString.length; i++) {
+        int8Array[i] = byteString.charCodeAt(i);
+      }
+      const blob = new Blob([arrayBuffer], { type: 'image/jpeg' });
+      return blob;
+    }
+
 }
