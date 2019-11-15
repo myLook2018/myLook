@@ -64,7 +64,7 @@
                 <!-- Poner un data por cada link que se quiera relacionar-->
                 <data
                     android:host="www.mylook.com"
-                    android:pathPrefix="/storeName"
+                    android:pathPrefix="/store"
                     android:scheme="https" />
             </intent-filter>
         </activity>
@@ -150,6 +150,9 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/purple" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
         <activity
             android:name="com.facebook.FacebookActivity"

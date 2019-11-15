@@ -71,6 +71,7 @@ public class NotificationCenter extends AppCompatActivity {
     private void getNotifications(){
         if (notifications == null || notifications.size() == 0)
             notifications = new ArrayList<>();
+        notifications.clear();
         initRecyclerView();
         FirebaseFirestore.getInstance().collection("notifications")
                 .whereEqualTo("userId", FirebaseAuth.getInstance().getUid())

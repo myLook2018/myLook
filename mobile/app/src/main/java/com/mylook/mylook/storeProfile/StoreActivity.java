@@ -94,8 +94,10 @@ public class StoreActivity extends AppCompatActivity {
         if (intentStore.hasExtra("store")) {
             fromDeepLink = false;
             return intentStore.getStringExtra("store");
-        }
-        else {
+        } else if(intentStore.hasExtra("storeId")){
+            fromDeepLink = true;
+            return intentStore.getStringExtra("storeId");
+        } else {
             try {
                 fromDeepLink = true;
                 if(intentStore.getData().getQueryParameter("storeName")!=null) {
@@ -235,7 +237,7 @@ public class StoreActivity extends AppCompatActivity {
             Log.e("Share", "Share store");
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta tienda wachin! https://www.mylook.com/store?storeName=" + Uri.encode(store.getStoreName()));
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "¡Mirá esta Tienda! https://www.mylook.com/store?storeName=" + Uri.encode(store.getStoreName()));
             sendIntent.setType("text/plain");
             startActivity(Intent.createChooser(sendIntent, "Share via"));
         }
