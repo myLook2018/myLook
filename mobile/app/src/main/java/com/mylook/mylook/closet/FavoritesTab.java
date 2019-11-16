@@ -100,7 +100,7 @@ public class FavoritesTab extends Fragment {
     private void confirmDeleteFavorite(int position) {
         android.app.AlertDialog alert = new android.app.AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
                 .setTitle("Eliminar favorito")
-                .setMessage("Estás seguro de que querés eliminar el favorito?")
+                .setMessage("¿Estás seguro que querés eliminar esta prenda de tus Favoritos? También se eliminarán los conjuntos que posean esta prenda")
                 .setPositiveButton("Eliminar", (paramDialogInterface, paramInt) -> {
                           deleteFavorite(position);
                         }
@@ -115,26 +115,28 @@ public class FavoritesTab extends Fragment {
     }
 
     private void deleteFavorite(int position) {
+        Log.e("FavoritesTAb", "Deleting Favourite");
         String idToDelete = adapter.getItem(position).getArticleId();
         mProgressBar.setVisibility(View.VISIBLE);
         closet.removeFavorite(position)
                 .addOnSuccessListener(success1 -> {
+                    Log.e("FavoritesTab", "Favourite deleted");
                     List<String> outfitsToChange = closet.getOutfits().getValue().stream()
                             .filter(o -> o.getFavorites().contains(idToDelete))
                             .map(Outfit::getOutfitId).collect(Collectors.toList());
                     if (outfitsToChange.size() != 0) {
-                        closet.removeFavoriteFromOutfits(outfitsToChange, idToDelete)
+                        closet.removeRelatedOutfits(outfitsToChange)
                                 .addOnSuccessListener(success2 -> {
                                     adapter.notifyDataSetChanged();
-                                    displayToast("Se eliminó de tus favoritos y actualizaron conjuntos");
+                                    displayToast("Se eliminó la prenda de tus favoritos y los conjuntos asociados");
                                 })
                                 .addOnFailureListener(fail -> {
                                     adapter.notifyDataSetChanged();
-                                    displayToast("Se eliminó de tus favoritos, pero los conjuntos no se actualizaron");
+                                    displayToast("Se eliminó la prenda de tus favoritos, pero los conjuntos no se actualizaron");
                                 });
                     } else {
                         adapter.notifyDataSetChanged();
-                        displayToast("Se eliminó de tu favorito");
+                        displayToast("Se eliminó la prenda de tus Favoritos");
                     }
                 })
                 .addOnFailureListener(fail -> displayToast("Error al eliminar de los favoritos"));

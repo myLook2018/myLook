@@ -187,32 +187,36 @@ public class OutfitCreateEditActivity extends AppCompatActivity {
         if (editText.getText().toString().equals("")) {
             displayToast("Ingrese un nombre para el conjunto");
         } else {
-            progressBar.setVisibility(View.VISIBLE);
-            HashMap<String, Object> data = new HashMap<>();
-            data.put("name", editText.getText().toString());
-            //TODO sacar???
-            data.put("category", "");
-            data.put("userID", FirebaseAuth.getInstance().getCurrentUser().getUid());
-            data.put("favorites", selectedIds);
-            FirebaseFirestore.getInstance().collection("outfits")
-                    .document(outfitDocument).set(data)
-                    .addOnSuccessListener(task -> {
-                        displayToast("Conjunto " + editText.getText() + " editado");
-                        Outfit outfit = new Outfit();
-                        outfit.setOutfitId(outfitDocument);
-                        outfit.setName(editText.getText().toString());
-                        outfit.setCategory("");
-                        outfit.setUserID(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                        List<Article> list = new ArrayList<>();
-                        selectedIndexes.forEach(i -> list.add(adapter.getItem(i)));
-                        outfit.setArticles(list);
-                        setResult(OUTFIT_EDITED, new Intent().putExtra("outfit", outfit));
-                        this.finish();
-                    })
-                    .addOnFailureListener(e -> {
-                        displayToast("Error al editar el conjunto");
-                        progressBar.setVisibility(View.GONE);
-                    });
+            if(selectedIds.size() < 3){
+                displayToast("Seleccioná al menos 3 prendas");
+            } else {
+                progressBar.setVisibility(View.VISIBLE);
+                HashMap<String, Object> data = new HashMap<>();
+                data.put("name", editText.getText().toString());
+                //TODO sacar???
+                data.put("category", "");
+                data.put("userID", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                data.put("favorites", selectedIds);
+                FirebaseFirestore.getInstance().collection("outfits")
+                        .document(outfitDocument).set(data)
+                        .addOnSuccessListener(task -> {
+                            displayToast("Conjunto " + editText.getText() + " editado");
+                            Outfit outfit = new Outfit();
+                            outfit.setOutfitId(outfitDocument);
+                            outfit.setName(editText.getText().toString());
+                            outfit.setCategory("");
+                            outfit.setUserID(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            List<Article> list = new ArrayList<>();
+                            selectedIndexes.forEach(i -> list.add(adapter.getItem(i)));
+                            outfit.setArticles(list);
+                            setResult(OUTFIT_EDITED, new Intent().putExtra("outfit", outfit));
+                            this.finish();
+                        })
+                        .addOnFailureListener(e -> {
+                            displayToast("Error al editar el conjunto");
+                            progressBar.setVisibility(View.GONE);
+                        });
+            }
         }
     }
 
