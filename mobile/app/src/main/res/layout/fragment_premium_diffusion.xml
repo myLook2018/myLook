@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/premium_messages"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="clip_vertical"
     android:layout_marginStart="4dp"
     android:layout_marginEnd="4dp"
     android:orientation="vertical"
     android:paddingBottom="8dp"
-    android:textAlignment="textEnd">
+    android:textAlignment="textStart"
+    app:barrierDirection="start"
+    app:layout_anchorGravity="top"
+    app:layout_gravity="top">
 
 </androidx.recyclerview.widget.RecyclerView>

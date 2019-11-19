@@ -18,6 +18,7 @@ import com.mylook.mylook.room.LocalInteractionDAO;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -147,8 +148,8 @@ class ExploreService {
 
     private boolean isNew(String id) {
         // TODO incluir en produccion
-        // return allLocalInteractions.stream().noneMatch(li -> li.getUid().equals(id));
-        return true;
+         return allLocalInteractions.stream().noneMatch(li -> li.getUid().equals(id));
+        //return true;
     }
 
     void likeArticle(Article article, boolean liked) {
@@ -161,6 +162,7 @@ class ExploreService {
         userInteraction.setStoreName(article.getStoreName());
         userInteraction.setTags(article.getTags());
         userInteraction.setUserId(userUid);
+        userInteraction.setTitle(article.getTitle());
         interactions.add(userInteraction);
 
         LocalInteraction local = new LocalInteraction();
@@ -201,6 +203,7 @@ class ExploreService {
         userInteraction.setStoreName(article.getStoreName());
         userInteraction.setTags(article.getTags());
         userInteraction.setUserId(userUid);
+        userInteraction.setTitle(article.getTitle());
         interactions.add(userInteraction);
     }
 
@@ -220,22 +223,21 @@ class ExploreService {
     }
 
     Task<QuerySnapshot> getArticles() {
-        //TODO incluir en produccion
-        //Calendar cal = Calendar.getInstance();
-        //cal.add(Calendar.DATE, -14);
-        //Date dateBefore2Weeks = cal.getTime();
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -14);
+        Date dateBefore2Weeks = cal.getTime();
         return FirebaseFirestore.getInstance().collection("articles")
-                //.whereGreaterThan("creationDate", dateBefore2Weeks) Le saque el filtro para que aparecieran
+                .whereGreaterThan("creationDate", dateBefore2Weeks)
                 .get();
     }
 
     Task<QuerySnapshot> getPremiumPublications() {
-        //TODO incluir en produccion
-        //Calendar cal = Calendar.getInstance();
-        //cal.add(Calendar.DATE, -14);
-        //Date dateBefore2Weeks = cal.getTime();
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -14);
+        Date dateBefore2Weeks = cal.getTime();
         return FirebaseFirestore.getInstance().collection("premiumPublications")
-                //.whereGreaterThan("creationDate", dateBefore2Weeks) Le saque el filtro para que aparecieran
+                .whereGreaterThan("creationDate", dateBefore2Weeks)
                 .get();
     }
 
@@ -246,7 +248,7 @@ class ExploreService {
         interactions.clear();
         for (LocalInteraction localInteraction : currentLocalInteractions) {
             // TODO aplicar en producción
-            //localDAO.insert(localInteraction);
+            localDAO.insert(localInteraction);
         }
         currentLocalInteractions.clear();
     }
