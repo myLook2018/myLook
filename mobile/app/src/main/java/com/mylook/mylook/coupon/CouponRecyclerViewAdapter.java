@@ -52,7 +52,7 @@ public class CouponRecyclerViewAdapter extends RecyclerView.Adapter<CouponRecycl
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(remoteDate.toDate());
         String[] meses = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-        return "Vence el " + calendar.get(Calendar.DAY_OF_MONTH) + " de " + meses[calendar.get(Calendar.MONTH)];
+        return calendar.get(Calendar.DAY_OF_MONTH) + " de " + meses[calendar.get(Calendar.MONTH)];
     }
 
     @Override
@@ -64,7 +64,11 @@ public class CouponRecyclerViewAdapter extends RecyclerView.Adapter<CouponRecycl
         if (coupon.isUsed()) {
             holder.couponDueDate.setText("Ya usaste este cupón");
         } else {
-            holder.couponDueDate.setText(formatDate(coupon.getDueDate()));
+            if(coupon.getStartDate().compareTo(Timestamp.now()) > 0 ){
+                holder.couponDueDate.setText("Cupón válido desde el "+formatDate(coupon.getStartDate()));
+            } else {
+                holder.couponDueDate.setText("Válido hasta el "+formatDate(coupon.getDueDate()));
+            }
         }
         holder.documentId = coupon.getDocumentId();
 

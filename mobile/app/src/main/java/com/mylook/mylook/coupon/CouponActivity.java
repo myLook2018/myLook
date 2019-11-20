@@ -72,6 +72,7 @@ public class CouponActivity extends AppCompatActivity {
                 coupon.setVoucherType((int)(long) l.get("voucherType"));
                 coupon.setUsed((boolean)l.get("used"));
                 coupon.setUsedDate((Timestamp)l.get("usedDate"));
+                coupon.setStartDate((Timestamp)l.get("startDate"));
             }
             setClickListeners();
             setCouponValues();
@@ -82,10 +83,7 @@ public class CouponActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(remoteDate.toDate());
         String[] meses = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-        if (coupon.isUsed()){
-            return "Usaste este cupón el " + calendar.get(Calendar.DAY_OF_MONTH) + " de " + meses[calendar.get(Calendar.MONTH)];
-        }
-        return "Vence el " + calendar.get(Calendar.DAY_OF_MONTH) + " de " + meses[calendar.get(Calendar.MONTH)];
+        return calendar.get(Calendar.DAY_OF_MONTH) + " de " + meses[calendar.get(Calendar.MONTH)];
     }
 
     private void setClickListeners(){
@@ -102,9 +100,13 @@ public class CouponActivity extends AppCompatActivity {
                 ", pero adivinen quien no hizo la cloud function ehhhhhh"));
         code.setText(coupon != null ? coupon.getCode() : "0512RECI");
         if(coupon.isUsed()){
-            duedate.setText(formatDate(coupon.getUsedDate()));
+            duedate.setText("Usaste este cupón el "+formatDate(coupon.getUsedDate()));
         } else {
-            duedate.setText(coupon != null ? formatDate(coupon.getDueDate()) : "Vence el 19/12");
+            if(coupon.getStartDate().compareTo(Timestamp.now()) > 0 ){
+                duedate.setText("Cupón válido desde el "+formatDate(coupon.getStartDate()) +" hasta el "+formatDate(coupon.getDueDate()));
+            } else {
+                duedate.setText(coupon != null ? "Válido hasta el "+formatDate(coupon.getDueDate()) : "Vence el 19/12");
+            }
         }
         storeName.setText(coupon != null ? coupon.getStoreName() : "AUKA siempre AUKA");
         code.setVisibility(View.VISIBLE);

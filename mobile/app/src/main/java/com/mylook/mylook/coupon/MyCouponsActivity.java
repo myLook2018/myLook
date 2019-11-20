@@ -20,6 +20,7 @@ import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Coupon;
 import com.mylook.mylook.session.Session;
 
+import java.sql.Time;
 import java.util.ArrayList;
 
 public class MyCouponsActivity extends AppCompatActivity {
@@ -93,7 +94,7 @@ public class MyCouponsActivity extends AppCompatActivity {
                         middleCoupon.setStoreName((String) doc.get("storeName"));
                         middleCoupon.setClientId((String) doc.get("clientId"));
                         middleCoupon.setUsed((boolean)doc.get("used"));
-
+                        middleCoupon.setStartDate((Timestamp)doc.get("startDate"));
                     }
                     Coupon newCoupon = middleCoupon;
                     FirebaseFirestore.getInstance().collection(getResources().getString(R.string.storesCollection)).document((String) doc.get("storeId"))
