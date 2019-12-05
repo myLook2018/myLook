@@ -16,6 +16,7 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mylook.mylook.R;
 import com.mylook.mylook.entities.Coupon;
+import com.mylook.mylook.session.MainActivity;
 import com.mylook.mylook.storeProfile.StoreActivity;
 
 import java.util.Calendar;
@@ -27,6 +28,7 @@ public class CouponActivity extends AppCompatActivity {
     private TextView title, description, code, duedate, storeName;
     private ImageView imgStore;
     private ProgressBar mProgressBarr;
+    private boolean fromNotification = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,6 +58,8 @@ public class CouponActivity extends AppCompatActivity {
     private void getRemoteCoupon() {
         Intent thisIntent = getIntent();
         couponId = thisIntent.getStringExtra("couponId");
+        if(thisIntent.hasExtra("fromDeepLink"))
+            fromNotification = thisIntent.getBooleanExtra("fromDeepLink", false);
         FirebaseFirestore.getInstance().collection(getResources().getString(R.string.vouchersCollection)).document(couponId).
                 get().addOnSuccessListener(l -> {
             try {
@@ -123,7 +127,13 @@ public class CouponActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        finish();
+        if(fromNotification){
+            Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
+            mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(mainIntent);
+        } else{
+            finish();
+        }
     }
 
     @Override

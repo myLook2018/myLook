@@ -148,8 +148,8 @@ class ExploreService {
 
     private boolean isNew(String id) {
         // TODO incluir en produccion
-         return allLocalInteractions.stream().noneMatch(li -> li.getUid().equals(id));
-        //return true;
+         //return allLocalInteractions.stream().noneMatch(li -> li.getUid().equals(id));
+        return true;
     }
 
     void likeArticle(Article article, boolean liked) {
@@ -228,7 +228,7 @@ class ExploreService {
         cal.add(Calendar.DATE, -14);
         Date dateBefore2Weeks = cal.getTime();
         return FirebaseFirestore.getInstance().collection("articles")
-                .whereGreaterThan("creationDate", dateBefore2Weeks)
+                //.whereGreaterThan("creationDate", dateBefore2Weeks)
                 .get();
     }
 
@@ -237,7 +237,7 @@ class ExploreService {
         cal.add(Calendar.DATE, -14);
         Date dateBefore2Weeks = cal.getTime();
         return FirebaseFirestore.getInstance().collection("premiumPublications")
-                .whereGreaterThan("creationDate", dateBefore2Weeks)
+                //.whereGreaterThan("creationDate", dateBefore2Weeks)
                 .get();
     }
 
@@ -248,7 +248,7 @@ class ExploreService {
         interactions.clear();
         for (LocalInteraction localInteraction : currentLocalInteractions) {
             // TODO aplicar en producción
-            localDAO.insert(localInteraction);
+            //localDAO.insert(localInteraction);
         }
         currentLocalInteractions.clear();
     }

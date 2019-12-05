@@ -102,7 +102,8 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         recyclerView = view.findViewById(R.id.recycler_view_content);
         starImage = view.findViewById(R.id.empty_star);
         emptyArticles = view.findViewById(R.id.emptyText);
-
+        emptyArticles.setVisibility(View.GONE);
+        starImage.setVisibility(View.GONE);
 
         adapter = new CardsHomeFeedAdapter(mContext, list);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(mContext, 2);
@@ -269,6 +270,13 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
                             } else {
                                 Log.d("Firestore task", "onComplete: " + task1.getException());
+                                if(list.isEmpty()){
+                                    emptyArticles.setVisibility(View.VISIBLE);
+                                    starImage.setVisibility(View.VISIBLE);
+                                } else {
+                                    emptyArticles.setVisibility(View.GONE);
+                                    starImage.setVisibility(View.GONE);
+                                }
                             }
                         });
                     }
@@ -314,21 +322,36 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                                 list.add(art);
                                             }*/
 
-                                            if (createArticleList(task12.getResult())) { //Con esta por la probabilidad de las promos, pero no por fecha
-                                                /*for (Article art : list) {
-                                                    Log.e(TAG, (art.getArticleId() + " - " + art.getCreationDate() + " - Promo: " + art.getPromotionLevel()));
-                                                }*/
+                                            if (createArticleList(task12.getResult())) {
 
                                                 adapter.notifyDataSetChanged();
                                             }
+                                            if(list.isEmpty()){
+                                                emptyArticles.setVisibility(View.VISIBLE);
+                                                starImage.setVisibility(View.VISIBLE);
+                                            } else {
+                                                emptyArticles.setVisibility(View.GONE);
+                                                starImage.setVisibility(View.GONE);
+                                            }
                                         } else {
                                             Log.e("Firestore task", "onComplete: " + task12.getException());
+                                            if(list.isEmpty()){
+                                                emptyArticles.setVisibility(View.VISIBLE);
+                                                starImage.setVisibility(View.VISIBLE);
+                                            } else {
+                                                emptyArticles.setVisibility(View.GONE);
+                                                starImage.setVisibility(View.GONE);
+                                            }
                                         }
                                     });
                                 }
+                                readPremiumSubscriptions();
+                            } else {
+                                readPremiumSubscriptions();
                             }
+                        }else {
+                            readPremiumSubscriptions();
                         }
-                        readPremiumSubscriptions();
                     });
 
         }

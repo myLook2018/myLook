@@ -423,6 +423,8 @@ exports.createCampaignCoupons = functions.firestore.document('voucherCampaing/{v
           console.log("Client id")
           console.log(clientId)
           admin.firestore().collection("clients").doc(clientId).get().then(async (clientSnap) => {
+            try {
+
             console.log("ClientSnap")
             console.log(clientSnap.data())
             var age = new Date().getTime() - clientSnap.get("birthday")
@@ -453,14 +455,19 @@ exports.createCampaignCoupons = functions.firestore.document('voucherCampaing/{v
               voucher.code = code
               console.log("Voucher" + JSON.stringify(voucher))
               await admin.firestore().collection("vouchers").doc(code).create(voucher).then(voucherResponse => {
-                console.log("Created new Voucher:" + voucherResponse.id)
+                console.log("Created new Voucher in "+voucherResponse.writeTime)
                 created = true
               }).catch(error => {
                 console.log("Voucher could not be created " + error)
               })
 
             }
-
+                         
+          } catch (error) {
+            console.error("Error creating voucher ");
+            console.error(error)
+               
+          } 
           });
 
         });
