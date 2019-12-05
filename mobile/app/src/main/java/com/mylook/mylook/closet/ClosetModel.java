@@ -77,6 +77,22 @@ public class ClosetModel extends ViewModel {
         }
         return null;
     }
+    Task<Void> removeRelatedOutfits(List<String> outfitsToDelete) {
+        if (outfitsToDelete.size() != 0) {
+            WriteBatch batch = FirebaseFirestore.getInstance().batch();
+            outfitsToDelete.forEach(outfitDoc -> batch.delete(FirebaseFirestore.getInstance()
+                            .collection("outfits").document(outfitDoc)));
+            return batch.commit().addOnSuccessListener(task -> {
+                for (int i = 0; i < outfitsList.size(); i++) {
+                    if (outfitsToDelete.contains(outfitsList.get(i).getOutfitId())) {
+                        outfitsList.remove(i);
+                    }
+                }
+                outfits.postValue(outfitsList);
+            });
+        }
+        return null;
+    }
 
     LiveData<List<Outfit>> getOutfits() {
         return outfits;

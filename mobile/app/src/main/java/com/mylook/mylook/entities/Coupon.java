@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 public class Coupon {
     private Timestamp dueDate;
+    private Timestamp startDate;
     private Timestamp creationDate;
     private Timestamp usedDate;
     private String clientId;
@@ -26,6 +27,14 @@ public class Coupon {
 
 
     public Coupon() {
+    }
+
+    public Timestamp getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Timestamp startDate) {
+        this.startDate = startDate;
     }
 
     public int getVoucherType() {

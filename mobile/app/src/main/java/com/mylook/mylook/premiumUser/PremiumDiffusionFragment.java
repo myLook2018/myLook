@@ -56,7 +56,7 @@ public class PremiumDiffusionFragment extends Fragment {
         FirebaseFirestore.getInstance().collection("diffusionMessages")
                 .whereEqualTo("userId", premiumUserId)
                 .whereEqualTo("topic", "topic_"+premiumUserId)
-                .orderBy("creationDate", Query.Direction.ASCENDING)
+                .orderBy("creationDate", Query.Direction.DESCENDING)
                 .get().addOnSuccessListener(v ->{
             Log.e("NewDifusionMessage", "Documents: "+v.getDocuments().size());
             if (v.getDocuments().size() > 0){
@@ -74,7 +74,7 @@ public class PremiumDiffusionFragment extends Fragment {
         adapter = new MessagesRecyclerViewAdapter(getActivity(), oldMessages,true);
         recyclerView.setAdapter(adapter);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
-        llm.setReverseLayout(true);
+        llm.setReverseLayout(false);
         recyclerView.setLayoutManager(llm);
 
     }

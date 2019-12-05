@@ -125,14 +125,16 @@ public class ArticleInfoActivity extends AppCompatActivity {
         CirclePageIndicator indicator = findViewById(R.id.circle_page_indicator);
         indicator.setViewPager(articlePager);
         indicator.setRadius(5 * getResources().getDisplayMetrics().density);
+        setResult(RESULT_OK, new Intent().putExtra("removed", false)
+                .putExtra("id", article.getArticleId()));
     }
 
     private void shareArticle(){
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "Mirá esta prenda! https://www.mylook.com/article?articleId=" + article.getArticleId());
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "¡Mirá esta prenda! https://www.mylook.com/article?articleId=" + article.getArticleId());
         sendIntent.setType("text/plain");
-        startActivity(Intent.createChooser(sendIntent, "Share via"));
+        startActivity(Intent.createChooser(sendIntent, "Compartir"));
     }
 
     private void changeSavedInCloset() {
@@ -148,12 +150,12 @@ public class ArticleInfoActivity extends AppCompatActivity {
                         if (inCloset) {
                             setResult(RESULT_OK, new Intent().putExtra("removed", false)
                                     .putExtra("id", article.getArticleId()));
-                            displayMessage("El artículo se añadió a tu ropero");
+                            displayMessage("Agregaste la prenda a tus Favoritos");
                             Session.getInstance().updateActivitiesStatus(Session.CLOSET_FRAGMENT);
                         } else {
                             setResult(RESULT_OK, new Intent().putExtra("removed", true)
                                     .putExtra("id", article.getArticleId()));
-                            displayMessage("El artículo se quitó de tu ropero");
+                            displayMessage("Quitaste la prenda de tus Favoritos");
                             FirebaseFirestore.getInstance().collection("outfits")
                                     .whereArrayContains("favorites", article.getArticleId())
                                     .get()
@@ -245,7 +247,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
                             setFavoriteFabIcon(inCloset);
                             btnCloset.setEnabled(true);
                         }else{
-                            displayMessage("Esta prenda ya no existe :(");
+                            displayMessage("Esta prenda ya no existe");
                             finish();
                         }
 
@@ -285,7 +287,7 @@ public class ArticleInfoActivity extends AppCompatActivity {
         if (fromDeepLink) {
             Intent intent= new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
-            finish();
         }
+        this.finish();
     }
 }

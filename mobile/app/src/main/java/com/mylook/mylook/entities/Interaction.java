@@ -10,6 +10,7 @@ public class Interaction {
     private boolean liked;
     private boolean clickOnArticle;
     private String articleId;
+    private String title;
     private ArrayList<String> tags;
     private String storeName;
     private String userId;
@@ -21,7 +22,15 @@ public class Interaction {
         this.interactionTime = new Timestamp(cal.getTime());
     }
 
-    public Interaction(int promotionLevel,boolean savedToCloset, boolean liked, String articleId, ArrayList<String> tags, String storeName, String userId) {
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Interaction(int promotionLevel, boolean savedToCloset, boolean liked, String articleId, ArrayList<String> tags, String storeName, String userId) {
         this.savedToCloset = savedToCloset;
         this.liked = liked;
         this.articleId = articleId;

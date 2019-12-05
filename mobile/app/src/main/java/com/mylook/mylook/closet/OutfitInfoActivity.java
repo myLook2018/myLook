@@ -2,6 +2,7 @@ package com.mylook.mylook.closet;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,12 +23,13 @@ import com.mylook.mylook.entities.Outfit;
 import com.mylook.mylook.info.ArticleInfoActivity;
 import com.mylook.mylook.utils.ArticlesGridAdapter;
 
-import static com.mylook.mylook.closet.OutfitCreateEditActivity.OUTFIT_EDIT_REQUEST;
+
 
 public class OutfitInfoActivity extends AppCompatActivity {
 
     static final int ARTICLE_INFO_REQUEST = 3;
     static final int OUTFIT_INFO_REQUEST = 1;
+    public static final int OUTFIT_EDIT_REQUEST = 4;
     static final int OUTFIT_DELETED = 1;
     static final int OUTFIT_EDITED = 2;
     private GridView gridView;
@@ -113,7 +115,7 @@ public class OutfitInfoActivity extends AppCompatActivity {
     private void deleteOutfit() {
         android.app.AlertDialog alert = new android.app.AlertDialog.Builder(this, R.style.AlertDialogTheme)
                 .setTitle("Eliminar conjunto")
-                .setMessage("Estás seguro de que querés eliminar el conjunto?")
+                .setMessage("¿Estás seguro que querés eliminar el conjunto?")
                 .setPositiveButton("Eliminar", (paramDialogInterface, paramInt) -> {
                             progressBar.setVisibility(View.VISIBLE);
                             FirebaseFirestore.getInstance().collection("outfits")
@@ -145,6 +147,7 @@ public class OutfitInfoActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        Log.e("Request code", ""+requestCode);
         if (requestCode == OUTFIT_EDIT_REQUEST) {
             if (resultCode == OUTFIT_EDITED) {
                 progressBar.setVisibility(View.VISIBLE);
